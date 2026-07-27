@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Notifications Disabled - TaskFlow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#eeeeee",
+                    "surface-dim": "#dadada",
+                    "primary-fixed": "#dae2ff",
+                    "on-tertiary-fixed-variant": "#930010",
+                    "on-surface-variant": "#424654",
+                    "tertiary-container": "#c12729",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-surface": "#303030",
+                    "surface-tint": "#0055d2",
+                    "on-error-container": "#93000a",
+                    "outline": "#737786",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed-variant": "#37485a",
+                    "secondary": "#4e6072",
+                    "on-secondary": "#ffffff",
+                    "tertiary-fixed": "#ffdad6",
+                    "primary-container": "#105cdb",
+                    "inverse-primary": "#b2c5ff",
+                    "surface-bright": "#f9f9f9",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-fixed-dim": "#ffb3ad",
+                    "on-secondary-fixed": "#091d2d",
+                    "secondary-fixed": "#d2e4fa",
+                    "surface-container-high": "#e8e8e8",
+                    "on-tertiary-fixed": "#410003",
+                    "on-primary-fixed": "#001848",
+                    "tertiary": "#9e0514",
+                    "surface-container-highest": "#e2e2e2",
+                    "on-error": "#ffffff",
+                    "inverse-on-surface": "#f1f1f1",
+                    "surface-variant": "#e2e2e2",
+                    "on-primary-container": "#dae2ff",
+                    "primary": "#0045ae",
+                    "error": "#ba1a1a",
+                    "outline-variant": "#c3c6d7",
+                    "primary-fixed-dim": "#b2c5ff",
+                    "on-primary-fixed-variant": "#0040a1",
+                    "background": "#f9f9f9",
+                    "on-surface": "#1b1b1b",
+                    "surface": "#f9f9f9",
+                    "surface-container-low": "#f3f3f3",
+                    "on-tertiary-container": "#ffdbd7",
+                    "error-container": "#ffdad6",
+                    "on-background": "#1b1b1b",
+                    "on-secondary-container": "#526477",
+                    "secondary-container": "#cfe2f7",
+                    "secondary-fixed-dim": "#b6c8de"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "4px",
+                    "margin-mobile": "16px",
+                    "container-max": "1280px",
+                    "margin-desktop": "48px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "headline-xl": ["Poppins"],
+                    "label-xs": ["Poppins"],
+                    "display-3l": ["Poppins"],
+                    "headline-lg": ["Poppins"],
+                    "display-2l": ["Poppins"],
+                    "body-sm": ["Poppins"],
+                    "body-base": ["Poppins"],
+                    "label-2xs": ["Poppins"]
+            },
+            "fontSize": {
+                    "headline-xl": ["24px", {"lineHeight": "120%", "fontWeight": "600"}],
+                    "label-xs": ["12px", {"lineHeight": "auto", "fontWeight": "500"}],
+                    "display-3l": ["40px", {"lineHeight": "110%", "fontWeight": "700"}],
+                    "headline-lg": ["20px", {"lineHeight": "140%", "fontWeight": "500"}],
+                    "display-2l": ["32px", {"lineHeight": "120%", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "140%", "fontWeight": "400"}],
+                    "body-base": ["16px", {"lineHeight": "140%", "fontWeight": "400"}],
+                    "label-2xs": ["10px", {"lineHeight": "auto", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #F4F9FF;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .soft-shadow {
+            box-shadow: 0px 8px 24px rgba(16, 92, 219, 0.08);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+<!-- Top Navigation Anchor (As specified in JSON, suppressed on transactional/focused screens usually, but included for context as a shell anchor) -->
+<header class="fixed top-0 left-0 right-0 h-16 bg-surface flex justify-between items-center px-margin-mobile shadow-sm z-50">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-primary overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional close-up studio portrait of a young person with a friendly expression, set against a clean and minimalist light blue background. The lighting is soft and high-key, reflecting a modern productivity app's bright and efficient aesthetic. The individual is wearing professional yet casual attire consistent with a high-energy SaaS platform user." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGBPTKglulfuPhH67zXtx8C99FuGvJ5JjLJ3XClqAOZJj4xHWs8Yp8rgEtfi6O6R9yq6Q-uelg7EjK3XRRj-zWY0pPFE1hu-uTOJ301pzXVHSgygmIahA7kjAE8Csr7FHZVh-yYx6tq6InYUQxQZ8gmVzed9T6n-VssG6eBqa1EXH0DyCoT2NwcbnRLRfspDyMBt5YCPfFdFZQHu44HYlXIPlHtWGhRG6jOHEzYBli3vOfOvAYB8eJtIfk9Hh6uE4n4f3rt7jh1ow"/>
+</div>
+<span class="font-headline-xl text-headline-xl text-primary font-bold">TaskFlow</span>
+</div>
+<button class="material-symbols-outlined text-primary text-[28px] hover:opacity-80 transition-opacity">notifications</button>
+</header>
+<!-- Main Canvas -->
+<main class="w-full max-w-lg mt-16 mb-20 flex flex-col items-center justify-center">
+<!-- Animated Background Element (Subtle) -->
+<div class="fixed inset-0 pointer-events-none opacity-40 -z-10">
+
+</div>
+<!-- Notification Denied Card -->
+<div class="glass-card bg-surface-container-lowest p-8 md:p-12 rounded-[24px] soft-shadow w-full flex flex-col items-center text-center">
+<!-- Icon Container -->
+<div class="w-24 h-24 mb-8 bg-tertiary-container/10 rounded-full flex items-center justify-center relative">
+<span class="material-symbols-outlined text-tertiary text-[48px]">notifications_off</span>
+<!-- Subtle Warning Overlay -->
+<div class="absolute -bottom-1 -right-1 bg-surface-container-lowest rounded-full p-1 shadow-sm">
+<span class="material-symbols-outlined text-error text-[24px]">warning</span>
+</div>
+</div>
+<!-- Content -->
+<h1 class="font-headline-xl text-headline-xl text-on-surface mb-3">Notifications Disabled</h1>
+<p class="font-body-base text-body-base text-on-surface-variant max-w-sm mb-10">
+                You won't receive reminders for your upcoming tasks, deadlines, or team updates. 
+            </p>
+<!-- Illustration Area (Bento-style visual placeholder) -->
+<div class="w-full h-48 bg-surface-container-low rounded-[24px] mb-10 overflow-hidden flex items-center justify-center border border-outline-variant/30 relative">
+<div class="absolute inset-0 opacity-20">
+<img class="w-full h-full object-cover" data-alt="A sophisticated abstract digital art composition featuring soft blue and gray geometric gradients. The style is modern minimalism with generous whitespace, suggesting a quiet, empty notification center. Soft ambient lighting and high-diffusion shadows create a sense of professional clarity and serene technological efficiency." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYSQuJQYuV-SvEgGVl1918GmuiC4ZQXXFErcYLsAlCBrH55JdIKgouUITQs-3x-S38Rz1kwjg7OA9xeOQbcpDCbiaFjW9u6x3ojMlg30w3Nc36Eqhz2pOnVORxuMyZcBCe3dQ1gJAN8n_CmmsB3iKQk5ror6GRgXHBzPCSNZzBAhuaahoifr2N8verEngvAWtI52ZdDYzCHwi-a54QqhTtdLmy1FRONqfm7VT_LNGyAybkaOKsHy0eeEyPm29x58LO1cz3pRxvwmQ"/>
+</div>
+<div class="z-10 flex flex-col items-center gap-2">
+<div class="w-32 h-2 bg-outline-variant/20 rounded-full"></div>
+<div class="w-48 h-2 bg-outline-variant/20 rounded-full opacity-60"></div>
+<div class="w-24 h-2 bg-outline-variant/20 rounded-full opacity-40"></div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="w-full space-y-4">
+<button class="w-full h-[56px] bg-primary text-on-primary font-semibold rounded-[16px] hover:opacity-90 active:scale-95 transition-all shadow-md">
+                    Enable in Settings
+                </button>
+<button class="w-full h-[48px] bg-secondary-container text-primary font-semibold rounded-[16px] hover:bg-secondary-container/80 transition-colors">
+                    Maybe Later
+                </button>
+</div>
+</div>
+<!-- Secondary Info Card (Asymmetric Layout Element) -->
+<div class="mt-6 glass-card bg-surface-container-lowest/60 p-6 rounded-[24px] soft-shadow w-full flex items-center gap-4">
+<div class="p-3 rounded-xl bg-primary-container text-white">
+<span class="material-symbols-outlined">lightbulb</span>
+</div>
+<div class="text-left">
+<h4 class="font-label-lg text-label-lg text-on-surface font-bold">Why enable?</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Stay on track with intelligent task suggestions and priority alerts.</p>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Shell (Suppressed contextually as it's a focus/interstitial state, but implementing per JSON requirements for top-level destination consistency) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 h-[80px] bg-surface/90 backdrop-blur-md border-t border-outline-variant/20">
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors px-4 py-1 rounded-full cursor-pointer">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors px-4 py-1 rounded-full cursor-pointer">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="font-label-sm text-label-sm">Calendar</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary text-on-primary w-12 h-12 rounded-full shadow-lg active:scale-90 transition-transform">
+<span class="material-symbols-outlined">add</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors px-4 py-1 rounded-full cursor-pointer">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="font-label-sm text-label-sm">Stats</span>
+</div>
+<!-- Active State Logic: Mapping to Settings since the action is 'Enable in Settings' -->
+<div class="flex flex-col items-center justify-center bg-secondary-container/15 text-secondary rounded-full px-4 py-1">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-sm text-label-sm font-bold">Settings</span>
+</div>
+</nav>
+<script>
+        // Micro-interaction for the warning icon
+        const warningIcon = document.querySelector('.material-symbols-outlined.text-error');
+        if (warningIcon) {
+            setInterval(() => {
+                warningIcon.classList.toggle('opacity-50');
+            }, 1500);
+        }
+        
+        // Simple entry animation logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const card = document.querySelector('.glass-card');
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body></html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Task Detail - TaskFlow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9f9f9;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                "on-error": "#ffffff",
+                "surface-variant": "#e2e2e2",
+                "secondary-fixed": "#d2e4fa",
+                "surface-tint": "#0055d2",
+                "on-surface-variant": "#424654",
+                "on-primary-fixed-variant": "#0040a1",
+                "surface": "#f9f9f9",
+                "on-secondary-fixed": "#091d2d",
+                "secondary": "#4e6072",
+                "primary-container": "#105cdb",
+                "primary": "#0045ae",
+                "on-surface": "#1b1b1b",
+                "surface-dim": "#dadada",
+                "on-secondary": "#ffffff",
+                "primary-fixed-dim": "#b2c5ff",
+                "tertiary-container": "#c12729",
+                "inverse-primary": "#b2c5ff",
+                "inverse-on-surface": "#f1f1f1",
+                "on-primary-container": "#dae2ff",
+                "error": "#ba1a1a",
+                "secondary-fixed-dim": "#b6c8de",
+                "outline-variant": "#c3c6d7",
+                "on-secondary-container": "#526477",
+                "surface-container-highest": "#e2e2e2",
+                "on-tertiary": "#ffffff",
+                "background": "#f9f9f9",
+                "surface-container-lowest": "#ffffff",
+                "surface-bright": "#f9f9f9",
+                "tertiary-fixed": "#ffdad6",
+                "on-tertiary-fixed-variant": "#930010",
+                "on-error-container": "#93000a",
+                "on-tertiary-container": "#ffdbd7",
+                "on-primary": "#ffffff",
+                "inverse-surface": "#303030",
+                "secondary-container": "#cfe2f7",
+                "outline": "#737786",
+                "on-secondary-fixed-variant": "#37485a",
+                "surface-container": "#eeeeee",
+                "on-background": "#1b1b1b",
+                "error-container": "#ffdad6",
+                "tertiary": "#9e0514",
+                "primary-fixed": "#dae2ff",
+                "tertiary-fixed-dim": "#ffb3ad",
+                "surface-container-low": "#f3f3f3",
+                "on-primary-fixed": "#001848",
+                "on-tertiary-fixed": "#410003",
+                "surface-container-high": "#e8e8e8"
+              },
+              "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+              },
+              "spacing": {
+                "container-max": "1280px",
+                "gutter": "24px",
+                "margin-mobile": "16px",
+                "margin-desktop": "48px",
+                "unit": "4px"
+              },
+              "fontFamily": {
+                "label-xs": ["Poppins"],
+                "body-base": ["Poppins"],
+                "label-2xs": ["Poppins"],
+                "headline-lg": ["Poppins"],
+                "display-3l": ["Poppins"],
+                "display-2l": ["Poppins"],
+                "body-sm": ["Poppins"],
+                "headline-xl": ["Poppins"]
+              },
+              "fontSize": {
+                "label-xs": ["12px", {"lineHeight": "auto", "fontWeight": "500"}],
+                "body-base": ["16px", {"lineHeight": "140%", "fontWeight": "400"}],
+                "label-2xs": ["10px", {"lineHeight": "auto", "fontWeight": "500"}],
+                "headline-lg": ["20px", {"lineHeight": "140%", "fontWeight": "500"}],
+                "display-3l": ["40px", {"lineHeight": "110%", "fontWeight": "700"}],
+                "display-2l": ["32px", {"lineHeight": "120%", "fontWeight": "600"}],
+                "body-sm": ["14px", {"lineHeight": "140%", "fontWeight": "400"}],
+                "headline-xl": ["24px", {"lineHeight": "120%", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+      </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-32">
+<!-- Top AppBar (from Shared Components) -->
+<header class="sticky top-0 z-50 bg-surface dark:bg-surface-dark shadow-sm dark:shadow-none flex justify-between items-center w-full px-4 md:px-12 h-16">
+<div class="flex items-center gap-4">
+<button class="hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-200 text-primary">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary font-bold">TaskFlow</h1>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary cursor-pointer hover:opacity-80 transition-opacity">notifications</span>
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold text-xs">JD</div>
+</div>
+</header>
+<main class="max-w-[800px] mx-auto px-4 md:px-gutter mt-8">
+<!-- Title & Badges Section -->
+<div class="flex flex-col gap-4 mb-8">
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-tertiary-container text-on-tertiary-container rounded-full text-label-xs font-label-xs flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">priority_high</span> High Priority
+                </span>
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-label-xs font-label-xs flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">sync</span> In Progress
+                </span>
+</div>
+<h2 class="font-display-2l text-display-2l text-on-surface tracking-tight leading-tight">Finalize Project Proposal</h2>
+</div>
+<!-- Bento Layout Details -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Description Card (Spans 2 columns on desktop) -->
+<section class="md:col-span-2 p-8 bg-surface-container-lowest rounded-[24px] shadow-[0px_8px_24px_rgba(16,92,219,0.06)] border border-surface-container flex flex-col gap-4">
+<h3 class="font-headline-lg text-headline-lg text-primary flex items-center gap-2">
+<span class="material-symbols-outlined">description</span> Description
+                </h3>
+<p class="font-body-base text-body-base text-on-surface-variant leading-relaxed">
+                    Review and finalize the final version of the project proposal before submitting it to the executive team. Ensure all budget figures are double-checked for accuracy across all departments.
+                </p>
+<div class="mt-4 pt-6 border-t border-surface-container flex flex-col gap-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-2xl bg-primary-fixed/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">event</span>
+</div>
+<div>
+<p class="text-label-xs font-label-xs text-on-surface-variant uppercase tracking-wider">Due Date</p>
+<p class="font-headline-lg text-headline-lg">Oct 25, 2023</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-2xl bg-secondary-container/30 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">schedule</span>
+</div>
+<div>
+<p class="text-label-xs font-label-xs text-on-surface-variant uppercase tracking-wider">Scheduled Time</p>
+<p class="font-headline-lg text-headline-lg">10:00 AM</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Sidebar Info Side (Meta Info) -->
+<div class="flex flex-col gap-6">
+<!-- Reminder Card -->
+<div class="p-6 bg-surface-container-lowest rounded-[24px] shadow-[0px_8px_24px_rgba(16,92,219,0.06)] border border-surface-container flex flex-col gap-3">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-[20px]">notifications_active</span>
+<span class="text-label-xs font-label-xs font-bold uppercase tracking-widest">Reminder</span>
+</div>
+<p class="font-headline-lg text-headline-lg">30 mins before</p>
+</div>
+<!-- Recurrence Card -->
+<div class="p-6 bg-primary-container text-on-primary-container rounded-[24px] shadow-[0px_12px_32px_rgba(16,92,219,0.15)] flex flex-col gap-3">
+<div class="flex items-center gap-2 text-on-primary-container/80">
+<span class="material-symbols-outlined text-[20px]">repeat</span>
+<span class="text-label-xs font-label-xs font-bold uppercase tracking-widest">Recurrence</span>
+</div>
+<p class="font-headline-lg text-headline-lg">Weekly</p>
+<div class="flex gap-2 mt-1">
+<span class="w-8 h-8 rounded-full bg-on-primary-container text-primary flex items-center justify-center text-label-xs font-bold">M</span>
+<span class="w-8 h-8 rounded-full bg-white/20 text-on-primary-container flex items-center justify-center text-label-xs font-bold">T</span>
+<span class="w-8 h-8 rounded-full bg-on-primary-container text-primary flex items-center justify-center text-label-xs font-bold">W</span>
+<span class="w-8 h-8 rounded-full bg-white/20 text-on-primary-container flex items-center justify-center text-label-xs font-bold">T</span>
+<span class="w-8 h-8 rounded-full bg-white/20 text-on-primary-container flex items-center justify-center text-label-xs font-bold">F</span>
+</div>
+</div>
+<!-- Attachment/Visual Placeholder -->
+<div class="relative group cursor-pointer overflow-hidden rounded-[24px] aspect-square bg-surface-variant">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="A clean, minimalist desk setup featuring a white tablet displaying a project proposal document. Beside it lies a high-end pen and a single cup of black coffee on a polished wooden surface. The lighting is soft and natural from a nearby window, creating a serene and productive atmosphere in a light-mode office setting. The overall color palette uses muted blues and crisp whites." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAKKIkAh4rDtqo3gm_U7p_YgkJ1fEjro9GJ6ZME0gELw0gNmnFQY_0L9MBG4FBIpUlc551coIkKX-Gv8dDYSxR04Mjm-w50VJwUacbg2qK2vmLDXGp1oB0S9w80lvqKOVc_eOmJ6s-k6p37dMzy5JD_el71bzPcFp0GMmHK0pSQiGRC2n7FYYraHBsCWwef5E3bvbf6VVTICOpzr_TumMm1XTAJ3Z5aExV4vKggoWYbLZWnm1STag4cxFTX4JGbbXU3ALFLnVch8cw')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-6">
+<span class="text-white text-label-xs font-label-xs flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">attach_file</span> 1 Attachment
+                        </span>
+<p class="text-white font-bold">Project_Draft_V4.pdf</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Task Actions Desktop/Tablet -->
+<div class="mt-10 flex flex-wrap items-center justify-between gap-4 py-8 border-t border-surface-container">
+<div class="flex gap-4">
+<button class="px-6 h-12 rounded-2xl border-2 border-primary text-primary font-bold hover:bg-primary-fixed/10 transition-colors flex items-center gap-2 active:scale-95 transition-all">
+<span class="material-symbols-outlined">edit</span> Edit Task
+                </button>
+<button class="px-6 h-12 rounded-2xl bg-tertiary text-on-tertiary font-bold hover:opacity-90 transition-opacity flex items-center gap-2 active:scale-95 transition-all shadow-md">
+<span class="material-symbols-outlined">delete</span> Delete
+                </button>
+</div>
+<button class="px-8 h-[56px] rounded-2xl bg-primary-container text-on-primary-container font-bold text-headline-lg flex items-center gap-3 hover:shadow-[0px_8px_32px_rgba(16,92,219,0.25)] transition-all active:scale-95">
+<span class="material-symbols-outlined">check_circle</span> Mark as Completed
+            </button>
+</div>
+</main>
+<!-- Bottom Navigation Shell (Mobile only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-safe bg-surface dark:bg-surface-dark border-t border-border-subtle h-[80px] shadow-lg">
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">home</span>
+<span class="text-label-sm font-label-sm">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="text-label-sm font-label-sm">Calendar</span>
+</div>
+<div class="flex flex-col items-center justify-center -mt-8">
+<div class="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-white shadow-lg active:scale-90 transition-all">
+<span class="material-symbols-outlined text-[32px]">add</span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="text-label-sm font-label-sm">Stats</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-sm font-label-sm">Settings</span>
+</div>
+</nav>
+<!-- Floating Action for Completion (Mobile specific UX) -->
+<div class="md:hidden fixed bottom-24 right-6">
+<button class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center shadow-2xl active:scale-95 transition-all" id="mobileComplete">
+<span class="material-symbols-outlined text-[32px]">done_all</span>
+</button>
+</div>
+<script>
+        // Micro-interaction for completion
+        const mainCompleteBtn = document.querySelector('button.bg-primary-container');
+        const mobileCompleteBtn = document.getElementById('mobileComplete');
+
+        function handleComplete() {
+            const btn = this;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Updating...';
+            btn.style.opacity = '0.7';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Completed!';
+                btn.classList.remove('bg-primary-container');
+                btn.classList.add('bg-green-600');
+                btn.style.opacity = '1';
+                
+                // Trigger a confetti-like effect or simple toast
+                alert('Task marked as completed!');
+            }, 1200);
+        }
+
+        if(mainCompleteBtn) mainCompleteBtn.addEventListener('click', handleComplete);
+        if(mobileCompleteBtn) mobileCompleteBtn.addEventListener('click', handleComplete);
+    </script>
+</body></html>

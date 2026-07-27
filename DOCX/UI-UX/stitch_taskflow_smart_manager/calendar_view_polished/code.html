@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>TaskFlow - Calendar</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "priority-medium": "#F59E0B",
+                        "priority-high": "#F43F5E",
+                        "priority-low": "#10B981",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#001848",
+                        "surface-container": "#eeeeee",
+                        "surface-bright": "#f9f9f9",
+                        "tertiary-fixed": "#ffdad6",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "on-surface": "#1b1b1b",
+                        "surface-variant": "#e2e2e2",
+                        "secondary-fixed-dim": "#b6c8de",
+                        "on-primary-fixed-variant": "#0040a1",
+                        "on-tertiary-fixed-variant": "#930010",
+                        "on-secondary-fixed-variant": "#37485a",
+                        "inverse-primary": "#b2c5ff",
+                        "secondary-fixed": "#d2e4fa",
+                        "secondary": "#4e6072",
+                        "tertiary-container": "#c12729",
+                        "inverse-on-surface": "#f1f1f1",
+                        "surface-container-highest": "#e2e2e2",
+                        "tertiary-fixed-dim": "#ffb3ad",
+                        "background": "#f9f9f9",
+                        "outline": "#737786",
+                        "on-background": "#1b1b1b",
+                        "on-tertiary-container": "#ffdbd7",
+                        "tertiary": "#9e0514",
+                        "primary": "#0045ae",
+                        "inverse-surface": "#303030",
+                        "surface": "#f9f9f9",
+                        "on-secondary-fixed": "#091d2d",
+                        "secondary-container": "#cfe2f7",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "primary-container": "#105cdb",
+                        "on-primary-container": "#dae2ff",
+                        "primary-fixed": "#dae2ff",
+                        "surface-dim": "#dadada",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "outline-variant": "#c3c6d7",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#424654",
+                        "surface-tint": "#0055d2",
+                        "surface-container-low": "#f3f3f3",
+                        "on-tertiary-fixed": "#410003",
+                        "on-secondary-container": "#526477",
+                        "surface-container-high": "#e8e8e8"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-desktop": "48px",
+                        "container-max": "1280px",
+                        "margin-mobile": "16px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "sans": ["Poppins", "sans-serif"],
+                        "label-xs": ["Poppins"],
+                        "display-3l": ["Poppins"],
+                        "headline-lg": ["Poppins"],
+                        "body-sm": ["Poppins"],
+                        "body-base": ["Poppins"],
+                        "label-2xs": ["Poppins"],
+                        "headline-xl": ["Poppins"],
+                        "display-2l": ["Poppins"]
+                    },
+                    "fontSize": {
+                        "label-xs": ["12px", {"lineHeight": "auto", "fontWeight": "500"}],
+                        "display-3l": ["40px", {"lineHeight": "110%", "fontWeight": "700"}],
+                        "headline-lg": ["20px", {"lineHeight": "140%", "fontWeight": "500"}],
+                        "body-sm": ["14px", {"lineHeight": "140%", "fontWeight": "400"}],
+                        "body-base": ["16px", {"lineHeight": "140%", "fontWeight": "400"}],
+                        "label-2xs": ["10px", {"lineHeight": "auto", "fontWeight": "500"}],
+                        "headline-xl": ["24px", {"lineHeight": "120%", "fontWeight": "600"}],
+                        "display-2l": ["32px", {"lineHeight": "120%", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Poppins', sans-serif;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 2px;
+        }
+        .day-cell {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+        .time-line::after {
+            content: '';
+            position: absolute;
+            left: 71px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #c3c6d7;
+            z-index: 0;
+        }
+        /* Ensure specific alignment for time labels */
+        .time-label {
+            width: 56px;
+            text-align: right;
+            padding-right: 12px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen pb-[100px] flex flex-col md:hidden font-body-base">
+<!-- Top App Bar -->
+<header class="flex justify-between items-center w-full px-margin-mobile h-16 bg-surface shadow-sm sticky top-0 z-40">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-high border border-outline-variant flex items-center justify-center">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7R7J1xKKNzYDGHrbR-MVazouuZVRJqySZdk7Rq_mBWqE-oa2MFYPHxJulmnW5KIt-8hS1IlywCfbjljYaEOxVh8JSBa_1MIQ1aMcKPhd3FGBFjtYGBbwnEpzVdgqTu5PrTAvNMSHUy6RlvE1-RBuL9XdZwSmaE59-8YLmiEiUe0QPqCo4sb8xz_cid350L_JUosiVlaOtJTQ4fkItT8BxXJTKMucXkVb1hCLQNW1jAnKXN1OeVuMelQPv9u4v3nuyIgQPEP3QTDM"/>
+</div>
+<h1 class="font-headline-lg text-primary tracking-tight">TaskFlow</h1>
+</div>
+<button class="text-primary p-2 hover:opacity-80 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="flex-1 px-margin-mobile pt-gutter flex flex-col gap-gutter relative max-w-md mx-auto w-full">
+<!-- Header / Month Selector -->
+<div class="flex justify-between items-center bg-surface-container-lowest rounded-xl p-3 shadow-sm border border-outline-variant">
+<button class="text-on-surface-variant p-1 hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<h2 class="font-headline-lg text-on-surface">October 2023</h2>
+<button class="text-on-surface-variant p-1 hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<!-- Calendar Widget -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm border border-outline-variant">
+<div class="calendar-grid mb-3">
+<div class="text-center font-label-xs text-on-surface-variant">S</div>
+<div class="text-center font-label-xs text-on-surface-variant">M</div>
+<div class="text-center font-label-xs text-on-surface-variant">T</div>
+<div class="text-center font-label-xs text-on-surface-variant">W</div>
+<div class="text-center font-label-xs text-on-surface-variant">T</div>
+<div class="text-center font-label-xs text-on-surface-variant">F</div>
+<div class="text-center font-label-xs text-on-surface-variant">S</div>
+</div>
+<div class="calendar-grid">
+<!-- Simulated October 2023 Grid -->
+<div class="day-cell font-body-sm text-on-surface-variant opacity-40">1</div>
+<div class="day-cell font-body-sm text-on-surface">2</div>
+<div class="day-cell font-body-sm text-on-surface">3</div>
+<div class="day-cell font-body-sm text-on-surface">4</div>
+<div class="day-cell font-body-sm text-on-surface">5</div>
+<div class="day-cell font-body-sm text-on-surface">6</div>
+<div class="day-cell font-body-sm text-on-surface">7</div>
+<div class="day-cell font-body-sm text-on-surface">8</div>
+<div class="day-cell font-body-sm text-on-surface">
+                9
+                <div class="absolute bottom-1 w-1 h-1 rounded-full bg-priority-high"></div>
+</div>
+<div class="day-cell font-body-sm text-on-surface">10</div>
+<div class="day-cell font-body-sm text-on-surface">11</div>
+<div class="day-cell font-body-sm text-on-surface">
+                12
+                <div class="absolute bottom-1 w-1 h-1 rounded-full bg-priority-medium"></div>
+</div>
+<div class="day-cell font-body-sm text-on-surface">13</div>
+<div class="day-cell font-body-sm text-on-surface">14</div>
+<div class="day-cell font-body-sm text-on-surface">15</div>
+<div class="day-cell font-body-sm text-on-surface">16</div>
+<div class="day-cell font-body-sm text-on-surface">17</div>
+<div class="day-cell font-body-sm text-on-surface">18</div>
+<div class="day-cell font-body-sm text-on-surface">19</div>
+<!-- Selected Date Refined -->
+<div class="day-cell">
+<div class="w-9 h-9 rounded-full bg-primary text-on-primary flex items-center justify-center font-semibold text-sm shadow-md">20</div>
+<div class="absolute -bottom-0.5 w-1 h-1 rounded-full bg-priority-high"></div>
+</div>
+<div class="day-cell font-body-sm text-on-surface">21</div>
+<div class="day-cell font-body-sm text-on-surface">22</div>
+<div class="day-cell font-body-sm text-on-surface">23</div>
+<div class="day-cell font-body-sm text-on-surface">24</div>
+<div class="day-cell font-body-sm text-on-surface">
+                25
+                <div class="absolute bottom-1 w-1 h-1 rounded-full bg-priority-low"></div>
+</div>
+<div class="day-cell font-body-sm text-on-surface">26</div>
+<div class="day-cell font-body-sm text-on-surface">27</div>
+<div class="day-cell font-body-sm text-on-surface">28</div>
+<div class="day-cell font-body-sm text-on-surface">29</div>
+<div class="day-cell font-body-sm text-on-surface">30</div>
+<div class="day-cell font-body-sm text-on-surface">31</div>
+<div class="day-cell font-body-sm text-on-surface-variant opacity-40">1</div>
+<div class="day-cell font-body-sm text-on-surface-variant opacity-40">2</div>
+<div class="day-cell font-body-sm text-on-surface-variant opacity-40">3</div>
+<div class="day-cell font-body-sm text-on-surface-variant opacity-40">4</div>
+</div>
+</div>
+<!-- Schedule Section -->
+<div class="flex flex-col gap-4 mb-8">
+<h3 class="font-headline-lg text-on-surface px-1">Schedule <span class="font-body-sm text-on-surface-variant font-normal ml-2">Oct 20</span></h3>
+<div class="flex flex-col relative time-line">
+<!-- Task Block 1 -->
+<div class="flex gap-4 items-start relative mb-4">
+<div class="time-label pt-3">
+<span class="font-label-xs text-on-surface-variant">09:00</span>
+</div>
+<div class="flex-1 bg-surface-container-lowest rounded-xl p-3 border border-outline-variant shadow-sm z-10">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-body-base text-on-surface font-semibold text-sm">Client Presentation Review</h4>
+<span class="bg-priority-high/10 text-priority-high font-label-xs px-2 py-0.5 rounded">High</span>
+</div>
+<p class="font-body-sm text-on-surface-variant text-xs line-clamp-1">Finalize slides for Q3 marketing review...</p>
+<div class="flex items-center gap-1.5 mt-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span class="font-label-xs">9:00 - 10:30 AM</span>
+</div>
+</div>
+</div>
+<!-- Current Time Indicator -->
+<div class="flex gap-4 items-center relative z-20 my-2">
+<div class="time-label">
+<span class="font-label-xs text-primary font-bold">11:15</span>
+</div>
+<div class="flex-1 flex items-center">
+<div class="w-2.5 h-2.5 rounded-full bg-primary ring-4 ring-primary/20 z-20 -ml-1.5"></div>
+<div class="flex-1 h-[2px] bg-primary"></div>
+</div>
+</div>
+<!-- Task Block 2 -->
+<div class="flex gap-4 items-start relative mb-4">
+<div class="time-label pt-3">
+<span class="font-label-xs text-on-surface-variant">13:00</span>
+</div>
+<div class="flex-1 bg-surface-container-lowest rounded-xl p-3 border border-outline-variant shadow-sm z-10 opacity-75">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-body-base text-on-surface font-semibold text-sm">Weekly Sync</h4>
+<span class="bg-priority-low/10 text-priority-low font-label-xs px-2 py-0.5 rounded">Low</span>
+</div>
+<div class="flex items-center gap-1.5 mt-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span class="font-label-xs">1:00 - 1:30 PM</span>
+</div>
+</div>
+</div>
+<!-- Task Block 3 -->
+<div class="flex gap-4 items-start relative">
+<div class="time-label pt-3">
+<span class="font-label-xs text-on-surface-variant">15:00</span>
+</div>
+<div class="flex-1 bg-surface-container-lowest rounded-xl p-3 border border-outline-variant shadow-sm z-10 opacity-75">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-body-base text-on-surface font-semibold text-sm">Design System Update</h4>
+<span class="bg-priority-medium/10 text-priority-medium font-label-xs px-2 py-0.5 rounded">Med</span>
+</div>
+<div class="flex items-center gap-1.5 mt-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span class="font-label-xs">3:00 - 5:00 PM</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button - Fixed position relative to screen -->
+<button class="fixed bottom-6 right-6 w-14 h-14 bg-primary rounded-2xl shadow-lg flex items-center justify-center text-on-primary z-50 active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0; font-size: 28px;">add</span>
+</button>
+</body></html>

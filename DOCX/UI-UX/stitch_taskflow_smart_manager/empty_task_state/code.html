@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TaskFlow - Empty State</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#eeeeee",
+                    "surface-dim": "#dadada",
+                    "primary-fixed": "#dae2ff",
+                    "on-tertiary-fixed-variant": "#930010",
+                    "on-surface-variant": "#424654",
+                    "tertiary-container": "#c12729",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-surface": "#303030",
+                    "surface-tint": "#0055d2",
+                    "on-error-container": "#93000a",
+                    "outline": "#737786",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed-variant": "#37485a",
+                    "secondary": "#4e6072",
+                    "on-secondary": "#ffffff",
+                    "tertiary-fixed": "#ffdad6",
+                    "primary-container": "#105cdb",
+                    "inverse-primary": "#b2c5ff",
+                    "surface-bright": "#f9f9f9",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-fixed-dim": "#ffb3ad",
+                    "on-secondary-fixed": "#091d2d",
+                    "secondary-fixed": "#d2e4fa",
+                    "surface-container-high": "#e8e8e8",
+                    "on-tertiary-fixed": "#410003",
+                    "on-primary-fixed": "#001848",
+                    "tertiary": "#9e0514",
+                    "surface-container-highest": "#e2e2e2",
+                    "on-error": "#ffffff",
+                    "inverse-on-surface": "#f1f1f1",
+                    "surface-variant": "#e2e2e2",
+                    "on-primary-container": "#dae2ff",
+                    "primary": "#0045ae",
+                    "error": "#ba1a1a",
+                    "outline-variant": "#c3c6d7",
+                    "primary-fixed-dim": "#b2c5ff",
+                    "on-primary-fixed-variant": "#0040a1",
+                    "background": "#f9f9f9",
+                    "on-surface": "#1b1b1b",
+                    "surface": "#f9f9f9",
+                    "surface-container-low": "#f3f3f3",
+                    "on-tertiary-container": "#ffdbd7",
+                    "error-container": "#ffdad6",
+                    "on-background": "#1b1b1b",
+                    "on-secondary-container": "#526477",
+                    "secondary-container": "#cfe2f7",
+                    "secondary-fixed-dim": "#b6c8de"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "4px",
+                    "margin-mobile": "16px",
+                    "container-max": "1280px",
+                    "margin-desktop": "48px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "headline-xl": ["Poppins"],
+                    "label-xs": ["Poppins"],
+                    "display-3l": ["Poppins"],
+                    "headline-lg": ["Poppins"],
+                    "display-2l": ["Poppins"],
+                    "body-sm": ["Poppins"],
+                    "body-base": ["Poppins"],
+                    "label-2xs": ["Poppins"]
+            },
+            "fontSize": {
+                    "headline-xl": ["24px", {"lineHeight": "120%", "fontWeight": "600"}],
+                    "label-xs": ["12px", {"lineHeight": "auto", "fontWeight": "500"}],
+                    "display-3l": ["40px", {"lineHeight": "110%", "fontWeight": "700"}],
+                    "headline-lg": ["20px", {"lineHeight": "140%", "fontWeight": "500"}],
+                    "display-2l": ["32px", {"lineHeight": "120%", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "140%", "fontWeight": "400"}],
+                    "body-base": ["16px", {"lineHeight": "140%", "fontWeight": "400"}],
+                    "label-2xs": ["10px", {"lineHeight": "auto", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #f9f9f9;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #1b1b1b;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glow-hover:hover {
+            box-shadow: 0px 8px 24px rgba(16, 92, 219, 0.2);
+        }
+        .floating-anim {
+            animation: floating 3s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-dark shadow-sm dark:shadow-none docked full-width top-0 z-40">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-16 max-w-container-max mx-auto">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined">person</span>
+</div>
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-primary dark:text-primary-fixed-dim font-extrabold tracking-tight">TaskFlow</span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed-dim">notifications</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex items-center justify-center px-6 py-12">
+<div class="w-full max-w-md text-center">
+<!-- Minimalist Illustration -->
+<div class="relative mb-8 flex justify-center">
+<div class="absolute inset-0 bg-secondary-container/10 blur-3xl rounded-full scale-125 -z-10"></div>
+<div class="floating-anim relative bg-white rounded-[32px] p-8 shadow-[0px_8px_24px_rgba(16,92,219,0.06)] border border-outline-variant/30">
+<!-- Notepad Representation -->
+<div class="w-48 h-56 bg-surface-container-low rounded-xl relative overflow-hidden flex flex-col">
+<div class="h-6 bg-primary-container w-full mb-4"></div>
+<div class="px-4 space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-4 h-4 rounded border-2 border-outline-variant"></div>
+<div class="h-2 w-24 bg-surface-dim rounded-full"></div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-4 h-4 rounded border-2 border-outline-variant"></div>
+<div class="h-2 w-32 bg-surface-dim rounded-full"></div>
+</div>
+<div class="flex items-center gap-3 opacity-50">
+<div class="w-4 h-4 rounded border-2 border-outline-variant"></div>
+<div class="h-2 w-20 bg-surface-dim rounded-full"></div>
+</div>
+</div>
+<!-- Stylized Floating Pencil -->
+<div class="absolute -right-2 top-20 w-12 h-32 bg-secondary transform rotate-[15deg] rounded-full shadow-lg border-4 border-white flex flex-col items-center justify-start py-2">
+<div class="w-full h-4 bg-tertiary-fixed rounded-t-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Content -->
+<div class="space-y-3 mb-10">
+<h1 class="font-headline-xl text-headline-xl text-on-surface">No tasks yet</h1>
+<p class="font-body-base text-body-base text-on-surface-variant max-w-[280px] mx-auto">
+                    Create your first task to stay organized and boost your daily productivity.
+                </p>
+</div>
+<!-- Primary Action -->
+<button class="group relative inline-flex items-center justify-center gap-3 bg-primary-container text-on-primary px-10 py-5 rounded-[16px] font-bold text-lg shadow-lg glow-hover transition-all duration-300 active:scale-95 overflow-hidden">
+<span class="material-symbols-outlined font-bold text-2xl group-hover:rotate-90 transition-transform duration-300">add</span>
+<span class="relative z-10">Create Task</span>
+<!-- Subtle reflection effect -->
+<div class="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+</button>
+<!-- Secondary Context Image (Atmospheric) -->
+<div class="mt-20 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
+<div class="w-full h-32 rounded-3xl" data-alt="A clean, minimalist workspace background featuring a white desk, a single potted plant with green leaves, and soft morning light filtering through a window. The overall aesthetic is bright, calm, and productive, using TaskFlow's signature light blue and white color palette to evoke a sense of clarity and focus for a task management application." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCGNdtB1KDDJg2F7c_w0YESEFk0YbcPXPVu4HElwDUKUiQZIOEKpj5XZlYL7_Q9-qJ7JLlQIJ4qvgWUtNGePaK2KAKmuKtUjVwy3_wCAqc7o0ksondHVlQxjvF2eSMF6ZfQYW8qYkWm4rrqEw02_pNsYZK7JmIsY1gACXYPFctkKlQZyiTpJ7yOHLkA__-K2Mf-WWIlCZcQGbfmHXurpJf5KY1qNeCaojrrtPq0XhCky74SQVM5YB0Rt45c7zkMhhBEHLdiVJ5CJ0c')"></div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-safe bg-surface dark:bg-surface-dark border-t border-border-subtle dark:border-outline h-[80px] shadow-lg md:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-variant/20 rounded-full transition-colors p-2" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-variant/20 rounded-full transition-colors p-2" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="font-label-sm text-label-sm">Calendar</span>
+</a>
+<!-- Active / Center FAB behavior -->
+<a class="flex flex-col items-center justify-center bg-secondary-container/15 text-secondary dark:text-secondary-fixed-dim rounded-full px-4 py-1 active:scale-90 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">add</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-variant/20 rounded-full transition-colors p-2" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="font-label-sm text-label-sm">Stats</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-variant/20 rounded-full transition-colors p-2" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-sm text-label-sm">Settings</span>
+</a>
+</nav>
+<!-- Desktop Sidebar Placeholder (Simplified for single screen logic) -->
+<aside class="hidden md:flex fixed left-0 top-0 h-full w-20 flex-col items-center py-8 bg-surface border-r border-outline-variant/30 gap-8">
+<span class="material-symbols-outlined text-primary text-3xl font-bold">task_alt</span>
+<div class="flex flex-col gap-6 mt-8">
+<button class="w-12 h-12 rounded-xl flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined">home</span>
+</button>
+<button class="w-12 h-12 rounded-xl flex items-center justify-center bg-secondary-container text-secondary">
+<span class="material-symbols-outlined">list</span>
+</button>
+<button class="w-12 h-12 rounded-xl flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined">calendar_today</span>
+</button>
+</div>
+</aside>
+<script>
+        // Micro-interaction for the notepad illustration
+        document.querySelector('.floating-anim').addEventListener('mouseover', function() {
+            this.style.animationPlayState = 'paused';
+            this.style.transform = 'scale(1.02)';
+            this.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        });
+        
+        document.querySelector('.floating-anim').addEventListener('mouseout', function() {
+            this.style.animationPlayState = 'running';
+            this.style.transform = 'scale(1)';
+        });
+
+        // Simulating the '+' button click
+        document.querySelector('button.group').addEventListener('click', function() {
+            const icon = this.querySelector('.material-symbols-outlined');
+            icon.innerText = 'check';
+            setTimeout(() => {
+                icon.innerText = 'add';
+            }, 1000);
+        });
+    </script>
+</body></html>

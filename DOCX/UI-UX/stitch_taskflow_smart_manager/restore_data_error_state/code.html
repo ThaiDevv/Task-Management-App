@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TaskFlow - Restore Failed</title>
+<!-- Google Fonts: Poppins -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#eeeeee",
+                        "surface-dim": "#dadada",
+                        "primary-fixed": "#dae2ff",
+                        "on-tertiary-fixed-variant": "#930010",
+                        "on-surface-variant": "#424654",
+                        "tertiary-container": "#c12729",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#303030",
+                        "surface-tint": "#0055d2",
+                        "on-error-container": "#93000a",
+                        "outline": "#737786",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#37485a",
+                        "secondary": "#4e6072",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#ffdad6",
+                        "primary-container": "#105cdb",
+                        "inverse-primary": "#b2c5ff",
+                        "surface-bright": "#f9f9f9",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb3ad",
+                        "on-secondary-fixed": "#091d2d",
+                        "secondary-fixed": "#d2e4fa",
+                        "surface-container-high": "#e8e8e8",
+                        "on-tertiary-fixed": "#410003",
+                        "on-primary-fixed": "#001848",
+                        "tertiary": "#9e0514",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#f1f1f1",
+                        "surface-variant": "#e2e2e2",
+                        "on-primary-container": "#dae2ff",
+                        "primary": "#0045ae",
+                        "error": "#ba1a1a",
+                        "outline-variant": "#c3c6d7",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "on-primary-fixed-variant": "#0040a1",
+                        "background": "#f9f9f9",
+                        "on-surface": "#1b1b1b",
+                        "surface": "#f9f9f9",
+                        "surface-container-low": "#f3f3f3",
+                        "on-tertiary-container": "#ffdbd7",
+                        "error-container": "#ffdad6",
+                        "on-background": "#1b1b1b",
+                        "on-secondary-container": "#526477",
+                        "secondary-container": "#cfe2f7",
+                        "secondary-fixed-dim": "#b6c8de"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "margin-mobile": "16px",
+                        "container-max": "1280px",
+                        "margin-desktop": "48px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-xl": ["Poppins"],
+                        "label-xs": ["Poppins"],
+                        "display-3l": ["Poppins"],
+                        "headline-lg": ["Poppins"],
+                        "display-2l": ["Poppins"],
+                        "body-sm": ["Poppins"],
+                        "body-base": ["Poppins"],
+                        "label-2xs": ["Poppins"]
+                    },
+                    "fontSize": {
+                        "headline-xl": ["24px", {"lineHeight": "120%", "fontWeight": "600"}],
+                        "label-xs": ["12px", {"lineHeight": "auto", "fontWeight": "500"}],
+                        "display-3l": ["40px", {"lineHeight": "110%", "fontWeight": "700"}],
+                        "headline-lg": ["20px", {"lineHeight": "140%", "fontWeight": "500"}],
+                        "display-2l": ["32px", {"lineHeight": "120%", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "140%", "fontWeight": "400"}],
+                        "body-base": ["16px", {"lineHeight": "140%", "fontWeight": "400"}],
+                        "label-2xs": ["10px", {"lineHeight": "auto", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #F4F9FF;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .soft-shadow {
+            box-shadow: 0px 8px 24px rgba(16, 92, 219, 0.08);
+        }
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-dark shadow-sm dark:shadow-none flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-16 sticky top-0 z-50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[32px]">task_alt</span>
+<h1 class="font-headline-xl text-headline-xl text-primary dark:text-primary-fixed-dim tracking-tight">TaskFlow</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:opacity-80 transition-opacity active:scale-95 duration-200">notifications</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container">
+<img class="w-full h-full object-cover" data-alt="A professional studio portrait of a young tech professional with a friendly smile, set against a clean, minimalist light blue background. The lighting is soft and even, reflecting a modern corporate aesthetic with high-key brightness. The individual wears a smart casual neutral-toned outfit, and the image maintains a crisp, high-resolution finish typical of premium SaaS platforms." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDadx3DxT_Hl8ETYTG-ZtAe4cqdmuXHUqMFUAVuglpVqo26C0E_3YkFXi5QQVmVpVLPsfm9z4s2GQxh2ItpJtTLWu7LAVw0KRibrkF3eQagy1FrMtzmtM-gu7dtIJ2LWrbhnoCwHZlsxkUtArV0VtMTVVzRIY1ykvzOJcu9805d4o5tlGwwEJFffJ7sFm8u7mcNBVoFg_SgBb3wdN2ClgeHY27uGu9A_ih_6tP9UvclemSdhT6VQpOnYQYBbx86uqQ1izZJLO7h0u8"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex items-center justify-center p-6 sm:p-12">
+<div class="max-w-md w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
+<!-- Restore Failed Card -->
+<div class="bg-white rounded-[24px] p-8 md:p-10 soft-shadow flex flex-col items-center text-center relative overflow-hidden">
+<!-- Background Accent (Subtle Red Glow) -->
+<div class="absolute -top-24 -right-24 w-48 h-48 bg-error/5 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-24 -left-24 w-48 h-48 bg-primary/5 rounded-full blur-3xl"></div>
+<!-- Red Warning Icon -->
+<div class="w-20 h-20 bg-error/10 rounded-full flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-error text-[48px]" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<h2 class="font-display-2l text-display-2l text-on-surface mb-3">Restore Failed</h2>
+<p class="font-body-base text-body-base text-on-surface-variant mb-8">
+                    We encountered an issue while attempting to process your data backup.
+                </p>
+<!-- Error Detail Box -->
+<div class="w-full bg-error-container/20 border border-error/10 rounded-xl p-4 mb-10 flex items-start gap-3 text-left">
+<span class="material-symbols-outlined text-error text-[20px] mt-0.5">error_outline</span>
+<div>
+<p class="font-label-xs text-label-xs text-error uppercase tracking-wider mb-1">Error Message</p>
+<p class="font-body-sm text-body-sm text-on-surface font-medium">Invalid JSON file</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 leading-relaxed">
+                            The file structure doesn't match the required TaskFlow schema. Please ensure you are using a valid export file.
+                        </p>
+</div>
+</div>
+<!-- Actions -->
+<div class="w-full space-y-4">
+<button class="w-full h-[56px] bg-[#105CDB] hover:bg-primary text-white font-semibold rounded-[16px] transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">refresh</span>
+                        Retry Upload
+                    </button>
+<button class="w-full h-[48px] text-primary font-medium hover:bg-secondary-container/30 rounded-[16px] transition-all duration-200">
+                        Back to Settings
+                    </button>
+</div>
+<!-- Support Link -->
+<div class="mt-8 pt-8 border-t border-surface-container-high w-full">
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Need help? <a class="text-primary font-semibold hover:underline" href="#">Contact Support</a>
+</p>
+</div>
+</div>
+<!-- Contextual Hint -->
+<div class="mt-6 text-center">
+<p class="font-label-xs text-label-xs text-on-surface-variant/60">
+                    File format required: .json (Max size 50MB)
+                </p>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-safe bg-surface dark:bg-surface-dark h-[80px] border-t border-border-subtle dark:border-outline">
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="font-label-sm text-label-sm">Calendar</span>
+</div>
+<div class="flex flex-col items-center justify-center -mt-8 bg-primary rounded-full w-14 h-14 shadow-lg text-white">
+<span class="material-symbols-outlined">add</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="font-label-sm text-label-sm">Stats</span>
+</div>
+<!-- Settings is Active because data backup is a settings flow -->
+<div class="flex flex-col items-center justify-center bg-secondary-container/15 text-secondary dark:text-secondary-fixed-dim rounded-full px-4 py-1">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-label-sm text-label-sm font-bold">Settings</span>
+</div>
+</nav>
+<!-- Micro-interaction Script -->
+<script>
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('mousedown', () => {
+                button.classList.add('scale-95');
+            });
+            button.addEventListener('mouseup', () => {
+                button.classList.remove('scale-95');
+            });
+            button.addEventListener('mouseleave', () => {
+                button.classList.remove('scale-95');
+            });
+        });
+    </script>
+</body></html>

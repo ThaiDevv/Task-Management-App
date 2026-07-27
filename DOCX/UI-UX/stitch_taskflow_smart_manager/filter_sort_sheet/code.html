@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TaskFlow - Task List &amp; Filters</title>
+<!-- Google Fonts: Poppins -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Shared Component Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "on-tertiary-fixed": "#410003",
+                "primary-fixed-dim": "#b2c5ff",
+                "secondary": "#4e6072",
+                "on-tertiary-fixed-variant": "#930010",
+                "secondary-fixed": "#d2e4fa",
+                "on-primary-fixed-variant": "#0040a1",
+                "on-primary": "#ffffff",
+                "tertiary-fixed-dim": "#ffb3ad",
+                "outline-variant": "#c3c6d7",
+                "background": "#f9f9f9",
+                "surface-variant": "#e2e2e2",
+                "surface-tint": "#0055d2",
+                "on-tertiary-container": "#ffdbd7",
+                "tertiary": "#9e0514",
+                "secondary-fixed-dim": "#b6c8de",
+                "surface-container-highest": "#e2e2e2",
+                "on-secondary-fixed": "#091d2d",
+                "on-background": "#1b1b1b",
+                "inverse-primary": "#b2c5ff",
+                "inverse-surface": "#303030",
+                "primary": "#0045ae",
+                "surface-dim": "#dadada",
+                "surface": "#f9f9f9",
+                "on-primary-container": "#dae2ff",
+                "on-error": "#ffffff",
+                "tertiary-fixed": "#ffdad6",
+                "primary-fixed": "#dae2ff",
+                "primary-container": "#105cdb",
+                "outline": "#737786",
+                "on-secondary-container": "#526477",
+                "surface-container-high": "#e8e8e8",
+                "inverse-on-surface": "#f1f1f1",
+                "surface-container-lowest": "#ffffff",
+                "error": "#ba1a1a",
+                "surface-bright": "#f9f9f9",
+                "on-error-container": "#93000a",
+                "on-secondary": "#ffffff",
+                "surface-container": "#eeeeee",
+                "error-container": "#ffdad6",
+                "tertiary-container": "#c12729",
+                "on-primary-fixed": "#001848",
+                "on-tertiary": "#ffffff",
+                "on-surface": "#1b1b1b",
+                "surface-container-low": "#f3f3f3",
+                "secondary-container": "#cfe2f7",
+                "on-secondary-fixed-variant": "#37485a",
+                "on-surface-variant": "#424654"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "container-max": "1280px",
+                "margin-desktop": "48px",
+                "margin-mobile": "16px",
+                "unit": "4px",
+                "gutter": "24px"
+            },
+            "fontFamily": {
+                "display-2l": ["Poppins"],
+                "display-3l": ["Poppins"],
+                "label-xs": ["Poppins"],
+                "headline-xl": ["Poppins"],
+                "label-2xs": ["Poppins"],
+                "headline-lg": ["Poppins"],
+                "body-sm": ["Poppins"],
+                "body-base": ["Poppins"]
+            },
+            "fontSize": {
+                "display-2l": ["32px", {"lineHeight": "120%", "fontWeight": "600"}],
+                "display-3l": ["40px", {"lineHeight": "110%", "fontWeight": "700"}],
+                "label-xs": ["12px", {"lineHeight": "auto", "fontWeight": "500"}],
+                "headline-xl": ["24px", {"lineHeight": "120%", "fontWeight": "600"}],
+                "label-2xs": ["10px", {"lineHeight": "auto", "fontWeight": "500"}],
+                "headline-lg": ["20px", {"lineHeight": "140%", "fontWeight": "500"}],
+                "body-sm": ["14px", {"lineHeight": "140%", "fontWeight": "400"}],
+                "body-base": ["16px", {"lineHeight": "140%", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f9f9f9;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        display: inline-block;
+        line-height: 1;
+      }
+      .bottom-sheet-transition {
+        transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface">
+<!-- Top App Bar (Shared Component Reference) -->
+<header class="bg-surface dark:bg-surface-dark shadow-sm dark:shadow-none flex justify-between items-center w-full px-margin-mobile h-16 fixed top-0 left-0 z-40">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a smiling young creative professional with short dark hair, wearing a clean white shirt against a soft blue studio background. The lighting is bright and airy, reflecting a modern light-mode UI aesthetic. High quality, professional photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdrkSJJ1a_ePnXVGnerJIWZUfRkbutmOPBJRT3xlsgv97vD5EW8LhUSAX0LgNGkbbk-1eqlvfDl3CydfyD-vgnMw_-lulBxYqeqW5RDL4MZj7ApIIcYIUKyf241wN2BOSpIc9dxU_KYAWVOba7oJUJWgkJXztX7G7wMimLqtVmfQC-Asx_9OfrkXp5_wb8ogPlNO6vrpayi7t9H62zOln29fpEoN6yls-O1CtMLmqAon4_cNgU8Sl1FcIumUjcQJorSZ5Vfe0fKs4"/>
+</div>
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-primary dark:text-primary-fixed-dim font-extrabold tracking-tight">TaskFlow</span>
+</div>
+<button class="material-symbols-outlined text-primary hover:opacity-80 transition-opacity p-2 rounded-full active:scale-95 transition-transform duration-200">notifications</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-20 pb-28 px-4 max-w-lg mx-auto min-h-screen">
+<!-- Date Header -->
+<div class="mb-6">
+<h1 class="font-display-2l text-display-2l text-on-surface mb-1">Today's Tasks</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Wednesday, October 25th</p>
+</div>
+<!-- Task List Items (Asymmetric/Modern pattern) -->
+<div class="space-y-4">
+<!-- Task Card 1: Overdue -->
+<div class="bg-surface-container-lowest p-6 rounded-[24px] shadow-[0px_8px_24px_rgba(16,92,219,0.06)] border border-error/10 flex gap-4 relative overflow-hidden group">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-error"></div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-2xs text-label-2xs bg-error-container text-on-error-container px-2 py-0.5 rounded-full uppercase tracking-wider">High Priority</span>
+<span class="font-label-xs text-label-xs text-error font-semibold uppercase">Overdue</span>
+</div>
+<h3 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-1">Update Brand Guidelines</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">Review the final typography tokens and color palette for the Q4 rebranding project.</p>
+</div>
+</div>
+<!-- Task Card 2: Todo -->
+<div class="bg-surface-container-lowest p-6 rounded-[24px] shadow-[0px_8px_24px_rgba(16,92,219,0.06)] flex gap-4 group">
+<div class="flex-shrink-0 pt-1">
+<div class="w-6 h-6 rounded-lg border-2 border-outline group-hover:border-primary transition-colors flex items-center justify-center"></div>
+</div>
+<div class="flex-1">
+<h3 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-1">User Research Interview</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Schedule sessions with the initial cohort of beta testers for feedback.</p>
+<div class="mt-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">schedule</span>
+<span class="font-label-xs text-label-xs text-on-surface-variant">14:00 - 15:00</span>
+</div>
+</div>
+</div>
+<!-- Task Card 3: Completed -->
+<div class="bg-surface-container-low p-6 rounded-[24px] opacity-70 flex gap-4">
+<div class="flex-shrink-0 pt-1">
+<div class="w-6 h-6 rounded-lg bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[18px]">check</span>
+</div>
+</div>
+<div class="flex-1">
+<h3 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-1 line-through">Morning Standup</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Daily sync with the engineering team on sprint progress.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Scrim (Overlay) -->
+<div class="fixed inset-0 bg-on-background/30 backdrop-blur-[2px] z-50 transition-opacity duration-300" id="scrim"></div>
+<!-- Bottom Sheet: Filter & Sort -->
+<div class="fixed bottom-0 left-0 right-0 z-50 bg-surface-container-lowest rounded-t-[32px] shadow-[0px_-8px_32px_rgba(0,0,0,0.15)] bottom-sheet-transition max-w-lg mx-auto" id="filterSheet">
+<!-- Handle -->
+<div class="w-full flex justify-center pt-4 pb-2">
+<div class="w-12 h-1.5 bg-outline-variant rounded-full"></div>
+</div>
+<div class="px-6 pb-8 max-h-[751px] overflow-y-auto scrollbar-hide">
+<header class="flex justify-between items-center mb-8">
+<h2 class="font-display-2l text-display-2l text-on-surface">Filter &amp; Sort</h2>
+<button class="font-label-lg text-primary hover:bg-primary-container/10 px-3 py-1 rounded-full transition-colors">Reset</button>
+</header>
+<!-- Status Section -->
+<section class="mb-8">
+<h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-widest mb-4">Status</h3>
+<div class="space-y-4">
+<label class="flex items-center justify-between group cursor-pointer">
+<span class="font-body-base text-body-base text-on-surface">Todo</span>
+<input checked="" class="w-6 h-6 rounded-lg border-outline text-primary focus:ring-primary focus:ring-offset-0 transition-all cursor-pointer" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between group cursor-pointer">
+<span class="font-body-base text-body-base text-on-surface">Completed</span>
+<input checked="" class="w-6 h-6 rounded-lg border-outline text-primary focus:ring-primary focus:ring-offset-0 transition-all cursor-pointer" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between group cursor-pointer">
+<span class="font-body-base text-body-base text-on-surface">Overdue</span>
+<input checked="" class="w-6 h-6 rounded-lg border-outline text-primary focus:ring-primary focus:ring-offset-0 transition-all cursor-pointer" type="checkbox"/>
+</label>
+</div>
+</section>
+<!-- Priority Section -->
+<section class="mb-8">
+<h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-widest mb-4">Priority</h3>
+<div class="flex flex-wrap gap-3">
+<label class="relative flex-1 min-w-[80px]">
+<input class="peer absolute opacity-0" name="priority" type="radio" value="high"/>
+<div class="text-center font-label-xs text-label-xs py-3 rounded-2xl border border-outline-variant peer-checked:bg-primary peer-checked:text-white peer-checked:border-primary transition-all cursor-pointer">High</div>
+</label>
+<label class="relative flex-1 min-w-[80px]">
+<input checked="" class="peer absolute opacity-0" name="priority" type="radio" value="medium"/>
+<div class="text-center font-label-xs text-label-xs py-3 rounded-2xl border border-outline-variant peer-checked:bg-primary peer-checked:text-white peer-checked:border-primary transition-all cursor-pointer">Medium</div>
+</label>
+<label class="relative flex-1 min-w-[80px]">
+<input class="peer absolute opacity-0" name="priority" type="radio" value="low"/>
+<div class="text-center font-label-xs text-label-xs py-3 rounded-2xl border border-outline-variant peer-checked:bg-primary peer-checked:text-white peer-checked:border-primary transition-all cursor-pointer">Low</div>
+</label>
+</div>
+</section>
+<!-- Sort By Section -->
+<section class="mb-10">
+<h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-widest mb-4">Sort By</h3>
+<div class="space-y-4">
+<label class="flex items-center justify-between cursor-pointer">
+<span class="font-body-base text-body-base text-on-surface">Due date ↑</span>
+<input checked="" class="w-6 h-6 border-outline text-primary focus:ring-primary cursor-pointer" name="sort" type="radio"/>
+</label>
+<label class="flex items-center justify-between cursor-pointer">
+<span class="font-body-base text-body-base text-on-surface">Due date ↓</span>
+<input class="w-6 h-6 border-outline text-primary focus:ring-primary cursor-pointer" name="sort" type="radio"/>
+</label>
+<label class="flex items-center justify-between cursor-pointer">
+<span class="font-body-base text-body-base text-on-surface">Priority</span>
+<input class="w-6 h-6 border-outline text-primary focus:ring-primary cursor-pointer" name="sort" type="radio"/>
+</label>
+</div>
+</section>
+<!-- Primary Button -->
+<button class="w-full h-14 bg-primary-container text-white font-headline-lg-mobile text-headline-lg-mobile rounded-[16px] shadow-lg shadow-primary-container/20 active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
+                Apply Filters
+            </button>
+</div>
+</div>
+<!-- Bottom Navigation Bar (Shared Component Reference) -->
+<nav class="fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-4 pb-safe bg-surface dark:bg-surface-dark border-t border-border-subtle dark:border-outline h-[80px] shadow-lg dark:shadow-none">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-variant/20 rounded-full transition-colors w-16 py-1" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-variant/20 rounded-full transition-colors w-16 py-1" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="font-label-sm text-label-sm mt-1">Calendar</span>
+</a>
+<!-- Active Nav (Home is active here as central task list, but let's assume this is the main task screen) -->
+<a class="flex flex-col items-center justify-center bg-secondary-container/15 text-secondary dark:text-secondary-fixed-dim rounded-full px-4 py-1 active:scale-90 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+<span class="font-label-sm text-label-sm"></span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-variant/20 rounded-full transition-colors w-16 py-1" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="font-label-sm text-label-sm mt-1">Stats</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-variant/20 rounded-full transition-colors w-16 py-1" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-sm text-label-sm mt-1">Settings</span>
+</a>
+</nav>
+<script>
+        const scrim = document.getElementById('scrim');
+        const sheet = document.getElementById('filterSheet');
+
+        // Close logic for the interactive demo
+        scrim.addEventListener('click', () => {
+            sheet.style.transform = 'translateY(100%)';
+            scrim.style.opacity = '0';
+            setTimeout(() => {
+                scrim.style.display = 'none';
+            }, 300);
+        });
+
+        // Initialize state
+        window.addEventListener('DOMContentLoaded', () => {
+            // Sheet starts visible in this prompt
+            sheet.style.transform = 'translateY(0)';
+        });
+    </script>
+</body></html>

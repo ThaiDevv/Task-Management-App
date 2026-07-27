@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TaskFlow | Notification Settings</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e2e2e2",
+                        "secondary-fixed": "#d2e4fa",
+                        "surface-tint": "#0055d2",
+                        "on-surface-variant": "#424654",
+                        "on-primary-fixed-variant": "#0040a1",
+                        "surface": "#f9f9f9",
+                        "on-secondary-fixed": "#091d2d",
+                        "secondary": "#4e6072",
+                        "primary-container": "#105cdb",
+                        "primary": "#0045ae",
+                        "on-surface": "#1b1b1b",
+                        "surface-dim": "#dadada",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "tertiary-container": "#c12729",
+                        "inverse-primary": "#b2c5ff",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-primary-container": "#dae2ff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#b6c8de",
+                        "outline-variant": "#c3c6d7",
+                        "on-secondary-container": "#526477",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-tertiary": "#ffffff",
+                        "background": "#f9f9f9",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#f9f9f9",
+                        "tertiary-fixed": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#930010",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#ffdbd7",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#303030",
+                        "secondary-container": "#cfe2f7",
+                        "outline": "#737786",
+                        "on-secondary-fixed-variant": "#37485a",
+                        "surface-container": "#eeeeee",
+                        "on-background": "#1b1b1b",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#9e0514",
+                        "primary-fixed": "#dae2ff",
+                        "tertiary-fixed-dim": "#ffb3ad",
+                        "surface-container-low": "#f3f3f3",
+                        "on-primary-fixed": "#001848",
+                        "on-tertiary-fixed": "#410003",
+                        "surface-container-high": "#e8e8e8"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "12px",
+                        "2xl": "16px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "48px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "label-xs": ["Poppins"],
+                        "body-base": ["Poppins"],
+                        "label-2xs": ["Poppins"],
+                        "headline-lg": ["Poppins"],
+                        "display-3l": ["Poppins"],
+                        "display-2l": ["Poppins"],
+                        "body-sm": ["Poppins"],
+                        "headline-xl": ["Poppins"]
+                    },
+                    "fontSize": {
+                        "label-xs": ["12px", {"lineHeight": "auto", "fontWeight": "500"}],
+                        "body-base": ["16px", {"lineHeight": "140%", "fontWeight": "400"}],
+                        "label-2xs": ["10px", {"lineHeight": "auto", "fontWeight": "500"}],
+                        "headline-lg": ["20px", {"lineHeight": "140%", "fontWeight": "500"}],
+                        "display-3l": ["40px", {"lineHeight": "110%", "fontWeight": "700"}],
+                        "display-2l": ["32px", {"lineHeight": "120%", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "140%", "fontWeight": "400"}],
+                        "headline-xl": ["24px", {"lineHeight": "120%", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .soft-shadow {
+            box-shadow: 0px 8px 24px rgba(16, 92, 219, 0.08);
+        }
+        .toggle-switch:checked + .toggle-bg {
+            background-color: #105cdb;
+        }
+        .toggle-switch:checked + .toggle-bg .toggle-dot {
+            transform: translateX(100%);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f9f9f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c3c6d7;
+            border-radius: 10px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body-base text-on-surface">
+<!-- Top App Bar -->
+<header class="fixed top-0 left-0 w-full z-50 bg-surface h-16 flex justify-between items-center px-4 md:px-margin-desktop shadow-sm">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-white">
+<span class="material-symbols-outlined">person</span>
+</div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-primary font-bold">TaskFlow</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary-container p-2 hover:bg-primary-fixed-dim/20 rounded-full transition-colors active:scale-95" data-icon="notifications">notifications</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-24 pb-32 px-4 md:px-margin-desktop max-w-container-max mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Settings Section -->
+<section class="lg:col-span-7 flex flex-col gap-6">
+<!-- Master Toggle Card -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl soft-shadow flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-secondary-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">notifications_active</span>
+</div>
+<div>
+<h2 class="font-headline-lg text-on-surface">Enable Notifications</h2>
+<p class="font-body-sm text-outline">Receive alerts for all tasks and events</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only toggle-switch peer" type="checkbox"/>
+<div class="w-14 h-7 bg-outline-variant peer-focus:outline-none rounded-full toggle-bg transition-colors duration-300">
+<div class="toggle-dot absolute top-[2px] left-[2px] bg-white border-gray-300 border rounded-full h-6 w-6 transition-transform duration-300"></div>
+</div>
+</label>
+</div>
+<!-- Timing Grid Card -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl soft-shadow">
+<h3 class="font-headline-lg text-on-surface mb-4">Reminder Timing</h3>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<button class="px-4 py-3 rounded-xl border-2 border-primary-container bg-secondary-container/20 text-primary font-medium text-sm transition-all">5m before</button>
+<button class="px-4 py-3 rounded-xl border-2 border-transparent bg-surface-container text-on-surface-variant font-medium text-sm hover:border-outline-variant transition-all">15m before</button>
+<button class="px-4 py-3 rounded-xl border-2 border-transparent bg-surface-container text-on-surface-variant font-medium text-sm hover:border-outline-variant transition-all">30m before</button>
+<button class="px-4 py-3 rounded-xl border-2 border-transparent bg-surface-container text-on-surface-variant font-medium text-sm hover:border-outline-variant transition-all">1h before</button>
+</div>
+</div>
+<!-- Sounds Section -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl soft-shadow">
+<h3 class="font-headline-lg text-on-surface mb-6">Notification Sounds</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors" data-icon="music_note">music_note</span>
+<span class="font-body-base font-medium">Breeze Chill</span>
+</div>
+<span class="material-symbols-outlined text-primary" data-icon="radio_button_checked" style="font-variation-settings: 'FILL' 1;">radio_button_checked</span>
+</div>
+<div class="flex items-center justify-between p-4 rounded-xl border border-transparent hover:border-outline-variant transition-all cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors" data-icon="music_note">music_note</span>
+<span class="font-body-base">Digital Pulse</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+</div>
+<div class="flex items-center justify-between p-4 rounded-xl border border-transparent hover:border-outline-variant transition-all cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors" data-icon="music_note">music_note</span>
+<span class="font-body-base">Morning Mist</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Upcoming Reminders (Sidebar Style Desktop / List Mobile) -->
+<aside class="lg:col-span-5 flex flex-col gap-6">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-xl text-on-surface">Upcoming Reminders</h3>
+<button class="text-primary font-medium hover:underline text-sm">View All</button>
+</div>
+<div class="space-y-4">
+<!-- Reminder Card 1 -->
+<div class="bg-surface-container-lowest p-5 rounded-2xl soft-shadow border-l-4 border-primary group hover:scale-[1.02] transition-transform duration-300">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-xs text-primary px-2 py-0.5 bg-secondary-container/30 rounded-lg">Productivity</span>
+<span class="font-label-xs text-outline">In 15 mins</span>
+</div>
+<h4 class="font-headline-lg mb-1">Design Sync Session</h4>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-base" data-icon="schedule">schedule</span>
+<p class="font-body-sm">10:00 AM - 11:30 AM</p>
+</div>
+</div>
+<!-- Reminder Card 2 -->
+<div class="bg-surface-container-lowest p-5 rounded-2xl soft-shadow border-l-4 border-tertiary hover:scale-[1.02] transition-transform duration-300">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-xs text-tertiary px-2 py-0.5 bg-tertiary-container/10 rounded-lg">High Priority</span>
+<span class="font-label-xs text-outline">In 45 mins</span>
+</div>
+<h4 class="font-headline-lg mb-1">Client Presentation</h4>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-base" data-icon="video_call">video_call</span>
+<p class="font-body-sm">Google Meet Link Attached</p>
+</div>
+</div>
+<!-- Reminder Card 3 -->
+<div class="bg-surface-container-lowest p-5 rounded-2xl soft-shadow border-l-4 border-secondary-fixed-dim hover:scale-[1.02] transition-transform duration-300">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-xs text-secondary-fixed-dim px-2 py-0.5 bg-secondary-container/20 rounded-lg">Personal</span>
+<span class="font-label-xs text-outline">Tomorrow</span>
+</div>
+<h4 class="font-headline-lg mb-1">Gym: Leg Day</h4>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-base" data-icon="location_on">location_on</span>
+<p class="font-body-sm">FitCenter Downtown</p>
+</div>
+</div>
+<!-- Visual Asset Placeholder -->
+<div class="mt-4 relative rounded-2xl overflow-hidden h-48 soft-shadow">
+<div class="absolute inset-0 bg-primary/20 backdrop-blur-sm z-10 flex flex-col items-center justify-center text-center p-6">
+<span class="material-symbols-outlined text-white text-5xl mb-2" data-icon="auto_awesome">auto_awesome</span>
+<h5 class="text-white font-headline-lg">Stay Focused</h5>
+<p class="text-white/80 font-body-sm max-w-[200px]">We'll handle the timing so you can handle the tasks.</p>
+</div>
+<div class="w-full h-full bg-cover bg-center" data-alt="A minimalist aesthetic office space with a clean wooden desk, a modern lamp, and a large window showing a soft blue morning sky. The lighting is bright and airy, reflecting a productive and calm atmosphere. High-end modern photography style with cool blue and white tones." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBVSRnU4zIZ1Dz3lkf8cV6UhlxPkQV_7SaqsP5CCla_MyvoK73l8q_alFUSC1xonKxMBNshjbEergb2Ko1UTZ0ZE1Hk8qhhMFZDzXDL2uPpXSItskFPu3hgBDagG39lj4iqKUdEvTm0AAMTqahG4iD9ykQcRW0XwX7GZ-f1EXhYkErkDIQgx4oSDTAyFtk-5jvhraA0WbU_aFg56vl4R-anKPfrgKiBvcUd2D8OF4X1k9WAevR-3dzq-07quabIVyZDQkSu-Wb60KM')"></div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Mobile only via script-driven hidden class or CSS) -->
+<nav class="fixed bottom-0 left-0 w-full h-[80px] bg-surface border-t border-outline-variant z-50 flex justify-around items-center px-4 pb-safe md:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="font-label-sm text-label-sm">Calendar</span>
+</a>
+<div class="flex items-center justify-center -mt-8">
+<button class="bg-primary-container text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+</button>
+</div>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+<span class="font-label-sm text-label-sm">Stats</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container/15 text-secondary rounded-full px-4 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-label-sm text-label-sm font-bold">Settings</span>
+</a>
+</nav>
+<!-- Desktop Sidebar/Nav Rail -->
+<div class="hidden md:flex fixed top-16 left-0 h-[calc(100vh-64px)] w-20 bg-surface border-r border-outline-variant flex-col items-center py-8 gap-8 z-40">
+<button class="w-12 h-12 flex items-center justify-center rounded-xl text-outline-variant hover:bg-primary-fixed-dim/20 hover:text-primary transition-all">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+</button>
+<button class="w-12 h-12 flex items-center justify-center rounded-xl text-outline-variant hover:bg-primary-fixed-dim/20 hover:text-primary transition-all">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+</button>
+<button class="w-12 h-12 flex items-center justify-center rounded-xl text-outline-variant hover:bg-primary-fixed-dim/20 hover:text-primary transition-all">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+</button>
+<button class="w-12 h-12 flex items-center justify-center rounded-xl bg-secondary-container/30 text-primary border-r-4 border-primary">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+</button>
+</div>
+<script>
+        // Simple Interaction logic for timing buttons
+        document.querySelectorAll('button[class*="rounded-xl border-2"]').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active classes from all buttons in this group
+                this.parentElement.querySelectorAll('button').forEach(btn => {
+                    btn.classList.remove('border-primary-container', 'bg-secondary-container/20', 'text-primary');
+                    btn.classList.add('border-transparent', 'bg-surface-container', 'text-on-surface-variant');
+                });
+                // Add active classes to clicked button
+                this.classList.add('border-primary-container', 'bg-secondary-container/20', 'text-primary');
+                this.classList.remove('border-transparent', 'bg-surface-container', 'text-on-surface-variant');
+            });
+        });
+
+        // Toggle master switch visibility logic
+        const mainToggle = document.querySelector('.toggle-switch');
+        mainToggle.addEventListener('change', function() {
+            const cards = document.querySelectorAll('main section > div:not(:first-child)');
+            cards.forEach(card => {
+                card.style.opacity = this.checked ? '1' : '0.5';
+                card.style.pointerEvents = this.checked ? 'auto' : 'none';
+                card.style.transition = 'opacity 0.3s ease';
+            });
+        });
+    </script>
+</body></html>

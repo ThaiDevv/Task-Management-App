@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Security &amp; PIN Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .safe-area-inset-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e2e2e2",
+                        "secondary-fixed": "#d2e4fa",
+                        "surface-tint": "#0055d2",
+                        "on-surface-variant": "#424654",
+                        "on-primary-fixed-variant": "#0040a1",
+                        "surface": "#f9f9f9",
+                        "on-secondary-fixed": "#091d2d",
+                        "secondary": "#4e6072",
+                        "primary-container": "#105cdb",
+                        "primary": "#0045ae",
+                        "on-surface": "#1b1b1b",
+                        "surface-dim": "#dadada",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "tertiary-container": "#c12729",
+                        "inverse-primary": "#b2c5ff",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-primary-container": "#dae2ff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#b6c8de",
+                        "outline-variant": "#c3c6d7",
+                        "on-secondary-container": "#526477",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-tertiary": "#ffffff",
+                        "background": "#f9f9f9",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#f9f9f9",
+                        "tertiary-fixed": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#930010",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#ffdbd7",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#303030",
+                        "secondary-container": "#cfe2f7",
+                        "outline": "#737786",
+                        "on-secondary-fixed-variant": "#37485a",
+                        "surface-container": "#eeeeee",
+                        "on-background": "#1b1b1b",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#9e0514",
+                        "primary-fixed": "#dae2ff",
+                        "tertiary-fixed-dim": "#ffb3ad",
+                        "surface-container-low": "#f3f3f3",
+                        "on-primary-fixed": "#001848",
+                        "on-tertiary-fixed": "#410003",
+                        "surface-container-high": "#e8e8e8"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "48px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "label-xs": ["Poppins"],
+                        "body-base": ["Poppins"],
+                        "label-2xs": ["Poppins"],
+                        "headline-lg": ["Poppins"],
+                        "display-3l": ["Poppins"],
+                        "display-2l": ["Poppins"],
+                        "body-sm": ["Poppins"],
+                        "headline-xl": ["Poppins"]
+                    },
+                    "fontSize": {
+                        "label-xs": ["12px", {"lineHeight": "auto", "fontWeight": "500"}],
+                        "body-base": ["16px", {"lineHeight": "140%", "fontWeight": "400"}],
+                        "label-2xs": ["10px", {"lineHeight": "auto", "fontWeight": "500"}],
+                        "headline-lg": ["20px", {"lineHeight": "140%", "fontWeight": "500"}],
+                        "display-3l": ["40px", {"lineHeight": "110%", "fontWeight": "700"}],
+                        "display-2l": ["32px", {"lineHeight": "120%", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "140%", "fontWeight": "400"}],
+                        "headline-xl": ["24px", {"lineHeight": "120%", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body-base min-h-screen">
+<!-- Top AppBar (from JSON) -->
+<header class="bg-surface docked full-width top-0 flex justify-between items-center w-full px-4 h-16 shadow-sm z-50 sticky">
+<div class="flex items-center gap-3">
+<button class="material-symbols-outlined text-primary p-2 active:scale-95 transition-transform">arrow_back</button>
+<span class="font-headline-lg text-headline-lg text-primary">Security</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary hover:opacity-80 transition-opacity cursor-pointer">notifications</span>
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold text-xs">JD</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-4 md:px-margin-desktop py-8">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left Column: Illustration and Status -->
+<div class="lg:col-span-5 flex flex-col gap-6">
+<div class="bg-white rounded-[24px] p-8 shadow-sm border border-outline-variant/30 flex flex-col items-center text-center overflow-hidden relative">
+<div class="absolute inset-0 z-0 opacity-10">
+
+</div>
+<div class="relative z-10 w-48 h-48 bg-secondary-container rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-primary text-6xl" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+</div>
+<h2 class="font-headline-xl text-headline-xl text-primary mb-2 relative z-10">Vault Protection</h2>
+<p class="text-on-surface-variant font-body-base max-w-xs relative z-10">Your security settings are currently optimized. Keep your PIN and biometrics updated for maximum safety.</p>
+<div class="mt-8 grid grid-cols-2 gap-4 w-full relative z-10">
+<div class="bg-surface-container-low p-4 rounded-xl text-left border border-outline-variant/20">
+<span class="text-label-xs font-label-xs text-on-surface-variant uppercase tracking-wider block mb-1">Status</span>
+<span class="text-primary font-bold">Encrypted</span>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl text-left border border-outline-variant/20">
+<span class="text-label-xs font-label-xs text-on-surface-variant uppercase tracking-wider block mb-1">Last Sync</span>
+<span class="text-primary font-bold">2m ago</span>
+</div>
+</div>
+</div>
+<!-- Shield Info Card -->
+<div class="bg-primary-container p-6 rounded-[24px] text-on-primary-container flex gap-4 items-center shadow-lg">
+<div class="bg-white/20 p-3 rounded-full">
+<span class="material-symbols-outlined text-white">security</span>
+</div>
+<div>
+<p class="font-headline-lg text-white">Enhanced Security</p>
+<p class="text-white/80 text-body-sm">Two-factor authentication is active on all linked devices.</p>
+</div>
+</div>
+</div>
+<!-- Right Column: Settings Panel -->
+<div class="lg:col-span-7 flex flex-col gap-6">
+<!-- Master Toggle Section -->
+<div class="bg-white rounded-[24px] p-8 shadow-sm border border-outline-variant/30">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface">PIN Lock</h3>
+<p class="text-on-surface-variant text-body-sm">Enable a master PIN to access the application.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" id="pin-toggle" type="checkbox"/>
+<div class="w-14 h-8 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Dependent Settings -->
+<div class="flex flex-col gap-4 transition-all duration-500" id="pin-settings-group">
+<!-- Change PIN Button -->
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:bg-surface-container transition-colors group cursor-pointer border border-outline-variant/20">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary p-2 bg-primary/10 rounded-lg">pin</span>
+<span class="font-body-base font-medium text-on-surface">Change PIN</span>
+</div>
+<button class="text-primary font-bold hover:underline">Edit</button>
+</div>
+<!-- Biometric Toggle -->
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl border border-outline-variant/20">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary p-2 bg-primary/10 rounded-lg">fingerprint</span>
+<div>
+<span class="font-body-base font-medium text-on-surface block">Biometric Authentication</span>
+<span class="text-on-surface-variant text-label-xs">Use Fingerprint or FaceID</span>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-12 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Auto-lock Dropdown -->
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl border border-outline-variant/20">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary p-2 bg-primary/10 rounded-lg">timer</span>
+<div>
+<span class="font-body-base font-medium text-on-surface block">Auto-lock Timer</span>
+<span class="text-on-surface-variant text-label-xs">Locks when app is inactive</span>
+</div>
+</div>
+<select class="bg-white border-outline rounded-xl font-label-xs px-3 py-2 text-on-surface focus:ring-primary focus:border-primary">
+<option value="immediately">Immediately</option>
+<option value="1">1 minute</option>
+<option selected="" value="5">5 minutes</option>
+<option value="15">15 minutes</option>
+<option value="never">Never</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Danger Zone -->
+<div class="bg-white rounded-[24px] p-8 shadow-sm border border-error/20">
+<h3 class="font-headline-lg text-headline-lg text-error mb-4">Critical Actions</h3>
+<div class="flex flex-col gap-4">
+<button class="flex items-center justify-between w-full p-4 rounded-xl bg-error/5 hover:bg-error/10 transition-colors border border-error/20 group">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-error">logout</span>
+<span class="font-body-base font-medium text-error">Logout from all devices</span>
+</div>
+<span class="material-symbols-outlined text-error transition-transform group-hover:translate-x-1">chevron_right</span>
+</button>
+<button class="flex items-center justify-between w-full p-4 rounded-xl bg-error/5 hover:bg-error/10 transition-colors border border-error/20 group">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-error">delete_forever</span>
+<span class="font-body-base font-medium text-error">Deactivate Security Vault</span>
+</div>
+<span class="material-symbols-outlined text-error transition-transform group-hover:translate-x-1">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation (from JSON) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-safe bg-surface h-[80px] border-t border-border-subtle shadow-lg">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full px-4 py-1 transition-colors" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full px-4 py-1 transition-colors" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="font-label-sm text-label-sm">Calendar</span>
+</a>
+<button class="flex items-center justify-center bg-primary text-white rounded-full w-12 h-12 shadow-lg active:scale-90 transition-all">
+<span class="material-symbols-outlined">add</span>
+</button>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full px-4 py-1 transition-colors" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="font-label-sm text-label-sm">Stats</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container/15 text-secondary rounded-full px-4 py-1" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-label-sm text-label-sm font-bold">Settings</span>
+</a>
+</nav>
+<div class="h-24"></div> <!-- Spacer for fixed nav -->
+<script>
+        // Toggle interaction for PIN lock section
+        const pinToggle = document.getElementById('pin-toggle');
+        const pinSettings = document.getElementById('pin-settings-group');
+
+        pinToggle.addEventListener('change', () => {
+            if (pinToggle.checked) {
+                pinSettings.style.opacity = '1';
+                pinSettings.style.pointerEvents = 'auto';
+                pinSettings.style.filter = 'none';
+            } else {
+                pinSettings.style.opacity = '0.5';
+                pinSettings.style.pointerEvents = 'none';
+                pinSettings.style.filter = 'grayscale(1)';
+            }
+        });
+
+        // Simple feedback for dropdown
+        document.querySelector('select').addEventListener('change', (e) => {
+            console.log(`Timer set to: ${e.target.value}`);
+            // In a real app, you'd trigger a snackbar here
+        });
+    </script>
+</body></html>

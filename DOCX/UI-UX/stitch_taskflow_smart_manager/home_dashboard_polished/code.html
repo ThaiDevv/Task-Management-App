@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>TaskFlow - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#001848",
+                        "surface-container": "#eeeeee",
+                        "surface-bright": "#f9f9f9",
+                        "tertiary-fixed": "#ffdad6",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "on-surface": "#1b1b1b",
+                        "surface-variant": "#e2e2e2",
+                        "secondary-fixed-dim": "#b6c8de",
+                        "on-primary-fixed-variant": "#0040a1",
+                        "on-tertiary-fixed-variant": "#930010",
+                        "on-secondary-fixed-variant": "#37485a",
+                        "inverse-primary": "#b2c5ff",
+                        "secondary-fixed": "#d2e4fa",
+                        "secondary": "#4e6072",
+                        "tertiary-container": "#c12729",
+                        "inverse-on-surface": "#f1f1f1",
+                        "surface-container-highest": "#e2e2e2",
+                        "tertiary-fixed-dim": "#ffb3ad",
+                        "background": "#f9f9f9",
+                        "outline": "#737786",
+                        "on-background": "#1b1b1b",
+                        "on-tertiary-container": "#ffdbd7",
+                        "tertiary": "#9e0514",
+                        "primary": "#105cdb",
+                        "inverse-surface": "#303030",
+                        "surface": "#f9f9f9",
+                        "on-secondary-fixed": "#091d2d",
+                        "secondary-container": "#cfe2f7",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "primary-container": "#105cdb",
+                        "on-primary-container": "#dae2ff",
+                        "primary-fixed": "#dae2ff",
+                        "surface-dim": "#dadada",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "outline-variant": "#c3c6d7",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#424654",
+                        "surface-tint": "#0055d2",
+                        "surface-container-low": "#f3f3f3",
+                        "on-tertiary-fixed": "#410003",
+                        "on-secondary-container": "#526477",
+                        "surface-container-high": "#e8e8e8",
+                        "priority-medium": "#F59E0B",
+                        "priority-high": "#F43F5E",
+                        "priority-low": "#10B981"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1.25rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-desktop": "48px",
+                        "container-max": "1280px",
+                        "margin-mobile": "16px",
+                        "unit": "4px",
+                        "stack-lg": "24px",
+                        "container-padding": "20px",
+                        "stack-md": "12px",
+                        "gutter-md": "16px",
+                        "stack-sm": "4px",
+                        "base": "8px",
+                        "margin-edge": "24px"
+                    },
+                    "fontFamily": {
+                        "poppins": ["Poppins", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #f9f9f9;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .card-shadow {
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        
+        .active-shadow {
+            box-shadow: 0px 10px 25px rgba(16, 92, 219, 0.15);
+        }
+        
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .btn-gradient {
+            background: linear-gradient(135deg, #105cdb 0%, #0045ae 100%);
+        }
+
+        .insight-pattern {
+            background-image: radial-gradient(circle at 100% 0%, rgba(255,255,255,0.15) 0%, transparent 40%),
+                              radial-gradient(circle at 0% 100%, rgba(255,255,255,0.1) 0%, transparent 30%);
+        }
+    </style>
+</head>
+<body class="text-on-background pb-[100px] md:pb-0">
+<!-- Top Navigation (Desktop) -->
+<header class="hidden md:flex bg-surface justify-between items-center w-full px-margin-edge h-16 shadow-sm z-40 sticky top-0">
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-high flex-shrink-0">
+<img alt="User Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTirRFAeyVqH9Ai3KMz6UspN2cybvklWzK9Z2T2Tv82vj502R_Q4PCww_ByBGioBUseZAsMhh4DEE-zk0L4wdnB-a6YpeJLSdPKKTmgN-pFuX4wa3DaYaFJRJtFznPhyYou1pfT7vcQ4kjkmt5H2a-genNKHj523U-1rgdEobTRGW3Sz_t1XQI5y3RLJ5Uj9jUcTkJD0JdUuKTvzLWySBkDLqQ532MFxYXkW1yh1jQPVRuMyzAmqUkVO7us_xfXK8xXAy4A-x6DD0"/>
+</div>
+<h1 class="font-semibold text-xl text-primary tracking-tight">TaskFlow</h1>
+</div>
+<nav class="flex items-center gap-8">
+<a class="text-primary font-bold hover:opacity-80 transition-opacity" href="#">Home</a>
+<a class="text-on-surface-variant font-medium hover:opacity-80 transition-opacity" href="#">Calendar</a>
+<a class="text-on-surface-variant font-medium hover:opacity-80 transition-opacity" href="#">Stats</a>
+<a class="text-on-surface-variant font-medium hover:opacity-80 transition-opacity" href="#">Settings</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant/20 transition-colors active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="btn-gradient text-on-primary px-5 py-2.5 rounded-xl font-semibold shadow-sm hover:opacity-90 active:scale-95 transition-all">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 20px;">add</span> New Task
+                </span>
+</button>
+</div>
+</header>
+<!-- Mobile TopAppBar -->
+<header class="md:hidden flex justify-between items-center w-full px-gutter h-14 bg-surface sticky top-0 z-40">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full overflow-hidden flex-shrink-0">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAriN32sCYqUy9RT0KwbnW7R4FfBm2TdCzGPnWqFDZlb4jIiGcZxpxULY2cH6lREWGLegqS-gx6xjSrA-v0fnohe4BQiSyLIbfNLqZf3qBr0uoIEBgu8-aNyr6ar6PlnbI-hYae_sNmvL2Czb-pN-mp7v2x0209RqRApU0f0RI8GdQ65oULip7cJRmoap0pv783_DwISAWeK75p1LYkyGJ6PP516rjHiQv8ifAmUxn4zkXBtXBH5u6HdApiEh6mT978UAVi5_RFdPE"/>
+</div>
+<h1 class="text-xl font-bold text-primary">TaskFlow</h1>
+</div>
+<button class="text-primary w-10 h-10 rounded-full flex items-center justify-center active:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</header>
+<main class="max-w-5xl mx-auto w-full md:pt-10 pt-4">
+<!-- Greeting -->
+<div class="px-margin-edge pb-6">
+<p class="text-sm text-outline font-medium">Tue, Oct 24</p>
+<h1 class="text-3xl font-bold text-on-surface tracking-tight mt-1">Hello, Alex!</h1>
+</div>
+<!-- Summary Metrics -->
+<section class="pl-margin-edge md:px-margin-edge mb-8">
+<div class="flex md:grid md:grid-cols-4 gap-4 overflow-x-auto no-scrollbar pb-4 md:pb-0 pr-margin-edge md:pr-0">
+<!-- Metric Card 1 -->
+<div class="bg-surface-container-lowest rounded-2xl p-5 min-w-[160px] md:min-w-0 flex-1 card-shadow border border-outline-variant/30 relative overflow-hidden group">
+<div class="absolute top-4 right-4 opacity-10">
+<span class="material-symbols-outlined text-primary" style="font-size: 32px;">list_alt</span>
+</div>
+<p class="text-[10px] text-outline mb-1 font-bold uppercase tracking-widest">Total Tasks</p>
+<p class="text-3xl font-bold text-on-surface">24</p>
+<div class="mt-3 flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined" style="font-size: 14px;">trending_up</span>
+<span class="text-xs font-semibold">+3 this week</span>
+</div>
+</div>
+<!-- Metric Card 2 -->
+<div class="bg-surface-container-lowest rounded-2xl p-5 min-w-[160px] md:min-w-0 flex-1 card-shadow border border-outline-variant/30 relative overflow-hidden">
+<div class="absolute top-4 right-4 opacity-10">
+<span class="material-symbols-outlined text-primary" style="font-size: 32px;">check_circle</span>
+</div>
+<p class="text-[10px] text-outline mb-1 font-bold uppercase tracking-widest">Completed</p>
+<p class="text-3xl font-bold text-on-surface">18</p>
+<div class="mt-3 w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 75%"></div>
+</div>
+</div>
+<!-- Metric Card 3 -->
+<div class="bg-surface-container-lowest rounded-2xl p-5 min-w-[160px] md:min-w-0 flex-1 card-shadow border border-outline-variant/30 relative overflow-hidden">
+<div class="absolute top-4 right-4 opacity-10">
+<span class="material-symbols-outlined text-primary" style="font-size: 32px;">pending_actions</span>
+</div>
+<p class="text-[10px] text-outline mb-1 font-bold uppercase tracking-widest">Pending</p>
+<p class="text-3xl font-bold text-on-surface">4</p>
+<div class="mt-3 w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 25%"></div>
+</div>
+</div>
+<!-- Metric Card 4 -->
+<div class="bg-surface-container-lowest rounded-2xl p-5 min-w-[160px] md:min-w-0 flex-1 card-shadow border border-outline-variant/30 relative overflow-hidden">
+<div class="absolute top-4 right-4 opacity-10">
+<span class="material-symbols-outlined text-error" style="font-size: 32px;">warning</span>
+</div>
+<p class="text-[10px] text-outline mb-1 font-bold uppercase tracking-widest">Overdue</p>
+<p class="text-3xl font-bold text-error">2</p>
+<div class="mt-3 flex items-center gap-1 text-error">
+<span class="material-symbols-outlined" style="font-size: 14px;">error</span>
+<span class="text-xs font-semibold">Action needed</span>
+</div>
+</div>
+</div>
+</section>
+<div class="px-margin-edge grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Today's Tasks -->
+<div class="md:col-span-2 flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<h2 class="text-xl font-bold text-on-surface">Today's Tasks</h2>
+<button class="text-primary font-semibold text-sm hover:underline">View All</button>
+</div>
+<!-- Task Card 1 -->
+<div class="bg-surface-container-lowest rounded-2xl p-5 card-shadow border-l-4 border-l-primary border border-primary/10 relative cursor-pointer active:scale-[0.98] transition-all">
+<div class="flex justify-between items-start">
+<div class="flex gap-4">
+<div class="mt-0.5">
+<div class="w-6 h-6 rounded-full border-2 border-primary bg-primary text-white flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-size: 14px; font-weight: bold;">check</span>
+</div>
+</div>
+<div>
+<h3 class="font-bold text-on-surface text-lg">Finalize Q3 Marketing Report</h3>
+<p class="text-sm text-outline mt-1 font-medium">Review metrics from campaign A...</p>
+<div class="flex items-center gap-3 mt-4">
+<div class="flex items-center gap-1 text-on-surface-variant text-xs font-semibold bg-surface-container px-3 py-1.5 rounded-lg">
+<span class="material-symbols-outlined" style="font-size: 16px;">schedule</span> 10:00 AM - 12:00 PM
+                                    </div>
+<div class="flex items-center gap-1 text-priority-high text-xs font-bold bg-priority-high/10 px-3 py-1.5 rounded-lg uppercase tracking-wider">
+                                        High
+                                    </div>
+</div>
+</div>
+</div>
+<button class="text-outline hover:text-primary">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Task Card 2 -->
+<div class="bg-surface-container-lowest rounded-2xl p-5 card-shadow border border-outline-variant/30 relative cursor-pointer active:scale-[0.98] transition-all">
+<div class="flex justify-between items-start">
+<div class="flex gap-4">
+<div class="mt-0.5">
+<div class="w-6 h-6 rounded-full border-2 border-outline hover:border-primary transition-colors"></div>
+</div>
+<div>
+<h3 class="font-bold text-on-surface text-lg">Client Call: Zenith Corp</h3>
+<div class="flex items-center gap-3 mt-3">
+<div class="flex items-center gap-1 text-on-surface-variant text-xs font-semibold">
+<span class="material-symbols-outlined" style="font-size: 16px;">schedule</span> 2:30 PM
+                                    </div>
+<div class="flex items-center gap-1 text-priority-medium text-xs font-bold bg-priority-medium/10 px-3 py-1.5 rounded-lg uppercase tracking-wider">
+                                        Medium
+                                    </div>
+</div>
+</div>
+</div>
+<div class="flex -space-x-2">
+<div class="w-7 h-7 rounded-full border-2 border-surface-container-lowest overflow-hidden shadow-sm">
+<img alt="Team Member" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDf1EHIiMlWgH9WiWdPJEFl5CFYEgW_vJbgotQXonr3ibw0obqKvuRGSAK92g-a5dzaVHS4o_xJZTwoGXDOwMko32sHuKl_Tyf_o3jpxtEVIpvXn7PRZH6b_J4UhCvArQ7etrYifErvxSXTN6zb7gOW0eIhZYyWsIPVof_J9gdekQJVdX2JwJFzvJ9gqO3nFdaoqXjdP_GxtXzBN2SsKgTG0HLC302-HUKAMHSx2MWrcUHefi12QqPb1uMQ1bON4RMXF6B-enqw1-g"/>
+</div>
+<div class="w-7 h-7 rounded-full border-2 border-surface-container-lowest bg-primary text-white flex items-center justify-center text-[10px] font-bold shadow-sm">+1</div>
+</div>
+</div>
+</div>
+<!-- Task Card 3 -->
+<div class="bg-surface-container-lowest rounded-2xl p-5 card-shadow border border-outline-variant/30 relative cursor-pointer active:scale-[0.98] transition-all">
+<div class="flex justify-between items-start">
+<div class="flex gap-4">
+<div class="mt-0.5">
+<div class="w-6 h-6 rounded-full border-2 border-outline hover:border-primary transition-colors"></div>
+</div>
+<div>
+<h3 class="font-bold text-on-surface text-lg">Update Design Documentation</h3>
+<div class="flex items-center gap-3 mt-3">
+<div class="flex items-center gap-1 text-on-surface-variant text-xs font-semibold">
+<span class="material-symbols-outlined" style="font-size: 16px;">schedule</span> 4:00 PM
+                                    </div>
+<div class="flex items-center gap-1 text-priority-low text-xs font-bold bg-priority-low/10 px-3 py-1.5 rounded-lg uppercase tracking-wider">
+                                        Low
+                                    </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Upcoming Sidebar -->
+<div class="flex flex-col gap-6">
+<div>
+<h2 class="text-xl font-bold text-on-surface mb-4">Upcoming</h2>
+<div class="bg-surface-container-lowest rounded-2xl p-6 card-shadow border border-outline-variant/30">
+<div class="flex justify-between items-center mb-6 pb-2 border-b border-surface-container-high">
+<span class="font-bold text-on-surface">Tomorrow</span>
+<span class="text-outline text-xs font-bold">Oct 25</span>
+</div>
+<div class="relative pl-6 border-l-2 border-surface-container-high flex flex-col gap-6">
+<div class="relative">
+<div class="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-primary ring-4 ring-white"></div>
+<p class="font-bold text-on-surface">Weekly Team Sync</p>
+<p class="text-xs text-outline font-medium mt-1">9:00 AM - 10:00 AM</p>
+</div>
+<div class="relative">
+<div class="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-surface-container-high ring-4 ring-white"></div>
+<p class="font-bold text-on-surface">Dentist Appointment</p>
+<p class="text-xs text-outline font-medium mt-1">2:00 PM</p>
+</div>
+</div>
+<button class="w-full mt-8 py-3 border border-outline-variant rounded-xl text-primary font-bold text-sm hover:bg-surface-container-low transition-colors">
+                            View Full Calendar
+                        </button>
+</div>
+</div>
+<!-- Productivity Insight Banner -->
+<div class="bg-primary rounded-2xl p-6 text-on-primary relative overflow-hidden shadow-lg insight-pattern group">
+<div class="absolute -right-8 -top-8 opacity-20 pointer-events-none transition-transform group-hover:scale-110 duration-500">
+<span class="material-symbols-outlined" style="font-size: 120px;">auto_awesome</span>
+</div>
+<h3 class="text-lg font-bold mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 20px;">lightbulb</span>
+                        Productivity Insight
+                    </h3>
+<p class="text-sm opacity-90 leading-relaxed font-medium">You are most productive between 9 AM and 11 AM. Try scheduling deep work during this window.</p>
+<!-- Floating Add Button on Insight -->
+<button class="absolute bottom-4 right-4 w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center hover:bg-white/30 active:scale-90 transition-all border border-white/30">
+<span class="material-symbols-outlined font-bold">add</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface border-t border-outline-variant/30 z-50 shadow-[0px_-8px_30px_rgba(0,0,0,0.04)] pb-safe-area-inset-bottom">
+<div class="flex justify-around items-center h-16 px-2">
+<button class="flex flex-col items-center justify-center w-16 text-primary gap-1">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="text-[10px] font-bold">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center w-16 text-outline gap-1 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="text-[10px] font-bold">Calendar</span>
+</button>
+<button class="flex items-center justify-center w-12 h-12 rounded-2xl btn-gradient text-white shadow-md active:scale-90 transition-transform -translate-y-1">
+<span class="material-symbols-outlined font-bold" style="font-size: 28px;">add</span>
+</button>
+<button class="flex flex-col items-center justify-center w-16 text-outline gap-1 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="text-[10px] font-bold">Stats</span>
+</button>
+<button class="flex flex-col items-center justify-center w-16 text-outline gap-1 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-bold">Settings</span>
+</button>
+</div>
+</nav>
+</body></html>
