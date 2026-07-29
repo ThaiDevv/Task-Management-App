@@ -1,0 +1,73 @@
+# Built application files
+*.apk
+*.aar
+*.ap_
+*.aab
+*.dex
+
+# Files for the ART/DALVIK VM
+*.class
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+build/
+**/build/
+.gradle/
+**/.gradle/
+
+# Local configuration file (sdk path, secrets, etc)
+local.properties
+**/local.properties
+
+# Log Files
+*.log
+
+# Android Studio / IntelliJ IDEA
+.idea/
+**/.idea/
+*.iml
+*.iws
+*.ipr
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+
+# Keystore / Secrets
+*.jks
+*.keystore
+*.p12
+*.key
+*.pem
+*.secret
+google-services.json
+
+# External native build folder
+.externalNativeBuild/
+**/.externalNativeBuild/
+.cxx/
+**/.cxx/
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Temporary / Scratch / Tool files
+.kombai/
+.artifacts/
+**/scratch/
+captures/
+**/captures/
+
+# EXCEPTIONS - Do NOT ignore Gradle wrapper files!
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+!gradlew
+!gradlew.bat
