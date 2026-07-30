@@ -18,16 +18,12 @@ import com.team.taskmanagementapp.util.Constants
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
-    // Khai báo DAO để các tầng khác sử dụng
     abstract fun taskDao(): TaskDao
 
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
-        /**
-         * Lấy Database Instance duy nhất trong toàn bộ App (Singleton Pattern).
-         */
         fun getInstance(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
