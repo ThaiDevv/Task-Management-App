@@ -24,7 +24,7 @@ data class Task (
     @ColumnInfo(name = "status")
     val status: TaskStatus = TaskStatus.TODO,
     @ColumnInfo(name = "isComplete")
-    val isComplete: Boolean = false,
+    val isCompleted: Boolean = false,
     @ColumnInfo(name = "isRecurring")
     val isRecurring: Boolean = false,
     @ColumnInfo(name = "recurrenceType")
