@@ -40,6 +40,12 @@ class TaskDetailActivity : AppCompatActivity() {
         binding = ActivityTaskDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Setup toolbar với nút Back
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { finish() }
+
         // Step 3A: Nhận task ID từ Intent
         val taskId = intent.getLongExtra(Constants.EXTRA_TASK_ID, -1L)
         if (taskId == -1L) {

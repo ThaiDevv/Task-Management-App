@@ -29,6 +29,12 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.detail.TaskDetailActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="adjustResize" />
+
     </application>
 
 </manifest>

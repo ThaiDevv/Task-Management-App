@@ -23,7 +23,7 @@
             app:title="@string/screen_task_detail_title"
             app:titleTextAppearance="@style/TextAppearance.TaskManagementApp.HeadlineMedium"
             app:titleTextColor="?attr/colorOnSurface"
-            app:navigationIcon="@drawable/ic_launcher_foreground" />
+            app:navigationContentDescription="@string/action_cancel" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
