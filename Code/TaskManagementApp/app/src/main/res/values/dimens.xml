@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- TaskFlow follows a 4dp baseline grid. -->
+    <dimen name="spacing_0">0dp</dimen>
+    <dimen name="spacing_4">4dp</dimen>
+    <dimen name="spacing_8">8dp</dimen>
+    <dimen name="spacing_12">12dp</dimen>
+    <dimen name="spacing_16">16dp</dimen>
+    <dimen name="spacing_20">20dp</dimen>
+    <dimen name="spacing_24">24dp</dimen>
+    <dimen name="spacing_32">32dp</dimen>
+    <dimen name="spacing_40">40dp</dimen>
+    <dimen name="spacing_48">48dp</dimen>
+    <dimen name="spacing_64">64dp</dimen>
+
+    <!-- Responsive layout tokens. -->
+    <dimen name="screen_margin_mobile">16dp</dimen>
+    <dimen name="screen_margin_tablet">24dp</dimen>
+    <dimen name="screen_margin_desktop">48dp</dimen>
+    <dimen name="layout_gutter">24dp</dimen>
+    <dimen name="card_padding">24dp</dimen>
+
+    <!-- Shape tokens from the TaskFlow design system. -->
+    <dimen name="radius_small">8dp</dimen>
+    <dimen name="radius_medium">16dp</dimen>
+    <dimen name="radius_large">24dp</dimen>
+    <dimen name="radius_full">999dp</dimen>
+
+    <!-- Typography scale. Text sizes use sp for accessibility. -->
+    <dimen name="text_display_large">40sp</dimen>
+    <dimen name="text_display_medium">32sp</dimen>
+    <dimen name="text_headline_large">24sp</dimen>
+    <dimen name="text_headline_medium">20sp</dimen>
+    <dimen name="text_body_large">16sp</dimen>
+    <dimen name="text_body_medium">14sp</dimen>
+    <dimen name="text_label_medium">12sp</dimen>
+    <dimen name="text_label_small">10sp</dimen>
+
+    <!-- Reusable component dimensions. -->
+    <dimen name="button_height_small">36dp</dimen>
+    <dimen name="button_height_medium">48dp</dimen>
+    <dimen name="button_height_large">56dp</dimen>
+    <dimen name="touch_target_minimum">48dp</dimen>
+    <dimen name="bottom_navigation_height">80dp</dimen>
+    <dimen name="fab_size">56dp</dimen>
+    <dimen name="icon_size_small">16dp</dimen>
+    <dimen name="icon_size_medium">24dp</dimen>
+    <dimen name="icon_size_large">32dp</dimen>
+    <dimen name="divider_height">1dp</dimen>
+</resources>

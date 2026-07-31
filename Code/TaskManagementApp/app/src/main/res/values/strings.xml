@@ -1,3 +1,21 @@
 <resources>
-    <string name="app_name">TaskManagementApp</string>
+    <string name="app_name">TaskFlow</string>
+    <string name="theme_preview_title">TaskFlow</string>
+    <string name="action_save">Lưu</string>
+    <string name="action_cancel">Hủy</string>
+    <string name="action_delete">Xóa</string>
+    <string name="action_retry">Thử lại</string>
+    <string name="action_create_task">Tạo công việc</string>
+    <string name="action_edit_task">Chỉnh sửa công việc</string>
+    <string name="task_status_todo">Cần làm</string>
+    <string name="task_status_in_progress">Đang thực hiện</string>
+    <string name="task_status_completed">Đã hoàn thành</string>
+    <string name="task_status_overdue">Quá hạn</string>
+    <string name="task_priority_low">Thấp</string>
+    <string name="task_priority_medium">Trung bình</string>
+    <string name="task_priority_high">Cao</string>
+    <string name="task_priority_urgent">Khẩn cấp</string>
+    <string name="state_loading">Đang tải…</string>
+    <string name="state_empty_tasks">Chưa có công việc nào</string>
+    <string name="state_error_generic">Đã xảy ra lỗi. Vui lòng thử lại.</string>
 </resources>
