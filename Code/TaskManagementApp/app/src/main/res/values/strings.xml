@@ -18,4 +18,27 @@
     <string name="state_loading">Đang tải…</string>
     <string name="state_empty_tasks">Chưa có công việc nào</string>
     <string name="state_error_generic">Đã xảy ra lỗi. Vui lòng thử lại.</string>
+
+    <!-- Task Detail Screen -->
+    <string name="screen_task_detail_title">Chi tiết công việc</string>
+    <string name="task_detail_overdue_banner">⚠️ Công việc đã quá hạn!</string>
+    <string name="task_detail_due_date_label">📅 Ngày hết hạn</string>
+    <string name="task_detail_recurrence_label">🔄 Lặp lại</string>
+    <string name="task_detail_description_label">📝 Mô tả</string>
+    <string name="task_detail_created_at_label">Tạo lúc:</string>
+    <string name="task_detail_updated_at_label">Cập nhật lúc:</string>
+    <string name="task_detail_button_complete">✅ Hoàn thành</string>
+    <string name="task_detail_button_uncomplete">✓ Bỏ hoàn thành</string>
+    <string name="task_detail_button_edit">✏️ Chỉnh sửa</string>
+    <string name="task_detail_button_delete">🗑️ Xóa</string>
+    <string name="task_detail_delete_confirm_title">Xác nhận xóa</string>
+    <string name="task_detail_delete_confirm_message">Bạn có chắc chắn muốn xóa công việc này? Hành động này không thể hoàn tác.</string>
+    <string name="task_detail_delete_confirm_positive">Xóa</string>
+    <string name="task_detail_delete_confirm_negative">Hủy</string>
+    <string name="task_detail_no_description">Không có mô tả</string>
+    <string name="task_detail_recurrence_none">Không lặp lại</string>
+    <string name="task_detail_recurrence_daily">Hàng ngày</string>
+    <string name="task_detail_recurrence_weekly">Hàng tuần</string>
+    <string name="task_detail_recurrence_monthly">Hàng tháng</string>
+    <string name="task_detail_recurrence_interval">Cứ %d ngày</string>
 </resources>
