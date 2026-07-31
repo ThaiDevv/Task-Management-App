@@ -1,5 +1,6 @@
 package com.team.taskmanagementapp.ui.detail
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -60,6 +61,11 @@ class TaskDetailActivity : AppCompatActivity() {
                 }
             }
         }
+
+        // Setup 3 action buttons
+        setupCompleteButton()
+        setupEditButton()
+        setupDeleteButton()
     }
 
     // ========================================================================
@@ -217,6 +223,59 @@ class TaskDetailActivity : AppCompatActivity() {
             binding.tvDueDateTime.setTextColor(
                 ContextCompat.getColor(this, R.color.on_surface)
             )
+        }
+    }
+
+    // ========================================================================
+    // Step 4A: Nút Complete/Uncomplete
+    // ========================================================================
+
+    private fun setupCompleteButton() {
+        binding.btnComplete.setOnClickListener {
+            currentTask?.let { task ->
+                viewModel.toggleTaskComplete(task)
+            }
+        }
+    }
+
+    // ========================================================================
+    // Step 4B: Nút Delete + Confirm Dialog
+    // ========================================================================
+
+    private fun setupDeleteButton() {
+        binding.btnDelete.setOnClickListener {
+            showDeleteConfirmDialog()
+        }
+    }
+
+    private fun showDeleteConfirmDialog() {
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.task_detail_delete_confirm_title)
+            .setMessage(R.string.task_detail_delete_confirm_message)
+            .setNegativeButton(R.string.task_detail_delete_confirm_negative) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton(R.string.task_detail_delete_confirm_positive) { _, _ ->
+                currentTask?.let { task ->
+                    viewModel.deleteTask(task)
+                    // Quay lại màn hình trước
+                    finish()
+                }
+            }
+            .show()
+    }
+
+    // ========================================================================
+    // Step 4C: Nút Edit
+    // ========================================================================
+
+    private fun setupEditButton() {
+        binding.btnEdit.setOnClickListener {
+            currentTask?.let { task ->
+                val intent = android.content.Intent(this, Class.forName("com.team.taskmanagementapp.ui.addedit.AddEditTaskActivity"))
+                intent.putExtra(Constants.EXTRA_TASK_ID, task.id.toLong())
+                startActivity(intent)
+            }
         }
     }
 }
