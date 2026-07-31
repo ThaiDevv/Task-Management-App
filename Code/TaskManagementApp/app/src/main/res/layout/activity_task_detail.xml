@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface"
+    tools:context=".ui.detail.TaskDetailActivity">
+
+    <!-- App Bar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        app:elevation="0dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorSurface"
+            app:title="@string/screen_task_detail_title"
+            app:titleTextAppearance="@style/TextAppearance.TaskManagementApp.HeadlineMedium"
+            app:titleTextColor="?attr/colorOnSurface"
+            app:navigationIcon="@drawable/ic_launcher_foreground" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Scrollable Content -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_16">
+
+            <!-- Step 2A: Overdue Banner -->
+            <LinearLayout
+                android:id="@+id/overdueBanner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_16"
+                android:background="@drawable/bg_overdue_banner"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/spacing_12"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/task_detail_overdue_banner"
+                    android:textAppearance="@style/TextAppearance.TaskManagementApp.BodyMedium"
+                    android:textColor="?attr/colorOnErrorContainer" />
+
+            </LinearLayout>
+
+            <!-- Step 2B: Task Title -->
+            <TextView
+                android:id="@+id/tvTaskTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_12"
+                android:textAppearance="@style/TextAppearance.TaskManagementApp.HeadlineLarge"
+                android:textColor="?attr/colorOnSurface"
+                tools:text="Hoàn thành báo cáo tuần" />
+
+            <!-- Step 2B: Status & Priority Badges -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_24"
+                android:orientation="horizontal">
+
+                <!-- Status Badge -->
+                <TextView
+                    android:id="@+id/tvStatusBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/spacing_8"
+                    android:background="@drawable/bg_badge_status"
+                    android:paddingStart="@dimen/spacing_12"
+                    android:paddingTop="@dimen/spacing_4"
+                    android:paddingEnd="@dimen/spacing_12"
+                    android:paddingBottom="@dimen/spacing_4"
+                    android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelMedium"
+                    tools:text="Cần làm"
+                    tools:textColor="?attr/colorOnSurface" />
+
+                <!-- Priority Badge -->
+                <TextView
+                    android:id="@+id/tvPriorityBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_badge_priority"
+                    android:paddingStart="@dimen/spacing_12"
+                    android:paddingTop="@dimen/spacing_4"
+                    android:paddingEnd="@dimen/spacing_12"
+                    android:paddingBottom="@dimen/spacing_4"
+                    android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelMedium"
+                    tools:text="Cao"
+                    tools:textColor="?attr/colorOnSurface" />
+
+            </LinearLayout>
+
+            <!-- Step 2C: Due Date & Time Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_12"
+                app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+                app:cardCornerRadius="@dimen/radius_medium"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_16">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/spacing_4"
+                        android:text="@string/task_detail_due_date_label"
+                        android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelMedium"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+
+                    <TextView
+                        android:id="@+id/tvDueDateTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.TaskManagementApp.BodyLarge"
+                        android:textColor="?attr/colorOnSurface"
+                        tools:text="31/07/2026 18:00" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Step 2C: Recurrence Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardRecurrence"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_12"
+                android:visibility="gone"
+                app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+                app:cardCornerRadius="@dimen/radius_medium"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_16">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/spacing_4"
+                        android:text="@string/task_detail_recurrence_label"
+                        android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelMedium"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+
+                    <TextView
+                        android:id="@+id/tvRecurrence"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.TaskManagementApp.BodyLarge"
+                        android:textColor="?attr/colorOnSurface"
+                        tools:text="Hàng ngày" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Step 2C: Description Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_16"
+                app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+                app:cardCornerRadius="@dimen/radius_medium"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_16">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/spacing_4"
+                        android:text="@string/task_detail_description_label"
+                        android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelMedium"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+
+                    <TextView
+                        android:id="@+id/tvDescription"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.TaskManagementApp.BodyMedium"
+                        android:textColor="?attr/colorOnSurface"
+                        tools:text="Hoàn thành báo cáo công việc tuần này và gửi cho quản lý trước 18:00." />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Step 2D: Timestamps -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_24"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvCreatedAt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_4"
+                    android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelSmall"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    tools:text="Tạo lúc: 30/07/2026 10:00" />
+
+                <TextView
+                    android:id="@+id/tvUpdatedAt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelSmall"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    tools:text="Cập nhật lúc: 31/07/2026 14:30" />
+
+            </LinearLayout>
+
+            <!-- Step 2D: Action Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Complete Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnComplete"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/button_height_medium"
+                    android:layout_marginBottom="@dimen/spacing_8"
+                    android:text="@string/task_detail_button_complete"
+                    android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelMedium"
+                    app:cornerRadius="@dimen/radius_small" />
+
+                <!-- Edit Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEdit"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/button_height_medium"
+                    android:layout_marginBottom="@dimen/spacing_8"
+                    android:text="@string/task_detail_button_edit"
+                    android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelMedium"
+                    app:cornerRadius="@dimen/radius_small" />
+
+                <!-- Delete Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDelete"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/button_height_medium"
+                    android:text="@string/task_detail_button_delete"
+                    android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelMedium"
+                    app:cornerRadius="@dimen/radius_small"
+                    app:strokeColor="?attr/colorError"
+                    android:textColor="?attr/colorError" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
