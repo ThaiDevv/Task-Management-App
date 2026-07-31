@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shape appearances keep corners consistent across Material components. -->
+    <style name="ShapeAppearance.TaskManagementApp.Small" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerSize">@dimen/radius_small</item>
+    </style>
+
+    <style name="ShapeAppearance.TaskManagementApp.Medium" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerSize">@dimen/radius_medium</item>
+    </style>
+
+    <style name="ShapeAppearance.TaskManagementApp.Large" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerSize">@dimen/radius_large</item>
+    </style>
+
+    <!-- Typography styles mapped from DESIGN.md. -->
+    <style name="TextAppearance.TaskManagementApp.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="android:fontFamily">@font/poppins_bold</item>
+        <item name="fontFamily">@font/poppins_bold</item>
+        <item name="android:textSize">@dimen/text_display_large</item>
+    </style>
+
+    <style name="TextAppearance.TaskManagementApp.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="fontFamily">@font/poppins_semibold</item>
+        <item name="android:textSize">@dimen/text_display_medium</item>
+    </style>
+
+    <style name="TextAppearance.TaskManagementApp.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="fontFamily">@font/poppins_semibold</item>
+        <item name="android:textSize">@dimen/text_headline_large</item>
+    </style>
+
+    <style name="TextAppearance.TaskManagementApp.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="fontFamily">@font/poppins_medium</item>
+        <item name="android:textSize">@dimen/text_headline_medium</item>
+    </style>
+
+    <style name="TextAppearance.TaskManagementApp.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:fontFamily">@font/poppins_regular</item>
+        <item name="fontFamily">@font/poppins_regular</item>
+        <item name="android:textSize">@dimen/text_body_large</item>
+    </style>
+
+    <style name="TextAppearance.TaskManagementApp.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/poppins_regular</item>
+        <item name="fontFamily">@font/poppins_regular</item>
+        <item name="android:textSize">@dimen/text_body_medium</item>
+    </style>
+
+    <style name="TextAppearance.TaskManagementApp.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="fontFamily">@font/poppins_medium</item>
+        <item name="android:textSize">@dimen/text_label_medium</item>
+    </style>
+
+    <style name="TextAppearance.TaskManagementApp.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="fontFamily">@font/poppins_medium</item>
+        <item name="android:textSize">@dimen/text_label_small</item>
+    </style>
+</resources>
