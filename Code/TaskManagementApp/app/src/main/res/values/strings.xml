@@ -1,21 +1,59 @@
 <resources>
+    <!-- App & General Brand Strings -->
     <string name="app_name">TaskFlow</string>
-    <string name="theme_preview_title">TaskFlow</string>
+
+    <!-- Shared Actions -->
     <string name="action_save">Lưu</string>
     <string name="action_cancel">Hủy</string>
     <string name="action_delete">Xóa</string>
     <string name="action_retry">Thử lại</string>
-    <string name="action_create_task">Tạo công việc</string>
-    <string name="action_edit_task">Chỉnh sửa công việc</string>
+    <string name="action_edit">Chỉnh sửa</string>
+    <string name="action_mark_complete">Đánh dấu hoàn thành</string>
+    <string name="action_mark_incomplete">Đánh dấu chưa xong</string>
+
+    <!-- Task Statuses -->
     <string name="task_status_todo">Cần làm</string>
     <string name="task_status_in_progress">Đang thực hiện</string>
     <string name="task_status_completed">Đã hoàn thành</string>
     <string name="task_status_overdue">Quá hạn</string>
+
+    <!-- Task Priorities -->
     <string name="task_priority_low">Thấp</string>
     <string name="task_priority_medium">Trung bình</string>
     <string name="task_priority_high">Cao</string>
     <string name="task_priority_urgent">Khẩn cấp</string>
-    <string name="state_loading">Đang tải…</string>
-    <string name="state_empty_tasks">Chưa có công việc nào</string>
+
+    <!-- Form Hints & Labels -->
+    <string name="title_hint">Tiêu đề công việc (*)</string>
+    <string name="description_hint">Mô tả công việc</string>
+    <string name="date_hint">Hạn chót (Ngày)</string>
+    <string name="time_hint">Giờ hẹn</string>
+    <string name="priority_hint">Độ ưu tiên</string>
+    <string name="recurrence_hint">Lặp lại</string>
+    <string name="category_hint">Danh mục</string>
+    <string name="save">Lưu công việc</string>
+    <string name="cancel">Hủy bỏ</string>
+
+    <!-- Task Detail Screen -->
+    <string name="screen_task_detail_title">Chi tiết công việc</string>
+    <string name="task_detail_description_header">Mô tả chi tiết</string>
+    <string name="task_detail_due_date_header">HẠN CHÓT</string>
+    <string name="task_detail_scheduled_time_header">GIỜ HẸN</string>
+    <string name="task_detail_reminder_header">NHẮC NHỞ</string>
+    <string name="task_detail_recurrence_header">LẶP LẠI</string>
+    <string name="task_detail_overdue_banner">⚠️ Công việc này đã quá hạn xử lý!</string>
+    <string name="task_detail_no_description">Không có mô tả chi tiết cho công việc này.</string>
+    <string name="task_detail_delete_confirm_title">Xóa công việc này?</string>
+    <string name="task_detail_delete_confirm_msg">Hành động này sẽ xóa vĩnh viễn công việc khỏi cơ sở dữ liệu và không thể khôi phục.</string>
+
+    <!-- Screen & UI States -->
+    <string name="state_loading">Đang tải dữ liệu…</string>
+    <string name="state_empty_tasks">Chưa có công việc nào. Bấm + để tạo mới!</string>
     <string name="state_error_generic">Đã xảy ra lỗi. Vui lòng thử lại.</string>
+
+    <!-- Bottom Navigation Labels -->
+    <string name="nav_home">Trang chủ</string>
+    <string name="nav_calendar">Lịch</string>
+    <string name="nav_stats">Thống kê</string>
+    <string name="nav_settings">Cài đặt</string>
 </resources>
