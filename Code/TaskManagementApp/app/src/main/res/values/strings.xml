@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">TaskManagementApp</string>
+
+    <!-- Add/Edit Task -->
+    <string name="add_task">Add Task</string>
+    <string name="edit_task">Edit Task</string>
+    <string name="title_hint">Title *</string>
+    <string name="description_hint">Description</string>
+    <string name="date_hint">Select Date</string>
+    <string name="time_hint">Select Time</string>
+    <string name="priority_hint">Priority</string>
+    <string name="recurrence_hint">Recurrence</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="error_empty_title">Title cannot be empty</string>
+    <string name="task_saved">Task saved successfully</string>
+    <string name="task_updated">Task updated successfully</string>
 </resources>
