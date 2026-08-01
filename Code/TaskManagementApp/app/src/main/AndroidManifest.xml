@@ -29,6 +29,13 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.activity.AddEditTaskActivity"
+            android:exported="false"
+            android:label="@string/add_task"
+            android:theme="@style/Theme.TaskManagementApp"
+            android:windowSoftInputMode="adjustResize" />
+
     </application>
 
 </manifest>
