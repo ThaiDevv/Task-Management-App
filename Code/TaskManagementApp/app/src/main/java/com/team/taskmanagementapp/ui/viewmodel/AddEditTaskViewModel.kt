@@ -1,0 +1,75 @@
+package com.team.taskmanagementapp.ui.viewmodel
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.team.taskmanagementapp.data.local.entity.Task
+import com.team.taskmanagementapp.data.model.enum.Priority
+import com.team.taskmanagementapp.data.model.enum.RecurrenceType
+import com.team.taskmanagementapp.data.repository.TaskRepository
+import com.team.taskmanagementapp.ui.base.UiState
+import kotlinx.coroutines.launch
+
+class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel() {
+
+    private val _uiState = MutableLiveData<UiState<Unit>>()
+    val uiState: LiveData<UiState<Unit>> = _uiState
+
+    private val _task = MutableLiveData<Task?>()
+    val task: LiveData<Task?> = _task
+
+    fun loadTask(taskId: Long) {
+        viewModelScope.launch {
+            _uiState.value = UiState.Loading
+            val result = repository.getTaskById(taskId)
+            if (result != null) {
+                _task.value = result
+                _uiState.value = UiState.Success(Unit)
+            } else {
+                _uiState.value = UiState.Error("Task not found")
+            }
+        }
+    }
+
+    fun saveTask(
+        id: Int = 0,
+        title: String,
+        description: String,
+        dueDate: Long,
+        dueTime: Long,
+        priority: Priority,
+        recurrenceType: RecurrenceType,
+        isEdit: Boolean
+    ) {
+        if (title.isBlank()) {
+            _uiState.value = UiState.Error("Title is required")
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.value = UiState.Loading
+            val task = Task(
+                id = id,
+                title = title,
+                description = description,
+                dueDate = dueDate,
+                dueTime = dueTime,
+                priority = priority,
+                recurrenceType = recurrenceType,
+                updatedAt = System.currentTimeMillis()
+            )
+
+            try {
+                if (isEdit) {
+                    repository.update(task)
+                } else {
+                    repository.insert(task)
+                }
+                _uiState.value = UiState.Success(Unit)
+            } catch (e: Exception) {
+                _uiState.value = UiState.Error(e.message ?: "Failed to save task")
+            }
+        }
+    }
+}
