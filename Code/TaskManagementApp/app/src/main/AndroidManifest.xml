@@ -30,6 +30,12 @@
         </activity>
 
         <activity
+            android:name=".ui.detail.TaskDetailActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:name=".ui.activity.AddEditTaskActivity"
             android:exported="false"
             android:label="@string/add_task"
