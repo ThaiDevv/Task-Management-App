@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TaskFlow - Splash Screen</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "error-container": "#ffdad6",
+                "on-primary-fixed": "#001848",
+                "surface-container": "#eeeeee",
+                "surface-bright": "#f9f9f9",
+                "tertiary-fixed": "#ffdad6",
+                "primary-fixed-dim": "#b2c5ff",
+                "on-surface": "#1b1b1b",
+                "surface-variant": "#e2e2e2",
+                "secondary-fixed-dim": "#b6c8de",
+                "on-primary-fixed-variant": "#0040a1",
+                "on-tertiary-fixed-variant": "#930010",
+                "on-secondary-fixed-variant": "#37485a",
+                "inverse-primary": "#b2c5ff",
+                "secondary-fixed": "#d2e4fa",
+                "secondary": "#4e6072",
+                "tertiary-container": "#c12729",
+                "inverse-on-surface": "#f1f1f1",
+                "surface-container-highest": "#e2e2e2",
+                "tertiary-fixed-dim": "#ffb3ad",
+                "background": "#f9f9f9",
+                "outline": "#737786",
+                "on-background": "#1b1b1b",
+                "on-tertiary-container": "#ffdbd7",
+                "tertiary": "#9e0514",
+                "primary": "#0045ae",
+                "inverse-surface": "#303030",
+                "surface": "#f9f9f9",
+                "on-secondary-fixed": "#091d2d",
+                "secondary-container": "#cfe2f7",
+                "surface-container-lowest": "#ffffff",
+                "on-secondary": "#ffffff",
+                "on-tertiary": "#ffffff",
+                "error": "#ba1a1a",
+                "primary-container": "#105cdb",
+                "on-primary-container": "#dae2ff",
+                "primary-fixed": "#dae2ff",
+                "surface-dim": "#dadada",
+                "on-error-container": "#93000a",
+                "on-error": "#ffffff",
+                "outline-variant": "#c3c6d7",
+                "on-primary": "#ffffff",
+                "on-surface-variant": "#424654",
+                "surface-tint": "#0055d2",
+                "surface-container-low": "#f3f3f3",
+                "on-tertiary-fixed": "#410003",
+                "on-secondary-container": "#526477",
+                "surface-container-high": "#e8e8e8"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "gutter": "24px",
+                "margin-desktop": "48px",
+                "container-max": "1280px",
+                "margin-mobile": "16px",
+                "unit": "4px"
+        },
+        "fontFamily": {
+                "label-xs": [
+                        "Poppins"
+                ],
+                "display-3l": [
+                        "Poppins"
+                ],
+                "headline-lg": [
+                        "Poppins"
+                ],
+                "body-sm": [
+                        "Poppins"
+                ],
+                "body-base": [
+                        "Poppins"
+                ],
+                "label-2xs": [
+                        "Poppins"
+                ],
+                "headline-xl": [
+                        "Poppins"
+                ],
+                "display-2l": [
+                        "Poppins"
+                ]
+        },
+        "fontSize": {
+                "label-xs": [
+                        "12px",
+                        {
+                                "lineHeight": "auto",
+                                "fontWeight": "500"
+                        }
+                ],
+                "display-3l": [
+                        "40px",
+                        {
+                                "lineHeight": "110%",
+                                "fontWeight": "700"
+                        }
+                ],
+                "headline-lg": [
+                        "20px",
+                        {
+                                "lineHeight": "140%",
+                                "fontWeight": "500"
+                        }
+                ],
+                "body-sm": [
+                        "14px",
+                        {
+                                "lineHeight": "140%",
+                                "fontWeight": "400"
+                        }
+                ],
+                "body-base": [
+                        "16px",
+                        {
+                                "lineHeight": "140%",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-2xs": [
+                        "10px",
+                        {
+                                "lineHeight": "auto",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-xl": [
+                        "24px",
+                        {
+                                "lineHeight": "120%",
+                                "fontWeight": "600"
+                        }
+                ],
+                "display-2l": [
+                        "32px",
+                        {
+                                "lineHeight": "120%",
+                                "fontWeight": "600"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        .splash-gradient {
+            background: linear-gradient(135deg, #105cdb 0%, #0040a1 100%);
+        }
+        
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 20px rgba(255, 255, 255, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+            }
+        }
+
+        @keyframes fade-in-up {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        .animate-fade-in-up {
+            animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+    </style>
+</head>
+<body class="bg-background font-body-base text-on-surface antialiased w-screen h-screen overflow-hidden flex items-center justify-center splash-gradient">
+<!-- Splash Content Container -->
+<div class="flex flex-col items-center justify-center space-y-gutter z-10 w-full max-w-sm mx-auto px-margin-mobile">
+<!-- Logo Container with Animation -->
+<div class="relative w-32 h-32 flex items-center justify-center mb-4 animate-fade-in-up">
+<!-- Pulsing background ring -->
+<div class="absolute inset-0 bg-white/20 rounded-2xl animate-pulse-ring"></div>
+<!-- Logo Image -->
+<img alt="TaskFlow Logo" class="relative z-10 w-24 h-24 object-contain rounded-xl shadow-lg transform transition-transform duration-500 hover:scale-105" src="https://lh3.googleusercontent.com/aida/AP1WRLuPCqqgekCKHKMHgCg3EZnDbMPtOF4T_L2soB9IOLq4cOUnob8ZfcG6-4a6RZ4zlyH_07wSwS3fhvngjoJ3sicsKstzb_VVDY8XzwvzcCsg9yOeyv7fY5cOidS4POV0VLPD6jvaRuRBcQzXObU9y8qUo_nNdb7WiBahk9-mXPa5wh6W3QK23eQu9cs2gm4S508YLCjnaFY0gFNnVEPBPp5fHZiFaDUz2esAgixWkAaqE-F-utfOXvIRiA"/>
+</div>
+<!-- App Name -->
+<h1 class="font-display-3l text-display-3l text-white text-center opacity-0 animate-fade-in-up delay-100 drop-shadow-md">
+            TaskFlow
+        </h1>
+<!-- Tagline -->
+<p class="font-headline-lg text-headline-lg text-white/90 text-center opacity-0 animate-fade-in-up delay-200 tracking-wide font-light">
+            Smart Task Management
+        </p>
+<!-- Loading Indicator -->
+<div class="mt-12 flex space-x-2 opacity-0 animate-fade-in-up delay-200 pt-8">
+<div class="w-2 h-2 rounded-full bg-white animate-bounce" style="animation-delay: 0ms;"></div>
+<div class="w-2 h-2 rounded-full bg-white/70 animate-bounce" style="animation-delay: 150ms;"></div>
+<div class="w-2 h-2 rounded-full bg-white/40 animate-bounce" style="animation-delay: 300ms;"></div>
+</div>
+</div>
+<!-- Decorative background elements for speed/flow feel -->
+<div class="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+<div class="absolute -top-24 -right-24 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl opacity-50 transform translate-x-10 -translate-y-10"></div>
+<div class="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-primary-fixed-dim rounded-full mix-blend-overlay filter blur-3xl opacity-40"></div>
+</div>
+<script>
+        // Simulate app loading and redirect/transition (for demonstration)
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                // In a real app, this would route to the main dashboard
+                console.log('App initialized, ready for transition');
+                document.body.style.opacity = '0';
+                document.body.style.transition = 'opacity 0.5s ease';
+            }, 3000);
+        });
+    </script>
+</body></html>

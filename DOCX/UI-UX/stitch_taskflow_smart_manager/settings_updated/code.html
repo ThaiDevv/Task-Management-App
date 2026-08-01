@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>TaskFlow - Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "error-container": "#ffdad6",
+                "on-primary-fixed": "#001848",
+                "surface-container": "#eeeeee",
+                "surface-bright": "#f9f9f9",
+                "tertiary-fixed": "#ffdad6",
+                "primary-fixed-dim": "#b2c5ff",
+                "on-surface": "#1b1b1b",
+                "surface-variant": "#e2e2e2",
+                "secondary-fixed-dim": "#b6c8de",
+                "on-primary-fixed-variant": "#0040a1",
+                "on-tertiary-fixed-variant": "#930010",
+                "on-secondary-fixed-variant": "#37485a",
+                "inverse-primary": "#b2c5ff",
+                "secondary-fixed": "#d2e4fa",
+                "secondary": "#4e6072",
+                "tertiary-container": "#c12729",
+                "inverse-on-surface": "#f1f1f1",
+                "surface-container-highest": "#e2e2e2",
+                "tertiary-fixed-dim": "#ffb3ad",
+                "background": "#f9f9f9",
+                "outline": "#737786",
+                "on-background": "#1b1b1b",
+                "on-tertiary-container": "#ffdbd7",
+                "tertiary": "#9e0514",
+                "primary": "#0045ae",
+                "inverse-surface": "#303030",
+                "surface": "#f9f9f9",
+                "on-secondary-fixed": "#091d2d",
+                "secondary-container": "#cfe2f7",
+                "surface-container-lowest": "#ffffff",
+                "on-secondary": "#ffffff",
+                "on-tertiary": "#ffffff",
+                "error": "#ba1a1a",
+                "primary-container": "#105cdb",
+                "on-primary-container": "#dae2ff",
+                "primary-fixed": "#dae2ff",
+                "surface-dim": "#dadada",
+                "on-error-container": "#93000a",
+                "on-error": "#ffffff",
+                "outline-variant": "#c3c6d7",
+                "on-primary": "#ffffff",
+                "on-surface-variant": "#424654",
+                "surface-tint": "#0055d2",
+                "surface-container-low": "#f3f3f3",
+                "on-tertiary-fixed": "#410003",
+                "on-secondary-container": "#526477",
+                "surface-container-high": "#e8e8e8"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "gutter": "24px",
+                "margin-desktop": "48px",
+                "container-max": "1280px",
+                "margin-mobile": "16px",
+                "unit": "4px",
+                "stack-lg": "24px",
+                "container-padding": "20px",
+                "stack-md": "12px",
+                "gutter-md": "16px",
+                "stack-sm": "4px",
+                "base": "8px",
+                "margin-edge": "24px",
+                "pb-safe": "env(safe-area-inset-bottom)"
+        },
+        "fontFamily": {
+                "label-xs": [
+                        "Poppins"
+                ],
+                "display-3l": [
+                        "Poppins"
+                ],
+                "headline-lg": [
+                        "Poppins"
+                ],
+                "body-sm": [
+                        "Poppins"
+                ],
+                "body-base": [
+                        "Poppins"
+                ],
+                "label-2xs": [
+                        "Poppins"
+                ],
+                "headline-xl": [
+                        "Poppins"
+                ],
+                "display-2l": [
+                        "Poppins"
+                ],
+                "body-lg": ["Poppins"],
+                "label-sm": ["Poppins"],
+                "headline-lg-mobile": ["Poppins"],
+                "label-lg": ["Poppins"],
+                "title-md": ["Poppins"],
+                "display-lg": ["Poppins"],
+                "body-md": ["Poppins"]
+        },
+        "fontSize": {
+                "label-xs": [
+                        "12px",
+                        {
+                                "lineHeight": "auto",
+                                "fontWeight": "500"
+                        }
+                ],
+                "display-3l": [
+                        "40px",
+                        {
+                                "lineHeight": "110%",
+                                "fontWeight": "700"
+                        }
+                ],
+                "headline-lg": [
+                        "20px",
+                        {
+                                "lineHeight": "140%",
+                                "fontWeight": "500"
+                        }
+                ],
+                "body-sm": [
+                        "14px",
+                        {
+                                "lineHeight": "140%",
+                                "fontWeight": "400"
+                        }
+                ],
+                "body-base": [
+                        "16px",
+                        {
+                                "lineHeight": "140%",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-2xs": [
+                        "10px",
+                        {
+                                "lineHeight": "auto",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-xl": [
+                        "24px",
+                        {
+                                "lineHeight": "120%",
+                                "fontWeight": "600"
+                        }
+                ],
+                "display-2l": [
+                        "32px",
+                        {
+                                "lineHeight": "120%",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "600" }],
+                "title-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+        }
+},
+    },
+  }
+</script>
+<style>
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+        .settings-card {
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Custom Toggle Switch */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #68D391;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #0045ae; /* primary */
+        }
+        .toggle-checkbox:checked + .toggle-label:after {
+            transform: translateX(100%);
+            border-color: white;
+        }
+        .toggle-label {
+            width: 3rem;
+            height: 1.5rem;
+            background-color: #e2e2e2; /* surface-variant */
+            border-radius: 9999px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .toggle-label:after {
+            content: '';
+            position: absolute;
+            top: 0.125rem;
+            left: 0.125rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            background-color: white;
+            border-radius: 9999px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease-in-out;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background min-h-screen font-body-lg overflow-x-hidden pb-[100px]">
+<!-- Top Navigation (Mobile & Desktop) -->
+<header class="bg-surface shadow-sm full-width top-0 z-40 sticky">
+<div class="flex justify-between items-center w-full px-margin-edge h-16 max-w-7xl mx-auto">
+<div class="flex items-center gap-3">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">TaskFlow</span>
+</div>
+<div class="hidden md:flex items-center gap-gutter-md">
+<!-- Desktop Top Nav Links -->
+<a class="text-on-surface-variant font-label-lg text-label-lg hover:opacity-80 transition-opacity flex items-center gap-1" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">home</span> Home
+                </a>
+<a class="text-on-surface-variant font-label-lg text-label-lg hover:opacity-80 transition-opacity flex items-center gap-1" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">calendar_month</span> Calendar
+                </a>
+<a class="text-on-surface-variant font-label-lg text-label-lg hover:opacity-80 transition-opacity flex items-center gap-1" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">bar_chart</span> Stats
+                </a>
+<a class="text-primary font-bold font-label-lg text-label-lg flex items-center gap-1" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span> Settings
+                </a>
+</div>
+<button class="md:hidden text-on-surface-variant active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<main class="max-w-3xl mx-auto px-margin-edge py-stack-lg">
+<!-- Profile Section -->
+<section class="mb-stack-lg">
+<h2 class="font-title-md text-title-md text-on-surface mb-stack-md px-1">Profile</h2>
+<div class="bg-surface-container-lowest rounded-xl p-container-padding settings-card flex items-center gap-gutter-md border border-outline-variant/30">
+<div class="w-16 h-16 rounded-full overflow-hidden bg-surface-container-high flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a person looking forward, modern minimalist background, soft natural lighting, high resolution portrait suitable for a business profile." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxTFA6xY0wc7dnrccecqd3HKFlAXk1xIsqO2kClWUzf5jlwKmLtboQGAreHNiH-RpVEKqCbBTDSiYYJWmZbMK1bFBLouCWnkBeQhSCMTjM8OlrZIQLqhiUlK5kLdMrrbpHPdgoahdD0VrAmZlHgUyurRunSZ_uqsDPnr6dAjZm7d-GVr80xjR5TYumMWFOfKgKRsrPUZperh55gvNc5BZUHxw5vEPj_ATVwJCwpzkNU_zldXsFizoiuxC1A92yNtLEXnufD80YSro"/>
+</div>
+<div class="flex-grow">
+<h3 class="font-title-md text-title-md text-on-surface">Alex Mercer</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">alex.mercer@taskflow.app</p>
+</div>
+<button class="text-primary hover:bg-surface-container-high p-2 rounded-lg transition-colors active:scale-95">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</div>
+</section>
+<!-- General Settings Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-lg">
+<!-- Appearance -->
+<section>
+<h2 class="font-title-md text-title-md text-on-surface mb-stack-md px-1">Appearance</h2>
+<div class="bg-surface-container-lowest rounded-xl p-container-padding settings-card border border-outline-variant/30 flex flex-col gap-stack-md">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline">dark_mode</span>
+<span class="font-body-lg text-body-lg text-on-surface">Dark Theme</span>
+</div>
+<div class="relative inline-block w-12 align-middle select-none">
+<input class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer opacity-0 z-10" id="theme-toggle" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-variant cursor-pointer" for="theme-toggle"></label>
+</div>
+</div>
+</div>
+</section>
+<!-- Security -->
+<section>
+<h2 class="font-title-md text-title-md text-on-surface mb-stack-md px-1">Security</h2>
+<div class="bg-surface-container-lowest rounded-xl p-container-padding settings-card border border-outline-variant/30 flex flex-col gap-stack-md">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline">lock</span>
+<span class="font-body-lg text-body-lg text-on-surface">PIN Lock</span>
+</div>
+<div class="relative inline-block w-12 align-middle select-none">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer opacity-0 z-10" id="pin-toggle" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-variant cursor-pointer" for="pin-toggle"></label>
+</div>
+</div>
+<div class="h-[1px] w-full bg-outline-variant/30 my-1"></div>
+<button class="flex justify-between items-center w-full text-left group active:scale-95 transition-transform">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">password</span>
+<span class="font-body-lg text-body-lg text-on-surface">Change PIN</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</button>
+</div>
+</section>
+<!-- Notifications -->
+<section>
+<h2 class="font-title-md text-title-md text-on-surface mb-stack-md px-1">Notifications</h2>
+<div class="bg-surface-container-lowest rounded-xl p-container-padding settings-card border border-outline-variant/30 flex flex-col gap-stack-md">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline">notifications_active</span>
+<span class="font-body-lg text-body-lg text-on-surface">Reminders</span>
+</div>
+<div class="relative inline-block w-12 align-middle select-none">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer opacity-0 z-10" id="notif-toggle" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-variant cursor-pointer" for="notif-toggle"></label>
+</div>
+</div>
+<div class="h-[1px] w-full bg-outline-variant/30 my-1"></div>
+<button class="flex justify-between items-center w-full text-left group active:scale-95 transition-transform">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">settings_applications</span>
+<span class="font-body-lg text-body-lg text-on-surface">System Permissions</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</button>
+</div>
+</section>
+<!-- Data Management -->
+<section>
+<h2 class="font-title-md text-title-md text-on-surface mb-stack-md px-1">Data</h2>
+<div class="bg-surface-container-lowest rounded-xl p-container-padding settings-card border border-outline-variant/30 flex flex-col gap-stack-md">
+<button class="flex justify-between items-center w-full text-left group active:scale-95 transition-transform">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">file_download</span>
+<span class="font-body-lg text-body-lg text-on-surface">Export JSON Backup</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</button>
+<div class="h-[1px] w-full bg-outline-variant/30 my-1"></div>
+<button class="flex justify-between items-center w-full text-left group active:scale-95 transition-transform">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">settings_backup_restore</span>
+<span class="font-body-lg text-body-lg text-on-surface">Restore JSON Backup</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</button>
+</div>
+</section>
+</div>
+<!-- About / Footer info -->
+<div class="mt-stack-lg pt-stack-lg flex flex-col items-center justify-center text-center">
+<div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center shadow-md mb-stack-sm bg-primary-container">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">task_alt</span>
+</div>
+<h4 class="font-title-md text-title-md text-on-surface">TaskFlow</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Version 1.0.0</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-stack-md hover:text-primary cursor-pointer transition-colors">Privacy Policy &amp; Terms of Service</p>
+</div>
+</main>
+<!-- Bottom Navigation (Mobile Only) -->
+<nav class="md:hidden bg-surface border-t border-outline-variant/30 fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-safe h-[80px]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors active:scale-90 duration-300 w-16 h-16" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">home</span>
+<span class="font-label-xs mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors active:scale-90 duration-300 w-16 h-16" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">calendar_month</span>
+<span class="font-label-xs mt-1">Calendar</span>
+</a>
+<!-- FAB placeholder in nav space, technically suppressed on settings but keeping layout structure if JSON enforces 5 items -->
+<div class="w-16 h-16 flex items-center justify-center opacity-50 cursor-not-allowed">
+<!-- Suppressed FAB action for Settings screen context -->
+</div>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors active:scale-90 duration-300 w-16 h-16" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">bar_chart</span>
+<span class="font-label-xs mt-1">Stats</span>
+</a>
+<!-- ACTIVE TAB -->
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 active:scale-90 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-label-xs mt-1">Settings</span>
+</a>
+</nav>
+</body></html>

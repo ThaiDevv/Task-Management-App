@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Statistics Dashboard - TaskFlow</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "error-container": "#ffdad6",
+                "on-primary-fixed": "#001848",
+                "surface-container": "#eeeeee",
+                "surface-bright": "#f9f9f9",
+                "tertiary-fixed": "#ffdad6",
+                "primary-fixed-dim": "#b2c5ff",
+                "on-surface": "#1b1b1b",
+                "surface-variant": "#e2e2e2",
+                "secondary-fixed-dim": "#b6c8de",
+                "on-primary-fixed-variant": "#0040a1",
+                "on-tertiary-fixed-variant": "#930010",
+                "on-secondary-fixed-variant": "#37485a",
+                "inverse-primary": "#b2c5ff",
+                "secondary-fixed": "#d2e4fa",
+                "secondary": "#4e6072",
+                "tertiary-container": "#c12729",
+                "inverse-on-surface": "#f1f1f1",
+                "surface-container-highest": "#e2e2e2",
+                "tertiary-fixed-dim": "#ffb3ad",
+                "background": "#f9f9f9",
+                "outline": "#737786",
+                "on-background": "#1b1b1b",
+                "on-tertiary-container": "#ffdbd7",
+                "tertiary": "#9e0514",
+                "primary": "#0045ae",
+                "inverse-surface": "#303030",
+                "surface": "#f9f9f9",
+                "on-secondary-fixed": "#091d2d",
+                "secondary-container": "#cfe2f7",
+                "surface-container-lowest": "#ffffff",
+                "on-secondary": "#ffffff",
+                "on-tertiary": "#ffffff",
+                "error": "#ba1a1a",
+                "primary-container": "#105cdb",
+                "on-primary-container": "#dae2ff",
+                "primary-fixed": "#dae2ff",
+                "surface-dim": "#dadada",
+                "on-error-container": "#93000a",
+                "on-error": "#ffffff",
+                "outline-variant": "#c3c6d7",
+                "on-primary": "#ffffff",
+                "on-surface-variant": "#424654",
+                "surface-tint": "#0055d2",
+                "surface-container-low": "#f3f3f3",
+                "on-tertiary-fixed": "#410003",
+                "on-secondary-container": "#526477",
+                "surface-container-high": "#e8e8e8",
+                "priority-high": "#ba1a1a",
+                "priority-medium": "#eab308",
+                "priority-low": "#22c55e"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "gutter": "24px",
+                "margin-desktop": "48px",
+                "container-max": "1280px",
+                "margin-mobile": "16px",
+                "unit": "4px"
+        },
+        "fontFamily": {
+                "label-xs": [
+                        "Poppins"
+                ],
+                "display-3l": [
+                        "Poppins"
+                ],
+                "headline-lg": [
+                        "Poppins"
+                ],
+                "body-sm": [
+                        "Poppins"
+                ],
+                "body-base": [
+                        "Poppins"
+                ],
+                "label-2xs": [
+                        "Poppins"
+                ],
+                "headline-xl": [
+                        "Poppins"
+                ],
+                "display-2l": [
+                        "Poppins"
+                ]
+        },
+        "fontSize": {
+                "label-xs": [
+                        "12px",
+                        {
+                                "lineHeight": "auto",
+                                "fontWeight": "500"
+                        }
+                ],
+                "display-3l": [
+                        "40px",
+                        {
+                                "lineHeight": "110%",
+                                "fontWeight": "700"
+                        }
+                ],
+                "headline-lg": [
+                        "20px",
+                        {
+                                "lineHeight": "140%",
+                                "fontWeight": "500"
+                        }
+                ],
+                "body-sm": [
+                        "14px",
+                        {
+                                "lineHeight": "140%",
+                                "fontWeight": "400"
+                        }
+                ],
+                "body-base": [
+                        "16px",
+                        {
+                                "lineHeight": "140%",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-2xs": [
+                        "10px",
+                        {
+                                "lineHeight": "auto",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-xl": [
+                        "24px",
+                        {
+                                "lineHeight": "120%",
+                                "fontWeight": "600"
+                        }
+                ],
+                "display-2l": [
+                        "32px",
+                        {
+                                "lineHeight": "120%",
+                                "fontWeight": "600"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        body {
+            background-color: #f9f9f9; /* surface color */
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        .bento-item-full {
+            grid-column: span 2;
+        }
+        .card-shadow {
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        /* Radial Progress */
+        .radial-progress {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(#0045ae 270deg, #e8e8e8 270deg); /* 75% */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .radial-progress::before {
+            content: "";
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #ffffff; /* inner circle */
+        }
+        .radial-value {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="h-full font-body-base text-body-base text-on-surface bg-surface flex flex-col pt-4 pb-[100px]">
+<!-- Top App Bar equivalent -->
+<header class="px-margin-mobile mb-6 flex justify-between items-center h-16">
+<h1 class="font-headline-xl text-headline-xl text-on-surface">Statistics</h1>
+<button class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant">filter_list</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 px-margin-mobile max-w-5xl mx-auto w-full">
+<div class="bento-grid">
+<!-- Weekly Productivity Chart (Bar) -->
+<div class="bento-item-full bg-surface-container-lowest rounded-xl p-4 card-shadow">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Weekly Productivity</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">Tasks completed over the last 7 days</p>
+<div class="h-48 w-full relative">
+<canvas id="weeklyChart"></canvas>
+</div>
+</div>
+<!-- Completion Percentage (Radial) -->
+<div class="bg-surface-container-lowest rounded-xl p-4 card-shadow flex flex-col items-center justify-center text-center">
+<h3 class="font-body-sm font-medium text-body-sm text-on-surface-variant mb-3">Completion Rate</h3>
+<div class="radial-progress shadow-sm">
+<span class="radial-value font-headline-xl text-headline-xl text-primary">75%</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-3">On track</p>
+</div>
+<!-- Stats Cards Stack -->
+<div class="flex flex-col gap-4">
+<div class="bg-primary rounded-xl p-4 card-shadow text-on-primary flex-1 flex flex-col justify-center relative overflow-hidden">
+<div class="absolute -right-4 -top-4 opacity-20">
+<span class="material-symbols-outlined text-[80px]">task_alt</span>
+</div>
+<span class="font-label-xs text-label-xs uppercase tracking-wider mb-1">Completed</span>
+<span class="font-display-3l text-display-3l">42</span>
+<span class="font-body-sm text-body-sm opacity-80">This week</span>
+</div>
+<div class="bg-primary-container rounded-xl p-4 card-shadow text-on-primary-container flex-1 flex flex-col justify-center relative overflow-hidden">
+<div class="absolute -right-4 -top-4 opacity-20">
+<span class="material-symbols-outlined text-[80px]">timer</span>
+</div>
+<span class="font-label-xs text-label-xs uppercase tracking-wider mb-1">Deep Work</span>
+<span class="font-display-3l text-display-3l">18h</span>
+<span class="font-body-sm text-body-sm opacity-80">Focused time</span>
+</div>
+</div>
+<!-- Tasks by Priority (Horizontal Bar) -->
+<div class="bento-item-full bg-surface-container-lowest rounded-xl p-4 card-shadow">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-3">Tasks by Priority</h2>
+<div class="space-y-4">
+<!-- High -->
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-body-sm font-medium text-body-sm text-on-surface">High Priority</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">12 tasks</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2">
+<div class="bg-priority-high h-2 rounded-full" style="width: 30%"></div>
+</div>
+</div>
+<!-- Medium -->
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-body-sm font-medium text-body-sm text-on-surface">Medium Priority</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">20 tasks</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2">
+<div class="bg-priority-medium h-2 rounded-full" style="width: 50%"></div>
+</div>
+</div>
+<!-- Low -->
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-body-sm font-medium text-body-sm text-on-surface">Low Priority</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">8 tasks</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2">
+<div class="bg-priority-low h-2 rounded-full" style="width: 20%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB for adding quick stat note (contextual) -->
+<button class="fixed right-6 bottom-24 w-14 h-14 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-lg active:scale-95 transition-transform duration-200 z-40 hidden md:flex">
+<span class="material-symbols-outlined">add</span>
+</button>
+<!-- Navigation Shell (Bottom Navigation) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-safe bg-surface-container-lowest shadow-[0_-1px_3px_rgba(0,0,0,0.05)] h-[80px]">
+<!-- Home -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors p-2" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-xs text-label-xs mt-1">Home</span>
+</a>
+<!-- Calendar -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors p-2" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="font-label-xs text-label-xs mt-1">Calendar</span>
+</a>
+<!-- Add (FAB-like in nav) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors p-2" href="#">
+<div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-on-primary shadow-md mb-4 -mt-6">
+<span class="material-symbols-outlined">add</span>
+</div>
+<span class="sr-only">Add</span>
+</a>
+<!-- Stats (Active) -->
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-5 py-2 transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bar_chart</span>
+<span class="font-label-xs text-label-xs mt-1 font-bold">Stats</span>
+</a>
+<!-- Settings -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors p-2" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-xs text-label-xs mt-1">Settings</span>
+</a>
+</nav>
+<script>
+        // Chart.js initialization for Weekly Productivity
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('weeklyChart').getContext('2d');
+            
+            // Primary color from Tailwind config
+            const primaryColor = '#0045ae';
+            const surfaceContainerHigh = '#e8e8e8';
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Completed Tasks',
+                        data: [5, 8, 12, 7, 10, 4, 2],
+                        backgroundColor: primaryColor,
+                        borderRadius: 4,
+                        barPercentage: 0.6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#303030',
+                            titleFont: { family: 'Poppins', size: 12 },
+                            bodyFont: { family: 'Poppins', size: 14, weight: 'bold' },
+                            padding: 10,
+                            cornerRadius: 8,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: surfaceContainerHigh,
+                                drawBorder: false,
+                            },
+                            ticks: {
+                                font: { family: 'Poppins', size: 12 },
+                                color: '#737786',
+                                stepSize: 4
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: { family: 'Poppins', size: 12 },
+                                color: '#737786'
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+        });
+    </script>
+</body></html>
