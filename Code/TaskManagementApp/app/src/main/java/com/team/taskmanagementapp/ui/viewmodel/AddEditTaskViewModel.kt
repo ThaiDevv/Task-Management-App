@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.enum.Priority
 import com.team.taskmanagementapp.data.model.enum.RecurrenceType
+import com.team.taskmanagementapp.data.model.enum.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.ui.base.UiState
 import kotlinx.coroutines.launch
@@ -40,6 +41,8 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
         dueTime: Long,
         priority: Priority,
         recurrenceType: RecurrenceType,
+        reminderMinutes: Int,
+        status: TaskStatus,
         isEdit: Boolean
     ) {
         if (title.isBlank()) {
@@ -49,21 +52,37 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
 
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            val task = Task(
-                id = id,
-                title = title,
-                description = description,
-                dueDate = dueDate,
-                dueTime = dueTime,
-                priority = priority,
-                recurrenceType = recurrenceType,
-                updatedAt = System.currentTimeMillis()
-            )
-
             try {
                 if (isEdit) {
-                    repository.update(task)
+                    val existingTask = repository.getTaskById(id.toLong())
+                    if (existingTask != null) {
+                        val updatedTask = existingTask.copy(
+                            title = title,
+                            description = description,
+                            dueDate = dueDate,
+                            dueTime = dueTime,
+                            priority = priority,
+                            recurrenceType = recurrenceType,
+                            reminderMinutes = reminderMinutes,
+                            status = status,
+                            updatedAt = System.currentTimeMillis()
+                        )
+                        repository.update(updatedTask)
+                    } else {
+                        _uiState.value = UiState.Error("Task not found to update")
+                        return@launch
+                    }
                 } else {
+                    val task = Task(
+                        title = title,
+                        description = description,
+                        dueDate = dueDate,
+                        dueTime = dueTime,
+                        priority = priority,
+                        recurrenceType = recurrenceType,
+                        reminderMinutes = reminderMinutes,
+                        status = status
+                    )
                     repository.insert(task)
                 }
                 _uiState.value = UiState.Success(Unit)

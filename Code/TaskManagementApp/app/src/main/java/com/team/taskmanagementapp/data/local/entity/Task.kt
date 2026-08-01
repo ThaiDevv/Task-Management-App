@@ -31,6 +31,8 @@ data class Task (
     val recurrenceType: RecurrenceType = RecurrenceType.NONE,
     @ColumnInfo(name = "recurrenceInterval")
     val recurrenceInterval: Int = 1,
+    @ColumnInfo(name = "reminderMinutes")
+    val reminderMinutes: Int = 0,
     @ColumnInfo(name = "createdAt")
     val createdAt: Long = System.currentTimeMillis(),
     @ColumnInfo(name = "updatedAt")

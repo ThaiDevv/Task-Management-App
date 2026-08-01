@@ -2,4 +2,12 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="background_light">#F5F9FF</color>
+    <color name="card_background">#FFFFFF</color>
+    <color name="priority_high_bg">#C62828</color>
+    <color name="selection_blue_bg">#0D47A1</color>
+    <color name="text_gray">#9E9E9E</color>
+    <color name="input_hint_gray">#BDBDBD</color>
+    <color name="divider_gray">#EEEEEE</color>
+    <color name="vibrant_blue">#0052D4</color>
 </resources>
