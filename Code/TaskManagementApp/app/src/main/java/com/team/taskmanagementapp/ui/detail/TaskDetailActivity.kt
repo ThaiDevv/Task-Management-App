@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.db.AppDatabase
 import com.team.taskmanagementapp.data.local.entity.Task
@@ -40,23 +41,21 @@ class TaskDetailActivity : AppCompatActivity() {
         binding = ActivityTaskDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Setup toolbar với nút Back
+        // Toolbar setup
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         binding.toolbar.setNavigationOnClickListener { finish() }
 
-        // Step 3A: Nhận task ID từ Intent
+        // Fetch task ID from Intent
         val taskId = intent.getLongExtra(Constants.EXTRA_TASK_ID, -1L)
         if (taskId == -1L) {
             finish()
             return
         }
 
-        // Load task data
+        // Observe task data
         viewModel.getTaskById(taskId)
-
-        // Observe selectedTask
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.selectedTask.collect { task ->
@@ -68,63 +67,43 @@ class TaskDetailActivity : AppCompatActivity() {
             }
         }
 
-        // Setup 3 action buttons
+        // Action button listeners
         setupCompleteButton()
         setupEditButton()
         setupDeleteButton()
     }
 
-    // ========================================================================
-    // Step 3B: Bind Task Data lên UI
-    // ========================================================================
-
     private fun bindTaskData(task: Task) {
-        // Title
+        // Task Title & Description
         binding.tvTaskTitle.text = task.title
-
-        // Description
         binding.tvDescription.text = task.description.ifBlank {
             getString(R.string.task_detail_no_description)
         }
 
-        // Due Date & Time
-        val dateStr = DateTimeUtils.formatTimestamp(task.dueDate, DateTimeUtils.FORMAT_FULL_DATE)
+        // Separate Due Date & Scheduled Time display to match polished design
+        val dateStr = DateTimeUtils.formatTimestamp(task.dueDate, "MMM dd, yyyy")
         val timeStr = DateTimeUtils.formatTimestamp(task.dueTime, DateTimeUtils.FORMAT_TIME_ONLY)
-        binding.tvDueDateTime.text = "$dateStr  •  $timeStr"
+        binding.tvDueDate.text = if (dateStr.isBlank()) "No Date" else dateStr
+        binding.tvScheduledTime.text = if (timeStr.isBlank()) "No Time" else timeStr
 
-        // Status Badge
+        // Status & Priority Badges
         bindStatusBadge(task.status, task)
-
-        // Priority Badge
         bindPriorityBadge(task.priority)
 
-        // Recurrence Card
+        // Recurrence Card & Day Selector
         bindRecurrence(task)
 
-        // Timestamps
-        val createdStr = DateTimeUtils.formatTimestamp(task.createdAt, DateTimeUtils.FORMAT_DATE_TIME)
-        val updatedStr = DateTimeUtils.formatTimestamp(task.updatedAt, DateTimeUtils.FORMAT_DATE_TIME)
-        binding.tvCreatedAt.text = "${getString(R.string.task_detail_created_at_label)} $createdStr"
-        binding.tvUpdatedAt.text = "${getString(R.string.task_detail_updated_at_label)} $updatedStr"
-
-        // Step 3C: Overdue Visual Indicator
-        bindOverdueIndicator(task)
-
-        // Complete button text
-        binding.btnComplete.text = if (task.isCompleted) {
+        // Complete Button state & text
+        val completeText = if (task.isCompleted) {
             getString(R.string.task_detail_button_uncomplete)
         } else {
             getString(R.string.task_detail_button_complete)
         }
+        binding.btnComplete.text = completeText
     }
-
-    // ========================================================================
-    // Step 3B: Status Badge
-    // ========================================================================
 
     private fun bindStatusBadge(status: TaskStatus, task: Task) {
         val (textResId, colorResId) = when {
-            // Nếu task quá hạn và chưa hoàn thành → hiển thị OVERDUE
             DateTimeUtils.isOverdue(task.dueDate, task.isCompleted) -> {
                 R.string.task_status_overdue to R.color.status_overdue
             }
@@ -139,12 +118,10 @@ class TaskDetailActivity : AppCompatActivity() {
         binding.tvStatusBadge.text = getString(textResId)
         binding.tvStatusBadge.setTextColor(ContextCompat.getColor(this, colorResId))
 
-        // Tint background drawable
         val bgDrawable = ContextCompat.getDrawable(this, R.drawable.bg_badge_status)?.mutate()
         bgDrawable?.setTint(ContextCompat.getColor(this, colorResId).let { color ->
-            // Dùng màu nhạt hơn cho background (alpha 20%)
             android.graphics.Color.argb(
-                51, // 20% alpha
+                51,
                 android.graphics.Color.red(color),
                 android.graphics.Color.green(color),
                 android.graphics.Color.blue(color)
@@ -152,10 +129,6 @@ class TaskDetailActivity : AppCompatActivity() {
         })
         binding.tvStatusBadge.background = bgDrawable
     }
-
-    // ========================================================================
-    // Step 3B: Priority Badge
-    // ========================================================================
 
     private fun bindPriorityBadge(priority: Priority) {
         val (textResId, colorResId) = when (priority) {
@@ -168,7 +141,6 @@ class TaskDetailActivity : AppCompatActivity() {
         binding.tvPriorityBadge.text = getString(textResId)
         binding.tvPriorityBadge.setTextColor(ContextCompat.getColor(this, colorResId))
 
-        // Tint background drawable
         val bgDrawable = ContextCompat.getDrawable(this, R.drawable.bg_badge_priority)?.mutate()
         bgDrawable?.setTint(ContextCompat.getColor(this, colorResId).let { color ->
             android.graphics.Color.argb(
@@ -180,10 +152,6 @@ class TaskDetailActivity : AppCompatActivity() {
         })
         binding.tvPriorityBadge.background = bgDrawable
     }
-
-    // ========================================================================
-    // Step 3B: Recurrence
-    // ========================================================================
 
     private fun bindRecurrence(task: Task) {
         if (!task.isRecurring || task.recurrenceType == RecurrenceType.NONE) {
@@ -200,53 +168,18 @@ class TaskDetailActivity : AppCompatActivity() {
             RecurrenceType.NONE -> getString(R.string.task_detail_recurrence_none)
         }
 
-        // Hiển thị kèm interval nếu > 1
-        binding.tvRecurrence.text = if (task.recurrenceInterval > 1) {
-            "$recurrenceText (mỗi ${task.recurrenceInterval} lần)"
-        } else {
-            recurrenceText
-        }
+        binding.tvRecurrenceType.text = recurrenceText
     }
-
-    // ========================================================================
-    // Step 3C: Overdue Visual Indicator
-    // ========================================================================
-
-    private fun bindOverdueIndicator(task: Task) {
-        val isOverdue = DateTimeUtils.isOverdue(task.dueDate, task.isCompleted)
-
-        if (isOverdue) {
-            // Hiện banner cảnh báo
-            binding.overdueBanner.visibility = View.VISIBLE
-
-            // Đổi màu due date text thành đỏ
-            binding.tvDueDateTime.setTextColor(ContextCompat.getColor(this, R.color.error))
-        } else {
-            // Ẩn banner
-            binding.overdueBanner.visibility = View.GONE
-
-            // Màu mặc định
-            binding.tvDueDateTime.setTextColor(
-                ContextCompat.getColor(this, R.color.on_surface)
-            )
-        }
-    }
-
-    // ========================================================================
-    // Step 4A: Nút Complete/Uncomplete
-    // ========================================================================
 
     private fun setupCompleteButton() {
-        binding.btnComplete.setOnClickListener {
+        val toggleAction = {
             currentTask?.let { task ->
                 viewModel.toggleTaskComplete(task)
             }
         }
+        binding.btnComplete.setOnClickListener { toggleAction() }
+        binding.fabComplete.setOnClickListener { toggleAction() }
     }
-
-    // ========================================================================
-    // Step 4B: Nút Delete + Confirm Dialog
-    // ========================================================================
 
     private fun setupDeleteButton() {
         binding.btnDelete.setOnClickListener {
@@ -255,7 +188,7 @@ class TaskDetailActivity : AppCompatActivity() {
     }
 
     private fun showDeleteConfirmDialog() {
-        com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.task_detail_delete_confirm_title)
             .setMessage(R.string.task_detail_delete_confirm_message)
             .setNegativeButton(R.string.task_detail_delete_confirm_negative) { dialog, _ ->
@@ -264,21 +197,16 @@ class TaskDetailActivity : AppCompatActivity() {
             .setPositiveButton(R.string.task_detail_delete_confirm_positive) { _, _ ->
                 currentTask?.let { task ->
                     viewModel.deleteTask(task)
-                    // Quay lại màn hình trước
                     finish()
                 }
             }
             .show()
     }
 
-    // ========================================================================
-    // Step 4C: Nút Edit
-    // ========================================================================
-
     private fun setupEditButton() {
         binding.btnEdit.setOnClickListener {
             currentTask?.let { task ->
-                val intent = android.content.Intent(this, Class.forName("com.team.taskmanagementapp.ui.addedit.AddEditTaskActivity"))
+                val intent = Intent(this, Class.forName("com.team.taskmanagementapp.ui.addedit.AddEditTaskActivity"))
                 intent.putExtra(Constants.EXTRA_TASK_ID, task.id.toLong())
                 startActivity(intent)
             }
