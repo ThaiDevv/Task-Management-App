@@ -4,586 +4,583 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface"
+    android:background="@color/background"
     tools:context=".ui.detail.TaskDetailActivity">
 
-    <!-- Top AppBar -->
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
+    <!-- ===== Top AppBar ===== -->
+    <LinearLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorSurface"
-        app:elevation="0dp">
+        android:layout_height="64dp"
+        android:background="@color/background"
+        android:elevation="2dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorSurface">
+        <!-- Back Button -->
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            android:padding="4dp"
+            android:src="@drawable/ic_back"
+            app:tint="@color/primary" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+        <!-- Title "TaskFlow" -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/poppins_bold"
+            android:text="TaskFlow"
+            android:textColor="@color/primary"
+            android:textSize="20sp" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="TaskFlow"
-                    android:textAppearance="@style/TextAppearance.TaskManagementApp.HeadlineMedium"
-                    android:textColor="?attr/colorPrimary"
-                    android:textStyle="bold" />
+        <!-- Notification Icon -->
+        <ImageView
+            android:id="@+id/ivNotification"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Notifications"
+            android:src="@drawable/ic_bell"
+            app:tint="@color/primary" />
 
-                <ImageView
-                    android:id="@+id/ivNotification"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="@dimen/spacing_16"
-                    android:src="@android:drawable/ic_popup_reminder"
-                    android:contentDescription="Notifications"
-                    app:tint="?attr/colorPrimary" />
+        <!-- User Avatar Circle "JD" -->
+        <TextView
+            android:id="@+id/tvUserAvatar"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_day_circle_active"
+            android:fontFamily="@font/poppins_bold"
+            android:gravity="center"
+            android:text="JD"
+            android:textColor="@color/primary"
+            android:textSize="11sp" />
+    </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tvUserAvatar"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="@drawable/bg_badge_priority"
-                    android:gravity="center"
-                    android:text="JD"
-                    android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelSmall"
-                    android:textColor="?attr/colorOnPrimaryContainer"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-        </com.google.android.material.appbar.MaterialToolbar>
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <!-- Main Content -->
+    <!-- ===== Scrollable Main Content ===== -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
+        android:clipToPadding="false"
+        android:layout_marginTop="64dp"
         android:paddingBottom="120dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/spacing_16">
+            android:padding="16dp">
 
-            <!-- Badges Row -->
+            <!-- ===== Title & Badges Section ===== -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_16"
-                android:orientation="horizontal">
-
-                <!-- Priority Badge -->
-                <TextView
-                    android:id="@+id/tvPriorityBadge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/spacing_8"
-                    android:background="@drawable/bg_badge_priority"
-                    android:drawableStart="@android:drawable/ic_dialog_alert"
-                    android:drawablePadding="4dp"
-                    android:paddingStart="@dimen/spacing_12"
-                    android:paddingTop="@dimen/spacing_4"
-                    android:paddingEnd="@dimen/spacing_12"
-                    android:paddingBottom="@dimen/spacing_4"
-                    android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelMedium"
-                    tools:text="High Priority" />
-
-                <!-- Status Badge -->
-                <TextView
-                    android:id="@+id/tvStatusBadge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_badge_status"
-                    android:drawableStart="@android:drawable/ic_popup_sync"
-                    android:drawablePadding="4dp"
-                    android:paddingStart="@dimen/spacing_12"
-                    android:paddingTop="@dimen/spacing_4"
-                    android:paddingEnd="@dimen/spacing_12"
-                    android:paddingBottom="@dimen/spacing_4"
-                    android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelMedium"
-                    tools:text="In Progress" />
-
-            </LinearLayout>
-
-            <!-- Task Title -->
-            <TextView
-                android:id="@+id/tvTaskTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_24"
-                android:textAppearance="@style/TextAppearance.TaskManagementApp.DisplayMedium"
-                android:textColor="?attr/colorOnSurface"
-                tools:text="Finalize Project Proposal" />
-
-            <!-- Bento Grid Container -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:baselineAligned="false"
-                android:weightSum="3">
-
-                <!-- Left Column: Description Card (col-span-2) -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:layout_marginEnd="@dimen/spacing_12"
-                    android:orientation="vertical">
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:cardBackgroundColor="?attr/colorSurfaceContainerLowest"
-                        app:cardCornerRadius="24dp"
-                        app:cardElevation="2dp"
-                        app:strokeWidth="1dp"
-                        app:strokeColor="?attr/colorSurfaceContainer">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="@dimen/spacing_24">
-
-                            <!-- Description Header -->
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical"
-                                android:layout_marginBottom="@dimen/spacing_12">
-
-                                <ImageView
-                                    android:layout_width="24dp"
-                                    android:layout_height="24dp"
-                                    android:layout_marginEnd="@dimen/spacing_8"
-                                    android:src="@android:drawable/ic_menu_info_details"
-                                    app:tint="?attr/colorPrimary" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Description"
-                                    android:textAppearance="@style/TextAppearance.TaskManagementApp.HeadlineMedium"
-                                    android:textColor="?attr/colorPrimary" />
-
-                            </LinearLayout>
-
-                            <!-- Description Text -->
-                            <TextView
-                                android:id="@+id/tvDescription"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="@dimen/spacing_16"
-                                android:textAppearance="@style/TextAppearance.TaskManagementApp.BodyLarge"
-                                android:textColor="?attr/colorOnSurfaceVariant"
-                                tools:text="Review and finalize the final version of the project proposal before submitting it to the executive team." />
-
-                            <!-- Divider -->
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="1dp"
-                                android:layout_marginTop="@dimen/spacing_8"
-                                android:layout_marginBottom="@dimen/spacing_16"
-                                android:background="?attr/colorSurfaceContainer" />
-
-                            <!-- Due Date Row -->
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical"
-                                android:layout_marginBottom="@dimen/spacing_16">
-
-                                <View
-                                    android:layout_width="48dp"
-                                    android:layout_height="48dp"
-                                    android:layout_marginEnd="@dimen/spacing_12"
-                                    android:background="@drawable/bg_badge_priority" />
-
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="DUE DATE"
-                                        android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelSmall"
-                                        android:textColor="?attr/colorOnSurfaceVariant" />
-
-                                    <TextView
-                                        android:id="@+id/tvDueDate"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:textAppearance="@style/TextAppearance.TaskManagementApp.HeadlineMedium"
-                                        android:textColor="?attr/colorOnSurface"
-                                        tools:text="Oct 25, 2023" />
-
-                                </LinearLayout>
-
-                            </LinearLayout>
-
-                            <!-- Scheduled Time Row -->
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical">
-
-                                <View
-                                    android:layout_width="48dp"
-                                    android:layout_height="48dp"
-                                    android:layout_marginEnd="@dimen/spacing_12"
-                                    android:background="@drawable/bg_badge_status" />
-
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="SCHEDULED TIME"
-                                        android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelSmall"
-                                        android:textColor="?attr/colorOnSurfaceVariant" />
-
-                                    <TextView
-                                        android:id="@+id/tvScheduledTime"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:textAppearance="@style/TextAppearance.TaskManagementApp.HeadlineMedium"
-                                        android:textColor="?attr/colorOnSurface"
-                                        tools:text="10:00 AM" />
-
-                                </LinearLayout>
-
-                            </LinearLayout>
-
-                        </LinearLayout>
-
-                    </com.google.android.material.card.MaterialCardView>
-
-                </LinearLayout>
-
-                <!-- Right Column: Sidebar Cards (col-span-1) -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <!-- Reminder Card -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/spacing_16"
-                        app:cardBackgroundColor="?attr/colorSurfaceContainerLowest"
-                        app:cardCornerRadius="24dp"
-                        app:cardElevation="2dp"
-                        app:strokeWidth="1dp"
-                        app:strokeColor="?attr/colorSurfaceContainer">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="@dimen/spacing_16">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical"
-                                android:layout_marginBottom="@dimen/spacing_8">
-
-                                <ImageView
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:layout_marginEnd="@dimen/spacing_4"
-                                    android:src="@android:drawable/ic_popup_reminder"
-                                    app:tint="?attr/colorPrimary" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="REMINDER"
-                                    android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelSmall"
-                                    android:textColor="?attr/colorPrimary"
-                                    android:textStyle="bold" />
-
-                            </LinearLayout>
-
-                            <TextView
-                                android:id="@+id/tvReminder"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="30 mins before"
-                                android:textAppearance="@style/TextAppearance.TaskManagementApp.HeadlineMedium"
-                                android:textColor="?attr/colorOnSurface" />
-
-                        </LinearLayout>
-
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <!-- Recurrence Card (Blue) -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardRecurrence"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/spacing_16"
-                        app:cardBackgroundColor="?attr/colorPrimaryContainer"
-                        app:cardCornerRadius="24dp"
-                        app:cardElevation="4dp">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="@dimen/spacing_16">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical"
-                                android:layout_marginBottom="@dimen/spacing_8">
-
-                                <ImageView
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:layout_marginEnd="@dimen/spacing_4"
-                                    android:src="@android:drawable/ic_popup_sync"
-                                    app:tint="?attr/colorOnPrimaryContainer" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="RECURRENCE"
-                                    android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelSmall"
-                                    android:textColor="?attr/colorOnPrimaryContainer"
-                                    android:textStyle="bold" />
-
-                            </LinearLayout>
-
-                            <TextView
-                                android:id="@+id/tvRecurrenceType"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="@dimen/spacing_8"
-                                android:text="Weekly"
-                                android:textAppearance="@style/TextAppearance.TaskManagementApp.HeadlineMedium"
-                                android:textColor="?attr/colorOnPrimaryContainer" />
-
-                            <!-- Day Selector -->
-                            <LinearLayout
-                                android:id="@+id/layoutDaySelector"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center">
-
-                                <TextView
-                                    android:id="@+id/tvDayM"
-                                    android:layout_width="32dp"
-                                    android:layout_height="32dp"
-                                    android:layout_marginEnd="@dimen/spacing_4"
-                                    android:background="@drawable/bg_badge_priority"
-                                    android:gravity="center"
-                                    android:text="M"
-                                    android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelSmall"
-                                    android:textColor="?attr/colorOnPrimaryContainer"
-                                    android:textStyle="bold" />
-
-                                <TextView
-                                    android:id="@+id/tvDayT"
-                                    android:layout_width="32dp"
-                                    android:layout_height="32dp"
-                                    android:layout_marginEnd="@dimen/spacing_4"
-                                    android:background="@drawable/bg_badge_priority"
-                                    android:gravity="center"
-                                    android:text="T"
-                                    android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelSmall"
-                                    android:textColor="?attr/colorOnPrimaryContainer"
-                                    android:textStyle="bold" />
-
-                                <TextView
-                                    android:id="@+id/tvDayW"
-                                    android:layout_width="32dp"
-                                    android:layout_height="32dp"
-                                    android:layout_marginEnd="@dimen/spacing_4"
-                                    android:background="@drawable/bg_badge_priority"
-                                    android:gravity="center"
-                                    android:text="W"
-                                    android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelSmall"
-                                    android:textColor="?attr/colorOnPrimaryContainer"
-                                    android:textStyle="bold" />
-
-                                <TextView
-                                    android:id="@+id/tvDayTh"
-                                    android:layout_width="32dp"
-                                    android:layout_height="32dp"
-                                    android:layout_marginEnd="@dimen/spacing_4"
-                                    android:background="@drawable/bg_badge_priority"
-                                    android:gravity="center"
-                                    android:text="T"
-                                    android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelSmall"
-                                    android:textColor="?attr/colorOnPrimaryContainer"
-                                    android:textStyle="bold" />
-
-                                <TextView
-                                    android:id="@+id/tvDayF"
-                                    android:layout_width="32dp"
-                                    android:layout_height="32dp"
-                                    android:background="@drawable/bg_badge_priority"
-                                    android:gravity="center"
-                                    android:text="F"
-                                    android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelSmall"
-                                    android:textColor="?attr/colorOnPrimaryContainer"
-                                    android:textStyle="bold" />
-
-                            </LinearLayout>
-
-                        </LinearLayout>
-
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <!-- Attachment Card -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardAttachment"
-                        android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        app:cardCornerRadius="24dp"
-                        app:cardElevation="0dp">
-
-                        <ImageView
-                            android:id="@+id/ivAttachment"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/ic_launcher_background"
-                            android:contentDescription="Attachment preview" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/gradient_attachment_overlay" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:orientation="vertical"
-                            android:padding="@dimen/spacing_16">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="📎 1 Attachment"
-                                android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelSmall"
-                                android:textColor="#FFFFFF" />
-
-                            <TextView
-                                android:id="@+id/tvAttachmentName"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Project_Draft_V4.pdf"
-                                android:textAppearance="@style/TextAppearance.TaskManagementApp.BodyLarge"
-                                android:textColor="#FFFFFF"
-                                android:textStyle="bold" />
-
-                        </LinearLayout>
-
-                    </com.google.android.material.card.MaterialCardView>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- Action Buttons -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_32"
+                android:layout_marginBottom="24dp"
                 android:orientation="vertical">
 
-                <!-- Edit + Delete Row -->
+                <!-- Badges Row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/spacing_12"
+                    android:layout_marginBottom="12dp"
                     android:orientation="horizontal">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnEdit"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/button_height_medium"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="@dimen/spacing_8"
-                        android:text="@string/task_detail_button_edit"
-                        android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelMedium"
-                        app:cornerRadius="@dimen/radius_medium"
-                        app:icon="@android:drawable/ic_menu_edit" />
+                    <!-- High Priority Badge -->
+                    <LinearLayout
+                        android:id="@+id/badgePriority"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_badge_priority_high"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="12dp"
+                        android:paddingTop="6dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="6dp">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnDelete"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/button_height_medium"
-                        android:layout_weight="1"
-                        android:text="@string/task_detail_button_delete"
-                        android:textAppearance="@style/TextAppearance.TaskManagementApp.LabelMedium"
-                        android:textColor="?attr/colorError"
-                        app:cornerRadius="@dimen/radius_medium"
-                        app:icon="@android:drawable/ic_menu_delete"
-                        app:iconTint="?attr/colorError"
-                        app:strokeColor="?attr/colorError" />
+                        <ImageView
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:layout_marginEnd="4dp"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/tertiary" />
 
+                        <TextView
+                            android:id="@+id/tvPriorityBadge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_medium"
+                            android:text="High Priority"
+                            android:textColor="@color/tertiary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- In Progress Badge -->
+                    <LinearLayout
+                        android:id="@+id/badgeStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_badge_status_pill"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="12dp"
+                        android:paddingTop="6dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="6dp">
+
+                        <ImageView
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:layout_marginEnd="4dp"
+                            android:src="@drawable/ic_time"
+                            app:tint="@color/on_secondary_container" />
+
+                        <TextView
+                            android:id="@+id/tvStatusBadge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_medium"
+                            android:text="In Progress"
+                            android:textColor="@color/on_secondary_container"
+                            android:textSize="12sp" />
+                    </LinearLayout>
                 </LinearLayout>
 
-                <!-- Mark as Completed Button -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnComplete"
+                <!-- Task Title -->
+                <TextView
+                    android:id="@+id/tvTaskTitle"
                     android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:text="@string/task_detail_button_complete"
-                    android:textAppearance="@style/TextAppearance.TaskManagementApp.HeadlineMedium"
-                    app:backgroundTint="?attr/colorPrimaryContainer"
-                    app:cornerRadius="@dimen/radius_medium"
-                    app:icon="@android:drawable/checkbox_on_background"
-                    app:iconTint="?attr/colorOnPrimaryContainer" />
-
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_bold"
+                    android:lineSpacingMultiplier="1.2"
+                    android:textColor="@color/on_surface"
+                    android:textSize="28sp"
+                    tools:text="Finalize Project Proposal" />
             </LinearLayout>
 
-        </LinearLayout>
+            <!-- ===== Description Bento Card ===== -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/surface_container_lowest"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="2dp"
+                app:strokeColor="@color/surface_container"
+                app:strokeWidth="1dp">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <!-- Header -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_marginEnd="8dp"
+                            android:src="@drawable/ic_add_task"
+                            app:tint="@color/primary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="Description"
+                            android:textColor="@color/primary"
+                            android:textSize="18sp" />
+                    </LinearLayout>
+
+                    <!-- Text -->
+                    <TextView
+                        android:id="@+id/tvDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:lineSpacingMultiplier="1.4"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="15sp"
+                        tools:text="Review and finalize the final version of the project proposal before submitting it to the executive team. Ensure all budget figures are double-checked for accuracy across all departments." />
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="@color/surface_container" />
+
+                    <!-- Due Date Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_marginEnd="16dp"
+                            android:background="@drawable/bg_icon_box_primary"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_calendar"
+                                app:tint="@color/primary" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_medium"
+                                android:letterSpacing="0.05"
+                                android:text="DUE DATE"
+                                android:textColor="@color/outline"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:id="@+id/tvDueDate"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_bold"
+                                android:textColor="@color/on_surface"
+                                android:textSize="18sp"
+                                tools:text="Oct 25, 2023" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Scheduled Time Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_marginEnd="16dp"
+                            android:background="@drawable/bg_icon_box_secondary"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_time"
+                                app:tint="@color/secondary" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_medium"
+                                android:letterSpacing="0.05"
+                                android:text="SCHEDULED TIME"
+                                android:textColor="@color/outline"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:id="@+id/tvScheduledTime"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_bold"
+                                android:textColor="@color/on_surface"
+                                android:textSize="18sp"
+                                tools:text="10:00 AM" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ===== Reminder Card ===== -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/surface_container_lowest"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="2dp"
+                app:strokeColor="@color/surface_container"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginEnd="6dp"
+                            android:src="@drawable/ic_bell"
+                            app:tint="@color/primary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_bold"
+                            android:letterSpacing="0.08"
+                            android:text="REMINDER"
+                            android:textColor="@color/primary"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvReminder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="30 mins before"
+                        android:textColor="@color/on_surface"
+                        android:textSize="18sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ===== Recurrence Card ===== -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardRecurrence"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/primary_container"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="6dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginEnd="6dp"
+                            android:src="@drawable/ic_time"
+                            app:tint="@color/primary_fixed_dim" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_bold"
+                            android:letterSpacing="0.08"
+                            android:text="RECURRENCE"
+                            android:textColor="@color/primary_fixed_dim"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvRecurrenceType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="Weekly"
+                        android:textColor="@color/on_primary_container"
+                        android:textSize="18sp" />
+
+                    <!-- Day Circles Row: M T W T F -->
+                    <LinearLayout
+                        android:id="@+id/layoutDaySelector"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <!-- M (Active) -->
+                        <TextView
+                            android:id="@+id/tvDayM"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_marginEnd="6dp"
+                            android:background="@drawable/bg_day_circle_active"
+                            android:fontFamily="@font/poppins_bold"
+                            android:gravity="center"
+                            android:text="M"
+                            android:textColor="@color/primary"
+                            android:textSize="12sp" />
+
+                        <!-- T (Inactive) -->
+                        <TextView
+                            android:id="@+id/tvDayT"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_marginEnd="6dp"
+                            android:background="@drawable/bg_day_circle_inactive"
+                            android:fontFamily="@font/poppins_bold"
+                            android:gravity="center"
+                            android:text="T"
+                            android:textColor="@color/on_primary_container"
+                            android:textSize="12sp" />
+
+                        <!-- W (Active) -->
+                        <TextView
+                            android:id="@+id/tvDayW"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_marginEnd="6dp"
+                            android:background="@drawable/bg_day_circle_active"
+                            android:fontFamily="@font/poppins_bold"
+                            android:gravity="center"
+                            android:text="W"
+                            android:textColor="@color/primary"
+                            android:textSize="12sp" />
+
+                        <!-- T (Inactive) -->
+                        <TextView
+                            android:id="@+id/tvDayTh"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_marginEnd="6dp"
+                            android:background="@drawable/bg_day_circle_inactive"
+                            android:fontFamily="@font/poppins_bold"
+                            android:gravity="center"
+                            android:text="T"
+                            android:textColor="@color/on_primary_container"
+                            android:textSize="12sp" />
+
+                        <!-- F (Inactive) -->
+                        <TextView
+                            android:id="@+id/tvDayF"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:background="@drawable/bg_day_circle_inactive"
+                            android:fontFamily="@font/poppins_bold"
+                            android:gravity="center"
+                            android:text="F"
+                            android:textColor="@color/on_primary_container"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ===== Action Buttons Section ===== -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="20dp"
+                android:background="@color/surface_container" />
+
+            <!-- Edit + Delete Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEdit"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="Edit Task"
+                    android:textAllCaps="false"
+                    android:textColor="@color/primary"
+                    android:textSize="14sp"
+                    app:backgroundTint="@color/surface_container_lowest"
+                    app:cornerRadius="16dp"
+                    app:icon="@drawable/ic_back"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/primary"
+                    app:strokeColor="@color/primary"
+                    app:strokeWidth="2dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDelete"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="Delete"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    app:backgroundTint="@color/tertiary"
+                    app:cornerRadius="16dp"
+                    app:icon="@drawable/ic_chevron_right"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/white" />
+            </LinearLayout>
+
+            <!-- Mark as Completed Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnComplete"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginBottom="24dp"
+                android:fontFamily="@font/poppins_bold"
+                android:text="Mark as Completed"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:backgroundTint="@color/primary"
+                app:cornerRadius="16dp"
+                app:icon="@drawable/ic_add_task"
+                app:iconGravity="textStart"
+                app:iconTint="@color/white" />
+
+        </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Mobile FAB for Quick Complete -->
+    <!-- ===== Mobile FAB ===== -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabComplete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/spacing_24"
+        android:layout_margin="24dp"
         android:contentDescription="Mark as completed"
-        android:src="@android:drawable/checkbox_on_background"
-        app:backgroundTint="?attr/colorPrimary"
-        app:tint="?attr/colorOnPrimary" />
+        android:src="@drawable/ic_add_task"
+        app:backgroundTint="@color/primary"
+        app:tint="@color/white" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
