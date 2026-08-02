@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true"
+    tools:context=".ui.CreateTaskFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_24">
+
+        <!-- Form Card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="@dimen/radius_large"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/surface_container_lowest">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_24">
+
+                <!-- Header -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Task Details"
+                    android:textSize="@dimen/text_headline_large"
+                    android:textColor="?attr/colorOnSurface"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fill in the information below to organize your workflow."
+                    android:textSize="@dimen/text_body_small"
+                    android:textColor="@color/outline"
+                    android:fontFamily="@font/poppins_regular"
+                    android:layout_marginTop="@dimen/spacing_4"
+                    android:layout_marginBottom="@dimen/spacing_24" />
+
+                <!-- Task Title (Error State) -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TASK TITLE"
+                    android:textSize="@dimen/text_label_small"
+                    android:textColor="@color/outline"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.05"
+                    android:layout_marginStart="@dimen/spacing_4" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/titleInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_8"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusTopStart="@dimen/radius_medium"
+                    app:boxCornerRadiusTopEnd="@dimen/radius_medium"
+                    app:boxCornerRadiusBottomStart="@dimen/radius_medium"
+                    app:boxCornerRadiusBottomEnd="@dimen/radius_medium"
+                    app:boxStrokeColor="@color/error"
+                    app:boxStrokeWidth="2dp"
+                    app:errorEnabled="true"
+                    app:errorTextColor="@color/error"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@drawable/ic_error"
+                    app:endIconTint="@color/error">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/titleEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:hint="e.g. Design System Review"
+                        android:textSize="@dimen/text_body_medium"
+                        android:fontFamily="@font/poppins_regular"
+                        android:background="@color/error_container" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Description -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="DESCRIPTION (OPTIONAL)"
+                    android:textSize="@dimen/text_label_small"
+                    android:textColor="@color/outline"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.05"
+                    android:layout_marginStart="@dimen/spacing_4"
+                    android:layout_marginTop="@dimen/spacing_24" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/descriptionInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_8"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusTopStart="@dimen/radius_medium"
+                    app:boxCornerRadiusTopEnd="@dimen/radius_medium"
+                    app:boxCornerRadiusBottomStart="@dimen/radius_medium"
+                    app:boxCornerRadiusBottomEnd="@dimen/radius_medium">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/descriptionEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="120dp"
+                        android:hint="Describe the steps or objectives..."
+                        android:textSize="@dimen/text_body_medium"
+                        android:fontFamily="@font/poppins_regular"
+                        android:gravity="top"
+                        android:inputType="textMultiLine" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Due Date and Priority Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/spacing_24"
+                    android:weightSum="2">
+
+                    <!-- Due Date (Error State) -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginEnd="@dimen/spacing_12">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="DUE DATE"
+                            android:textSize="@dimen/text_label_small"
+                            android:textColor="@color/outline"
+                            android:fontFamily="@font/poppins_medium"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.05"
+                            android:layout_marginStart="@dimen/spacing_4" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/dueDateInputLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_8"
+                            app:boxBackgroundMode="outline"
+                            app:boxCornerRadiusTopStart="@dimen/radius_medium"
+                            app:boxCornerRadiusTopEnd="@dimen/radius_medium"
+                            app:boxCornerRadiusBottomStart="@dimen/radius_medium"
+                            app:boxCornerRadiusBottomEnd="@dimen/radius_medium"
+                            app:boxStrokeColor="@color/error"
+                            app:boxStrokeWidth="2dp"
+                            app:errorEnabled="true"
+                            app:errorTextColor="@color/error"
+                            app:endIconMode="custom"
+                            app:endIconDrawable="@drawable/ic_nav_calendar"
+                            app:endIconTint="@color/error">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/dueDateEditText"
+                                android:layout_width="match_parent"
+                                android:layout_height="56dp"
+                                android:hint="Select date"
+                                android:textSize="@dimen/text_body_medium"
+                                android:fontFamily="@font/poppins_regular"
+                                android:focusable="false"
+                                android:clickable="true"
+                                android:background="@color/error_container" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+                    <!-- Priority -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="@dimen/spacing_12">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="PRIORITY"
+                            android:textSize="@dimen/text_label_small"
+                            android:textColor="@color/outline"
+                            android:fontFamily="@font/poppins_medium"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.05"
+                            android:layout_marginStart="@dimen/spacing_4" />
+
+                        <com.google.android.material.button.MaterialButtonToggleGroup
+                            android:id="@+id/priorityToggleGroup"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:layout_marginTop="@dimen/spacing_8"
+                            app:singleSelection="true"
+                            app:selectionRequired="true">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/priorityMediumButton"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="Medium"
+                                android:textSize="@dimen/text_label_small"
+                                android:fontFamily="@font/poppins_medium"
+                                android:checked="true"
+                                style="@style/Widget.Material3.Button.OutlinedButton" />
+
+                        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Action Buttons -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/spacing_32"
+                    android:paddingTop="@dimen/spacing_24"
+                    android:gravity="center"
+                    android:weightSum="2">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/createButton"
+                        android:layout_width="0dp"
+                        android:layout_height="56dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="@dimen/spacing_8"
+                        android:text="Create Task"
+                        android:textSize="@dimen/text_body_medium"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:textStyle="bold"
+                        app:cornerRadius="@dimen/radius_medium"
+                        style="@style/Widget.Material3.Button" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/cancelButton"
+                        android:layout_width="0dp"
+                        android:layout_height="56dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/spacing_8"
+                        android:text="Cancel"
+                        android:textSize="@dimen/text_body_medium"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:textStyle="bold"
+                        app:cornerRadius="@dimen/radius_medium"
+                        style="@style/Widget.Material3.Button.TonalButton" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Validation Summary Alert -->
+        <LinearLayout
+            android:id="@+id/validationAlert"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_24"
+            android:orientation="horizontal"
+            android:background="@color/error_container"
+            android:padding="@dimen/spacing_16"
+            android:gravity="center_vertical"
+            android:visibility="visible">
+
+            <ImageView
+                android:layout_width="@dimen/icon_size_medium"
+                android:layout_height="@dimen/icon_size_medium"
+                android:src="@drawable/ic_error"
+                android:contentDescription="@null"
+                android:tint="@color/error" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="@dimen/spacing_16">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ACTION REQUIRED"
+                    android:textSize="@dimen/text_label_small"
+                    android:textColor="@color/error"
+                    android:fontFamily="@font/poppins_bold"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.05" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Please correct the errors in the Title and Due Date fields before proceeding."
+                    android:textSize="@dimen/text_body_small"
+                    android:textColor="@color/on_error_container"
+                    android:fontFamily="@font/poppins_regular"
+                    android:layout_marginTop="@dimen/spacing_4" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

@@ -18,4 +18,40 @@
     <string name="state_loading">Đang tải…</string>
     <string name="state_empty_tasks">Chưa có công việc nào</string>
     <string name="state_error_generic">Đã xảy ra lỗi. Vui lòng thử lại.</string>
+
+    <!-- Bottom Navigation Labels -->
+    <string name="nav_home">Home</string>
+    <string name="nav_task_list">Task List</string>
+    <string name="nav_calendar">Calendar</string>
+    <string name="nav_stats">Stats</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Home Dashboard Strings -->
+    <string name="dashboard_greeting_prefix">Hello,</string>
+    <string name="dashboard_total_tasks">Total Tasks</string>
+    <string name="dashboard_completed">Completed</string>
+    <string name="dashboard_pending">Pending</string>
+    <string name="dashboard_overdue">Overdue</string>
+    <string name="dashboard_todays_tasks">Today\'s Tasks</string>
+    <string name="dashboard_view_all">View All</string>
+    <string name="dashboard_productivity_insight">Productivity Insight</string>
+    <string name="dashboard_upcoming">Upcoming</string>
+    <string name="dashboard_tomorrow">Tomorrow</string>
+    <string name="dashboard_view_full_calendar">View Full Calendar</string>
+
+    <!-- Calendar Fragment Strings -->
+    <string name="calendar_schedule">Schedule</string>
+
+    <!-- Settings Fragment Strings -->
+    <string name="settings_security">Security</string>
+    <string name="settings_pin_lock">PIN Lock</string>
+    <string name="settings_pin_desc">Enable a master PIN to access the application.</string>
+    <string name="settings_change_pin">Change PIN</string>
+    <string name="settings_biometric">Biometric Authentication</string>
+    <string name="settings_biometric_desc">Use Fingerprint or FaceID</string>
+    <string name="settings_auto_lock">Auto-lock Timer</string>
+    <string name="settings_auto_lock_desc">Locks when app is inactive</string>
+    <string name="settings_critical_actions">Critical Actions</string>
+    <string name="settings_logout_all">Logout from all devices</string>
+    <string name="settings_deactivate_vault">Deactivate Security Vault</string>
 </resources>

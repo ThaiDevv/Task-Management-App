@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?attr/colorSurface"
+    tools:context=".ui.StatsFragment">
+
+    <!-- Top AppBar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/spacing_16"
+        android:paddingEnd="@dimen/spacing_16"
+        android:background="?attr/colorSurface"
+        android:elevation="4dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/nav_stats"
+            android:textSize="@dimen/text_headline_large"
+            android:textColor="?attr/colorPrimary"
+            android:fontFamily="@font/poppins_semibold"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <!-- Stats Content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_24">
+
+            <!-- Stats Grid -->
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:rowCount="2"
+                android:columnOrderPreserved="false">
+
+                <!-- Total Completed Card -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_row="0"
+                    android:layout_column="0"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="fill_horizontal"
+                    android:layout_marginEnd="@dimen/spacing_8"
+                    android:layout_marginBottom="@dimen/spacing_8"
+                    app:cardCornerRadius="@dimen/radius_medium"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@color/surface_container_lowest">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/spacing_16">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Completed"
+                            android:textSize="@dimen/text_label_small"
+                            android:textColor="@color/outline"
+                            android:fontFamily="@font/poppins_bold"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="28"
+                            android:textSize="32sp"
+                            android:textColor="?attr/colorOnSurface"
+                            android:fontFamily="@font/poppins_bold"
+                            android:textStyle="bold"
+                            android:layout_marginTop="@dimen/spacing_8" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- In Progress Card -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_row="0"
+                    android:layout_column="1"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="fill_horizontal"
+                    android:layout_marginStart="@dimen/spacing_8"
+                    android:layout_marginBottom="@dimen/spacing_8"
+                    app:cardCornerRadius="@dimen/radius_medium"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@color/surface_container_lowest">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/spacing_16">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="In Progress"
+                            android:textSize="@dimen/text_label_small"
+                            android:textColor="@color/outline"
+                            android:fontFamily="@font/poppins_bold"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="12"
+                            android:textSize="32sp"
+                            android:textColor="?attr/colorOnSurface"
+                            android:fontFamily="@font/poppins_bold"
+                            android:textStyle="bold"
+                            android:layout_marginTop="@dimen/spacing_8" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Overdue Card -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_row="1"
+                    android:layout_column="0"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="fill_horizontal"
+                    android:layout_marginEnd="@dimen/spacing_8"
+                    android:layout_marginTop="@dimen/spacing_8"
+                    app:cardCornerRadius="@dimen/radius_medium"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@color/surface_container_lowest">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/spacing_16">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Overdue"
+                            android:textSize="@dimen/text_label_small"
+                            android:textColor="@color/outline"
+                            android:fontFamily="@font/poppins_bold"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="3"
+                            android:textSize="32sp"
+                            android:textColor="@color/error"
+                            android:fontFamily="@font/poppins_bold"
+                            android:textStyle="bold"
+                            android:layout_marginTop="@dimen/spacing_8" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Completion Rate Card -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_row="1"
+                    android:layout_column="1"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="fill_horizontal"
+                    android:layout_marginStart="@dimen/spacing_8"
+                    android:layout_marginTop="@dimen/spacing_8"
+                    app:cardCornerRadius="@dimen/radius_medium"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@color/surface_container_lowest">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/spacing_16">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Completion Rate"
+                            android:textSize="@dimen/text_label_small"
+                            android:textColor="@color/outline"
+                            android:fontFamily="@font/poppins_bold"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="78%"
+                            android:textSize="32sp"
+                            android:textColor="?attr/colorOnSurface"
+                            android:fontFamily="@font/poppins_bold"
+                            android:textStyle="bold"
+                            android:layout_marginTop="@dimen/spacing_8" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+            </GridLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

@@ -2,8 +2,8 @@ package com.team.taskmanagementapp.data.local.dao
 
 import androidx.room.*
 import com.team.taskmanagementapp.data.local.entity.Task
-import com.team.taskmanagementapp.data.model.enum.Priority
-import com.team.taskmanagementapp.data.model.enum.TaskStatus
+import com.team.taskmanagementapp.data.model.enums.Priority
+import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import kotlinx.coroutines.flow.Flow
 
 @Dao

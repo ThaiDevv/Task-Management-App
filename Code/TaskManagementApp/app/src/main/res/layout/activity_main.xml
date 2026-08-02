@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -8,18 +8,177 @@
     android:background="?attr/colorSurface"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/themePreviewTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/spacing_24"
-        android:text="@string/theme_preview_title"
-        android:textAppearance="@style/TextAppearance.TaskManagementApp.DisplayMedium"
-        android:textColor="?attr/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.599" />
+    <!-- Fragment Container as NavHostFragment -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/bottom_navigation_height"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_graph" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Custom Bottom Navigation Bar -->
+    <LinearLayout
+        android:id="@+id/bottom_bar_container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bottom_navigation_height"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:background="@color/surface_container_lowest"
+        android:elevation="8dp"
+        android:paddingStart="@dimen/spacing_8"
+        android:paddingEnd="@dimen/spacing_8">
+
+        <!-- Home Tab -->
+        <LinearLayout
+            android:id="@+id/tab_home"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless">
+
+            <ImageView
+                android:id="@+id/icon_home"
+                android:layout_width="@dimen/icon_size_medium"
+                android:layout_height="@dimen/icon_size_medium"
+                android:src="@drawable/ic_nav_home"
+                android:contentDescription="@null"
+                app:tint="@color/bottom_nav_icon_selector" />
+
+            <TextView
+                android:id="@+id/label_home"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nav_home"
+                android:textSize="@dimen/text_label_small"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/bottom_nav_text_selector"
+                android:layout_marginTop="@dimen/spacing_4" />
+
+        </LinearLayout>
+
+        <!-- Calendar Tab -->
+        <LinearLayout
+            android:id="@+id/tab_calendar"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless">
+
+            <ImageView
+                android:id="@+id/icon_calendar"
+                android:layout_width="@dimen/icon_size_medium"
+                android:layout_height="@dimen/icon_size_medium"
+                android:src="@drawable/ic_nav_calendar"
+                android:contentDescription="@null"
+                app:tint="@color/bottom_nav_icon_selector" />
+
+            <TextView
+                android:id="@+id/label_calendar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nav_calendar"
+                android:textSize="@dimen/text_label_small"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/bottom_nav_text_selector"
+                android:layout_marginTop="@dimen/spacing_4" />
+
+        </LinearLayout>
+
+        <!-- FAB Container (center) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_create_task"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/action_create_task"
+                android:src="@drawable/ic_add"
+                app:backgroundTint="?attr/colorPrimary"
+                app:tint="@color/on_primary"
+                app:fabSize="normal"
+                app:elevation="8dp" />
+
+        </LinearLayout>
+
+        <!-- Stats Tab -->
+        <LinearLayout
+            android:id="@+id/tab_stats"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless">
+
+            <ImageView
+                android:id="@+id/icon_stats"
+                android:layout_width="@dimen/icon_size_medium"
+                android:layout_height="@dimen/icon_size_medium"
+                android:src="@drawable/ic_nav_stats"
+                android:contentDescription="@null"
+                app:tint="@color/bottom_nav_icon_selector" />
+
+            <TextView
+                android:id="@+id/label_stats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nav_stats"
+                android:textSize="@dimen/text_label_small"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/bottom_nav_text_selector"
+                android:layout_marginTop="@dimen/spacing_4" />
+
+        </LinearLayout>
+
+        <!-- Settings Tab -->
+        <LinearLayout
+            android:id="@+id/tab_settings"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless">
+
+            <ImageView
+                android:id="@+id/icon_settings"
+                android:layout_width="@dimen/icon_size_medium"
+                android:layout_height="@dimen/icon_size_medium"
+                android:src="@drawable/ic_nav_settings"
+                android:contentDescription="@null"
+                app:tint="@color/bottom_nav_icon_selector" />
+
+            <TextView
+                android:id="@+id/label_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nav_settings"
+                android:textSize="@dimen/text_label_small"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/bottom_nav_text_selector"
+                android:layout_marginTop="@dimen/spacing_4" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

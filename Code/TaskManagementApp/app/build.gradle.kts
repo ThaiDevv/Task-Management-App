@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.activity.ktx)
+    implementation("androidx.gridlayout:gridlayout:1.0.0")
 
     // Architecture Components (ViewModel, LiveData, Lifecycle)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)

@@ -2,6 +2,7 @@
 <resources>
     <!-- TaskFlow follows a 4dp baseline grid. -->
     <dimen name="spacing_0">0dp</dimen>
+    <dimen name="spacing_2">2dp</dimen>
     <dimen name="spacing_4">4dp</dimen>
     <dimen name="spacing_8">8dp</dimen>
     <dimen name="spacing_12">12dp</dimen>
@@ -12,6 +13,7 @@
     <dimen name="spacing_40">40dp</dimen>
     <dimen name="spacing_48">48dp</dimen>
     <dimen name="spacing_64">64dp</dimen>
+    <dimen name="spacing_96">96dp</dimen>
 
     <!-- Responsive layout tokens. -->
     <dimen name="screen_margin_mobile">16dp</dimen>
@@ -33,6 +35,7 @@
     <dimen name="text_headline_medium">20sp</dimen>
     <dimen name="text_body_large">16sp</dimen>
     <dimen name="text_body_medium">14sp</dimen>
+    <dimen name="text_body_small">12sp</dimen>
     <dimen name="text_label_medium">12sp</dimen>
     <dimen name="text_label_small">10sp</dimen>
 
