@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>TaskFlow - PIN Unlock</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "error-container": "#ffdad6",
+                "on-primary-fixed": "#001848",
+                "surface-container": "#eeeeee",
+                "surface-bright": "#f9f9f9",
+                "tertiary-fixed": "#ffdad6",
+                "primary-fixed-dim": "#b2c5ff",
+                "on-surface": "#1b1b1b",
+                "surface-variant": "#e2e2e2",
+                "secondary-fixed-dim": "#b6c8de",
+                "on-primary-fixed-variant": "#0040a1",
+                "on-tertiary-fixed-variant": "#930010",
+                "on-secondary-fixed-variant": "#37485a",
+                "inverse-primary": "#b2c5ff",
+                "secondary-fixed": "#d2e4fa",
+                "secondary": "#4e6072",
+                "tertiary-container": "#c12729",
+                "inverse-on-surface": "#f1f1f1",
+                "surface-container-highest": "#e2e2e2",
+                "tertiary-fixed-dim": "#ffb3ad",
+                "background": "#f9f9f9",
+                "outline": "#737786",
+                "on-background": "#1b1b1b",
+                "on-tertiary-container": "#ffdbd7",
+                "tertiary": "#9e0514",
+                "primary": "#0045ae",
+                "inverse-surface": "#303030",
+                "surface": "#f9f9f9",
+                "on-secondary-fixed": "#091d2d",
+                "secondary-container": "#cfe2f7",
+                "surface-container-lowest": "#ffffff",
+                "on-secondary": "#ffffff",
+                "on-tertiary": "#ffffff",
+                "error": "#ba1a1a",
+                "primary-container": "#105cdb",
+                "on-primary-container": "#dae2ff",
+                "primary-fixed": "#dae2ff",
+                "surface-dim": "#dadada",
+                "on-error-container": "#93000a",
+                "on-error": "#ffffff",
+                "outline-variant": "#c3c6d7",
+                "on-primary": "#ffffff",
+                "on-surface-variant": "#424654",
+                "surface-tint": "#0055d2",
+                "surface-container-low": "#f3f3f3",
+                "on-tertiary-fixed": "#410003",
+                "on-secondary-container": "#526477",
+                "surface-container-high": "#e8e8e8"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "gutter": "24px",
+                "margin-desktop": "48px",
+                "container-max": "1280px",
+                "margin-mobile": "16px",
+                "unit": "4px"
+        },
+        "fontFamily": {
+                "label-xs": [
+                        "Poppins"
+                ],
+                "display-3l": [
+                        "Poppins"
+                ],
+                "headline-lg": [
+                        "Poppins"
+                ],
+                "body-sm": [
+                        "Poppins"
+                ],
+                "body-base": [
+                        "Poppins"
+                ],
+                "label-2xs": [
+                        "Poppins"
+                ],
+                "headline-xl": [
+                        "Poppins"
+                ],
+                "display-2l": [
+                        "Poppins"
+                ]
+        },
+        "fontSize": {
+                "label-xs": [
+                        "12px",
+                        {
+                                "lineHeight": "auto",
+                                "fontWeight": "500"
+                        }
+                ],
+                "display-3l": [
+                        "40px",
+                        {
+                                "lineHeight": "110%",
+                                "fontWeight": "700"
+                        }
+                ],
+                "headline-lg": [
+                        "20px",
+                        {
+                                "lineHeight": "140%",
+                                "fontWeight": "500"
+                        }
+                ],
+                "body-sm": [
+                        "14px",
+                        {
+                                "lineHeight": "140%",
+                                "fontWeight": "400"
+                        }
+                ],
+                "body-base": [
+                        "16px",
+                        {
+                                "lineHeight": "140%",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-2xs": [
+                        "10px",
+                        {
+                                "lineHeight": "auto",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-xl": [
+                        "24px",
+                        {
+                                "lineHeight": "120%",
+                                "fontWeight": "600"
+                        }
+                ],
+                "display-2l": [
+                        "32px",
+                        {
+                                "lineHeight": "120%",
+                                "fontWeight": "600"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        .pin-dot {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .pin-dot.filled {
+            background-color: #0045ae;
+            border-color: #0045ae;
+            transform: scale(1.1);
+        }
+        .keypad-btn {
+            transition: all 0.1s ease-out;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .keypad-btn:active {
+            transform: scale(0.95);
+            background-color: #e2e2e2;
+        }
+        .shake {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface h-screen w-screen overflow-hidden flex flex-col font-body-base antialiased">
+<!-- Top Branding -->
+<div class="flex-none pt-16 pb-8 px-gutter flex flex-col items-center justify-center">
+<div class="w-16 h-16 rounded-xl shadow-sm bg-surface-container-lowest flex items-center justify-center mb-6 overflow-hidden">
+<img alt="TaskFlow Logo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8_Vauq97h2cFnVMdyAKuw_85aWcn5BeDA5FaooZksewkwpdVXM_OC_sfmCZPtTV-at_VgZ-zKqHbgmjPg_3eTPG02L-KXqlDUKcz15lLQsvotC9TFEjmDJswha741ddA7Uc7C3Kmc0hjcBKWXP_Uouc_TUkSgg7nuaiVi70uOvObuVVxiWbD9wuUsG_wxmapr2q-lpUDsuGbPkI0YFDV3KHOUUGrdzwBQmBO05QDKSsveg7e9udsQGDIOPwtcGH1cnoytaTVt1kQ"/>
+</div>
+<h1 class="font-display-2l text-display-2l text-on-surface mb-2">Welcome Back</h1>
+<p class="font-body-base text-body-base text-on-surface-variant text-center">Enter your PIN to access TaskFlow</p>
+</div>
+<!-- PIN Visual Area -->
+<div class="flex-grow flex flex-col items-center justify-center px-gutter mb-8">
+<div class="flex gap-6 mb-8" id="pin-indicator">
+<div class="pin-dot w-4 h-4 rounded-full border-2 border-primary-fixed-dim bg-transparent"></div>
+<div class="pin-dot w-4 h-4 rounded-full border-2 border-primary-fixed-dim bg-transparent"></div>
+<div class="pin-dot w-4 h-4 rounded-full border-2 border-primary-fixed-dim bg-transparent"></div>
+<div class="pin-dot w-4 h-4 rounded-full border-2 border-primary-fixed-dim bg-transparent"></div>
+</div>
+</div>
+<!-- Keypad -->
+<div class="flex-none pb-safe px-6 md:px-gutter max-w-sm w-full mx-auto mb-8">
+<div class="grid grid-cols-3 gap-y-6 gap-x-6">
+<!-- Row 1 -->
+<button class="keypad-btn w-16 h-16 rounded-full mx-auto flex items-center justify-center font-display-2l text-display-2l text-primary bg-surface-container-low shadow-sm" onclick="enterDigit(1)">1</button>
+<button class="keypad-btn w-16 h-16 rounded-full mx-auto flex flex-col items-center justify-center bg-surface-container-low shadow-sm" onclick="enterDigit(2)">
+<span class="font-display-2l text-display-2l text-primary leading-none">2</span>
+<span class="font-label-xs text-label-xs text-outline tracking-[0.2em] mt-1">ABC</span>
+</button>
+<button class="keypad-btn w-16 h-16 rounded-full mx-auto flex flex-col items-center justify-center bg-surface-container-low shadow-sm" onclick="enterDigit(3)">
+<span class="font-display-2l text-display-2l text-primary leading-none">3</span>
+<span class="font-label-xs text-label-xs text-outline tracking-[0.2em] mt-1">DEF</span>
+</button>
+<!-- Row 2 -->
+<button class="keypad-btn w-16 h-16 rounded-full mx-auto flex flex-col items-center justify-center bg-surface-container-low shadow-sm" onclick="enterDigit(4)">
+<span class="font-display-2l text-display-2l text-primary leading-none">4</span>
+<span class="font-label-xs text-label-xs text-outline tracking-[0.2em] mt-1">GHI</span>
+</button>
+<button class="keypad-btn w-16 h-16 rounded-full mx-auto flex flex-col items-center justify-center bg-surface-container-low shadow-sm" onclick="enterDigit(5)">
+<span class="font-display-2l text-display-2l text-primary leading-none">5</span>
+<span class="font-label-xs text-label-xs text-outline tracking-[0.2em] mt-1">JKL</span>
+</button>
+<button class="keypad-btn w-16 h-16 rounded-full mx-auto flex flex-col items-center justify-center bg-surface-container-low shadow-sm" onclick="enterDigit(6)">
+<span class="font-display-2l text-display-2l text-primary leading-none">6</span>
+<span class="font-label-xs text-label-xs text-outline tracking-[0.2em] mt-1">MNO</span>
+</button>
+<!-- Row 3 -->
+<button class="keypad-btn w-16 h-16 rounded-full mx-auto flex flex-col items-center justify-center bg-surface-container-low shadow-sm" onclick="enterDigit(7)">
+<span class="font-display-2l text-display-2l text-primary leading-none">7</span>
+<span class="font-label-xs text-label-xs text-outline tracking-[0.2em] mt-1">PQRS</span>
+</button>
+<button class="keypad-btn w-16 h-16 rounded-full mx-auto flex flex-col items-center justify-center bg-surface-container-low shadow-sm" onclick="enterDigit(8)">
+<span class="font-display-2l text-display-2l text-primary leading-none">8</span>
+<span class="font-label-xs text-label-xs text-outline tracking-[0.2em] mt-1">TUV</span>
+</button>
+<button class="keypad-btn w-16 h-16 rounded-full mx-auto flex flex-col items-center justify-center bg-surface-container-low shadow-sm" onclick="enterDigit(9)">
+<span class="font-display-2l text-display-2l text-primary leading-none">9</span>
+<span class="font-label-xs text-label-xs text-outline tracking-[0.2em] mt-1">WXYZ</span>
+</button>
+<!-- Row 4 -->
+<button class="keypad-btn w-16 h-16 rounded-full mx-auto flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" onclick="biometricAuth()">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 0;">fingerprint</span>
+</button>
+<button class="keypad-btn w-16 h-16 rounded-full mx-auto flex items-center justify-center font-display-2l text-display-2l text-primary bg-surface-container-low shadow-sm" onclick="enterDigit(0)">0</button>
+<button class="keypad-btn w-16 h-16 rounded-full mx-auto flex items-center justify-center text-on-surface-variant hover:text-error transition-colors" onclick="deleteDigit()">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 0;">backspace</span>
+</button>
+</div>
+<div class="mt-8 text-center">
+<button class="font-body-base text-body-base font-medium text-primary hover:opacity-80 transition-opacity">Forgot PIN?</button>
+</div>
+</div>
+<script>
+        let pin = '';
+        const maxLen = 4;
+        const dots = document.querySelectorAll('.pin-dot');
+        const indicatorContainer = document.getElementById('pin-indicator');
+
+        function updateDots() {
+            dots.forEach((dot, index) => {
+                if (index < pin.length) {
+                    dot.classList.add('filled');
+                } else {
+                    dot.classList.remove('filled');
+                }
+            });
+
+            if (pin.length === maxLen) {
+                // Simulate check
+                setTimeout(() => {
+                    if (pin === '1234') { // Dummy success
+                        indicatorContainer.classList.remove('shake');
+                        dots.forEach(d => d.style.backgroundColor = '#105cdb'); // success blue
+                        dots.forEach(d => d.style.borderColor = '#105cdb');
+                    } else {
+                        // Fail
+                        indicatorContainer.classList.add('shake');
+                        setTimeout(() => {
+                            indicatorContainer.classList.remove('shake');
+                            pin = '';
+                            updateDots();
+                        }, 400);
+                    }
+                }, 200);
+            }
+        }
+
+        function enterDigit(num) {
+            if (pin.length < maxLen) {
+                pin += num;
+                updateDots();
+            }
+        }
+
+        function deleteDigit() {
+            if (pin.length > 0) {
+                pin = pin.slice(0, -1);
+                updateDots();
+                // Reset colors if failed previously
+                dots.forEach(d => d.style.backgroundColor = ''); 
+                dots.forEach(d => d.style.borderColor = '');
+            }
+        }
+
+        function biometricAuth() {
+            // Visual feedback for biometric click
+             dots.forEach(d => {
+                 d.classList.add('filled');
+                 d.style.backgroundColor = '#0045ae';
+                 d.style.borderColor = '#0045ae';
+             });
+             setTimeout(() => {
+                  dots.forEach(d => d.style.backgroundColor = '#105cdb');
+                  dots.forEach(d => d.style.borderColor = '#105cdb');
+             }, 300);
+        }
+    </script>
+</body></html>
