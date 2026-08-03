@@ -88,17 +88,26 @@
                         android:textColor="@color/outline"
                         android:textSize="12sp" />
 
-                    <EditText
-                        android:id="@+id/titleEditText"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/titleInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@null"
-                        android:fontFamily="@font/poppins_bold"
-                        android:hint="e.g., Database Migration"
-                        android:inputType="textCapSentences"
-                        android:textColor="@color/on_surface"
-                        android:textColorHint="@color/outline_variant"
-                        android:textSize="18sp" />
+                        app:boxBackgroundMode="none"
+                        app:errorEnabled="true">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/titleEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:fontFamily="@font/poppins_bold"
+                            android:hint="e.g., Database Migration"
+                            android:inputType="textCapSentences"
+                            android:singleLine="true"
+                            android:textColor="@color/on_surface"
+                            android:textColorHint="@color/outline_variant"
+                            android:textSize="18sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -129,19 +138,27 @@
                         android:textColor="@color/outline"
                         android:textSize="12sp" />
 
-                    <EditText
-                        android:id="@+id/descriptionEditText"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/descriptionInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@null"
-                        android:fontFamily="@font/poppins_regular"
-                        android:gravity="top"
-                        android:hint="Add notes, links, or context..."
-                        android:inputType="textMultiLine"
-                        android:minLines="3"
-                        android:textColor="@color/on_surface"
-                        android:textColorHint="@color/outline_variant"
-                        android:textSize="15sp" />
+                        app:boxBackgroundMode="none"
+                        app:errorEnabled="true">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/descriptionEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:fontFamily="@font/poppins_regular"
+                            android:gravity="top"
+                            android:hint="Add notes, links, or context..."
+                            android:inputType="textMultiLine"
+                            android:minLines="3"
+                            android:textColor="@color/on_surface"
+                            android:textColorHint="@color/outline_variant"
+                            android:textSize="15sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -207,6 +224,17 @@
                             app:tint="@color/outline" />
                     </LinearLayout>
 
+                    <TextView
+                        android:id="@+id/dateErrorText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_12"
+                        android:layout_marginBottom="@dimen/spacing_8"
+                        android:fontFamily="@font/poppins_regular"
+                        android:textColor="@color/error"
+                        android:textSize="@dimen/text_label_medium"
+                        android:visibility="gone" />
+
                     <!-- Time Picker Field -->
                     <LinearLayout
                         android:id="@+id/timePickerContainer"
@@ -240,6 +268,17 @@
                             android:src="@drawable/ic_chevron_right"
                             app:tint="@color/outline" />
                     </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/timeErrorText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_12"
+                        android:layout_marginTop="@dimen/spacing_4"
+                        android:fontFamily="@font/poppins_regular"
+                        android:textColor="@color/error"
+                        android:textSize="@dimen/text_label_medium"
+                        android:visibility="gone" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -316,6 +355,16 @@
                             android:textColor="@color/white"
                             android:textSize="14sp" />
                     </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/priorityErrorText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_4"
+                        android:fontFamily="@font/poppins_regular"
+                        android:textColor="@color/error"
+                        android:textSize="@dimen/text_label_medium"
+                        android:visibility="gone" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
