@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface"
+    android:background="@color/background"
     tools:context=".MainActivity">
 
     <!-- Fragment Container as NavHostFragment -->
@@ -16,7 +16,8 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/bottom_navigation_height"
         app:defaultNavHost="true"
-        app:navGraph="@navigation/nav_graph" />
+        app:navGraph="@navigation/nav_graph"
+        tools:layout="@layout/fragment_task_list" />
 
     <!-- Custom Bottom Navigation Bar -->
     <LinearLayout
@@ -24,9 +25,11 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_navigation_height"
         android:layout_gravity="bottom"
-        android:orientation="horizontal"
         android:background="@color/surface_container_lowest"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:elevation="8dp"
+        android:orientation="horizontal"
         android:paddingStart="@dimen/spacing_8"
         android:paddingEnd="@dimen/spacing_8">
 
@@ -36,29 +39,29 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless">
+            android:gravity="center"
+            android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/icon_home"
                 android:layout_width="@dimen/icon_size_medium"
                 android:layout_height="@dimen/icon_size_medium"
-                android:src="@drawable/ic_nav_home"
                 android:contentDescription="@null"
+                android:src="@drawable/ic_nav_home"
                 app:tint="@color/bottom_nav_icon_selector" />
 
             <TextView
                 android:id="@+id/label_home"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/nav_home"
-                android:textSize="@dimen/text_label_small"
+                android:layout_marginTop="@dimen/spacing_4"
                 android:fontFamily="@font/poppins_medium"
+                android:text="@string/nav_home"
                 android:textColor="@color/bottom_nav_text_selector"
-                android:layout_marginTop="@dimen/spacing_4" />
+                android:textSize="@dimen/text_label_small" />
 
         </LinearLayout>
 
@@ -68,50 +71,55 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless">
+            android:gravity="center"
+            android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/icon_calendar"
                 android:layout_width="@dimen/icon_size_medium"
                 android:layout_height="@dimen/icon_size_medium"
-                android:src="@drawable/ic_nav_calendar"
                 android:contentDescription="@null"
+                android:src="@drawable/ic_nav_calendar"
                 app:tint="@color/bottom_nav_icon_selector" />
 
             <TextView
                 android:id="@+id/label_calendar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/nav_calendar"
-                android:textSize="@dimen/text_label_small"
+                android:layout_marginTop="@dimen/spacing_4"
                 android:fontFamily="@font/poppins_medium"
+                android:text="@string/nav_calendar"
                 android:textColor="@color/bottom_nav_text_selector"
-                android:layout_marginTop="@dimen/spacing_4" />
+                android:textSize="@dimen/text_label_small" />
 
         </LinearLayout>
 
-        <!-- FAB Container (center) -->
+        <!-- FAB Container (Floating Center Circle) -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:gravity="center"
+            android:orientation="vertical">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_create_task"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="-20dp"
                 android:contentDescription="@string/action_create_task"
                 android:src="@drawable/ic_add"
-                app:backgroundTint="?attr/colorPrimary"
-                app:tint="@color/on_primary"
+                app:backgroundTint="@color/primary"
+                app:elevation="12dp"
+                app:fabCustomSize="56dp"
                 app:fabSize="normal"
-                app:elevation="8dp" />
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+                app:tint="@color/white" />
 
         </LinearLayout>
 
@@ -121,29 +129,29 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless">
+            android:gravity="center"
+            android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/icon_stats"
                 android:layout_width="@dimen/icon_size_medium"
                 android:layout_height="@dimen/icon_size_medium"
-                android:src="@drawable/ic_nav_stats"
                 android:contentDescription="@null"
+                android:src="@drawable/ic_nav_stats"
                 app:tint="@color/bottom_nav_icon_selector" />
 
             <TextView
                 android:id="@+id/label_stats"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/nav_stats"
-                android:textSize="@dimen/text_label_small"
+                android:layout_marginTop="@dimen/spacing_4"
                 android:fontFamily="@font/poppins_medium"
+                android:text="@string/nav_stats"
                 android:textColor="@color/bottom_nav_text_selector"
-                android:layout_marginTop="@dimen/spacing_4" />
+                android:textSize="@dimen/text_label_small" />
 
         </LinearLayout>
 
@@ -153,29 +161,29 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless">
+            android:gravity="center"
+            android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/icon_settings"
                 android:layout_width="@dimen/icon_size_medium"
                 android:layout_height="@dimen/icon_size_medium"
-                android:src="@drawable/ic_nav_settings"
                 android:contentDescription="@null"
+                android:src="@drawable/ic_nav_settings"
                 app:tint="@color/bottom_nav_icon_selector" />
 
             <TextView
                 android:id="@+id/label_settings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/nav_settings"
-                android:textSize="@dimen/text_label_small"
+                android:layout_marginTop="@dimen/spacing_4"
                 android:fontFamily="@font/poppins_medium"
+                android:text="@string/nav_settings"
                 android:textColor="@color/bottom_nav_text_selector"
-                android:layout_marginTop="@dimen/spacing_4" />
+                android:textSize="@dimen/text_label_small" />
 
         </LinearLayout>
 
