@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?attr/colorSurface"
+    tools:context=".ui.CalendarFragment">
+
+    <!-- Top AppBar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/spacing_16"
+        android:paddingEnd="@dimen/spacing_16"
+        android:background="?attr/colorSurface"
+        android:elevation="4dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/nav_calendar"
+            android:textSize="@dimen/text_headline_large"
+            android:textColor="?attr/colorPrimary"
+            android:fontFamily="@font/poppins_semibold"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <!-- Content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_24">
+
+            <!-- Month Selector -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="@dimen/spacing_12"
+                android:paddingEnd="@dimen/spacing_12"
+                android:paddingTop="@dimen/spacing_8"
+                android:paddingBottom="@dimen/spacing_8"
+                android:background="@color/surface_container_lowest"
+                android:layout_marginBottom="@dimen/spacing_16"
+                app:cardCornerRadius="@dimen/radius_medium">
+
+                <ImageView
+                    android:layout_width="@dimen/icon_size_medium"
+                    android:layout_height="@dimen/icon_size_medium"
+                    android:src="@drawable/ic_nav_calendar"
+                    android:contentDescription="@null"
+                    android:tint="@color/outline" />
+
+                <TextView
+                    android:id="@+id/monthYearText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/spacing_12"
+                    android:text="October 2024"
+                    android:textSize="@dimen/text_headline_medium"
+                    android:textColor="?attr/colorOnSurface"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <!-- Calendar Grid -->
+            <GridLayout
+                android:id="@+id/calendarGrid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="7"
+                android:rowCount="6"
+                android:padding="@dimen/spacing_8"
+                android:layout_marginBottom="@dimen/spacing_24"
+                android:background="@color/surface_container_lowest"
+                android:layout_gravity="center_horizontal" />
+
+            <!-- Schedule Title -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/calendar_schedule"
+                android:textSize="@dimen/text_headline_large"
+                android:textColor="?attr/colorOnSurface"
+                android:fontFamily="@font/poppins_bold"
+                android:textStyle="bold"
+                android:layout_marginBottom="@dimen/spacing_16" />
+
+            <!-- Schedule Tasks List -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/scheduleRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/item_task_summary" />
+
+            <!-- Empty State -->
+            <TextView
+                android:id="@+id/emptyScheduleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/state_empty_tasks"
+                android:textSize="@dimen/text_body_medium"
+                android:textColor="@color/outline"
+                android:textAlignment="center"
+                android:layout_marginTop="@dimen/spacing_32"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

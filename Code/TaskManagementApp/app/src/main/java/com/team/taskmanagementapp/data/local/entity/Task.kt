@@ -3,9 +3,9 @@ package com.team.taskmanagementapp.data.local.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.team.taskmanagementapp.data.model.enum.Priority
-import com.team.taskmanagementapp.data.model.enum.RecurrenceType
-import com.team.taskmanagementapp.data.model.enum.TaskStatus
+import com.team.taskmanagementapp.data.model.enums.Priority
+import com.team.taskmanagementapp.data.model.enums.RecurrenceType
+import com.team.taskmanagementapp.data.model.enums.TaskStatus
 
 @Entity(tableName = "tasks")
 data class Task (

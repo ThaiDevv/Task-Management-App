@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/taskListFragment">
+
+    <fragment
+        android:id="@+id/taskListFragment"
+        android:name="com.team.taskmanagementapp.ui.TaskListFragment"
+        android:label="@string/nav_task_list" />
+
+    <fragment
+        android:id="@+id/calendarFragment"
+        android:name="com.team.taskmanagementapp.ui.CalendarFragment"
+        android:label="@string/nav_calendar" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.team.taskmanagementapp.ui.SettingsFragment"
+        android:label="@string/nav_settings" />
+
+    <fragment
+        android:id="@+id/statsFragment"
+        android:name="com.team.taskmanagementapp.ui.StatsFragment"
+        android:label="@string/nav_stats" />
+
+    <fragment
+        android:id="@+id/createTaskFragment"
+        android:name="com.team.taskmanagementapp.ui.CreateTaskFragment"
+        android:label="Create New Task" />
+
+</navigation>

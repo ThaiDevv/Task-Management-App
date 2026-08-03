@@ -1,9 +1,9 @@
 package com.team.taskmanagementapp.data.local.db
 
 import androidx.room.TypeConverter
-import com.team.taskmanagementapp.data.model.enum.Priority
-import com.team.taskmanagementapp.data.model.enum.RecurrenceType
-import com.team.taskmanagementapp.data.model.enum.TaskStatus
+import com.team.taskmanagementapp.data.model.enums.Priority
+import com.team.taskmanagementapp.data.model.enums.RecurrenceType
+import com.team.taskmanagementapp.data.model.enums.TaskStatus
 
 class Converters {
     @TypeConverter

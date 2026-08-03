@@ -2,8 +2,8 @@ package com.team.taskmanagementapp.data.repository
 
 import com.team.taskmanagementapp.data.local.dao.TaskDao
 import com.team.taskmanagementapp.data.local.entity.Task
-import com.team.taskmanagementapp.data.model.enum.Priority
-import com.team.taskmanagementapp.data.model.enum.TaskStatus
+import com.team.taskmanagementapp.data.model.enums.Priority
+import com.team.taskmanagementapp.data.model.enums.TaskStatus
 
 class TaskRepository(
     private val taskDao: TaskDao
