@@ -226,6 +226,16 @@
 
                         </com.google.android.material.button.MaterialButtonToggleGroup>
 
+                        <TextView
+                            android:id="@+id/priorityErrorText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_4"
+                            android:fontFamily="@font/poppins_regular"
+                            android:textColor="@color/error"
+                            android:textSize="@dimen/text_label_medium"
+                            android:visibility="gone" />
+
                     </LinearLayout>
 
                 </LinearLayout>

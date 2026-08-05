@@ -10,8 +10,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.navigation.fragment.findNavController
-import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.databinding.FragmentTaskListBinding
 import com.team.taskmanagementapp.ui.base.UiState
 import com.team.taskmanagementapp.viewmodel.TaskViewModel
@@ -62,11 +60,6 @@ class TaskListFragment : Fragment() {
         binding.tasksRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = taskAdapter
-        }
-
-        // FAB to Create Task
-        binding.fabCreateTask.setOnClickListener {
-            findNavController().navigate(R.id.createTaskFragment)
         }
     }
 

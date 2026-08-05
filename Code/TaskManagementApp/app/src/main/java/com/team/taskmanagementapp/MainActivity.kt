@@ -1,5 +1,6 @@
 package com.team.taskmanagementapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -9,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.team.taskmanagementapp.databinding.ActivityMainBinding
+import com.team.taskmanagementapp.ui.activity.AddEditTaskActivity
 
 /**
  * Main Activity serving as the primary entry point and container for the app's navigation tabs.
@@ -45,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
         // FAB to Create Task
         binding.fabCreateTask.setOnClickListener {
-            navController.navigate(R.id.createTaskFragment)
+            startActivity(Intent(this, AddEditTaskActivity::class.java))
         }
     }
 

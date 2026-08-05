@@ -10,17 +10,20 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doAfterTextChanged
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.db.AppDatabase
 import com.team.taskmanagementapp.data.local.entity.Task
-import com.team.taskmanagementapp.data.model.enum.Priority
-import com.team.taskmanagementapp.data.model.enum.RecurrenceType
-import com.team.taskmanagementapp.data.model.enum.TaskStatus
+import com.team.taskmanagementapp.data.model.enums.Priority
+import com.team.taskmanagementapp.data.model.enums.RecurrenceType
+import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.databinding.ActivityAddEditTaskBinding
 import com.team.taskmanagementapp.ui.base.UiState
 import com.team.taskmanagementapp.ui.viewmodel.AddEditTaskViewModel
 import com.team.taskmanagementapp.ui.viewmodel.AddEditTaskViewModelFactory
+import com.team.taskmanagementapp.util.ValidationHelper
+import com.team.taskmanagementapp.util.ValidationHelper.ValidationError
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -40,6 +43,7 @@ class AddEditTaskActivity : AppCompatActivity() {
     private var selectedStatus: TaskStatus = TaskStatus.TODO
     private var taskId: Long = -1L
     private var isEditMode = false
+    private var isSaving = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +54,7 @@ class AddEditTaskActivity : AppCompatActivity() {
         isEditMode = taskId != -1L
 
         setupUI()
+        setupValidation()
         setupClickListeners()
         observeViewModel()
 
@@ -108,6 +113,7 @@ class AddEditTaskActivity : AppCompatActivity() {
         updateSelectionTextColor(binding.priorityLow, priority == Priority.LOW)
         updateSelectionTextColor(binding.priorityMedium, priority == Priority.MEDIUM)
         updateSelectionTextColor(binding.priorityHigh, priority == Priority.HIGH)
+        showInlineError(binding.priorityErrorText, ValidationHelper.validatePriority(priority))
     }
 
     private fun setupRecurrenceSelection() {
@@ -166,6 +172,8 @@ class AddEditTaskActivity : AppCompatActivity() {
             DatePickerDialog(this, { _, y, m, d ->
                 selectedDate.set(y, m, d)
                 updateDateLabel()
+                validateDateField()
+                validateTimeField()
             }, selectedDate.get(Calendar.YEAR), selectedDate.get(Calendar.MONTH), selectedDate.get(Calendar.DAY_OF_MONTH)).show()
         }
 
@@ -174,6 +182,7 @@ class AddEditTaskActivity : AppCompatActivity() {
                 selectedTime.set(Calendar.HOUR_OF_DAY, h)
                 selectedTime.set(Calendar.MINUTE, min)
                 updateTimeLabel()
+                validateTimeField()
             }, selectedTime.get(Calendar.HOUR_OF_DAY), selectedTime.get(Calendar.MINUTE), false).show()
         }
     }
@@ -188,9 +197,81 @@ class AddEditTaskActivity : AppCompatActivity() {
         binding.timeText.text = format.format(selectedTime.time)
     }
 
+    private fun setupValidation() {
+        binding.titleEditText.doAfterTextChanged { text ->
+            binding.titleInputLayout.error = validationMessage(
+                ValidationHelper.validateTitle(text?.toString().orEmpty())
+            )
+        }
+
+        binding.descriptionEditText.doAfterTextChanged { text ->
+            binding.descriptionInputLayout.error = validationMessage(
+                ValidationHelper.validateDescription(text?.toString().orEmpty())
+            )
+        }
+    }
+
+    private fun validateAll(): Boolean {
+        val title = binding.titleEditText.text?.toString().orEmpty()
+        val description = binding.descriptionEditText.text?.toString().orEmpty()
+        val dueDate = selectedDate.timeInMillis
+        val dueTime = selectedTime.timeInMillis
+
+        binding.titleInputLayout.error = validationMessage(ValidationHelper.validateTitle(title))
+        binding.descriptionInputLayout.error = validationMessage(
+            ValidationHelper.validateDescription(description)
+        )
+        validateDateField()
+        validateTimeField()
+        showInlineError(
+            binding.priorityErrorText,
+            ValidationHelper.validatePriority(selectedPriority)
+        )
+
+        return ValidationHelper.validateAll(
+            title = title,
+            description = description,
+            dueDateMillis = dueDate,
+            dueTimeMillis = dueTime,
+            priority = selectedPriority,
+            isNewTask = !isEditMode
+        )
+    }
+
+    private fun validateDateField() {
+        showInlineError(
+            binding.dateErrorText,
+            ValidationHelper.validateDueDate(
+                dueDateMillis = selectedDate.timeInMillis,
+                isNewTask = !isEditMode
+            )
+        )
+    }
+
+    private fun validateTimeField() {
+        showInlineError(
+            binding.timeErrorText,
+            ValidationHelper.validateDueTime(
+                dueDateMillis = selectedDate.timeInMillis,
+                dueTimeMillis = selectedTime.timeInMillis
+            )
+        )
+    }
+
+    private fun showInlineError(view: TextView, error: ValidationError?) {
+        view.text = validationMessage(error)
+        view.visibility = if (error == null) View.GONE else View.VISIBLE
+    }
+
+    private fun validationMessage(error: ValidationError?): String? =
+        error?.let { getString(it.messageRes) }
+
     private fun saveTask() {
+        if (!validateAll()) return
+
         val title = binding.titleEditText.text.toString()
         val description = binding.descriptionEditText.text.toString()
+        isSaving = true
 
         viewModel.saveTask(
             id = if (isEditMode) taskId.toInt() else 0,
@@ -214,10 +295,13 @@ class AddEditTaskActivity : AppCompatActivity() {
         viewModel.uiState.observe(this) { state ->
             when (state) {
                 is UiState.Success -> {
-                    Toast.makeText(this, if (isEditMode) "Task Updated" else "Task Created", Toast.LENGTH_SHORT).show()
-                    finish()
+                    if (isSaving) {
+                        Toast.makeText(this, if (isEditMode) "Task Updated" else "Task Created", Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
                 }
                 is UiState.Error -> {
+                    isSaving = false
                     Toast.makeText(this, state.message, Toast.LENGTH_SHORT).show()
                 }
                 else -> {}
