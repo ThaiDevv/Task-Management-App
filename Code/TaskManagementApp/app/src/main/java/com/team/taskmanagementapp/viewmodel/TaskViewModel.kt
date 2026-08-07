@@ -81,35 +81,39 @@ class TaskViewModel(
 
     fun toggleTaskComplete(task: Task) {
         viewModelScope.launch {
-            val now = System.currentTimeMillis()
-            val wasCompleted = task.isCompleted
+            try {
+                val now = System.currentTimeMillis()
+                val wasCompleted = task.isCompleted
 
-            val updatedTask = task.copy(
-                isCompleted = !wasCompleted,
-                status = if (!wasCompleted) TaskStatus.COMPLETED else TaskStatus.TODO,
-                updatedAt = now
-            )
-
-            // Mark task as completed/uncompleted first
-            repository.update(updatedTask)
-
-            // Recurring task completed -> create the next task instance
-            if (!wasCompleted && task.isRecurring && task.recurrenceType != RecurrenceType.NONE) {
-                val nextInstance = task.copy(
-                    id = 0,
-                    isCompleted = false,
-                    status = TaskStatus.TODO,
-                    dueDate = calculateNextDueDate(task),
-                    dueTime = task.dueTime,
-                    createdAt = now,
+                val updatedTask = task.copy(
+                    isCompleted = !wasCompleted,
+                    status = if (!wasCompleted) TaskStatus.COMPLETED else TaskStatus.TODO,
                     updatedAt = now
                 )
-                repository.insert(nextInstance)
-            }
 
-            // Keep detail screen in sync
-            if (_selectedTask.value?.id == task.id) {
-                _selectedTask.value = updatedTask
+                // Mark task as completed/uncompleted first
+                repository.update(updatedTask)
+
+                // Recurring task completed -> create the next task instance
+                if (!wasCompleted && task.isRecurring && task.recurrenceType != RecurrenceType.NONE) {
+                    val nextInstance = task.copy(
+                        id = 0,
+                        isCompleted = false,
+                        status = TaskStatus.TODO,
+                        dueDate = calculateNextDueDate(task),
+                        dueTime = task.dueTime,
+                        createdAt = now,
+                        updatedAt = now
+                    )
+                    repository.insert(nextInstance)
+                }
+
+                // Keep detail screen in sync
+                if (_selectedTask.value?.id == task.id) {
+                    _selectedTask.value = updatedTask
+                }
+            } catch (e: Exception) {
+                _uiState.value = UiState.Error("Lỗi khi cập nhật trạng thái công việc: ${e.localizedMessage}")
             }
         }
     }

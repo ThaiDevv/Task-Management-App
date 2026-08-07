@@ -51,7 +51,7 @@ class TaskAdapter(
 
             // UI feedback: strikethrough title, dimmed card
             if (task.isCompleted) {
-                binding.taskTitle.paintFlags =
+binding.taskTitle.paintFlags =
                     binding.taskTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
                 binding.taskTitle.alpha = 0.6f
                 binding.root.alpha = 0.6f
