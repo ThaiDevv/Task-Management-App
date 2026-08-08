@@ -188,19 +188,34 @@ class TaskDetailActivity : AppCompatActivity() {
     }
 
     private fun showDeleteConfirmDialog() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.task_detail_delete_confirm_title)
-            .setMessage(R.string.task_detail_delete_confirm_message)
-            .setNegativeButton(R.string.task_detail_delete_confirm_negative) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setPositiveButton(R.string.task_detail_delete_confirm_positive) { _, _ ->
-                currentTask?.let { task ->
-                    viewModel.deleteTask(task)
-                    finish()
+        val task = currentTask ?: return
+
+        if (task.isRecurring) {
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.task_detail_delete_recurring_title)
+                .setMessage(R.string.task_detail_delete_recurring_msg)
+                .setNeutralButton(R.string.action_cancel) { dialog, _ ->
+                    dialog.dismiss()
                 }
-            }
-            .show()
+                .setNegativeButton(R.string.task_detail_delete_only_this) { _, _ ->
+                    // TODO: PART 2 - Delete only this instance
+                }
+                .setPositiveButton(R.string.task_detail_delete_all_occurrences) { _, _ ->
+                    // TODO: PART 2 - Delete all occurrences
+                }
+                .show()
+        } else {
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.task_detail_delete_confirm_title)
+                .setMessage(R.string.task_detail_delete_confirm_msg)
+                .setNegativeButton(R.string.task_detail_delete_confirm_negative) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .setPositiveButton(R.string.task_detail_delete_confirm_positive) { _, _ ->
+                    // TODO: PART 2 - Standard delete
+                }
+                .show()
+        }
     }
 
     private fun setupEditButton() {

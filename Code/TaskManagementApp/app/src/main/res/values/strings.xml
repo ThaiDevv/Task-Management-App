@@ -56,6 +56,12 @@
     <string name="task_detail_button_delete">🗑️ Xóa</string>
     <string name="task_detail_delete_confirm_positive">Xóa</string>
     <string name="task_detail_delete_confirm_negative">Hủy</string>
+
+    <!-- Recurring Task Deletion -->
+    <string name="task_detail_delete_recurring_title">Xóa công việc định kỳ</string>
+    <string name="task_detail_delete_recurring_msg">Bạn muốn xóa chỉ công việc này hay tất cả các công việc trong chuỗi định kỳ?</string>
+    <string name="task_detail_delete_only_this">Chỉ công việc này</string>
+    <string name="task_detail_delete_all_occurrences">Tất cả công việc</string>
     <string name="task_detail_recurrence_none">Không lặp lại</string>
     <string name="task_detail_recurrence_daily">Hàng ngày</string>
     <string name="task_detail_recurrence_weekly">Hàng tuần</string>
