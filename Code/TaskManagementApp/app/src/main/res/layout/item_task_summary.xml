@@ -97,7 +97,8 @@
                 android:fontFamily="@font/poppins_medium"
                 android:textStyle="bold"
                 android:textAllCaps="true"
-                android:background="@drawable/bg_priority_badge" />
+                android:background="@drawable/bg_pill_outlined"
+                android:textColor="@color/on_surface" />
 
         </LinearLayout>
 

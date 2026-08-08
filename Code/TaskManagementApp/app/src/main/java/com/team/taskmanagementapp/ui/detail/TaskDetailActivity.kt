@@ -1,6 +1,7 @@
 package com.team.taskmanagementapp.ui.detail
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -9,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import android.graphics.drawable.GradientDrawable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.db.AppDatabase
@@ -98,13 +100,15 @@ class TaskDetailActivity : AppCompatActivity() {
             
             binding.fabComplete.setImageResource(R.drawable.ic_time)
             binding.fabComplete.backgroundTintList = ContextCompat.getColorStateList(this, R.color.outline)
+            binding.fabComplete.contentDescription = getString(R.string.action_mark_incomplete)
         } else {
             binding.btnComplete.text = getString(R.string.task_detail_button_complete)
-            binding.btnComplete.setIconResource(R.drawable.ic_add_task) // Show completed icon
+            binding.btnComplete.setIconResource(R.drawable.ic_check)
             binding.btnComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.primary))
             
-            binding.fabComplete.setImageResource(R.drawable.ic_add_task)
+            binding.fabComplete.setImageResource(R.drawable.ic_check)
             binding.fabComplete.backgroundTintList = ContextCompat.getColorStateList(this, R.color.primary)
+            binding.fabComplete.contentDescription = getString(R.string.action_mark_complete)
         }
     }
 
@@ -122,18 +126,10 @@ class TaskDetailActivity : AppCompatActivity() {
         }
 
         binding.tvStatusBadge.text = getString(textResId)
-        binding.tvStatusBadge.setTextColor(ContextCompat.getColor(this, colorResId))
-
-        val bgDrawable = ContextCompat.getDrawable(this, R.drawable.bg_badge_status)?.mutate()
-        bgDrawable?.setTint(ContextCompat.getColor(this, colorResId).let { color ->
-            android.graphics.Color.argb(
-                51,
-                android.graphics.Color.red(color),
-                android.graphics.Color.green(color),
-                android.graphics.Color.blue(color)
-            )
-        })
-        binding.tvStatusBadge.background = bgDrawable
+        val color = ContextCompat.getColor(this, colorResId)
+        binding.tvStatusBadge.setTextColor(color)
+        binding.badgeStatus.background = createBadgeBackground(color)
+        binding.ivStatusBadge.setColorFilter(color)
     }
 
     private fun bindPriorityBadge(priority: Priority) {
@@ -145,19 +141,18 @@ class TaskDetailActivity : AppCompatActivity() {
         }
 
         binding.tvPriorityBadge.text = getString(textResId)
-        binding.tvPriorityBadge.setTextColor(ContextCompat.getColor(this, colorResId))
-
-        val bgDrawable = ContextCompat.getDrawable(this, R.drawable.bg_badge_priority)?.mutate()
-        bgDrawable?.setTint(ContextCompat.getColor(this, colorResId).let { color ->
-            android.graphics.Color.argb(
-                51,
-                android.graphics.Color.red(color),
-                android.graphics.Color.green(color),
-                android.graphics.Color.blue(color)
-            )
-        })
-        binding.tvPriorityBadge.background = bgDrawable
+        val color = ContextCompat.getColor(this, colorResId)
+        binding.tvPriorityBadge.setTextColor(color)
+        binding.badgePriority.background = createBadgeBackground(color)
+        binding.ivPriorityBadge.setColorFilter(color)
     }
+
+    private fun createBadgeBackground(color: Int): GradientDrawable =
+        GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadius = resources.getDimension(R.dimen.radius_full)
+            setColor(Color.argb(51, Color.red(color), Color.green(color), Color.blue(color)))
+        }
 
     private fun bindRecurrence(task: Task) {
         if (!task.isRecurring || task.recurrenceType == RecurrenceType.NONE) {
