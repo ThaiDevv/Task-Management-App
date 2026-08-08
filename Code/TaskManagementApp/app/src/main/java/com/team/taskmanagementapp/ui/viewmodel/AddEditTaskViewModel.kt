@@ -83,21 +83,26 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
                         return@launch
                     }
                 } else {
+                    val now = System.currentTimeMillis()
                     val task = Task(
-                        title = title,
-                        description = description,
+                        id = 0,
+                        title = title.trim(),
+                        description = description.trim(),
                         dueDate = dueDate,
                         dueTime = dueTime,
                         priority = priority,
                         recurrenceType = recurrenceType,
                         reminderMinutes = reminderMinutes,
-                        status = status
+                        status = status,
+                        isCompleted = false,
+                        createdAt = now,
+                        updatedAt = now
                     )
                     repository.insert(task)
                 }
                 _uiState.value = UiState.Success(Unit)
             } catch (e: Exception) {
-                _uiState.value = UiState.Error(e.message ?: "Failed to save task")
+                _uiState.value = UiState.Error(e.localizedMessage ?: "Failed to save task")
             }
         }
     }
