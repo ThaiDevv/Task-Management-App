@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
+import com.google.android.material.snackbar.Snackbar
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.db.AppDatabase
 import com.team.taskmanagementapp.data.local.entity.Task
@@ -267,7 +268,10 @@ class AddEditTaskActivity : AppCompatActivity() {
         error?.let { getString(it.messageRes) }
 
     private fun saveTask() {
-        if (!validateAll()) return
+        if (!validateAll()) {
+            Toast.makeText(this, getString(R.string.validation_form_invalid), Toast.LENGTH_SHORT).show()
+            return
+        }
 
         val title = binding.titleEditText.text.toString()
         val description = binding.descriptionEditText.text.toString()
@@ -296,7 +300,8 @@ class AddEditTaskActivity : AppCompatActivity() {
             when (state) {
                 is UiState.Success -> {
                     if (isSaving) {
-                        Toast.makeText(this, if (isEditMode) "Task Updated" else "Task Created", Toast.LENGTH_SHORT).show()
+                        val message = if (isEditMode) "Task updated successfully" else "Task created successfully"
+                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                         finish()
                     }
                 }
