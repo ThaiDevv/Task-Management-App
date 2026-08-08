@@ -7,8 +7,11 @@ import com.team.taskmanagementapp.data.model.enums.Priority
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.ui.base.UiState
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
@@ -17,8 +20,12 @@ class TaskViewModel(
     private val repository: TaskRepository
 ) : ViewModel() {
 
+    private val _deleteSuccess = MutableSharedFlow<Boolean>()
+    val deleteSuccess = _deleteSuccess.asSharedFlow()
+
     private val _uiState = MutableStateFlow<UiState<List<Task>>>(UiState.Loading)
     val uiState: StateFlow<UiState<List<Task>>> = _uiState.asStateFlow()
+
 
     private val _selectedTask = MutableStateFlow<Task?>(null)
     val selectedTask: StateFlow<Task?> = _selectedTask.asStateFlow()
@@ -70,6 +77,7 @@ class TaskViewModel(
         viewModelScope.launch {
             try {
                 repository.delete(task)
+                _deleteSuccess.emit(true)
             } catch (e: Exception) {
                 _uiState.value = UiState.Error("Lỗi khi xóa công việc: ${e.localizedMessage}")
             }

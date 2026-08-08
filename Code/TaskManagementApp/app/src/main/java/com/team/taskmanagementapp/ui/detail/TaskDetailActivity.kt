@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.db.AppDatabase
 import com.team.taskmanagementapp.data.local.entity.Task
@@ -71,6 +72,7 @@ class TaskDetailActivity : AppCompatActivity() {
         setupCompleteButton()
         setupEditButton()
         setupDeleteButton()
+        observeDeleteSuccess()
     }
 
     private fun bindTaskData(task: Task) {
@@ -217,6 +219,19 @@ class TaskDetailActivity : AppCompatActivity() {
                     viewModel.deleteTask(task)
                 }
                 .show()
+        }
+    }
+
+    private fun observeDeleteSuccess() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.deleteSuccess.collect { success ->
+                    if (success) {
+                        Snackbar.make(binding.root, R.string.task_deleted, Snackbar.LENGTH_SHORT).show()
+                        finish()
+                    }
+                }
+            }
         }
     }
 
