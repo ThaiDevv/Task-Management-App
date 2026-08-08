@@ -90,22 +90,13 @@ class TaskDetailActivity : AppCompatActivity() {
         // Recurrence Card & Day Selector
         bindRecurrence(task)
 
-        // Complete Button state, text, and icons
-        if (task.isCompleted) {
-            binding.btnComplete.text = getString(R.string.task_detail_button_uncomplete)
-            binding.btnComplete.setIconResource(R.drawable.ic_time) // Show incomplete symbol or time icon
-            binding.btnComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.outline))
-            
-            binding.fabComplete.setImageResource(R.drawable.ic_time)
-            binding.fabComplete.backgroundTintList = ContextCompat.getColorStateList(this, R.color.outline)
+        // Complete Button state & text
+        val completeText = if (task.isCompleted) {
+            getString(R.string.task_detail_button_uncomplete)
         } else {
-            binding.btnComplete.text = getString(R.string.task_detail_button_complete)
-            binding.btnComplete.setIconResource(R.drawable.ic_add_task) // Show completed icon
-            binding.btnComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.primary))
-            
-            binding.fabComplete.setImageResource(R.drawable.ic_add_task)
-            binding.fabComplete.backgroundTintList = ContextCompat.getColorStateList(this, R.color.primary)
+            getString(R.string.task_detail_button_complete)
         }
+        binding.btnComplete.text = completeText
     }
 
     private fun bindStatusBadge(status: TaskStatus, task: Task) {
@@ -194,6 +185,8 @@ class TaskDetailActivity : AppCompatActivity() {
     }
 
     private fun showDeleteConfirmDialog() {
+        val task = currentTask ?: return
+
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.task_detail_delete_confirm_title)
             .setMessage(R.string.task_detail_delete_confirm_msg)
@@ -201,10 +194,8 @@ class TaskDetailActivity : AppCompatActivity() {
                 dialog.dismiss()
             }
             .setPositiveButton(R.string.task_detail_delete_confirm_positive) { _, _ ->
-                currentTask?.let { task ->
-                    viewModel.deleteTask(task)
-                    finish()
-                }
+                viewModel.deleteTask(task)
+                finish()
             }
             .show()
     }
