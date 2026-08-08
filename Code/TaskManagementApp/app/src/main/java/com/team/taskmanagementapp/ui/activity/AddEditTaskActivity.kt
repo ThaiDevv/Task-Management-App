@@ -2,16 +2,21 @@ package com.team.taskmanagementapp.ui.activity
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
+
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.snackbar.Snackbar
+
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.db.AppDatabase
 import com.team.taskmanagementapp.data.local.entity.Task
@@ -23,8 +28,10 @@ import com.team.taskmanagementapp.databinding.ActivityAddEditTaskBinding
 import com.team.taskmanagementapp.ui.base.UiState
 import com.team.taskmanagementapp.ui.viewmodel.AddEditTaskViewModel
 import com.team.taskmanagementapp.ui.viewmodel.AddEditTaskViewModelFactory
+import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.ValidationHelper
 import com.team.taskmanagementapp.util.ValidationHelper.ValidationError
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -45,6 +52,8 @@ class AddEditTaskActivity : AppCompatActivity() {
     private var taskId: Long = -1L
     private var isEditMode = false
     private var isSaving = false
+    private var loadedTask: Task? = null
+    private var isFormPopulated = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +69,7 @@ class AddEditTaskActivity : AppCompatActivity() {
         observeViewModel()
 
         if (isEditMode) {
-            viewModel.loadTask(taskId)
+            observeTask(taskId)
         }
     }
 
@@ -147,7 +156,12 @@ class AddEditTaskActivity : AppCompatActivity() {
     }
 
     private fun updateSelectionTextColor(view: TextView, isSelected: Boolean) {
-        view.setTextColor(if (isSelected) ContextCompat.getColor(this, R.color.white) else ContextCompat.getColor(this, R.color.black))
+        view.setTextColor(
+            ContextCompat.getColor(
+                this,
+                if (isSelected) R.color.white else R.color.on_surface
+            )
+        )
     }
 
     private fun setupReminderSelection() {
@@ -275,27 +289,31 @@ class AddEditTaskActivity : AppCompatActivity() {
 
         val title = binding.titleEditText.text.toString()
         val description = binding.descriptionEditText.text.toString()
-        isSaving = true
+        if (isEditMode) {
+            val task = loadedTask
+            if (task == null) {
+                Toast.makeText(this, "Task is still loading", Toast.LENGTH_SHORT).show()
+                return
+            }
 
-        viewModel.saveTask(
-            id = if (isEditMode) taskId.toInt() else 0,
-            title = title,
-            description = description,
-            dueDate = selectedDate.timeInMillis,
-            dueTime = selectedTime.timeInMillis,
-            priority = selectedPriority,
-            recurrenceType = selectedRecurrence,
-            reminderMinutes = selectedReminderMinutes,
-            status = selectedStatus,
-            isEdit = isEditMode
-        )
+            updateExistingTask(task, title, description)
+        } else {
+            isSaving = true
+            viewModel.saveTask(
+                title = title,
+                description = description,
+                dueDate = selectedDate.timeInMillis,
+                dueTime = selectedTime.timeInMillis,
+                priority = selectedPriority,
+                recurrenceType = selectedRecurrence,
+                reminderMinutes = selectedReminderMinutes,
+                status = selectedStatus,
+                isEdit = false
+            )
+        }
     }
 
     private fun observeViewModel() {
-        viewModel.task.observe(this) { task ->
-            task?.let { populateTaskData(it) }
-        }
-
         viewModel.uiState.observe(this) { state ->
             when (state) {
                 is UiState.Success -> {
@@ -312,6 +330,80 @@ class AddEditTaskActivity : AppCompatActivity() {
                 else -> {}
             }
         }
+    }
+
+    private fun observeTask(taskId: Long) {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.observeTask(taskId).collect { task ->
+                    if (task == null) {
+                        if (!isFormPopulated) {
+                            Toast.makeText(this@AddEditTaskActivity, "Task not found", Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
+                        return@collect
+                    }
+
+                    loadedTask = task
+                    if (!isFormPopulated) {
+                        populateTaskData(task)
+                        isFormPopulated = true
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updateExistingTask(
+        existingTask: Task,
+        title: String,
+        description: String
+    ) {
+        isSaving = true
+        lifecycleScope.launch {
+            try {
+                val editedTask = existingTask.copy(
+                    title = title,
+                    description = description,
+                    dueDate = selectedDate.timeInMillis,
+                    dueTime = selectedTime.timeInMillis,
+                    priority = selectedPriority,
+                    recurrenceType = selectedRecurrence,
+                    reminderMinutes = selectedReminderMinutes,
+                    status = selectedStatus
+                )
+                val updatedTask = viewModel.updateTask(editedTask)
+
+                if (hasDueDateOrTimeChanged(existingTask, updatedTask)) {
+                    dispatchTaskDateTimeChanged(updatedTask)
+                }
+
+                Toast.makeText(this@AddEditTaskActivity, "Task Updated", Toast.LENGTH_SHORT).show()
+                setResult(RESULT_OK)
+                finish()
+            } catch (error: Exception) {
+                isSaving = false
+                Toast.makeText(
+                    this@AddEditTaskActivity,
+                    error.message ?: "Failed to update task",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private fun hasDueDateOrTimeChanged(oldTask: Task, newTask: Task): Boolean =
+        oldTask.dueDate != newTask.dueDate || oldTask.dueTime != newTask.dueTime
+
+    private fun dispatchTaskDateTimeChanged(task: Task) {
+        sendBroadcast(
+            Intent(Constants.ACTION_TASK_DATE_TIME_CHANGED).apply {
+                setPackage(packageName)
+                putExtra(Constants.EXTRA_TASK_ID, task.id.toLong())
+                putExtra(Constants.EXTRA_TASK_DUE_DATE, task.dueDate)
+                putExtra(Constants.EXTRA_TASK_DUE_TIME, task.dueTime)
+            }
+        )
     }
 
     private fun populateTaskData(task: Task) {
@@ -334,6 +426,6 @@ class AddEditTaskActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val EXTRA_TASK_ID = "extra_task_id"
+        const val EXTRA_TASK_ID = Constants.EXTRA_TASK_ID
     }
 }

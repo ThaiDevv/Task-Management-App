@@ -10,6 +10,7 @@ import com.team.taskmanagementapp.data.model.enums.RecurrenceType
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.ui.base.UiState
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel() {
@@ -19,6 +20,15 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
 
     private val _task = MutableLiveData<Task?>()
     val task: LiveData<Task?> = _task
+
+    fun observeTask(taskId: Long): Flow<Task?> = repository.observeTaskById(taskId)
+
+    suspend fun updateTask(task: Task): Task {
+        val now = System.currentTimeMillis()
+        val updatedTask = task.copy(updatedAt = maxOf(now, task.updatedAt + 1L))
+        repository.update(updatedTask)
+        return updatedTask
+    }
 
     fun loadTask(taskId: Long) {
         viewModelScope.launch {

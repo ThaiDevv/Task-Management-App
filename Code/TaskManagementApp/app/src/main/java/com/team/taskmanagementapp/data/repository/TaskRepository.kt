@@ -4,6 +4,7 @@ import com.team.taskmanagementapp.data.local.dao.TaskDao
 import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.enums.Priority
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
+import kotlinx.coroutines.flow.Flow
 
 class TaskRepository(
     private val taskDao: TaskDao
@@ -12,6 +13,9 @@ class TaskRepository(
 
     suspend fun getTaskById(id: Long) =
         taskDao.getTaskById(id)
+
+    fun observeTaskById(id: Long): Flow<Task?> =
+        taskDao.observeTaskById(id)
 
     suspend fun insert(task: Task) =
         taskDao.insertTask(task)
