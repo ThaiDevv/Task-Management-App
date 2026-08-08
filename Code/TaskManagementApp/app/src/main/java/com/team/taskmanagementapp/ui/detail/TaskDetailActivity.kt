@@ -198,10 +198,12 @@ class TaskDetailActivity : AppCompatActivity() {
                     dialog.dismiss()
                 }
                 .setNegativeButton(R.string.task_detail_delete_only_this) { _, _ ->
-                    // TODO: PART 2 - Delete only this instance
+                    // Logic to delete only this instance
+                    viewModel.deleteTask(task)
                 }
                 .setPositiveButton(R.string.task_detail_delete_all_occurrences) { _, _ ->
-                    // TODO: PART 2 - Delete all occurrences
+                    // TODO: PART 2 - Delete all occurrences is not supported by current data model
+                    // No action taken as recurring series cannot be identified
                 }
                 .show()
         } else {
@@ -212,7 +214,7 @@ class TaskDetailActivity : AppCompatActivity() {
                     dialog.dismiss()
                 }
                 .setPositiveButton(R.string.task_detail_delete_confirm_positive) { _, _ ->
-                    // TODO: PART 2 - Standard delete
+                    viewModel.deleteTask(task)
                 }
                 .show()
         }
