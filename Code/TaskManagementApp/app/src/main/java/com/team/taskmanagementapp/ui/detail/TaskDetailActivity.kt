@@ -13,11 +13,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.db.AppDatabase
 import com.team.taskmanagementapp.data.local.entity.Task
-import com.team.taskmanagementapp.data.model.enum.Priority
-import com.team.taskmanagementapp.data.model.enum.RecurrenceType
-import com.team.taskmanagementapp.data.model.enum.TaskStatus
+import com.team.taskmanagementapp.data.model.enums.Priority
+import com.team.taskmanagementapp.data.model.enums.RecurrenceType
+import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.databinding.ActivityTaskDetailBinding
+import com.team.taskmanagementapp.ui.activity.AddEditTaskActivity
 import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.DateTimeUtils
 import com.team.taskmanagementapp.viewmodel.TaskViewModel
@@ -41,11 +42,7 @@ class TaskDetailActivity : AppCompatActivity() {
         binding = ActivityTaskDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Toolbar setup
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-        binding.toolbar.setNavigationOnClickListener { finish() }
+        binding.btnBack.setOnClickListener { finish() }
 
         // Fetch task ID from Intent
         val taskId = intent.getLongExtra(Constants.EXTRA_TASK_ID, -1L)
@@ -93,13 +90,22 @@ class TaskDetailActivity : AppCompatActivity() {
         // Recurrence Card & Day Selector
         bindRecurrence(task)
 
-        // Complete Button state & text
-        val completeText = if (task.isCompleted) {
-            getString(R.string.task_detail_button_uncomplete)
+        // Complete Button state, text, and icons
+        if (task.isCompleted) {
+            binding.btnComplete.text = getString(R.string.task_detail_button_uncomplete)
+            binding.btnComplete.setIconResource(R.drawable.ic_time) // Show incomplete symbol or time icon
+            binding.btnComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.outline))
+            
+            binding.fabComplete.setImageResource(R.drawable.ic_time)
+            binding.fabComplete.backgroundTintList = ContextCompat.getColorStateList(this, R.color.outline)
         } else {
-            getString(R.string.task_detail_button_complete)
+            binding.btnComplete.text = getString(R.string.task_detail_button_complete)
+            binding.btnComplete.setIconResource(R.drawable.ic_add_task) // Show completed icon
+            binding.btnComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.primary))
+            
+            binding.fabComplete.setImageResource(R.drawable.ic_add_task)
+            binding.fabComplete.backgroundTintList = ContextCompat.getColorStateList(this, R.color.primary)
         }
-        binding.btnComplete.text = completeText
     }
 
     private fun bindStatusBadge(status: TaskStatus, task: Task) {
@@ -190,7 +196,7 @@ class TaskDetailActivity : AppCompatActivity() {
     private fun showDeleteConfirmDialog() {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.task_detail_delete_confirm_title)
-            .setMessage(R.string.task_detail_delete_confirm_message)
+            .setMessage(R.string.task_detail_delete_confirm_msg)
             .setNegativeButton(R.string.task_detail_delete_confirm_negative) { dialog, _ ->
                 dialog.dismiss()
             }
@@ -206,7 +212,7 @@ class TaskDetailActivity : AppCompatActivity() {
     private fun setupEditButton() {
         binding.btnEdit.setOnClickListener {
             currentTask?.let { task ->
-                val intent = Intent(this, Class.forName("com.team.taskmanagementapp.ui.addedit.AddEditTaskActivity"))
+                val intent = Intent(this, AddEditTaskActivity::class.java)
                 intent.putExtra(Constants.EXTRA_TASK_ID, task.id.toLong())
                 startActivity(intent)
             }

@@ -5,9 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.textfield.TextInputLayout
+import com.team.taskmanagementapp.data.model.enums.Priority
 import com.team.taskmanagementapp.databinding.FragmentCreateTaskBinding
+import com.team.taskmanagementapp.util.ValidationHelper
+import com.team.taskmanagementapp.util.ValidationHelper.ValidationError
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -80,54 +85,94 @@ class CreateTaskFragment : Fragment() {
     }
 
     private fun setupValidation() {
-        // Show error states by default (matching design)
-        binding.titleInputLayout.error = "Title is required"
-        binding.dueDateInputLayout.error = "Date cannot be in the past"
-        binding.validationAlert.visibility = View.VISIBLE
+        binding.titleInputLayout.error = null
+        binding.descriptionInputLayout.error = null
+        binding.dueDateInputLayout.error = null
+        binding.priorityErrorText.visibility = View.GONE
+        binding.validationAlert.visibility = View.GONE
+
+        binding.titleEditText.doAfterTextChanged { text ->
+            showInputError(
+                binding.titleInputLayout,
+                ValidationHelper.validateTitle(text?.toString().orEmpty())
+            )
+            updateValidationAlert()
+        }
+
+        binding.descriptionEditText.doAfterTextChanged { text ->
+            showInputError(
+                binding.descriptionInputLayout,
+                ValidationHelper.validateDescription(text?.toString().orEmpty())
+            )
+            updateValidationAlert()
+        }
+
+        binding.priorityToggleGroup.addOnButtonCheckedListener { _, _, _ ->
+            showPriorityError(ValidationHelper.validatePriority(selectedPriority()))
+            updateValidationAlert()
+        }
     }
 
     private fun validateForm(): Boolean {
-        var isValid = true
+        val title = binding.titleEditText.text?.toString().orEmpty()
+        val description = binding.descriptionEditText.text?.toString().orEmpty()
+        val dueDateMillis = selectedDueDateMillis()
+        val priority = selectedPriority()
 
-        // Validate title
-        val title = binding.titleEditText.text.toString().trim()
-        if (title.isEmpty()) {
-            binding.titleInputLayout.error = "Title is required"
-            isValid = false
-        } else {
-            binding.titleInputLayout.error = null
-        }
+        showInputError(binding.titleInputLayout, ValidationHelper.validateTitle(title))
+        showInputError(
+            binding.descriptionInputLayout,
+            ValidationHelper.validateDescription(description)
+        )
+        validateDate()
+        showPriorityError(ValidationHelper.validatePriority(priority))
 
-        // Validate date
-        if (!validateDate()) {
-            isValid = false
-        }
-
-        // Update validation alert visibility
+        val isValid = ValidationHelper.validateAll(
+            title = title,
+            description = description,
+            dueDateMillis = dueDateMillis,
+            dueTimeMillis = null,
+            priority = priority,
+            isNewTask = true
+        )
         binding.validationAlert.visibility = if (isValid) View.GONE else View.VISIBLE
 
         return isValid
     }
 
     private fun validateDate(): Boolean {
-        val dateText = binding.dueDateEditText.text.toString()
-        if (dateText.isEmpty()) {
-            binding.dueDateInputLayout.error = "Date is required"
-            return false
-        }
-
-        val today = Calendar.getInstance()
-        today.set(Calendar.HOUR_OF_DAY, 0)
-        today.set(Calendar.MINUTE, 0)
-        today.set(Calendar.SECOND, 0)
-        today.set(Calendar.MILLISECOND, 0)
-
-        if (selectedDate.before(today)) {
-            binding.dueDateInputLayout.error = "Date cannot be in the past"
-            return false
-        }
-
-        binding.dueDateInputLayout.error = null
-        return true
+        val error = ValidationHelper.validateDueDate(
+            dueDateMillis = selectedDueDateMillis(),
+            isNewTask = true
+        )
+        showInputError(binding.dueDateInputLayout, error)
+        updateValidationAlert()
+        return error == null
     }
+
+    private fun selectedDueDateMillis(): Long? =
+        selectedDate.timeInMillis.takeIf { binding.dueDateEditText.text?.isNotBlank() == true }
+
+    private fun selectedPriority(): Priority? =
+        if (binding.priorityToggleGroup.checkedButtonId == View.NO_ID) null else Priority.MEDIUM
+
+    private fun showInputError(layout: TextInputLayout, error: ValidationError?) {
+        layout.error = validationMessage(error)
+    }
+
+    private fun showPriorityError(error: ValidationError?) {
+        binding.priorityErrorText.text = validationMessage(error)
+        binding.priorityErrorText.visibility = if (error == null) View.GONE else View.VISIBLE
+    }
+
+    private fun updateValidationAlert() {
+        val hasError = binding.titleInputLayout.error != null ||
+            binding.descriptionInputLayout.error != null ||
+            binding.dueDateInputLayout.error != null ||
+            binding.priorityErrorText.visibility == View.VISIBLE
+        binding.validationAlert.visibility = if (hasError) View.VISIBLE else View.GONE
+    }
+
+    private fun validationMessage(error: ValidationError?): String? =
+        error?.let { getString(it.messageRes) }
 }

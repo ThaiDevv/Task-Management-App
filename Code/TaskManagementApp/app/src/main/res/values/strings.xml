@@ -1,6 +1,8 @@
 <resources>
     <!-- App & General Brand Strings -->
     <string name="app_name">TaskFlow</string>
+    <string name="add_task">Add Task</string>
+    <string name="action_create_task">Create task</string>
 
     <!-- Shared Actions -->
     <string name="action_save">Lưu</string>
@@ -33,6 +35,16 @@
     <string name="category_hint">Danh mục</string>
     <string name="save">Lưu công việc</string>
     <string name="cancel">Hủy bỏ</string>
+
+    <!-- Task Form Validation -->
+    <string name="validation_title_required">Title is required</string>
+    <string name="validation_title_too_long">Title must not exceed 200 characters</string>
+    <string name="validation_description_too_long">Description must not exceed 1000 characters</string>
+    <string name="validation_due_date_required">Due date is required</string>
+    <string name="validation_due_date_in_past">Due date cannot be in the past</string>
+    <string name="validation_due_time_not_in_future">Due time must be in the future when the due date is today</string>
+    <string name="validation_priority_required">Priority is required</string>
+    <string name="validation_form_invalid">Please fix the highlighted fields before saving</string>
 
     <!-- Task Detail Screen -->
     <string name="screen_task_detail_title">Chi tiết công việc</string>
@@ -103,10 +115,5 @@
     <string name="settings_critical_actions">Critical Actions</string>
     <string name="settings_logout_all">Logout from all devices</string>
     <string name="settings_deactivate_vault">Deactivate Security Vault</string>
-=======
-    <string name="nav_home">Trang chủ</string>
-    <string name="nav_calendar">Lịch</string>
-    <string name="nav_stats">Thống kê</string>
-    <string name="nav_settings">Cài đặt</string>
 
 </resources>
