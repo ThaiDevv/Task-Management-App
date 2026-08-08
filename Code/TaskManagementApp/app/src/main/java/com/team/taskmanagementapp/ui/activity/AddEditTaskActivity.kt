@@ -15,7 +15,6 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-=======
 import com.google.android.material.snackbar.Snackbar
 
 import com.team.taskmanagementapp.R
@@ -318,14 +317,9 @@ class AddEditTaskActivity : AppCompatActivity() {
         viewModel.uiState.observe(this) { state ->
             when (state) {
                 is UiState.Success -> {
-
-                    if (isSaving && !isEditMode) {
-                        Toast.makeText(this, if (isEditMode) "Task Updated" else "Task Created", Toast.LENGTH_SHORT).show()
-=======
                     if (isSaving) {
                         val message = if (isEditMode) "Task updated successfully" else "Task created successfully"
                         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-
                         finish()
                     }
                 }
