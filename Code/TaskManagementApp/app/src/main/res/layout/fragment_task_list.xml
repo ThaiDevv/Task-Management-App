@@ -344,6 +344,17 @@
 
                     <!-- text-sm font-semibold text-primary -->
                     <TextView
+                        android:id="@+id/sortIndicator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="@string/sort_by_due_date"
+                        android:textColor="#737786"
+                        android:textSize="12sp" />
+
+                    <!-- text-sm font-semibold text-primary -->
+                    <TextView
                         android:id="@+id/viewAllBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -351,6 +362,17 @@
                         android:text="View All"
                         android:textColor="#105CDB"
                         android:textSize="14sp" />
+
+                    <ImageButton
+                        android:id="@+id/sortButton"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginStart="10dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/sort_title"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_sort"
+                        app:tint="@color/primary" />
                 </LinearLayout>
 
                 <!-- ─── TASK CARD 1 (done, blue left border) ─── -->

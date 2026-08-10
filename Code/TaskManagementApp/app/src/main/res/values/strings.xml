@@ -123,4 +123,13 @@
     <string name="settings_logout_all">Logout from all devices</string>
     <string name="settings_deactivate_vault">Deactivate Security Vault</string>
 
+    <!-- Sort -->
+    <string name="sort_title">Sắp xếp</string>
+    <string name="sort_by_due_date">Theo ngày hạn</string>
+    <string name="sort_by_priority">Theo độ ưu tiên</string>
+    <string name="sort_by_created_date">Theo ngày tạo</string>
+    <string name="sort_by_title">Theo tiêu đề</string>
+    <string name="sort_ascending">Tăng dần</string>
+    <string name="sort_descending">Giảm dần</string>
+
 </resources>
