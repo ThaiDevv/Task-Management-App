@@ -1,13 +1,17 @@
 package com.team.taskmanagementapp.viewmodel
 
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.enums.Priority
 import com.team.taskmanagementapp.data.model.enums.RecurrenceType
+import com.team.taskmanagementapp.data.model.enums.SortOrder
+import com.team.taskmanagementapp.data.model.enums.SortType
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.ui.base.UiState
+import com.team.taskmanagementapp.util.Constants
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -19,7 +23,8 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class TaskViewModel(
-    private val repository: TaskRepository
+    private val repository: TaskRepository,
+    private val preferences: SharedPreferences
 ) : ViewModel() {
 
     private val _deleteSuccess = MutableSharedFlow<Boolean>()
@@ -28,12 +33,64 @@ class TaskViewModel(
     private val _uiState = MutableStateFlow<UiState<List<Task>>>(UiState.Loading)
     val uiState: StateFlow<UiState<List<Task>>> = _uiState.asStateFlow()
 
-
     private val _selectedTask = MutableStateFlow<Task?>(null)
     val selectedTask: StateFlow<Task?> = _selectedTask.asStateFlow()
 
+    // Sort state (default: Due Date ASC, persisted in SharedPreferences)
+    private val _sortType = MutableStateFlow(
+        SortType.valueOf(
+            preferences.getString(Constants.KEY_SORT_TYPE, Constants.DEFAULT_SORT_TYPE)!!
+        )
+    )
+    val sortType: StateFlow<SortType> = _sortType.asStateFlow()
+
+    private val _sortOrder = MutableStateFlow(
+        SortOrder.valueOf(
+            preferences.getString(Constants.KEY_SORT_ORDER, Constants.DEFAULT_SORT_ORDER)!!
+        )
+    )
+    val sortOrder: StateFlow<SortOrder> = _sortOrder.asStateFlow()
+
     init {
         loadAllTasks()
+    }
+
+    /**
+     * Cập nhật tiêu chí + hướng sort, persist qua SharedPreferences,
+     * rồi sort lại danh sách đang hiển thị.
+     */
+    fun applySort(sortType: SortType, order: SortOrder) {
+        _sortType.value = sortType
+        _sortOrder.value = order
+        preferences.edit()
+            .putString(Constants.KEY_SORT_TYPE, sortType.name)
+            .putString(Constants.KEY_SORT_ORDER, order.name)
+            .apply()
+
+        val current = _uiState.value
+        if (current is UiState.Success) {
+            updateTasks(current.data)
+        }
+    }
+
+    /** Sort theo tiêu chí + hướng, rồi set UiState (Empty nếu rỗng). */
+    private fun updateTasks(tasks: List<Task>) {
+        val sorted = sortTasks(tasks, _sortType.value, _sortOrder.value)
+        _uiState.value = if (sorted.isEmpty()) UiState.Empty else UiState.Success(sorted)
+    }
+
+    private fun sortTasks(tasks: List<Task>, type: SortType, order: SortOrder): List<Task> {
+        val comparator = when (type) {
+            SortType.DUE_DATE -> compareBy<Task> { it.dueDate }
+            SortType.PRIORITY -> compareBy<Task> { it.priority.ordinal }
+            SortType.CREATED_DATE -> compareBy<Task> { it.createdAt }
+            SortType.TITLE -> compareBy<Task> { it.title.lowercase() }
+        }
+        return if (order == SortOrder.DESC) {
+            tasks.sortedWith(comparator.reversed())
+        } else {
+            tasks.sortedWith(comparator)
+        }
     }
 
 
@@ -45,11 +102,7 @@ class TaskViewModel(
                     _uiState.value = UiState.Error("Không thể tải danh sách công việc: ${e.localizedMessage}")
                 }
                 .collect { tasks ->
-                    if (tasks.isEmpty()) {
-                        _uiState.value = UiState.Empty
-                    } else {
-                        _uiState.value = UiState.Success(tasks)
-                    }
+                    updateTasks(tasks)
                 }
         }
     }
@@ -153,11 +206,7 @@ class TaskViewModel(
                     _uiState.value = UiState.Error("Lỗi tìm kiếm: ${e.localizedMessage}")
                 }
                 .collect { tasks ->
-                    if (tasks.isEmpty()) {
-                        _uiState.value = UiState.Empty
-                    } else {
-                        _uiState.value = UiState.Success(tasks)
-                    }
+                    updateTasks(tasks)
                 }
         }
     }
@@ -171,11 +220,7 @@ class TaskViewModel(
                     _uiState.value = UiState.Error("Lỗi lọc theo trạng thái: ${e.localizedMessage}")
                 }
                 .collect { tasks ->
-                    if (tasks.isEmpty()) {
-                        _uiState.value = UiState.Empty
-                    } else {
-                        _uiState.value = UiState.Success(tasks)
-                    }
+                    updateTasks(tasks)
                 }
         }
     }
@@ -189,11 +234,7 @@ class TaskViewModel(
                     _uiState.value = UiState.Error("Lỗi lọc theo mức độ ưu tiên: ${e.localizedMessage}")
                 }
                 .collect { tasks ->
-                    if (tasks.isEmpty()) {
-                        _uiState.value = UiState.Empty
-                    } else {
-                        _uiState.value = UiState.Success(tasks)
-                    }
+                    updateTasks(tasks)
                 }
         }
     }
