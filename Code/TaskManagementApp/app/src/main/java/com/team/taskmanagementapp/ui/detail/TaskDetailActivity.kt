@@ -1,5 +1,6 @@
 package com.team.taskmanagementapp.ui.detail
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -34,7 +35,11 @@ class TaskDetailActivity : AppCompatActivity() {
     private val viewModel: TaskViewModel by viewModels {
         val database = AppDatabase.getInstance(applicationContext)
         val repository = TaskRepository(database.taskDao())
-        TaskViewModelFactory(repository)
+        val preferences = applicationContext.getSharedPreferences(
+            Constants.PREFS_NAME,
+            Context.MODE_PRIVATE
+        )
+        TaskViewModelFactory(repository, preferences)
     }
 
     private var currentTask: Task? = null
