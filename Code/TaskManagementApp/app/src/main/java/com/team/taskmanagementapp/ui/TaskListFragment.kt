@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-
+import com.team.taskmanagementapp.util.NotificationHelper
 /**
  * TaskListFragment displays the home dashboard with greeting, summary metrics, and today's tasks.
  * Uses TaskViewModel to observe task data and update UI reactively.
@@ -64,6 +64,8 @@ class TaskListFragment : Fragment() {
                 viewModel.toggleTaskComplete(task)
             },
             onTaskClick = { task ->
+                // Dòng tạm thời dùng để test notification
+                NotificationHelper.showTaskReminder(requireContext(), task)
                 val intent = Intent(requireContext(), TaskDetailActivity::class.java)
                 intent.putExtra(Constants.EXTRA_TASK_ID, task.id.toLong())
                 startActivity(intent)

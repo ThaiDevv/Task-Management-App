@@ -110,15 +110,7 @@ class TaskDetailActivity : AppCompatActivity() {
             binding.fabComplete.setImageResource(R.drawable.ic_check)
             binding.fabComplete.backgroundTintList = ContextCompat.getColorStateList(this, R.color.primary)
             binding.fabComplete.contentDescription = getString(R.string.action_mark_complete)
-=======
-        // Complete Button state & text
-        val completeText = if (task.isCompleted) {
-            getString(R.string.task_detail_button_uncomplete)
-        } else {
-            getString(R.string.task_detail_button_complete)
-
         }
-        binding.btnComplete.text = completeText
     }
 
     private fun bindStatusBadge(status: TaskStatus, task: Task) {
