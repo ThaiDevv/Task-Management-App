@@ -49,7 +49,28 @@ interface TaskDao {
     @Query("SELECT * FROM tasks WHERE title LIKE '%' || :query || '%' ORDER BY dueDate ASC")
     fun searchTasksByTitle(query: String): Flow<List<Task>>
 
-    // 11. Xóa tất cả công việc
+    // 11. Lọc công việc nâng cao (Kết hợp nhiều điều kiện)
+    @Query("""
+        SELECT * FROM tasks 
+        WHERE (:status IS NULL OR status = :status)
+          AND (:priority IS NULL OR priority = :priority)
+          AND (
+              (:isOverdueOnly = 0 AND (:startDate IS NULL OR dueDate >= :startDate) AND (:endDate IS NULL OR dueDate <= :endDate))
+              OR
+              (:isOverdueOnly = 1 AND dueDate < :currentTime AND status != 'COMPLETED')
+          )
+        ORDER BY dueDate ASC
+    """)
+    fun getFilteredTasks(
+        status: TaskStatus?,
+        priority: Priority?,
+        startDate: Long?,
+        endDate: Long?,
+        isOverdueOnly: Int,
+        currentTime: Long
+    ): Flow<List<Task>>
+
+    // 12. Xóa tất cả công việc
     @Query("DELETE FROM tasks")
     suspend fun deleteAllTasks()
 }
