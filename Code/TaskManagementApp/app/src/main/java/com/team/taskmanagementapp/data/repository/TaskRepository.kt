@@ -17,6 +17,9 @@ class TaskRepository(
     suspend fun getTaskById(id: Long) =
         taskDao.getTaskById(id)
 
+    fun observeTaskById(id: Long): Flow<Task?> =
+        taskDao.observeTaskById(id)
+
     suspend fun insert(task: Task) =
         taskDao.insertTask(task)
 

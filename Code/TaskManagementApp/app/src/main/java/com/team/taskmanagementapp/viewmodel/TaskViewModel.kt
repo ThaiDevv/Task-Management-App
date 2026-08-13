@@ -5,21 +5,30 @@ import androidx.lifecycle.viewModelScope
 import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.FilterCriteria
 import com.team.taskmanagementapp.data.model.enums.Priority
+import com.team.taskmanagementapp.data.model.enums.RecurrenceType
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.ui.base.UiState
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 class TaskViewModel(
     private val repository: TaskRepository
 ) : ViewModel() {
 
+    private val _deleteSuccess = MutableSharedFlow<Boolean>()
+    val deleteSuccess = _deleteSuccess.asSharedFlow()
+
     private val _uiState = MutableStateFlow<UiState<List<Task>>>(UiState.Loading)
     val uiState: StateFlow<UiState<List<Task>>> = _uiState.asStateFlow()
+
 
     private val _selectedTask = MutableStateFlow<Task?>(null)
     val selectedTask: StateFlow<Task?> = _selectedTask.asStateFlow()
@@ -74,6 +83,7 @@ class TaskViewModel(
         viewModelScope.launch {
             try {
                 repository.delete(task)
+                _deleteSuccess.emit(true)
             } catch (e: Exception) {
                 _uiState.value = UiState.Error("Lỗi khi xóa công việc: ${e.localizedMessage}")
             }
@@ -83,13 +93,55 @@ class TaskViewModel(
 
     fun toggleTaskComplete(task: Task) {
         viewModelScope.launch {
-            val updatedTask = task.copy(
-                isCompleted = !task.isCompleted,
-                status = if (!task.isCompleted) TaskStatus.COMPLETED else TaskStatus.TODO,
-                updatedAt = System.currentTimeMillis()
-            )
-            repository.update(updatedTask)
+            try {
+                val now = System.currentTimeMillis()
+                val wasCompleted = task.isCompleted
+
+                val updatedTask = task.copy(
+                    isCompleted = !wasCompleted,
+                    status = if (!wasCompleted) TaskStatus.COMPLETED else TaskStatus.TODO,
+                    updatedAt = now
+                )
+
+                // Mark task as completed/uncompleted first
+                repository.update(updatedTask)
+
+                // Recurring task completed -> create the next task instance
+                if (!wasCompleted && task.isRecurring && task.recurrenceType != RecurrenceType.NONE) {
+                    val nextInstance = task.copy(
+                        id = 0,
+                        isCompleted = false,
+                        status = TaskStatus.TODO,
+                        dueDate = calculateNextDueDate(task),
+                        dueTime = task.dueTime,
+                        createdAt = now,
+                        updatedAt = now
+                    )
+                    repository.insert(nextInstance)
+                }
+
+                // Keep detail screen in sync
+                if (_selectedTask.value?.id == task.id) {
+                    _selectedTask.value = updatedTask
+                }
+            } catch (e: Exception) {
+                _uiState.value = UiState.Error("Lỗi khi cập nhật trạng thái công việc: ${e.localizedMessage}")
+            }
         }
+    }
+
+    /**
+     * Calculate the next due date based on the task's recurrence type and interval.
+     */
+    private fun calculateNextDueDate(task: Task): Long {
+        val calendar = Calendar.getInstance().apply { timeInMillis = task.dueDate }
+        when (task.recurrenceType) {
+            RecurrenceType.DAILY -> calendar.add(Calendar.DAY_OF_YEAR, task.recurrenceInterval)
+            RecurrenceType.WEEKLY -> calendar.add(Calendar.WEEK_OF_YEAR, task.recurrenceInterval)
+            RecurrenceType.MONTHLY -> calendar.add(Calendar.MONTH, task.recurrenceInterval)
+            RecurrenceType.NONE -> Unit
+        }
+        return calendar.timeInMillis
     }
 
 

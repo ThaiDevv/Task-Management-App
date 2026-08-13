@@ -26,6 +26,11 @@ import com.team.taskmanagementapp.databinding.FragmentTaskListBinding
 import com.team.taskmanagementapp.ui.base.UiState
 import com.team.taskmanagementapp.viewmodel.TaskViewModel
 import com.team.taskmanagementapp.viewmodel.TaskViewModelFactory
+import com.team.taskmanagementapp.data.repository.TaskRepository
+import android.content.Intent
+import com.team.taskmanagementapp.data.local.db.AppDatabase
+import com.team.taskmanagementapp.ui.detail.TaskDetailActivity
+import com.team.taskmanagementapp.util.Constants
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -63,7 +68,17 @@ class TaskListFragment : Fragment() {
     private fun setupUI() {
         updateGreeting()
 
-        taskAdapter = TaskAdapter()
+        // Setup RecyclerView with toggle and click callbacks
+        taskAdapter = TaskAdapter(
+            onTaskToggleComplete = { task ->
+                viewModel.toggleTaskComplete(task)
+            },
+            onTaskClick = { task ->
+                val intent = Intent(requireContext(), TaskDetailActivity::class.java)
+                intent.putExtra(Constants.EXTRA_TASK_ID, task.id.toLong())
+                startActivity(intent)
+            }
+        )
         binding.tasksRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = taskAdapter

@@ -10,6 +10,7 @@ import com.team.taskmanagementapp.data.model.enums.RecurrenceType
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.ui.base.UiState
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel() {
@@ -19,6 +20,15 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
 
     private val _task = MutableLiveData<Task?>()
     val task: LiveData<Task?> = _task
+
+    fun observeTask(taskId: Long): Flow<Task?> = repository.observeTaskById(taskId)
+
+    suspend fun updateTask(task: Task): Task {
+        val now = System.currentTimeMillis()
+        val updatedTask = task.copy(updatedAt = maxOf(now, task.updatedAt + 1L))
+        repository.update(updatedTask)
+        return updatedTask
+    }
 
     fun loadTask(taskId: Long) {
         viewModelScope.launch {
@@ -73,21 +83,26 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
                         return@launch
                     }
                 } else {
+                    val now = System.currentTimeMillis()
                     val task = Task(
-                        title = title,
-                        description = description,
+                        id = 0,
+                        title = title.trim(),
+                        description = description.trim(),
                         dueDate = dueDate,
                         dueTime = dueTime,
                         priority = priority,
                         recurrenceType = recurrenceType,
                         reminderMinutes = reminderMinutes,
-                        status = status
+                        status = status,
+                        isCompleted = false,
+                        createdAt = now,
+                        updatedAt = now
                     )
                     repository.insert(task)
                 }
                 _uiState.value = UiState.Success(Unit)
             } catch (e: Exception) {
-                _uiState.value = UiState.Error(e.message ?: "Failed to save task")
+                _uiState.value = UiState.Error(e.localizedMessage ?: "Failed to save task")
             }
         }
     }

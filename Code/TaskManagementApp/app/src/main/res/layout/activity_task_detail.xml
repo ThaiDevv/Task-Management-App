@@ -109,6 +109,7 @@
                         android:paddingBottom="6dp">
 
                         <ImageView
+                            android:id="@+id/ivPriorityBadge"
                             android:layout_width="14dp"
                             android:layout_height="14dp"
                             android:layout_marginEnd="4dp"
@@ -139,6 +140,7 @@
                         android:paddingBottom="6dp">
 
                         <ImageView
+                            android:id="@+id/ivStatusBadge"
                             android:layout_width="14dp"
                             android:layout_height="14dp"
                             android:layout_marginEnd="4dp"
@@ -564,7 +566,7 @@
                 android:textSize="16sp"
                 app:backgroundTint="@color/primary"
                 app:cornerRadius="16dp"
-                app:icon="@drawable/ic_add_task"
+                app:icon="@drawable/ic_check"
                 app:iconGravity="textStart"
                 app:iconTint="@color/white" />
 
@@ -579,7 +581,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="24dp"
         android:contentDescription="Mark as completed"
-        android:src="@drawable/ic_add_task"
+        android:src="@drawable/ic_check"
         app:backgroundTint="@color/primary"
         app:tint="@color/white" />
 
