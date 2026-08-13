@@ -329,7 +329,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="10dp"
                     android:orientation="horizontal">
 
                     <!-- text-xl font-bold -->
@@ -351,6 +351,50 @@
                         android:text="View All"
                         android:textColor="#105CDB"
                         android:textSize="14sp" />
+
+                    <!-- Filter button -->
+                    <LinearLayout
+                        android:id="@+id/btnOpenFilter"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/bg_pill_outlined"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            android:id="@+id/ivFilterIcon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_nav_settings"
+                            app:tint="#105CDB" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Active filter indicator -->
+                <LinearLayout
+                    android:id="@+id/activeFilterBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="14dp"
+                    android:background="@drawable/bg_filter_active_badge"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tvActiveFilterLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:text="@string/filter_active_indicator"
+                        android:textColor="#0045AE"
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <!-- ─── TASK CARD 1 (done, blue left border) ─── -->
