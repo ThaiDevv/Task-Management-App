@@ -19,16 +19,15 @@
             android:orientation="vertical"
             android:paddingTop="16dp">
 
-            <!-- ===== GREETING ===== -->
+            <!-- ===== 1. GREETING HEADER ===== -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
-                android:paddingBottom="24dp">
+                android:paddingBottom="20dp">
 
-                <!-- text-sm text-outline font-medium -->
                 <TextView
                     android:id="@+id/dateText"
                     android:layout_width="wrap_content"
@@ -38,36 +37,35 @@
                     android:textColor="#737786"
                     android:textSize="14sp" />
 
-                <!-- text-3xl font-bold text-on-surface tracking-tight -->
                 <TextView
                     android:id="@+id/greetingText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="2dp"
                     android:fontFamily="@font/poppins_bold"
                     android:letterSpacing="-0.01"
                     android:text="Hello, Alex!"
                     android:textColor="#1B1B1B"
-                    android:textSize="30sp" />
+                    android:textSize="28sp" />
             </LinearLayout>
 
-            <!-- ===== METRIC CARDS (2x2) ===== -->
+            <!-- ===== 2. BENTO SUMMARY METRICS CARDS (2x2 Grid) ===== -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
-                android:paddingBottom="32dp">
+                android:paddingBottom="24dp">
 
-                <!-- Row 1 -->
+                <!-- Row 1: Total & Completed -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
                     android:orientation="horizontal">
 
-                    <!-- Total Tasks -->
+                    <!-- Total Tasks Card -->
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -83,9 +81,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:padding="20dp">
+                            android:padding="16dp">
 
-                            <!-- 10px uppercase tracking-widest font-bold -->
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -97,20 +94,19 @@
                                 android:textColor="#737786"
                                 android:textSize="10sp" />
 
-                            <!-- text-3xl font-bold -->
                             <TextView
                                 android:id="@+id/totalTasksValue"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_bold"
-                                android:text="24"
+                                android:text="0"
                                 android:textColor="#1B1B1B"
-                                android:textSize="30sp" />
+                                android:textSize="26sp" />
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="12dp"
+                                android:layout_marginTop="8dp"
                                 android:gravity="center_vertical"
                                 android:orientation="horizontal">
 
@@ -121,19 +117,18 @@
                                     android:src="@drawable/ic_chevron_right"
                                     app:tint="#105CDB" />
 
-                                <!-- text-xs font-semibold text-primary -->
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/poppins_semibold"
-                                    android:text="+3 this week"
+                                    android:text="Active tasks"
                                     android:textColor="#105CDB"
                                     android:textSize="11sp" />
                             </LinearLayout>
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
-                    <!-- Completed -->
+                    <!-- Completed Tasks Card -->
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -149,7 +144,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:padding="20dp">
+                            android:padding="16dp">
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -167,35 +162,35 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_bold"
-                                android:text="18"
+                                android:text="0"
                                 android:textColor="#1B1B1B"
-                                android:textSize="30sp" />
+                                android:textSize="26sp" />
 
-                            <!-- Progress 75%: bg-surface-container h-1.5 rounded-full -->
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="6dp"
-                                android:layout_marginTop="12dp"
+                                android:layout_marginTop="8dp"
                                 android:background="@drawable/bg_progress_track"
                                 android:weightSum="100">
 
                                 <View
+                                    android:id="@+id/completedProgressBar"
                                     android:layout_width="0dp"
                                     android:layout_height="match_parent"
-                                    android:layout_weight="75"
+                                    android:layout_weight="0"
                                     android:background="@drawable/bg_progress_fill" />
                             </LinearLayout>
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
 
-                <!-- Row 2 -->
+                <!-- Row 2: Pending & Overdue -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <!-- Pending -->
+                    <!-- Pending Tasks Card -->
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -211,7 +206,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:padding="20dp">
+                            android:padding="16dp">
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -229,28 +224,28 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_bold"
-                                android:text="4"
+                                android:text="0"
                                 android:textColor="#1B1B1B"
-                                android:textSize="30sp" />
+                                android:textSize="26sp" />
 
-                            <!-- Progress 25% -->
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="6dp"
-                                android:layout_marginTop="12dp"
+                                android:layout_marginTop="8dp"
                                 android:background="@drawable/bg_progress_track"
                                 android:weightSum="100">
 
                                 <View
+                                    android:id="@+id/pendingProgressBar"
                                     android:layout_width="0dp"
                                     android:layout_height="match_parent"
-                                    android:layout_weight="25"
+                                    android:layout_weight="0"
                                     android:background="@drawable/bg_progress_fill" />
                             </LinearLayout>
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
-                    <!-- Overdue -->
+                    <!-- Overdue Tasks Card -->
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -266,7 +261,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:padding="20dp">
+                            android:padding="16dp">
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -279,20 +274,19 @@
                                 android:textColor="#737786"
                                 android:textSize="10sp" />
 
-                            <!-- text-3xl font-bold text-error -->
                             <TextView
                                 android:id="@+id/overdueValue"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_bold"
-                                android:text="2"
-                                android:textColor="#BA1A1A"
-                                android:textSize="30sp" />
+                                android:text="0"
+                                android:textColor="#F43F5E"
+                                android:textSize="26sp" />
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="12dp"
+                                android:layout_marginTop="8dp"
                                 android:gravity="center_vertical"
                                 android:orientation="horizontal">
 
@@ -301,14 +295,14 @@
                                     android:layout_height="14dp"
                                     android:layout_marginEnd="2dp"
                                     android:src="@drawable/ic_chevron_right"
-                                    app:tint="#BA1A1A" />
+                                    app:tint="#F43F5E" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/poppins_semibold"
                                     android:text="Action needed"
-                                    android:textColor="#BA1A1A"
+                                    android:textColor="#F43F5E"
                                     android:textSize="11sp" />
                             </LinearLayout>
                         </LinearLayout>
@@ -316,23 +310,23 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- ===== TODAY'S TASKS ===== -->
+            <!-- ===== 3. TODAY'S TASKS SECTION ===== -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingStart="24dp"
-                android:paddingEnd="24dp">
+                android:paddingEnd="24dp"
+                android:paddingBottom="24dp">
 
-                <!-- Header row -->
+                <!-- Header Row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="12dp"
                     android:orientation="horizontal">
 
-                    <!-- text-xl font-bold -->
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -342,22 +336,11 @@
                         android:textColor="#1B1B1B"
                         android:textSize="20sp" />
 
-                    <!-- text-sm font-semibold text-primary -->
-                    <TextView
-                        android:id="@+id/viewAllBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:text="View All"
-                        android:textColor="#105CDB"
-                        android:textSize="14sp" />
-
-                    <!-- Filter button -->
+                    <!-- Filter Button -->
                     <LinearLayout
                         android:id="@+id/btnOpenFilter"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:layout_marginStart="10dp"
                         android:background="@drawable/bg_pill_outlined"
                         android:gravity="center"
                         android:clickable="true"
@@ -372,12 +355,12 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Active filter indicator -->
+                <!-- Active Filter Indicator Badge -->
                 <LinearLayout
                     android:id="@+id/activeFilterBadge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="14dp"
+                    android:layout_marginBottom="12dp"
                     android:background="@drawable/bg_filter_active_badge"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
@@ -397,580 +380,168 @@
                         android:textSize="12sp" />
                 </LinearLayout>
 
-                <!-- ─── TASK CARD 1 (done, blue left border) ─── -->
-                <com.google.android.material.card.MaterialCardView
+                <!-- Dynamic Today Tasks RecyclerView -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/todayTasksRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    app:cardBackgroundColor="#FFFFFF"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="0dp"
-                    app:strokeColor="#1A105CDB"
-                    app:strokeWidth="1dp">
+                    android:nestedScrollingEnabled="false"
+                    tools:listitem="@layout/item_task_summary" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <!-- 4dp blue left border -->
-                        <View
-                            android:layout_width="4dp"
-                            android:layout_height="match_parent"
-                            android:background="#105CDB" />
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="20dp">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="top"
-                                android:orientation="horizontal">
-
-                                <!-- Filled blue circle (checked) -->
-                                <com.google.android.material.card.MaterialCardView
-                                    android:layout_width="24dp"
-                                    android:layout_height="24dp"
-                                    android:layout_marginEnd="16dp"
-                                    android:layout_marginTop="2dp"
-                                    app:cardBackgroundColor="#105CDB"
-                                    app:cardCornerRadius="12dp"
-                                    app:cardElevation="0dp"
-                                    app:strokeWidth="0dp">
-
-                                    <ImageView
-                                        android:layout_width="12dp"
-                                        android:layout_height="12dp"
-                                        android:layout_gravity="center"
-                                        android:src="@drawable/ic_add_task"
-                                        app:tint="#FFFFFF" />
-                                </com.google.android.material.card.MaterialCardView>
-
-                                <LinearLayout
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:orientation="vertical">
-
-                                    <!-- font-bold text-on-surface text-lg -->
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:fontFamily="@font/poppins_bold"
-                                        android:text="Finalize Q3 Marketing Report"
-                                        android:textColor="#1B1B1B"
-                                        android:textSize="17sp" />
-
-                                    <!-- text-sm text-outline font-medium -->
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginTop="4dp"
-                                        android:fontFamily="@font/poppins_medium"
-                                        android:text="Review metrics from campaign A..."
-                                        android:textColor="#737786"
-                                        android:textSize="13sp" />
-
-                                    <!-- Tags row -->
-                                    <LinearLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginTop="14dp"
-                                        android:gravity="center_vertical"
-                                        android:orientation="horizontal">
-
-                                        <!-- Time tag: bg-surface-container rounded-lg -->
-                                        <LinearLayout
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_marginEnd="10dp"
-                                            android:background="@drawable/bg_tag_time"
-                                            android:gravity="center_vertical"
-                                            android:orientation="horizontal"
-                                            android:paddingStart="10dp"
-                                            android:paddingTop="6dp"
-                                            android:paddingEnd="10dp"
-                                            android:paddingBottom="6dp">
-
-                                            <ImageView
-                                                android:layout_width="14dp"
-                                                android:layout_height="14dp"
-                                                android:layout_marginEnd="4dp"
-                                                android:src="@drawable/ic_time"
-                                                app:tint="#424654" />
-
-                                            <!-- text-xs font-semibold text-on-surface-variant -->
-                                            <TextView
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:fontFamily="@font/poppins_semibold"
-                                                android:text="10:00 AM - 12:00 PM"
-                                                android:textColor="#424654"
-                                                android:textSize="11sp" />
-                                        </LinearLayout>
-
-                                        <!-- HIGH: text-priority-high bg-priority-high/10 uppercase tracking-wider -->
-                                        <TextView
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:background="@drawable/bg_tag_high"
-                                            android:fontFamily="@font/poppins_bold"
-                                            android:letterSpacing="0.05"
-                                            android:paddingStart="10dp"
-                                            android:paddingTop="6dp"
-                                            android:paddingEnd="10dp"
-                                            android:paddingBottom="6dp"
-                                            android:text="High"
-                                            android:textColor="#F43F5E"
-                                            android:textSize="11sp" />
-                                    </LinearLayout>
-                                </LinearLayout>
-
-                                <ImageView
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:layout_marginStart="8dp"
-                                    android:src="@drawable/ic_chevron_right"
-                                    app:tint="#737786" />
-                            </LinearLayout>
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- ─── TASK CARD 2 ─── -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    app:cardBackgroundColor="#FFFFFF"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="0dp"
-                    app:strokeColor="#4DC3C6D7"
-                    app:strokeWidth="1dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="top"
-                        android:orientation="horizontal"
-                        android:padding="20dp">
-
-                        <!-- Empty circle -->
-                        <com.google.android.material.card.MaterialCardView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginEnd="16dp"
-                            android:layout_marginTop="2dp"
-                            app:cardBackgroundColor="#FFFFFF"
-                            app:cardCornerRadius="12dp"
-                            app:cardElevation="0dp"
-                            app:strokeColor="#737786"
-                            app:strokeWidth="2dp" />
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/poppins_bold"
-                                android:text="Client Call: Zenith Corp"
-                                android:textColor="#1B1B1B"
-                                android:textSize="17sp" />
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="12dp"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal">
-
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginEnd="10dp"
-                                    android:gravity="center_vertical"
-                                    android:orientation="horizontal">
-
-                                    <ImageView
-                                        android:layout_width="14dp"
-                                        android:layout_height="14dp"
-                                        android:layout_marginEnd="4dp"
-                                        android:src="@drawable/ic_time"
-                                        app:tint="#424654" />
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:fontFamily="@font/poppins_semibold"
-                                        android:text="2:30 PM"
-                                        android:textColor="#424654"
-                                        android:textSize="12sp" />
-                                </LinearLayout>
-
-                                <!-- MEDIUM: #F59E0B -->
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:background="@drawable/bg_tag_medium"
-                                    android:fontFamily="@font/poppins_bold"
-                                    android:letterSpacing="0.05"
-                                    android:paddingStart="10dp"
-                                    android:paddingTop="6dp"
-                                    android:paddingEnd="10dp"
-                                    android:paddingBottom="6dp"
-                                    android:text="Medium"
-                                    android:textColor="#F59E0B"
-                                    android:textSize="11sp" />
-                            </LinearLayout>
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- ─── TASK CARD 3 ─── -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="32dp"
-                    app:cardBackgroundColor="#FFFFFF"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="0dp"
-                    app:strokeColor="#4DC3C6D7"
-                    app:strokeWidth="1dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="top"
-                        android:orientation="horizontal"
-                        android:padding="20dp">
-
-                        <com.google.android.material.card.MaterialCardView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginEnd="16dp"
-                            android:layout_marginTop="2dp"
-                            app:cardBackgroundColor="#FFFFFF"
-                            app:cardCornerRadius="12dp"
-                            app:cardElevation="0dp"
-                            app:strokeColor="#737786"
-                            app:strokeWidth="2dp" />
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/poppins_bold"
-                                android:text="Update Design Documentation"
-                                android:textColor="#1B1B1B"
-                                android:textSize="17sp" />
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="12dp"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal">
-
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginEnd="10dp"
-                                    android:gravity="center_vertical"
-                                    android:orientation="horizontal">
-
-                                    <ImageView
-                                        android:layout_width="14dp"
-                                        android:layout_height="14dp"
-                                        android:layout_marginEnd="4dp"
-                                        android:src="@drawable/ic_time"
-                                        app:tint="#424654" />
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:fontFamily="@font/poppins_semibold"
-                                        android:text="4:00 PM"
-                                        android:textColor="#424654"
-                                        android:textSize="12sp" />
-                                </LinearLayout>
-
-                                <!-- LOW: #10B981 -->
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:background="@drawable/bg_tag_low"
-                                    android:fontFamily="@font/poppins_bold"
-                                    android:letterSpacing="0.05"
-                                    android:paddingStart="10dp"
-                                    android:paddingTop="6dp"
-                                    android:paddingEnd="10dp"
-                                    android:paddingBottom="6dp"
-                                    android:text="Low"
-                                    android:textColor="#10B981"
-                                    android:textSize="11sp" />
-                            </LinearLayout>
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- ===== UPCOMING ===== -->
+                <!-- Empty State for Today's Tasks -->
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:fontFamily="@font/poppins_bold"
-                    android:text="Upcoming"
-                    android:textColor="#1B1B1B"
-                    android:textSize="20sp" />
-
-                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/todayEmptyStateText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
-                    app:cardBackgroundColor="#FFFFFF"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="0dp"
-                    app:strokeColor="#4DC3C6D7"
-                    app:strokeWidth="1dp">
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="No tasks scheduled for today"
+                    android:textAlignment="center"
+                    android:textColor="#737786"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
+            </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="24dp">
+            <!-- ===== 4. UPCOMING TASKS SECTION ===== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:paddingBottom="24dp">
 
-                        <!-- Tomorrow / Oct 25 header -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:paddingBottom="14dp">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:fontFamily="@font/poppins_bold"
-                                android:text="Tomorrow"
-                                android:textColor="#1B1B1B"
-                                android:textSize="16sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/poppins_bold"
-                                android:text="Oct 25"
-                                android:textColor="#737786"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <!-- Divider -->
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginBottom="20dp"
-                            android:background="#E8E8E8" />
-
-                        <!-- Event 1: Weekly Team Sync (blue dot) -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="20dp"
-                            android:gravity="top"
-                            android:orientation="horizontal">
-
-                            <com.google.android.material.card.MaterialCardView
-                                android:layout_width="12dp"
-                                android:layout_height="12dp"
-                                android:layout_marginEnd="16dp"
-                                android:layout_marginTop="4dp"
-                                app:cardBackgroundColor="#105CDB"
-                                app:cardCornerRadius="6dp"
-                                app:cardElevation="0dp"
-                                app:strokeWidth="0dp" />
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:fontFamily="@font/poppins_bold"
-                                    android:text="Weekly Team Sync"
-                                    android:textColor="#1B1B1B"
-                                    android:textSize="15sp" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="2dp"
-                                    android:fontFamily="@font/poppins_medium"
-                                    android:text="9:00 AM - 10:00 AM"
-                                    android:textColor="#737786"
-                                    android:textSize="12sp" />
-                            </LinearLayout>
-                        </LinearLayout>
-
-                        <!-- Event 2: Dentist Appointment (gray dot) -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="28dp"
-                            android:gravity="top"
-                            android:orientation="horizontal">
-
-                            <com.google.android.material.card.MaterialCardView
-                                android:layout_width="12dp"
-                                android:layout_height="12dp"
-                                android:layout_marginEnd="16dp"
-                                android:layout_marginTop="4dp"
-                                app:cardBackgroundColor="#E8E8E8"
-                                app:cardCornerRadius="6dp"
-                                app:cardElevation="0dp"
-                                app:strokeWidth="0dp" />
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:fontFamily="@font/poppins_bold"
-                                    android:text="Dentist Appointment"
-                                    android:textColor="#1B1B1B"
-                                    android:textSize="15sp" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="2dp"
-                                    android:fontFamily="@font/poppins_medium"
-                                    android:text="2:00 PM"
-                                    android:textColor="#737786"
-                                    android:textSize="12sp" />
-                            </LinearLayout>
-                        </LinearLayout>
-
-                        <!-- View Full Calendar button -->
-                        <com.google.android.material.button.MaterialButton
-                            android:layout_width="match_parent"
-                            android:layout_height="48dp"
-                            android:fontFamily="@font/poppins_bold"
-                            android:text="View Full Calendar"
-                            android:textAllCaps="false"
-                            android:textColor="#105CDB"
-                            android:textSize="14sp"
-                            app:backgroundTint="#FFFFFF"
-                            app:cornerRadius="12dp"
-                            app:strokeColor="#C3C6D7"
-                            app:strokeWidth="1dp" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- ===== PRODUCTIVITY INSIGHT BANNER ===== -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="32dp"
-                    android:background="@drawable/bg_insight_banner"
-                    android:orientation="vertical"
-                    android:padding="24dp">
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp"
+                    android:orientation="horizontal">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="10dp"
-                        android:orientation="horizontal">
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="Upcoming"
+                        android:textColor="#1B1B1B"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/upcomingDateText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:textColor="#737786"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <!-- Dynamic Upcoming Tasks RecyclerView -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/upcomingTasksRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    tools:listitem="@layout/item_task_summary" />
+
+                <!-- Empty State for Upcoming Tasks -->
+                <TextView
+                    android:id="@+id/upcomingEmptyStateText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="No upcoming tasks scheduled"
+                    android:textAlignment="center"
+                    android:textColor="#737786"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <!-- ===== 5. PRODUCTIVITY INSIGHT BANNER ===== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="32dp"
+                android:background="@drawable/bg_insight_banner"
+                android:orientation="vertical"
+                android:padding="24dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/ic_bell"
+                        app:tint="#FFFFFF" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="Productivity Insight"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp" />
+
+                    <!-- Glass Add Button -->
+                    <LinearLayout
+                        android:id="@+id/btnQuickAddTask"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_glass_btn"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true">
 
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:layout_marginEnd="8dp"
-                            android:src="@drawable/ic_bell"
+                            android:src="@drawable/ic_add_task"
                             app:tint="#FFFFFF" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:fontFamily="@font/poppins_bold"
-                            android:text="Productivity Insight"
-                            android:textColor="#FFFFFF"
-                            android:textSize="18sp" />
-
-                        <!-- Glass add button -->
-                        <LinearLayout
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:background="@drawable/bg_glass_btn"
-                            android:gravity="center">
-
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_add_task"
-                                app:tint="#FFFFFF" />
-                        </LinearLayout>
                     </LinearLayout>
-
-                    <!-- text-sm opacity-90 leading-relaxed font-medium -->
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:alpha="0.9"
-                        android:fontFamily="@font/poppins_medium"
-                        android:lineSpacingMultiplier="1.5"
-                        android:text="You are most productive between 9 AM and 11 AM. Try scheduling deep work during this window."
-                        android:textColor="#FFFFFF"
-                        android:textSize="14sp" />
                 </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.9"
+                    android:fontFamily="@font/poppins_medium"
+                    android:lineSpacingMultiplier="1.4"
+                    android:text="You are most productive between 9 AM and 11 AM. Try scheduling deep work during this window."
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp" />
             </LinearLayout>
 
-            <!-- Runtime RecyclerView (hidden in static preview) -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/tasksRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp"
-                android:visibility="gone"
-                tools:listitem="@layout/item_task_summary" />
-
+            <!-- Global Empty / Error State text fallback -->
             <TextView
                 android:id="@+id/emptyStateText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_medium"
-                android:layout_marginTop="32dp"
+                android:layout_marginBottom="24dp"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
-                android:text="@string/state_empty_tasks"
                 android:textAlignment="center"
                 android:textColor="#737786"
                 android:textSize="15sp"
+                android:visibility="gone" />
+
+            <!-- Legacy fallback tasksRecyclerView hidden for backward binding compatibility -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/tasksRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:visibility="gone" />
 
         </LinearLayout>
