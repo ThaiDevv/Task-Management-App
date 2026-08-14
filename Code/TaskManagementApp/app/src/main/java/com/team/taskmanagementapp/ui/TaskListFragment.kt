@@ -51,7 +51,7 @@ class TaskListFragment : Fragment() {
     private val viewModel: TaskViewModel by viewModels {
         val database = AppDatabase.getInstance(requireContext())
         val repository = TaskRepository(database.taskDao())
-        TaskViewModelFactory(repository)
+        TaskViewModelFactory(repository, requireContext().applicationContext)
     }
 
     override fun onCreateView(
@@ -71,7 +71,6 @@ class TaskListFragment : Fragment() {
 
     private fun setupUI() {
         updateGreeting()
-
         // Today's Tasks Adapter
         todayTaskAdapter = TaskAdapter(
             onTaskToggleComplete = { task -> viewModel.toggleTaskComplete(task) },
@@ -85,6 +84,7 @@ class TaskListFragment : Fragment() {
         // Upcoming Tasks Adapter (timeline style)
         upcomingTaskAdapter = UpcomingTaskAdapter(
             onTaskClick = { openTaskDetail(it) }
+
         )
         binding.upcomingTasksRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())

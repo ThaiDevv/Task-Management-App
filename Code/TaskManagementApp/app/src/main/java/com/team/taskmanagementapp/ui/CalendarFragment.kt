@@ -38,7 +38,11 @@ class CalendarFragment : Fragment() {
             Constants.PREFS_NAME,
             Context.MODE_PRIVATE
         )
-        TaskViewModelFactory(repository, preferences)
+        TaskViewModelFactory(
+            repository,
+            requireContext().applicationContext,
+            preferences
+        )
     }
 
     override fun onCreateView(

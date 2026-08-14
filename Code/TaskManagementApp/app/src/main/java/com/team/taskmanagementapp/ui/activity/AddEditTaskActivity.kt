@@ -1,12 +1,15 @@
 package com.team.taskmanagementapp.ui.activity
 
+import android.Manifest
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -28,7 +31,9 @@ import com.team.taskmanagementapp.databinding.ActivityAddEditTaskBinding
 import com.team.taskmanagementapp.ui.base.UiState
 import com.team.taskmanagementapp.ui.viewmodel.AddEditTaskViewModel
 import com.team.taskmanagementapp.ui.viewmodel.AddEditTaskViewModelFactory
+import com.team.taskmanagementapp.util.AlarmScheduler
 import com.team.taskmanagementapp.util.Constants
+import com.team.taskmanagementapp.util.NotificationPermissionManager
 import com.team.taskmanagementapp.util.ValidationHelper
 import com.team.taskmanagementapp.util.ValidationHelper.ValidationError
 import kotlinx.coroutines.launch
@@ -54,6 +59,32 @@ class AddEditTaskActivity : AppCompatActivity() {
     private var isSaving = false
     private var loadedTask: Task? = null
     private var isFormPopulated = false
+    private var retrySaveAfterExactAlarmPermission = false
+
+    private val exactAlarmPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (!retrySaveAfterExactAlarmPermission) return@registerForActivityResult
+
+        retrySaveAfterExactAlarmPermission = false
+        if (AlarmScheduler.canScheduleExactAlarms(this)) {
+            saveTask()
+        } else {
+            Toast.makeText(
+                this,
+                R.string.exact_alarm_permission_required,
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    // TASK-39: Permission launcher for re-checking after user returns from Settings
+    private val notificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                performSave()
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -287,6 +318,46 @@ class AddEditTaskActivity : AppCompatActivity() {
             return
         }
 
+        // TASK-39: If user set a reminder and notification permission is missing, warn them
+        if (selectedReminderMinutes > 0 && !NotificationPermissionManager.isGranted(this)) {
+            showReminderPermissionBlockedDialog()
+            return
+        }
+
+        performSave()
+    }
+
+    /**
+     * TASK-39: Shows a dialog warning the user that saving with a reminder requires notification permission.
+     * Offers two options:
+     * - "Mở Cài đặt": Go to system Settings to enable permission, then come back.
+     * - "Lưu bỏ qua": Save the task anyway (reminder won't fire).
+     */
+    private fun showReminderPermissionBlockedDialog() {
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.notif_permission_reminder_blocked_title))
+            .setMessage(getString(R.string.notif_permission_reminder_blocked_message))
+            .setPositiveButton(getString(R.string.notif_permission_reminder_blocked_settings)) { _, _ ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                    shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)
+                ) {
+                    NotificationPermissionManager.showRationaleDialog(this, notificationPermissionLauncher)
+                } else {
+                    NotificationPermissionManager.showSettingsRedirectDialog(this)
+                }
+            }
+            .setNegativeButton(getString(R.string.notif_permission_reminder_blocked_save)) { _, _ ->
+                performSave()
+            }
+            .setCancelable(true)
+            .show()
+    }
+
+    /**
+     * Executes the actual save / update logic after all permission and validation checks pass.
+     */
+    private fun performSave() {
+        if (!ensureExactAlarmPermission()) return
         val title = binding.titleEditText.text.toString()
         val description = binding.descriptionEditText.text.toString()
         if (isEditMode) {
@@ -318,6 +389,7 @@ class AddEditTaskActivity : AppCompatActivity() {
             when (state) {
                 is UiState.Success -> {
                     if (isSaving) {
+                        AlarmScheduler.scheduleAlarm(this, state.data)
                         val message = if (isEditMode) "Task updated successfully" else "Task created successfully"
                         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                         finish()
@@ -373,6 +445,7 @@ class AddEditTaskActivity : AppCompatActivity() {
                     status = selectedStatus
                 )
                 val updatedTask = viewModel.updateTask(editedTask)
+                AlarmScheduler.rescheduleAlarm(this@AddEditTaskActivity, updatedTask)
 
                 if (hasDueDateOrTimeChanged(existingTask, updatedTask)) {
                     dispatchTaskDateTimeChanged(updatedTask)
@@ -394,6 +467,21 @@ class AddEditTaskActivity : AppCompatActivity() {
 
     private fun hasDueDateOrTimeChanged(oldTask: Task, newTask: Task): Boolean =
         oldTask.dueDate != newTask.dueDate || oldTask.dueTime != newTask.dueTime
+
+    private fun ensureExactAlarmPermission(): Boolean {
+        if (
+            selectedReminderMinutes <= 0 ||
+            AlarmScheduler.canScheduleExactAlarms(this)
+        ) {
+            return true
+        }
+
+        retrySaveAfterExactAlarmPermission = true
+        exactAlarmPermissionLauncher.launch(
+            AlarmScheduler.exactAlarmPermissionIntent(this)
+        )
+        return false
+    }
 
     private fun dispatchTaskDateTimeChanged(task: Task) {
         sendBroadcast(
