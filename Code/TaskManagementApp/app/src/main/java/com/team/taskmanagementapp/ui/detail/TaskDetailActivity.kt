@@ -93,10 +93,6 @@ class TaskDetailActivity : AppCompatActivity() {
         binding.tvDueDate.text = if (dateStr.isBlank()) "No Date" else dateStr
         binding.tvScheduledTime.text = if (timeStr.isBlank()) "No Time" else timeStr
 
-        // Created At
-        val createdDateStr = DateTimeUtils.formatTimestamp(task.createdAt, "MMM dd, yyyy · hh:mm a")
-        binding.tvCreatedAt.text = if (createdDateStr.isBlank()) "—" else createdDateStr
-
         // Status & Priority Badges
         bindStatusBadge(task.status, task)
         bindPriorityBadge(task.priority)

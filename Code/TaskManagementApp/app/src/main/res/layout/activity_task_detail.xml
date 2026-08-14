@@ -513,66 +513,6 @@
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
-            <!-- ===== Created At / Activity Card ===== -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardCreatedAt"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@color/surface_container_lowest"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="2dp"
-                app:strokeColor="@color/surface_container"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="24dp">
-
-                    <LinearLayout
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_marginEnd="16dp"
-                        android:background="@drawable/bg_icon_box_info"
-                        android:gravity="center">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_info"
-                            app:tint="#388E3C" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/poppins_medium"
-                            android:letterSpacing="0.05"
-                            android:text="CREATED AT"
-                            android:textColor="@color/outline"
-                            android:textSize="11sp" />
-
-                        <TextView
-                            android:id="@+id/tvCreatedAt"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/poppins_bold"
-                            android:textColor="@color/on_surface"
-                            android:textSize="18sp"
-                            tools:text="Oct 22, 2023 · 9:15 AM" />
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
             <!-- ===== Perseverance Motivation Quote Card (Randomized every 5s with background image) ===== -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardMotivation"
