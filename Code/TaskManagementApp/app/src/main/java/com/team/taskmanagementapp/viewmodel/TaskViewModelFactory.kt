@@ -7,7 +7,7 @@ import com.team.taskmanagementapp.data.repository.TaskRepository
 
 class TaskViewModelFactory(
     private val repository: TaskRepository,
-    private val preferences: SharedPreferences
+    private val preferences: SharedPreferences? = null
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")

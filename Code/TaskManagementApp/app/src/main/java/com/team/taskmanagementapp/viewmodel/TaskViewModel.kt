@@ -19,8 +19,11 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
+import android.content.SharedPreferences
+
 class TaskViewModel(
-    private val repository: TaskRepository
+    private val repository: TaskRepository,
+    private val preferences: SharedPreferences? = null
 ) : ViewModel() {
 
     private val _deleteSuccess = MutableSharedFlow<Boolean>()

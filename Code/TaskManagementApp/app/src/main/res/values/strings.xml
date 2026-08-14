@@ -150,4 +150,13 @@
     <string name="sort_due_date_asc">Due date ↑</string>
     <string name="sort_due_date_desc">Due date ↓</string>
     <string name="sort_priority">Priority</string>
+
+    <!-- Sort Menu Options -->
+    <string name="sort_title">Sắp xếp</string>
+    <string name="sort_by_due_date">Theo ngày hạn</string>
+    <string name="sort_by_priority">Theo độ ưu tiên</string>
+    <string name="sort_by_created_date">Theo ngày tạo</string>
+    <string name="sort_by_title">Theo tiêu đề</string>
+    <string name="sort_ascending">Tăng dần</string>
+    <string name="sort_descending">Giảm dần</string>
 </resources>
