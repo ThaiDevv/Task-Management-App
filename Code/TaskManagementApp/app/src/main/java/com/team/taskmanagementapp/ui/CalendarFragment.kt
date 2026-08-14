@@ -1,5 +1,6 @@
 package com.team.taskmanagementapp.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,7 +34,11 @@ class CalendarFragment : Fragment() {
     private val viewModel: TaskViewModel by viewModels {
         val database = AppDatabase.getInstance(requireContext())
         val repository = TaskRepository(database.taskDao())
-        TaskViewModelFactory(repository)
+        val preferences = requireContext().getSharedPreferences(
+            Constants.PREFS_NAME,
+            Context.MODE_PRIVATE
+        )
+        TaskViewModelFactory(repository, preferences)
     }
 
     override fun onCreateView(

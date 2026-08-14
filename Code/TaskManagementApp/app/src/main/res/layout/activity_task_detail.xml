@@ -12,7 +12,7 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="64dp"
-        android:background="@color/background"
+        android:background="@color/surface"
         android:elevation="2dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -78,23 +78,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="24dp">
 
             <!-- ===== Title & Badges Section ===== -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="28dp"
                 android:orientation="vertical">
 
                 <!-- Badges Row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
+                    android:layout_marginBottom="14dp"
                     android:orientation="horizontal">
 
-                    <!-- High Priority Badge -->
+                    <!-- Priority Badge (High = tertiary/red pill) -->
                     <LinearLayout
                         android:id="@+id/badgePriority"
                         android:layout_width="wrap_content"
@@ -126,7 +126,7 @@
                             android:textSize="12sp" />
                     </LinearLayout>
 
-                    <!-- In Progress Badge -->
+                    <!-- Status Badge (In Progress = secondary-container pill) -->
                     <LinearLayout
                         android:id="@+id/badgeStatus"
                         android:layout_width="wrap_content"
@@ -158,7 +158,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Task Title -->
+                <!-- Task Title — display-2l style: 32sp bold -->
                 <TextView
                     android:id="@+id/tvTaskTitle"
                     android:layout_width="match_parent"
@@ -166,11 +166,11 @@
                     android:fontFamily="@font/poppins_bold"
                     android:lineSpacingMultiplier="1.2"
                     android:textColor="@color/on_surface"
-                    android:textSize="28sp"
+                    android:textSize="32sp"
                     tools:text="Finalize Project Proposal" />
             </LinearLayout>
 
-            <!-- ===== Description Bento Card ===== -->
+            <!-- ===== Description Bento Card (spans full width) ===== -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -185,13 +185,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="24dp">
+                    android:padding="32dp">
 
-                    <!-- Header -->
+                    <!-- Header: description icon + label -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
+                        android:layout_marginBottom="14dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
@@ -211,23 +211,23 @@
                             android:textSize="18sp" />
                     </LinearLayout>
 
-                    <!-- Text -->
+                    <!-- Description text: body-base 16sp, relaxed line spacing -->
                     <TextView
                         android:id="@+id/tvDescription"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
+                        android:layout_marginBottom="24dp"
                         android:fontFamily="@font/poppins_regular"
-                        android:lineSpacingMultiplier="1.4"
+                        android:lineSpacingMultiplier="1.5"
                         android:textColor="@color/on_surface_variant"
-                        android:textSize="15sp"
+                        android:textSize="16sp"
                         tools:text="Review and finalize the final version of the project proposal before submitting it to the executive team. Ensure all budget figures are double-checked for accuracy across all departments." />
 
                     <!-- Divider -->
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_marginBottom="20dp"
+                        android:layout_marginBottom="24dp"
                         android:background="@color/surface_container" />
 
                     <!-- Due Date Row -->
@@ -272,7 +272,7 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_bold"
                                 android:textColor="@color/on_surface"
-                                android:textSize="18sp"
+                                android:textSize="20sp"
                                 tools:text="Oct 25, 2023" />
                         </LinearLayout>
                     </LinearLayout>
@@ -318,195 +318,293 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_bold"
                                 android:textColor="@color/on_surface"
-                                android:textSize="18sp"
+                                android:textSize="20sp"
                                 tools:text="10:00 AM" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ===== Reminder Card ===== -->
-            <com.google.android.material.card.MaterialCardView
+            <!-- ===== Sidebar Row: Reminder + Recurrence ===== -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@color/surface_container_lowest"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="2dp"
-                app:strokeColor="@color/surface_container"
-                app:strokeWidth="1dp">
+                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <!-- Reminder Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/surface_container_lowest"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="2dp"
+                    app:strokeColor="@color/surface_container"
+                    app:strokeWidth="1dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:orientation="vertical"
+                        android:padding="20dp">
 
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_marginEnd="6dp"
-                            android:src="@drawable/ic_bell"
-                            app:tint="@color/primary" />
+                        <!-- Header -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_marginEnd="6dp"
+                                android:src="@drawable/ic_bell"
+                                app:tint="@color/primary" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_bold"
+                                android:letterSpacing="0.08"
+                                android:text="REMINDER"
+                                android:textColor="@color/primary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
 
                         <TextView
+                            android:id="@+id/tvReminder"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_bold"
-                            android:letterSpacing="0.08"
-                            android:text="REMINDER"
-                            android:textColor="@color/primary"
-                            android:textSize="11sp" />
+                            android:text="30 mins before"
+                            android:textColor="@color/on_surface"
+                            android:textSize="18sp" />
                     </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-                    <TextView
-                        android:id="@+id/tvReminder"
-                        android:layout_width="wrap_content"
+                <!-- Recurrence Card (blue primary-container background) -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardRecurrence"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/primary_container"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="6dp"
+                    app:strokeWidth="0dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/poppins_bold"
-                        android:text="30 mins before"
-                        android:textColor="@color/on_surface"
-                        android:textSize="18sp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                        android:orientation="vertical"
+                        android:padding="20dp">
 
-            <!-- ===== Recurrence Card ===== -->
+                        <!-- Header -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_marginEnd="6dp"
+                                android:src="@drawable/ic_time"
+                                app:tint="@color/primary_fixed_dim" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_bold"
+                                android:letterSpacing="0.08"
+                                android:text="RECURRENCE"
+                                android:textColor="@color/primary_fixed_dim"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvRecurrenceType"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="Weekly"
+                            android:textColor="@color/on_primary_container"
+                            android:textSize="18sp" />
+
+                        <!-- Day Circles Row: M T W T F -->
+                        <LinearLayout
+                            android:id="@+id/layoutDaySelector"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <!-- M (Active) -->
+                            <TextView
+                                android:id="@+id/tvDayM"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_marginEnd="6dp"
+                                android:background="@drawable/bg_day_circle_active"
+                                android:fontFamily="@font/poppins_bold"
+                                android:gravity="center"
+                                android:text="M"
+                                android:textColor="@color/primary"
+                                android:textSize="12sp" />
+
+                            <!-- T (Inactive) -->
+                            <TextView
+                                android:id="@+id/tvDayT"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_marginEnd="6dp"
+                                android:background="@drawable/bg_day_circle_inactive"
+                                android:fontFamily="@font/poppins_bold"
+                                android:gravity="center"
+                                android:text="T"
+                                android:textColor="@color/on_primary_container"
+                                android:textSize="12sp" />
+
+                            <!-- W (Active) -->
+                            <TextView
+                                android:id="@+id/tvDayW"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_marginEnd="6dp"
+                                android:background="@drawable/bg_day_circle_active"
+                                android:fontFamily="@font/poppins_bold"
+                                android:gravity="center"
+                                android:text="W"
+                                android:textColor="@color/primary"
+                                android:textSize="12sp" />
+
+                            <!-- T (Inactive) -->
+                            <TextView
+                                android:id="@+id/tvDayTh"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_marginEnd="6dp"
+                                android:background="@drawable/bg_day_circle_inactive"
+                                android:fontFamily="@font/poppins_bold"
+                                android:gravity="center"
+                                android:text="T"
+                                android:textColor="@color/on_primary_container"
+                                android:textSize="12sp" />
+
+                            <!-- F (Inactive) -->
+                            <TextView
+                                android:id="@+id/tvDayF"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_day_circle_inactive"
+                                android:fontFamily="@font/poppins_bold"
+                                android:gravity="center"
+                                android:text="F"
+                                android:textColor="@color/on_primary_container"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <!-- ===== Perseverance Motivation Quote Card (Randomized every 5s with background image) ===== -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardRecurrence"
+                android:id="@+id/cardMotivation"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="220dp"
                 android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@color/primary_container"
                 app:cardCornerRadius="24dp"
-                app:cardElevation="6dp"
+                app:cardElevation="4dp"
                 app:strokeWidth="0dp">
 
-                <LinearLayout
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    android:layout_height="match_parent">
 
+                    <!-- Background Image -->
+                    <ImageView
+                        android:id="@+id/ivQuoteBg"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/img_quote_bg_1"
+                        android:contentDescription="Motivational Background" />
+
+                    <!-- Dark Gradient Overlay -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/gradient_attachment_overlay" />
+
+                    <!-- Content Layout -->
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:layout_height="match_parent"
+                        android:gravity="bottom"
+                        android:orientation="vertical"
+                        android:padding="20dp">
 
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_marginEnd="6dp"
-                            android:src="@drawable/ic_time"
-                            app:tint="@color/primary_fixed_dim" />
-
-                        <TextView
+                        <!-- Badge Row -->
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:layout_marginEnd="6dp"
+                                android:src="@drawable/ic_quote"
+                                app:tint="@color/white" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_bold"
+                                android:letterSpacing="0.08"
+                                android:text="MOTIVATION · KIÊN TRÌ"
+                                android:textColor="@color/white"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <!-- Quote Content -->
+                        <TextView
+                            android:id="@+id/tvQuoteContent"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
                             android:fontFamily="@font/poppins_bold"
-                            android:letterSpacing="0.08"
-                            android:text="RECURRENCE"
-                            android:textColor="@color/primary_fixed_dim"
-                            android:textSize="11sp" />
+                            android:lineSpacingMultiplier="1.3"
+                            android:textColor="@color/white"
+                            android:textSize="15sp"
+                            tools:text="“Hành trình vạn dặm bắt đầu bằng một bước chân.”" />
+
+                        <!-- Author / Subtitle -->
+                        <TextView
+                            android:id="@+id/tvQuoteAuthor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_medium"
+                            android:textColor="#E0FFFFFF"
+                            android:textSize="12sp"
+                            tools:text="— Lão Tử" />
                     </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tvRecurrenceType"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:text="Weekly"
-                        android:textColor="@color/on_primary_container"
-                        android:textSize="18sp" />
-
-                    <!-- Day Circles Row: M T W T F -->
-                    <LinearLayout
-                        android:id="@+id/layoutDaySelector"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <!-- M (Active) -->
-                        <TextView
-                            android:id="@+id/tvDayM"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:layout_marginEnd="6dp"
-                            android:background="@drawable/bg_day_circle_active"
-                            android:fontFamily="@font/poppins_bold"
-                            android:gravity="center"
-                            android:text="M"
-                            android:textColor="@color/primary"
-                            android:textSize="12sp" />
-
-                        <!-- T (Inactive) -->
-                        <TextView
-                            android:id="@+id/tvDayT"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:layout_marginEnd="6dp"
-                            android:background="@drawable/bg_day_circle_inactive"
-                            android:fontFamily="@font/poppins_bold"
-                            android:gravity="center"
-                            android:text="T"
-                            android:textColor="@color/on_primary_container"
-                            android:textSize="12sp" />
-
-                        <!-- W (Active) -->
-                        <TextView
-                            android:id="@+id/tvDayW"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:layout_marginEnd="6dp"
-                            android:background="@drawable/bg_day_circle_active"
-                            android:fontFamily="@font/poppins_bold"
-                            android:gravity="center"
-                            android:text="W"
-                            android:textColor="@color/primary"
-                            android:textSize="12sp" />
-
-                        <!-- T (Inactive) -->
-                        <TextView
-                            android:id="@+id/tvDayTh"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:layout_marginEnd="6dp"
-                            android:background="@drawable/bg_day_circle_inactive"
-                            android:fontFamily="@font/poppins_bold"
-                            android:gravity="center"
-                            android:text="T"
-                            android:textColor="@color/on_primary_container"
-                            android:textSize="12sp" />
-
-                        <!-- F (Inactive) -->
-                        <TextView
-                            android:id="@+id/tvDayF"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:background="@drawable/bg_day_circle_inactive"
-                            android:fontFamily="@font/poppins_bold"
-                            android:gravity="center"
-                            android:text="F"
-                            android:textColor="@color/on_primary_container"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-                </LinearLayout>
+                </FrameLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <!-- ===== Action Buttons Section ===== -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="20dp"
                 android:background="@color/surface_container" />
 
@@ -530,7 +628,7 @@
                     android:textSize="14sp"
                     app:backgroundTint="@color/surface_container_lowest"
                     app:cornerRadius="16dp"
-                    app:icon="@drawable/ic_back"
+                    app:icon="@drawable/ic_edit"
                     app:iconGravity="textStart"
                     app:iconTint="@color/primary"
                     app:strokeColor="@color/primary"
@@ -548,12 +646,12 @@
                     android:textSize="14sp"
                     app:backgroundTint="@color/tertiary"
                     app:cornerRadius="16dp"
-                    app:icon="@drawable/ic_chevron_right"
+                    app:icon="@drawable/ic_delete"
                     app:iconGravity="textStart"
                     app:iconTint="@color/white" />
             </LinearLayout>
 
-            <!-- Mark as Completed Button -->
+            <!-- Mark as Completed Button — primary_container background as per spec -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnComplete"
                 android:layout_width="match_parent"
@@ -562,18 +660,18 @@
                 android:fontFamily="@font/poppins_bold"
                 android:text="Mark as Completed"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
+                android:textColor="@color/on_primary_container"
                 android:textSize="16sp"
-                app:backgroundTint="@color/primary"
+                app:backgroundTint="@color/primary_container"
                 app:cornerRadius="16dp"
-                app:icon="@drawable/ic_check"
+                app:icon="@drawable/ic_check_circle"
                 app:iconGravity="textStart"
-                app:iconTint="@color/white" />
+                app:iconTint="@color/on_primary_container" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- ===== Mobile FAB ===== -->
+    <!-- ===== Mobile FAB (bottom-right, Mark as Completed) ===== -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabComplete"
         android:layout_width="wrap_content"
