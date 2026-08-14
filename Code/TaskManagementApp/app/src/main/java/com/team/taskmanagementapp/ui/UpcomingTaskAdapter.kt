@@ -137,7 +137,7 @@ class UpcomingTaskAdapter(
         val grouped = tasks.sortedBy { it.dueDate }.groupBy { task ->
             val cal = Calendar.getInstance().apply { timeInMillis = task.dueDate }
             Pair(cal.get(Calendar.YEAR), cal.get(Calendar.DAY_OF_YEAR))
-        }
+        }.entries.take(3)
 
         for ((_, dayTasks) in grouped) {
             val firstTaskCal = Calendar.getInstance().apply { timeInMillis = dayTasks.first().dueDate }
