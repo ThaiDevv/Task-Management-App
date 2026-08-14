@@ -16,12 +16,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <!-- Priority Left Border Stripe (4dp) -->
+        <!-- Priority Left Border Stripe (4dp) — only shown when completed -->
         <View
             android:id="@+id/priorityStripe"
             android:layout_width="4dp"
             android:layout_height="match_parent"
-            android:background="#105CDB" />
+            android:background="#105CDB"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -31,7 +32,7 @@
             android:orientation="horizontal"
             android:padding="20dp">
 
-            <!-- Checkbox Circle Button -->
+            <!-- Custom Circular Checkbox -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/checkCircleContainer"
                 android:layout_width="24dp"
@@ -54,7 +55,7 @@
                     app:tint="#FFFFFF" />
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Invisible CheckBox for touch handling -->
+            <!-- Hidden checkbox for logic -->
             <CheckBox
                 android:id="@+id/taskCheckbox"
                 android:layout_width="0dp"
@@ -89,7 +90,7 @@
                     android:textColor="#737786"
                     android:textSize="13sp" />
 
-                <!-- Tags Row: Scheduled Time Tag & Priority Tag -->
+                <!-- Tags Row: Scheduled Time + Priority -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -97,7 +98,7 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <!-- Time Tag: bg-surface-container rounded-lg -->
+                    <!-- Time Tag -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -144,12 +145,12 @@
 
             </LinearLayout>
 
-            <!-- Chevron Right Icon -->
+            <!-- Chevron Right -->
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:layout_marginStart="8dp"
                 android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
                 android:src="@drawable/ic_chevron_right"
                 app:tint="#737786" />
 

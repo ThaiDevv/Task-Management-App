@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Upcoming Task Item — Timeline style matching home_dashboard_polished spec.
+    Each item renders a continuous vertical line with a colored bullet dot on top.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="top"
+    android:orientation="horizontal"
+    android:paddingBottom="20dp">
+
+    <!-- Timeline Column (Continuous Line + Overlay Bullet Dot) -->
+    <FrameLayout
+        android:layout_width="24dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="16dp">
+
+        <!-- Continuous Vertical Line -->
+        <View
+            android:id="@+id/timelineLine"
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:background="#22C3C6D7" />
+
+        <!-- Bullet Dot (with white border ring matching HTML spec: ring-4 ring-white) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/timelineDot"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_marginTop="2dp"
+            app:cardBackgroundColor="#105CDB"
+            app:cardCornerRadius="7dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#FFFFFF"
+            app:strokeWidth="2dp" />
+
+    </FrameLayout>
+
+    <!-- Content Column: Title + Time -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/upcomingTaskTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_bold"
+            android:textColor="#1B1B1B"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/upcomingTaskTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="@font/poppins_medium"
+            android:textColor="#737786"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <!-- Priority Dot Indicator -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/upcomingPriorityDot"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_gravity="top"
+        android:layout_marginTop="6dp"
+        app:cardBackgroundColor="#737786"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="0dp"
+        app:strokeWidth="0dp" />
+
+</LinearLayout>

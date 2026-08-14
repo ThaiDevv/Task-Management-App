@@ -46,7 +46,7 @@ class TaskListFragment : Fragment() {
 
     private lateinit var binding: FragmentTaskListBinding
     private lateinit var todayTaskAdapter: TaskAdapter
-    private lateinit var upcomingTaskAdapter: TaskAdapter
+    private lateinit var upcomingTaskAdapter: UpcomingTaskAdapter
 
     private val viewModel: TaskViewModel by viewModels {
         val database = AppDatabase.getInstance(requireContext())
@@ -71,7 +71,6 @@ class TaskListFragment : Fragment() {
 
     private fun setupUI() {
         updateGreeting()
-        updateUpcomingDateHeader()
 
         // Today's Tasks Adapter
         todayTaskAdapter = TaskAdapter(
@@ -83,9 +82,8 @@ class TaskListFragment : Fragment() {
             adapter = todayTaskAdapter
         }
 
-        // Upcoming Tasks Adapter
-        upcomingTaskAdapter = TaskAdapter(
-            onTaskToggleComplete = { task -> viewModel.toggleTaskComplete(task) },
+        // Upcoming Tasks Adapter (timeline style)
+        upcomingTaskAdapter = UpcomingTaskAdapter(
             onTaskClick = { openTaskDetail(it) }
         )
         binding.upcomingTasksRecyclerView.apply {
@@ -109,6 +107,9 @@ class TaskListFragment : Fragment() {
             val intent = Intent(requireContext(), AddEditTaskActivity::class.java)
             startActivity(intent)
         }
+
+        // View Full Calendar button (no-op placeholder)
+        binding.btnViewCalendar.setOnClickListener { /* TODO: navigate to calendar */ }
     }
 
     private fun openTaskDetail(task: Task) {
@@ -131,12 +132,40 @@ class TaskListFragment : Fragment() {
         binding.greetingText.text = "$greeting, Alex!"
     }
 
-    private fun updateUpcomingDateHeader() {
-        val tomorrow = Calendar.getInstance().apply {
-            add(Calendar.DAY_OF_YEAR, 1)
+    /**
+     * Updates the Upcoming section header based on the earliest upcoming task date.
+     * - If the earliest task falls tomorrow → label = "Tomorrow", short date = "Oct 25"
+     * - Otherwise → label = e.g. "Oct 26" (full day+month), short date = same or year etc.
+     * Call this after we know the upcomingList.
+     */
+    private fun updateUpcomingDateHeader(upcomingList: List<com.team.taskmanagementapp.data.local.entity.Task>) {
+        val dateShortFormat = SimpleDateFormat("MMM d", Locale.getDefault())
+        val dayFormat = SimpleDateFormat("EEEE", Locale.getDefault())
+
+        if (upcomingList.isEmpty()) {
+            // No upcoming tasks — hide header content
+            binding.upcomingDayLabel.text = "Upcoming"
+            binding.upcomingDateText.text = ""
+            return
         }
-        val dateFormat = SimpleDateFormat("MMM dd", Locale.getDefault())
-        binding.upcomingDateText.text = "Tomorrow, ${dateFormat.format(tomorrow.time)}"
+
+        // Find the earliest due date in upcoming list
+        val earliestMillis = upcomingList.minOf { it.dueDate }
+        val earliestCal = Calendar.getInstance().apply { timeInMillis = earliestMillis }
+
+        val tomorrowCal = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 1) }
+
+        val isTomorrow = earliestCal.get(Calendar.YEAR) == tomorrowCal.get(Calendar.YEAR)
+                && earliestCal.get(Calendar.DAY_OF_YEAR) == tomorrowCal.get(Calendar.DAY_OF_YEAR)
+
+        if (isTomorrow) {
+            binding.upcomingDayLabel.text = "Tomorrow"
+            binding.upcomingDateText.text = dateShortFormat.format(earliestCal.time)
+        } else {
+            // Show the actual date as label (e.g. "Oct 26")
+            binding.upcomingDayLabel.text = dateShortFormat.format(earliestCal.time)
+            binding.upcomingDateText.text = dayFormat.format(earliestCal.time)
+        }
     }
 
     private fun observeViewModel() {
@@ -177,10 +206,15 @@ class TaskListFragment : Fragment() {
 
         val nowEndToday = getEndOfTodayMillis()
         val todayList = allTasks.filter { it.dueDate <= nowEndToday }
+        // Sort upcoming by dueDate ascending so earliest appears at top
         val upcomingList = allTasks.filter { it.dueDate > nowEndToday }
+            .sortedBy { it.dueDate }
 
         todayTaskAdapter.submitList(todayList)
         upcomingTaskAdapter.submitList(upcomingList)
+
+        // Update the timeline card header based on actual earliest upcoming date
+        updateUpcomingDateHeader(upcomingList)
 
         if (todayList.isEmpty()) {
             binding.todayEmptyStateText.visibility = View.VISIBLE

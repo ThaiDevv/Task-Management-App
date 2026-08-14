@@ -412,52 +412,107 @@
                 android:paddingEnd="24dp"
                 android:paddingBottom="24dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/poppins_bold"
-                        android:text="Upcoming"
-                        android:textColor="#1B1B1B"
-                        android:textSize="20sp" />
-
-                    <TextView
-                        android:id="@+id/upcomingDateText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:textColor="#737786"
-                        android:textSize="13sp" />
-                </LinearLayout>
-
-                <!-- Dynamic Upcoming Tasks RecyclerView -->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/upcomingTasksRecyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
-                    tools:listitem="@layout/item_task_summary" />
-
-                <!-- Empty State for Upcoming Tasks -->
+                <!-- Section Title "Upcoming" -->
                 <TextView
-                    android:id="@+id/upcomingEmptyStateText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:fontFamily="@font/poppins_medium"
-                    android:text="No upcoming tasks scheduled"
-                    android:textAlignment="center"
-                    android:textColor="#737786"
-                    android:textSize="14sp"
-                    android:visibility="gone" />
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="Upcoming"
+                    android:textColor="#1B1B1B"
+                    android:textSize="20sp"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Timeline Card (matches home_dashboard_polished style) -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#4DC3C6D7"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="24dp">
+
+                        <!-- Date Header Row: "Tomorrow" | "Oct 25" -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingBottom="16dp"
+                            android:layout_marginBottom="8dp">
+
+                            <!-- Left: Day label (Tomorrow / date string) -->
+                            <TextView
+                                android:id="@+id/upcomingDayLabel"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/poppins_bold"
+                                android:text="Tomorrow"
+                                android:textColor="#1B1B1B"
+                                android:textSize="15sp" />
+
+                            <!-- Right: Short date (e.g. Oct 25) -->
+                            <TextView
+                                android:id="@+id/upcomingDateText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_semibold"
+                                android:textColor="#737786"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                        <!-- Horizontal divider line below header -->
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginBottom="16dp"
+                            android:background="#22C3C6D7" />
+
+                        <!-- Upcoming Task List (timeline items with embedded vertical line & dots) -->
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/upcomingTasksRecyclerView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false"
+                            tools:listitem="@layout/item_upcoming_task" />
+
+                        <!-- Empty state inside card -->
+                        <TextView
+                            android:id="@+id/upcomingEmptyStateText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="4dp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:text="No upcoming tasks scheduled"
+                            android:textAlignment="center"
+                            android:textColor="#737786"
+                            android:textSize="14sp"
+                            android:visibility="gone" />
+
+                        <!-- View Full Calendar button -->
+                        <Button
+                            android:id="@+id/btnViewCalendar"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:layout_marginTop="16dp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="View Full Calendar"
+                            android:textColor="#105CDB"
+                            android:textSize="13sp"
+                            app:strokeColor="#C3C6D7"
+                            app:strokeWidth="1dp"
+                            app:cornerRadius="14dp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
             <!-- ===== 5. PRODUCTIVITY INSIGHT BANNER ===== -->

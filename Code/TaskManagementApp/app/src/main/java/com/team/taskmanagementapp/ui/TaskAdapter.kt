@@ -65,8 +65,8 @@ class TaskAdapter(
             val priorityColor = ContextCompat.getColor(context, priorityColorRes)
             val priorityBg = ContextCompat.getColor(context, priorityBgRes)
 
-            // Priority left border stripe
-            binding.priorityStripe.setBackgroundColor(priorityColor)
+            // Priority left border stripe — only shown on completed tasks (see isCompleted block below)
+            // Background color pre-set to primary blue in XML; visibility controlled below
 
             // Priority Pill Badge
             binding.taskPriority.text = task.priority.name
@@ -78,6 +78,10 @@ class TaskAdapter(
 
             // Custom Checkbox Circle Button state
             if (task.isCompleted) {
+                // Show blue left stripe only on completed tasks
+                binding.priorityStripe.visibility = View.VISIBLE
+                binding.priorityStripe.setBackgroundColor(ContextCompat.getColor(context, R.color.primary))
+
                 binding.checkCircleContainer.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary))
                 binding.checkCircleContainer.strokeWidth = 0
                 binding.checkMarkIcon.visibility = View.VISIBLE
@@ -87,6 +91,9 @@ class TaskAdapter(
                 binding.taskTitle.alpha = 0.5f
                 binding.root.alpha = 0.65f
             } else {
+                // Hide stripe when task is incomplete
+                binding.priorityStripe.visibility = View.GONE
+
                 binding.checkCircleContainer.setCardBackgroundColor(Color.WHITE)
                 binding.checkCircleContainer.strokeColor = Color.parseColor("#737786")
                 binding.checkCircleContainer.strokeWidth = (2 * context.resources.displayMetrics.density).toInt()
