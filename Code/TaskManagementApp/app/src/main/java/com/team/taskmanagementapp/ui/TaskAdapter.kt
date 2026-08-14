@@ -1,5 +1,6 @@
 package com.team.taskmanagementapp.ui
 
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
@@ -14,9 +15,6 @@ import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.enums.Priority
 import com.team.taskmanagementapp.databinding.ItemTaskSummaryBinding
 import com.team.taskmanagementapp.util.DateTimeUtils
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class TaskAdapter(
     private val onTaskToggleComplete: ((Task) -> Unit)? = null,
@@ -43,7 +41,7 @@ class TaskAdapter(
         fun bind(task: Task) {
             val context = binding.root.context
             binding.taskTitle.text = task.title
-            
+
             if (task.description.isBlank()) {
                 binding.taskDescription.visibility = View.GONE
             } else {
@@ -56,10 +54,7 @@ class TaskAdapter(
             val timeStr = DateTimeUtils.formatTimestamp(task.dueTime, "hh:mm a")
             binding.taskTime.text = "$dateStr, $timeStr"
 
-            // Set priority pill styling
-            val priorityText = task.priority.name.lowercase().replaceFirstChar { it.uppercase() }
-            binding.taskPriority.text = priorityText
-
+            // Set priority pill styling and left stripe
             val (priorityBgRes, priorityColorRes) = when (task.priority) {
                 Priority.LOW -> R.color.priority_low_bg to R.color.priority_low
                 Priority.MEDIUM -> R.color.priority_medium_bg to R.color.priority_medium
@@ -70,30 +65,41 @@ class TaskAdapter(
             val priorityColor = ContextCompat.getColor(context, priorityColorRes)
             val priorityBg = ContextCompat.getColor(context, priorityBgRes)
 
+            // Priority left border stripe
+            binding.priorityStripe.setBackgroundColor(priorityColor)
+
+            // Priority Pill Badge
+            binding.taskPriority.text = task.priority.name
             binding.taskPriority.setTextColor(priorityColor)
             binding.taskPriority.background = GradientDrawable().apply {
                 setColor(priorityBg)
-                cornerRadius = 24f
+                cornerRadius = 16f
             }
 
-            // Set checkbox state
-            binding.taskCheckbox.isChecked = task.isCompleted
-
-            // UI feedback: strikethrough title, dimmed card
+            // Custom Checkbox Circle Button state
             if (task.isCompleted) {
+                binding.checkCircleContainer.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary))
+                binding.checkCircleContainer.strokeWidth = 0
+                binding.checkMarkIcon.visibility = View.VISIBLE
+
                 binding.taskTitle.paintFlags =
                     binding.taskTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
                 binding.taskTitle.alpha = 0.5f
                 binding.root.alpha = 0.65f
             } else {
+                binding.checkCircleContainer.setCardBackgroundColor(Color.WHITE)
+                binding.checkCircleContainer.strokeColor = Color.parseColor("#737786")
+                binding.checkCircleContainer.strokeWidth = (2 * context.resources.displayMetrics.density).toInt()
+                binding.checkMarkIcon.visibility = View.GONE
+
                 binding.taskTitle.paintFlags =
                     binding.taskTitle.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
                 binding.taskTitle.alpha = 1.0f
                 binding.root.alpha = 1.0f
             }
 
-            // Checkbox click -> toggle complete/uncomplete
-            binding.taskCheckbox.setOnClickListener {
+            // Checkbox click -> toggle complete
+            binding.checkCircleContainer.setOnClickListener {
                 onTaskToggleComplete?.invoke(task)
             }
 
