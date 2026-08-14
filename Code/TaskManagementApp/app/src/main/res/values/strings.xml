@@ -159,4 +159,7 @@
     <string name="sort_by_title">Theo tiêu đề</string>
     <string name="sort_ascending">Tăng dần</string>
     <string name="sort_descending">Giảm dần</string>
+    <!-- Task notification actions -->
+    <string name="notification_action_complete">Hoàn thành</string>
+    <string name="notification_action_snooze">Nhắc lại sau 15 phút</string>
 </resources>

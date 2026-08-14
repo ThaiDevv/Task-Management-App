@@ -1,6 +1,7 @@
 package com.team.taskmanagementapp
 
 import android.app.Application
+import com.team.taskmanagementapp.util.NotificationHelper
 
 /**
  * Custom Application class for Task Management App.
@@ -10,6 +11,7 @@ class TaskApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        // Initialization logic for notification channels, etc. will be registered here
+        // TODO exercise starts in NotificationHelper.createNotificationChannel().
+        NotificationHelper.createNotificationChannel(this)
     }
 }
