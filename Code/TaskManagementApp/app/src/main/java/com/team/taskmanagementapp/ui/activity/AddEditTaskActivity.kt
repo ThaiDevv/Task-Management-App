@@ -18,9 +18,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-
 import com.google.android.material.snackbar.Snackbar
-
 
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.db.AppDatabase
@@ -33,6 +31,7 @@ import com.team.taskmanagementapp.databinding.ActivityAddEditTaskBinding
 import com.team.taskmanagementapp.ui.base.UiState
 import com.team.taskmanagementapp.ui.viewmodel.AddEditTaskViewModel
 import com.team.taskmanagementapp.ui.viewmodel.AddEditTaskViewModelFactory
+import com.team.taskmanagementapp.util.AlarmScheduler
 import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.NotificationPermissionManager
 import com.team.taskmanagementapp.util.ValidationHelper
@@ -60,6 +59,24 @@ class AddEditTaskActivity : AppCompatActivity() {
     private var isSaving = false
     private var loadedTask: Task? = null
     private var isFormPopulated = false
+    private var retrySaveAfterExactAlarmPermission = false
+
+    private val exactAlarmPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (!retrySaveAfterExactAlarmPermission) return@registerForActivityResult
+
+        retrySaveAfterExactAlarmPermission = false
+        if (AlarmScheduler.canScheduleExactAlarms(this)) {
+            saveTask()
+        } else {
+            Toast.makeText(
+                this,
+                R.string.exact_alarm_permission_required,
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
 
     // TASK-39: Permission launcher for re-checking after user returns from Settings
     private val notificationPermissionLauncher =
@@ -340,6 +357,7 @@ class AddEditTaskActivity : AppCompatActivity() {
      * Executes the actual save / update logic after all permission and validation checks pass.
      */
     private fun performSave() {
+        if (!ensureExactAlarmPermission()) return
         val title = binding.titleEditText.text.toString()
         val description = binding.descriptionEditText.text.toString()
         if (isEditMode) {
@@ -370,9 +388,8 @@ class AddEditTaskActivity : AppCompatActivity() {
         viewModel.uiState.observe(this) { state ->
             when (state) {
                 is UiState.Success -> {
-
-
                     if (isSaving) {
+                        AlarmScheduler.scheduleAlarm(this, state.data)
                         val message = if (isEditMode) "Task updated successfully" else "Task created successfully"
                         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                         finish()
@@ -428,6 +445,7 @@ class AddEditTaskActivity : AppCompatActivity() {
                     status = selectedStatus
                 )
                 val updatedTask = viewModel.updateTask(editedTask)
+                AlarmScheduler.rescheduleAlarm(this@AddEditTaskActivity, updatedTask)
 
                 if (hasDueDateOrTimeChanged(existingTask, updatedTask)) {
                     dispatchTaskDateTimeChanged(updatedTask)
@@ -449,6 +467,21 @@ class AddEditTaskActivity : AppCompatActivity() {
 
     private fun hasDueDateOrTimeChanged(oldTask: Task, newTask: Task): Boolean =
         oldTask.dueDate != newTask.dueDate || oldTask.dueTime != newTask.dueTime
+
+    private fun ensureExactAlarmPermission(): Boolean {
+        if (
+            selectedReminderMinutes <= 0 ||
+            AlarmScheduler.canScheduleExactAlarms(this)
+        ) {
+            return true
+        }
+
+        retrySaveAfterExactAlarmPermission = true
+        exactAlarmPermissionLauncher.launch(
+            AlarmScheduler.exactAlarmPermissionIntent(this)
+        )
+        return false
+    }
 
     private fun dispatchTaskDateTimeChanged(task: Task) {
         sendBroadcast(

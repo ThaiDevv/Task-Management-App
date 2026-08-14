@@ -122,8 +122,6 @@
     <string name="settings_critical_actions">Critical Actions</string>
     <string name="settings_logout_all">Logout from all devices</string>
     <string name="settings_deactivate_vault">Deactivate Security Vault</string>
-
-
     <!-- Filter Bottom Sheet -->
     <string name="filter_title">Filter &amp; Sort</string>
     <string name="filter_reset">Reset</string>
@@ -160,10 +158,10 @@
     <string name="sort_by_title">Theo tiêu đề</string>
     <string name="sort_ascending">Tăng dần</string>
     <string name="sort_descending">Giảm dần</string>
-
-    <!-- Notification Strings (Task 37 & Task 39) -->
+    <!-- Notification Strings (Task 37, 38 & Task 39) -->
     <string name="notification_action_complete">Đánh dấu hoàn thành</string>
     <string name="notification_action_snooze">Báo lại 10 phút</string>
+    <string name="exact_alarm_permission_required">Allow exact alarms to schedule task reminders</string>
 
     <string name="notif_permission_rationale_title">Cho phép thông báo nhắc việc</string>
     <string name="notif_permission_rationale_message">TaskFlow cần quyền thông báo để nhắc nhở bạn về các task quan trọng đúng giờ. Bật ngay để không bỏ lỡ bất kỳ deadline nào!</string>

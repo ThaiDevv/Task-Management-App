@@ -39,7 +39,7 @@ class TaskDetailActivity : AppCompatActivity() {
             Constants.PREFS_NAME,
             Context.MODE_PRIVATE
         )
-        TaskViewModelFactory(repository, preferences)
+        TaskViewModelFactory(repository, applicationContext, preferences)
     }
 
     private var currentTask: Task? = null
@@ -118,7 +118,6 @@ class TaskDetailActivity : AppCompatActivity() {
         } else {
             // Not completed → primary_container button (matches Stitch spec)
             binding.btnComplete.text = getString(R.string.task_detail_button_complete)
-
             binding.btnComplete.setIconResource(R.drawable.ic_check_circle)
             binding.btnComplete.backgroundTintList =
                 ContextCompat.getColorStateList(this, R.color.primary_container)
@@ -131,7 +130,6 @@ class TaskDetailActivity : AppCompatActivity() {
             binding.fabComplete.setImageResource(R.drawable.ic_check_circle)
             binding.fabComplete.backgroundTintList =
                 ContextCompat.getColorStateList(this, R.color.primary)
-
             binding.fabComplete.contentDescription = getString(R.string.action_mark_complete)
         }
     }

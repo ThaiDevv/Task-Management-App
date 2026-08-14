@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import com.team.taskmanagementapp.util.NotificationHelper
+
 /**
  * TaskListFragment displays the home dashboard with greeting, summary metrics,
  * Today's Tasks, Upcoming Tasks, and Productivity Insight banner.
@@ -51,7 +51,7 @@ class TaskListFragment : Fragment() {
     private val viewModel: TaskViewModel by viewModels {
         val database = AppDatabase.getInstance(requireContext())
         val repository = TaskRepository(database.taskDao())
-        TaskViewModelFactory(repository)
+        TaskViewModelFactory(repository, requireContext().applicationContext)
     }
 
     override fun onCreateView(
@@ -71,8 +71,6 @@ class TaskListFragment : Fragment() {
 
     private fun setupUI() {
         updateGreeting()
-
-
         // Today's Tasks Adapter
         todayTaskAdapter = TaskAdapter(
             onTaskToggleComplete = { task -> viewModel.toggleTaskComplete(task) },
