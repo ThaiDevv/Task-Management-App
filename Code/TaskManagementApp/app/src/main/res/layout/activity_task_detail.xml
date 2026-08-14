@@ -573,6 +573,93 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- ===== Perseverance Motivation Quote Card (Randomized every 5s with background image) ===== -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardMotivation"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp"
+                app:strokeWidth="0dp">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <!-- Background Image -->
+                    <ImageView
+                        android:id="@+id/ivQuoteBg"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/img_quote_bg_1"
+                        android:contentDescription="Motivational Background" />
+
+                    <!-- Dark Gradient Overlay -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/gradient_attachment_overlay" />
+
+                    <!-- Content Layout -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="bottom"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <!-- Badge Row -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:layout_marginEnd="6dp"
+                                android:src="@drawable/ic_quote"
+                                app:tint="@color/white" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_bold"
+                                android:letterSpacing="0.08"
+                                android:text="MOTIVATION · KIÊN TRÌ"
+                                android:textColor="@color/white"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <!-- Quote Content -->
+                        <TextView
+                            android:id="@+id/tvQuoteContent"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:lineSpacingMultiplier="1.3"
+                            android:textColor="@color/white"
+                            android:textSize="15sp"
+                            tools:text="“Hành trình vạn dặm bắt đầu bằng một bước chân.”" />
+
+                        <!-- Author / Subtitle -->
+                        <TextView
+                            android:id="@+id/tvQuoteAuthor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_medium"
+                            android:textColor="#E0FFFFFF"
+                            android:textSize="12sp"
+                            tools:text="— Lão Tử" />
+                    </LinearLayout>
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- ===== Action Buttons Section ===== -->
             <View
                 android:layout_width="match_parent"
@@ -619,7 +706,7 @@
                     android:textSize="14sp"
                     app:backgroundTint="@color/tertiary"
                     app:cornerRadius="16dp"
-                    app:icon="@drawable/ic_chevron_right"
+                    app:icon="@drawable/ic_delete"
                     app:iconGravity="textStart"
                     app:iconTint="@color/white" />
             </LinearLayout>
@@ -637,7 +724,7 @@
                 android:textSize="16sp"
                 app:backgroundTint="@color/primary_container"
                 app:cornerRadius="16dp"
-                app:icon="@drawable/ic_check"
+                app:icon="@drawable/ic_check_circle"
                 app:iconGravity="textStart"
                 app:iconTint="@color/on_primary_container" />
 

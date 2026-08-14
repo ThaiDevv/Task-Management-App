@@ -75,6 +75,9 @@ class TaskDetailActivity : AppCompatActivity() {
         setupCompleteButton()
         setupEditButton()
         setupDeleteButton()
+
+        // 5-second motivational quote rotator with background images
+        setupMotivationQuoteRotator()
     }
 
     private fun bindTaskData(task: Task) {
@@ -119,7 +122,7 @@ class TaskDetailActivity : AppCompatActivity() {
         } else {
             // Not completed → primary_container button (matches Stitch spec)
             binding.btnComplete.text = getString(R.string.task_detail_button_complete)
-            binding.btnComplete.setIconResource(R.drawable.ic_check)
+            binding.btnComplete.setIconResource(R.drawable.ic_check_circle)
             binding.btnComplete.backgroundTintList =
                 ContextCompat.getColorStateList(this, R.color.primary_container)
             binding.btnComplete.setTextColor(
@@ -128,7 +131,7 @@ class TaskDetailActivity : AppCompatActivity() {
             binding.btnComplete.iconTint =
                 ContextCompat.getColorStateList(this, R.color.on_primary_container)
 
-            binding.fabComplete.setImageResource(R.drawable.ic_check)
+            binding.fabComplete.setImageResource(R.drawable.ic_check_circle)
             binding.fabComplete.backgroundTintList =
                 ContextCompat.getColorStateList(this, R.color.primary)
             binding.fabComplete.contentDescription = getString(R.string.action_mark_complete)
@@ -233,6 +236,63 @@ class TaskDetailActivity : AppCompatActivity() {
                 val intent = Intent(this, AddEditTaskActivity::class.java)
                 intent.putExtra(Constants.EXTRA_TASK_ID, task.id.toLong())
                 startActivity(intent)
+            }
+        }
+    }
+
+    // ===== Motivation Quote Rotator (5-second random rotation) =====
+
+    private data class MotivationQuote(
+        val content: String,
+        val author: String,
+        val imageResId: Int
+    )
+
+    private val motivationQuotes = listOf(
+        MotivationQuote("“Hành trình vạn dặm bắt đầu bằng một bước chân.”", "— Lão Tử", R.drawable.img_quote_bg_1),
+        MotivationQuote("“Không phải tôi thông minh, tôi chỉ ở lại với vấn đề lâu hơn.”", "— Albert Einstein", R.drawable.img_quote_bg_2),
+        MotivationQuote("“Thành công không phải cuối cùng, thất bại không phải tận cùng. Sức dũng cảm bước tiếp mới là tất cả.”", "— Winston Churchill", R.drawable.img_quote_bg_3),
+        MotivationQuote("“Đừng sợ đi chậm, chỉ sợ đứng yên.”", "— Tục ngữ", R.drawable.img_quote_bg_4),
+        MotivationQuote("“Sự kiên trì là chìa khóa mở mọi cánh cửa của thành công.”", "— Thomas Edison", R.drawable.img_quote_bg_1),
+        MotivationQuote("“Những khó khăn lớn nhất luôn tôi luyện nên những con người mạnh mẽ nhất.”", "— Triết lý cuộc sống", R.drawable.img_quote_bg_2),
+        MotivationQuote("“Bạn chỉ thật sự thất bại khi bạn quyết định từ bỏ.”", "— Napoleon Hill", R.drawable.img_quote_bg_3),
+        MotivationQuote("“Mỗi ngày cố gắng thêm 1%, sau một năm bạn sẽ vượt trội gấp 37 lần.”", "— Atomic Habits", R.drawable.img_quote_bg_4),
+        MotivationQuote("“Giọt nước chảy mãi cũng làm mòn đá cứng.”", "— Thành ngữ", R.drawable.img_quote_bg_1),
+        MotivationQuote("“Mặt trời luôn mọc sau đêm tối. Hãy kiên trì bước tiếp!”", "— Cảm hứng mỗi ngày", R.drawable.img_quote_bg_2),
+        MotivationQuote("“Kỷ luật là cầu nối giữa mục tiêu và thành tựu.”", "— Jim Rohn", R.drawable.img_quote_bg_3),
+        MotivationQuote("“Nỗ lực âm thầm của hôm nay sẽ là ánh hào quang rực rỡ của ngày mai.”", "— Động lực sống", R.drawable.img_quote_bg_4),
+        MotivationQuote("“Người kiên trì là người hoàn thành những gì người khác bắt đầu.”", "— Triết lý thành công", R.drawable.img_quote_bg_1),
+        MotivationQuote("“Ước mơ không tự đến, nó đòi hỏi mồ hôi và sự kiên trì mỗi ngày.”", "— Quản lý công việc", R.drawable.img_quote_bg_2),
+        MotivationQuote("“Lửa thử vàng, gian gian thử sức, khó khăn thử thách lòng kiên trì.”", "— Ca dao Việt Nam", R.drawable.img_quote_bg_3),
+        MotivationQuote("“Chiến thắng bản thân là chiến thắng hiển hách nhất.”", "— Đạo Phật", R.drawable.img_quote_bg_4)
+    )
+
+    private fun setupMotivationQuoteRotator() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                var currentIndex = (motivationQuotes.indices).random()
+                while (true) {
+                    val quote = motivationQuotes[currentIndex % motivationQuotes.size]
+
+                    // Smooth cross-fade animation when switching quote & background image
+                    binding.cardMotivation.animate()
+                        .alpha(0.4f)
+                        .setDuration(350)
+                        .withEndAction {
+                            binding.ivQuoteBg.setImageResource(quote.imageResId)
+                            binding.tvQuoteContent.text = quote.content
+                            binding.tvQuoteAuthor.text = quote.author
+
+                            binding.cardMotivation.animate()
+                                .alpha(1.0f)
+                                .setDuration(350)
+                                .start()
+                        }
+                        .start()
+
+                    currentIndex++
+                    kotlinx.coroutines.delay(5000)
+                }
             }
         }
     }
