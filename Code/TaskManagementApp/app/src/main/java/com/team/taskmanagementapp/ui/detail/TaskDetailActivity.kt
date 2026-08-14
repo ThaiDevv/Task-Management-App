@@ -119,12 +119,6 @@ class TaskDetailActivity : AppCompatActivity() {
             // Not completed → primary_container button (matches Stitch spec)
             binding.btnComplete.text = getString(R.string.task_detail_button_complete)
 
-            binding.btnComplete.setIconResource(R.drawable.ic_check)
-            binding.btnComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.primary))
-            
-            binding.fabComplete.setImageResource(R.drawable.ic_check)
-            binding.fabComplete.backgroundTintList = ContextCompat.getColorStateList(this, R.color.primary)
-=======
             binding.btnComplete.setIconResource(R.drawable.ic_check_circle)
             binding.btnComplete.backgroundTintList =
                 ContextCompat.getColorStateList(this, R.color.primary_container)

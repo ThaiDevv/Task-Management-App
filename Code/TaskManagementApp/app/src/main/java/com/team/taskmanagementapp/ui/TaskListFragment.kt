@@ -73,19 +73,6 @@ class TaskListFragment : Fragment() {
         updateGreeting()
 
 
-        // Setup RecyclerView with toggle and click callbacks
-        taskAdapter = TaskAdapter(
-            onTaskToggleComplete = { task ->
-                viewModel.toggleTaskComplete(task)
-            },
-            onTaskClick = { task ->
-                // Dòng tạm thời dùng để test notification
-                NotificationHelper.showTaskReminder(requireContext(), task)
-                val intent = Intent(requireContext(), TaskDetailActivity::class.java)
-                intent.putExtra(Constants.EXTRA_TASK_ID, task.id.toLong())
-                startActivity(intent)
-            }
-=======
         // Today's Tasks Adapter
         todayTaskAdapter = TaskAdapter(
             onTaskToggleComplete = { task -> viewModel.toggleTaskComplete(task) },
