@@ -84,11 +84,15 @@ class TaskDetailActivity : AppCompatActivity() {
             getString(R.string.task_detail_no_description)
         }
 
-        // Separate Due Date & Scheduled Time display to match polished design
+        // Due Date & Scheduled Time
         val dateStr = DateTimeUtils.formatTimestamp(task.dueDate, "MMM dd, yyyy")
         val timeStr = DateTimeUtils.formatTimestamp(task.dueTime, DateTimeUtils.FORMAT_TIME_ONLY)
         binding.tvDueDate.text = if (dateStr.isBlank()) "No Date" else dateStr
         binding.tvScheduledTime.text = if (timeStr.isBlank()) "No Time" else timeStr
+
+        // Created At
+        val createdDateStr = DateTimeUtils.formatTimestamp(task.createdAt, "MMM dd, yyyy · hh:mm a")
+        binding.tvCreatedAt.text = if (createdDateStr.isBlank()) "—" else createdDateStr
 
         // Status & Priority Badges
         bindStatusBadge(task.status, task)
@@ -97,23 +101,36 @@ class TaskDetailActivity : AppCompatActivity() {
         // Recurrence Card & Day Selector
         bindRecurrence(task)
 
-
         // Complete Button state, text, and icons
         if (task.isCompleted) {
+            // Completed → green button
             binding.btnComplete.text = getString(R.string.task_detail_button_uncomplete)
-            binding.btnComplete.setIconResource(R.drawable.ic_time) // Show incomplete symbol or time icon
-            binding.btnComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.outline))
-            
+            binding.btnComplete.setIconResource(R.drawable.ic_time)
+            binding.btnComplete.backgroundTintList =
+                ContextCompat.getColorStateList(this, android.R.color.holo_green_dark)
+            binding.btnComplete.setTextColor(ContextCompat.getColor(this, android.R.color.white))
+            binding.btnComplete.iconTint =
+                ContextCompat.getColorStateList(this, android.R.color.white)
+
             binding.fabComplete.setImageResource(R.drawable.ic_time)
-            binding.fabComplete.backgroundTintList = ContextCompat.getColorStateList(this, R.color.outline)
+            binding.fabComplete.backgroundTintList =
+                ContextCompat.getColorStateList(this, android.R.color.holo_green_dark)
             binding.fabComplete.contentDescription = getString(R.string.action_mark_incomplete)
         } else {
+            // Not completed → primary_container button (matches Stitch spec)
             binding.btnComplete.text = getString(R.string.task_detail_button_complete)
             binding.btnComplete.setIconResource(R.drawable.ic_check)
-            binding.btnComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.primary))
-            
+            binding.btnComplete.backgroundTintList =
+                ContextCompat.getColorStateList(this, R.color.primary_container)
+            binding.btnComplete.setTextColor(
+                ContextCompat.getColor(this, R.color.on_primary_container)
+            )
+            binding.btnComplete.iconTint =
+                ContextCompat.getColorStateList(this, R.color.on_primary_container)
+
             binding.fabComplete.setImageResource(R.drawable.ic_check)
-            binding.fabComplete.backgroundTintList = ContextCompat.getColorStateList(this, R.color.primary)
+            binding.fabComplete.backgroundTintList =
+                ContextCompat.getColorStateList(this, R.color.primary)
             binding.fabComplete.contentDescription = getString(R.string.action_mark_complete)
         }
     }
