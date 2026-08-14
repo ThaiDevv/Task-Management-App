@@ -1,5 +1,6 @@
 package com.team.taskmanagementapp.ui
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -18,19 +19,17 @@ import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.db.AppDatabase
 import com.team.taskmanagementapp.data.model.DueDateRange
 import com.team.taskmanagementapp.data.model.FilterCriteria
+import com.team.taskmanagementapp.data.model.SortOption
 import com.team.taskmanagementapp.data.model.enums.Priority
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.databinding.FragmentFilterBottomSheetBinding
 import com.team.taskmanagementapp.databinding.FragmentTaskListBinding
 import com.team.taskmanagementapp.ui.base.UiState
-import com.team.taskmanagementapp.viewmodel.TaskViewModel
-import com.team.taskmanagementapp.viewmodel.TaskViewModelFactory
-import com.team.taskmanagementapp.data.repository.TaskRepository
-import android.content.Intent
-import com.team.taskmanagementapp.data.local.db.AppDatabase
 import com.team.taskmanagementapp.ui.detail.TaskDetailActivity
 import com.team.taskmanagementapp.util.Constants
+import com.team.taskmanagementapp.viewmodel.TaskViewModel
+import com.team.taskmanagementapp.viewmodel.TaskViewModelFactory
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -137,7 +136,7 @@ class TaskListFragment : Fragment() {
                         }
                     }
                 }
-                // Observe filter state → update active indicator
+                // Observe filter state -> update active indicator
                 launch {
                     viewModel.filterCriteria.collect { criteria ->
                         updateFilterIndicator(criteria)
@@ -152,6 +151,7 @@ class TaskListFragment : Fragment() {
         val isActive = criteria.status != null
                 || criteria.priority != null
                 || criteria.dueDateRange != DueDateRange.ALL
+                || criteria.sortOption != SortOption.DUE_DATE_ASC
 
         binding.activeFilterBadge.visibility = if (isActive) View.VISIBLE else View.GONE
 
@@ -167,10 +167,10 @@ class TaskListFragment : Fragment() {
         val total = tasks.size
         val completed = tasks.count { it.isCompleted }
         val pending = tasks.count {
-            !it.isCompleted && it.status != com.team.taskmanagementapp.data.model.enums.TaskStatus.OVERDUE
+            !it.isCompleted && it.status != TaskStatus.OVERDUE
         }
         val overdue = tasks.count {
-            it.status == com.team.taskmanagementapp.data.model.enums.TaskStatus.OVERDUE
+            it.status == TaskStatus.OVERDUE
         }
         binding.totalTasksValue.text = total.toString()
         binding.completedValue.text = completed.toString()
@@ -194,20 +194,19 @@ class TaskListFragment : Fragment() {
     /**
      * Bottom sheet matching the TaskFlow "Filter & Sort" reference design:
      *   - STATUS: checkboxes (Todo / In Progress / Completed / Overdue)
-     *   - PRIORITY: equal-width pill chips (All / High / Medium / Low / Urgent)
-     *   - DUE DATE: radio rows (All / Today / This Week / This Month / Overdue)
+     *   - PRIORITY: equal-width pill chips (Urgent / High / Medium / Low)
+     *   - DUE DATE: radio rows (All / Today / This Week / This Month)
+     *   - SORT BY: radio rows (Due date asc / Due date desc / Priority)
      *   - Apply Filters / Reset buttons
      */
     class FilterBottomSheet : BottomSheetDialogFragment() {
 
         companion object {
             const val TAG = "FilterBottomSheet"
-            private const val ARG_STATUS    = "arg_status"
-            private const val ARG_PRIORITY  = "arg_priority"
-            private const val ARG_SORT      = "arg_sort"
-
-            // Static state for sort option since it's not saved in FilterCriteria database
-            private var lastSelectedSortOption: Int = 0
+            private const val ARG_STATUS     = "arg_status"
+            private const val ARG_PRIORITY   = "arg_priority"
+            private const val ARG_DATE_RANGE = "arg_date_range"
+            private const val ARG_SORT       = "arg_sort"
 
             fun newInstance(
                 criteria: FilterCriteria,
@@ -215,9 +214,10 @@ class TaskListFragment : Fragment() {
             ): FilterBottomSheet = FilterBottomSheet().also { sheet ->
                 sheet.onFilterAction = onAction
                 sheet.arguments = Bundle().apply {
-                    putString(ARG_STATUS,   criteria.status?.name)
-                    putString(ARG_PRIORITY, criteria.priority?.name)
-                    putInt(ARG_SORT,       lastSelectedSortOption)
+                    putString(ARG_STATUS,     criteria.status?.name)
+                    putString(ARG_PRIORITY,   criteria.priority?.name)
+                    putString(ARG_DATE_RANGE, criteria.dueDateRange.name)
+                    putString(ARG_SORT,       criteria.sortOption.name)
                 }
             }
         }
@@ -227,10 +227,11 @@ class TaskListFragment : Fragment() {
 
         var onFilterAction: ((FilterAction) -> Unit)? = null
 
-        // Local draft selections (not yet applied)
+        // Local draft selections
         private var selectedStatus: TaskStatus? = null
         private var selectedPriority: Priority? = null
-        private var selectedSortOption: Int = 0
+        private var selectedDueDateRange: DueDateRange = DueDateRange.ALL
+        private var selectedSortOption: SortOption = SortOption.DUE_DATE_ASC
 
         override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -244,19 +245,22 @@ class TaskListFragment : Fragment() {
             restoreFromArgs()
             syncStatusUi()
             syncPriorityUi()
+            syncDateRangeUi()
             syncSortUi()
+
             wireStatusRows()
             wirePriorityChips()
+            wireDateRangeRows()
             wireSortRows()
 
             binding.btnApplyFilter.setOnClickListener {
-                lastSelectedSortOption = selectedSortOption
                 onFilterAction?.invoke(
                     FilterAction.Apply(
                         FilterCriteria(
                             status = selectedStatus,
                             priority = selectedPriority,
-                            dueDateRange = DueDateRange.ALL // Default since we replaced due date section
+                            dueDateRange = selectedDueDateRange,
+                            sortOption = selectedSortOption
                         )
                     )
                 )
@@ -264,8 +268,6 @@ class TaskListFragment : Fragment() {
             }
 
             binding.btnReset.setOnClickListener {
-                selectedSortOption = 0
-                lastSelectedSortOption = 0
                 onFilterAction?.invoke(FilterAction.Clear)
                 dismiss()
             }
@@ -276,7 +278,10 @@ class TaskListFragment : Fragment() {
                 ?.let { runCatching { TaskStatus.valueOf(it) }.getOrNull() }
             selectedPriority = arguments?.getString(ARG_PRIORITY)
                 ?.let { runCatching { Priority.valueOf(it) }.getOrNull() }
-            selectedSortOption = arguments?.getInt(ARG_SORT) ?: 0
+            selectedDueDateRange = arguments?.getString(ARG_DATE_RANGE)
+                ?.let { runCatching { DueDateRange.valueOf(it) }.getOrNull() } ?: DueDateRange.ALL
+            selectedSortOption = arguments?.getString(ARG_SORT)
+                ?.let { runCatching { SortOption.valueOf(it) }.getOrNull() } ?: SortOption.DUE_DATE_ASC
         }
 
         // ── STATUS ────────────────────────────────────────────────────────
@@ -284,6 +289,10 @@ class TaskListFragment : Fragment() {
         private fun wireStatusRows() {
             binding.statusTodo.setOnClickListener {
                 selectedStatus = if (selectedStatus == TaskStatus.TODO) null else TaskStatus.TODO
+                syncStatusUi()
+            }
+            binding.statusInProgress.setOnClickListener {
+                selectedStatus = if (selectedStatus == TaskStatus.IN_PROGRESS) null else TaskStatus.IN_PROGRESS
                 syncStatusUi()
             }
             binding.statusCompleted.setOnClickListener {
@@ -298,6 +307,7 @@ class TaskListFragment : Fragment() {
 
         private fun syncStatusUi() {
             binding.cbStatusTodo.isChecked       = selectedStatus == TaskStatus.TODO
+            binding.cbStatusInProgress.isChecked = selectedStatus == TaskStatus.IN_PROGRESS
             binding.cbStatusCompleted.isChecked  = selectedStatus == TaskStatus.COMPLETED
             binding.cbStatusOverdue.isChecked    = selectedStatus == TaskStatus.OVERDUE
         }
@@ -305,6 +315,10 @@ class TaskListFragment : Fragment() {
         // ── PRIORITY ──────────────────────────────────────────────────────
 
         private fun wirePriorityChips() {
+            binding.chipPriorityUrgent.setOnClickListener {
+                selectedPriority = if (selectedPriority == Priority.URGENT) null else Priority.URGENT
+                syncPriorityUi()
+            }
             binding.chipPriorityHigh.setOnClickListener {
                 selectedPriority = if (selectedPriority == Priority.HIGH) null else Priority.HIGH
                 syncPriorityUi()
@@ -320,29 +334,61 @@ class TaskListFragment : Fragment() {
         }
 
         private fun syncPriorityUi() {
+            setChipSelected(binding.chipPriorityUrgent, selectedPriority == Priority.URGENT)
             setChipSelected(binding.chipPriorityHigh,   selectedPriority == Priority.HIGH)
             setChipSelected(binding.chipPriorityMedium, selectedPriority == Priority.MEDIUM)
             setChipSelected(binding.chipPriorityLow,    selectedPriority == Priority.LOW)
+        }
+
+        // ── DUE DATE RANGE ────────────────────────────────────────────────
+
+        private fun wireDateRangeRows() {
+            binding.dateRangeAll.setOnClickListener {
+                selectedDueDateRange = DueDateRange.ALL
+                syncDateRangeUi()
+            }
+            binding.dateRangeToday.setOnClickListener {
+                selectedDueDateRange = DueDateRange.TODAY
+                syncDateRangeUi()
+            }
+            binding.dateRangeThisWeek.setOnClickListener {
+                selectedDueDateRange = DueDateRange.THIS_WEEK
+                syncDateRangeUi()
+            }
+            binding.dateRangeThisMonth.setOnClickListener {
+                selectedDueDateRange = DueDateRange.THIS_MONTH
+                syncDateRangeUi()
+            }
+        }
+
+        private fun syncDateRangeUi() {
+            binding.rbDateRangeAll.isChecked       = selectedDueDateRange == DueDateRange.ALL
+            binding.rbDateRangeToday.isChecked     = selectedDueDateRange == DueDateRange.TODAY
+            binding.rbDateRangeThisWeek.isChecked  = selectedDueDateRange == DueDateRange.THIS_WEEK
+            binding.rbDateRangeThisMonth.isChecked = selectedDueDateRange == DueDateRange.THIS_MONTH
         }
 
         // ── SORT BY ───────────────────────────────────────────────────────
 
         private fun wireSortRows() {
             binding.sortDueDateAsc.setOnClickListener {
-                selectedSortOption = 0; syncSortUi()
+                selectedSortOption = SortOption.DUE_DATE_ASC
+                syncSortUi()
             }
             binding.sortDueDateDesc.setOnClickListener {
-                selectedSortOption = 1; syncSortUi()
+                selectedSortOption = SortOption.DUE_DATE_DESC
+                syncSortUi()
             }
             binding.sortPriority.setOnClickListener {
-                selectedSortOption = 2; syncSortUi()
+                selectedSortOption = SortOption.PRIORITY_DESC
+                syncSortUi()
             }
         }
 
         private fun syncSortUi() {
-            binding.rbSortDueDateAsc.isChecked  = selectedSortOption == 0
-            binding.rbSortDueDateDesc.isChecked = selectedSortOption == 1
-            binding.rbSortPriority.isChecked    = selectedSortOption == 2
+            binding.rbSortDueDateAsc.isChecked  = selectedSortOption == SortOption.DUE_DATE_ASC
+            binding.rbSortDueDateDesc.isChecked = selectedSortOption == SortOption.DUE_DATE_DESC
+            binding.rbSortPriority.isChecked    = selectedSortOption == SortOption.PRIORITY_DESC
         }
 
         // ── Chip visual helper ────────────────────────────────────────────

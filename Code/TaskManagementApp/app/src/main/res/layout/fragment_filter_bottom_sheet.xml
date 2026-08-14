@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Filter & Sort Bottom Sheet
-  Faithfully reproduces the TaskFlow reference design:
-  • rounded-t-[32dp] white card + gray drag handle
-  • STATUS: label–checkbox rows (Todo / Completed / Overdue)
-  • PRIORITY: equal-width pill chips in one row (High / Medium / Low)
-  • SORT BY: label–radio rows (Due date ↑ / Due date ↓ / Priority)
-  • Apply Filters: full-width #105CDB button h=56dp rounded-[16dp]
+  Full support for Status (Todo / In Progress / Completed / Overdue),
+  Priority (Urgent / High / Medium / Low),
+  Due Date (All / Today / This Week / This Month / Overdue),
+  and Sort By options.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -15,7 +13,7 @@
     android:background="@drawable/bg_filter_sheet"
     android:orientation="vertical">
 
-    <!-- ── Drag Handle (w-12 h-1.5 bg-outline-variant rounded-full) ── -->
+    <!-- ── Drag Handle ── -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,7 +28,7 @@
             android:background="@drawable/bg_filter_handle" />
     </LinearLayout>
 
-    <!-- ── Scrollable content ── -->
+    <!-- ── Scrollable Content ── -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,13 +42,13 @@
             android:paddingEnd="24dp"
             android:paddingBottom="32dp">
 
-            <!-- ── Header: "Filter & Sort"  +  Reset ── -->
+            <!-- ── Header: "Filter & Sort" + Reset ── -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="28dp"
+                android:layout_marginBottom="24dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -80,12 +78,12 @@
             </LinearLayout>
 
             <!-- ════════════════════════════════════
-                 STATUS SECTION
+                 1. STATUS SECTION
             ════════════════════════════════════ -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="12dp"
                 android:fontFamily="@font/poppins_bold"
                 android:letterSpacing="0.12"
                 android:text="@string/filter_section_status"
@@ -97,9 +95,8 @@
             <LinearLayout
                 android:id="@+id/statusTodo"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="48dp"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="4dp"
                 android:orientation="horizontal"
                 android:clickable="true"
                 android:focusable="true"
@@ -112,10 +109,39 @@
                     android:fontFamily="@font/poppins_regular"
                     android:text="@string/filter_status_todo"
                     android:textColor="#1B1B1B"
-                    android:textSize="16sp" />
+                    android:textSize="15sp" />
 
                 <CheckBox
                     android:id="@+id/cbStatusTodo"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:buttonTint="#0045AE" />
+            </LinearLayout>
+
+            <!-- In Progress row -->
+            <LinearLayout
+                android:id="@+id/statusInProgress"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="@string/filter_status_in_progress"
+                    android:textColor="#1B1B1B"
+                    android:textSize="15sp" />
+
+                <CheckBox
+                    android:id="@+id/cbStatusInProgress"
                     android:layout_width="26dp"
                     android:layout_height="26dp"
                     android:clickable="false"
@@ -127,9 +153,8 @@
             <LinearLayout
                 android:id="@+id/statusCompleted"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="48dp"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="4dp"
                 android:orientation="horizontal"
                 android:clickable="true"
                 android:focusable="true"
@@ -142,7 +167,7 @@
                     android:fontFamily="@font/poppins_regular"
                     android:text="@string/filter_status_completed"
                     android:textColor="#1B1B1B"
-                    android:textSize="16sp" />
+                    android:textSize="15sp" />
 
                 <CheckBox
                     android:id="@+id/cbStatusCompleted"
@@ -157,7 +182,7 @@
             <LinearLayout
                 android:id="@+id/statusOverdue"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="48dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:clickable="true"
@@ -171,7 +196,7 @@
                     android:fontFamily="@font/poppins_regular"
                     android:text="@string/filter_status_overdue"
                     android:textColor="#1B1B1B"
-                    android:textSize="16sp" />
+                    android:textSize="15sp" />
 
                 <CheckBox
                     android:id="@+id/cbStatusOverdue"
@@ -183,15 +208,13 @@
             </LinearLayout>
 
             <!-- ════════════════════════════════════
-                 PRIORITY SECTION
-                 Equal-width pills: High | Medium | Low
-                 (flex-wrap gap-3, rounded-2xl, border → bg-primary when selected)
+                 2. PRIORITY SECTION (Urgent, High, Medium, Low)
             ════════════════════════════════════ -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="12dp"
                 android:fontFamily="@font/poppins_bold"
                 android:letterSpacing="0.12"
                 android:text="@string/filter_section_priority"
@@ -199,66 +222,210 @@
                 android:textColor="#737786"
                 android:textSize="11sp" />
 
-            <!-- Row 1: High · Medium · Low -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/chipPriorityUrgent"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_filter_chip_selector"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:gravity="center"
+                    android:text="@string/filter_priority_urgent"
+                    android:textColor="#1B1B1B"
+                    android:textSize="12sp"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
                     android:id="@+id/chipPriorityHigh"
                     android:layout_width="0dp"
-                    android:layout_height="48dp"
+                    android:layout_height="44dp"
                     android:layout_weight="1"
-                    android:layout_marginEnd="12dp"
+                    android:layout_marginEnd="8dp"
                     android:background="@drawable/bg_filter_chip_selector"
                     android:fontFamily="@font/poppins_semibold"
                     android:gravity="center"
                     android:text="@string/filter_priority_high"
                     android:textColor="#1B1B1B"
-                    android:textSize="13sp"
+                    android:textSize="12sp"
                     android:clickable="true"
                     android:focusable="true" />
 
                 <TextView
                     android:id="@+id/chipPriorityMedium"
                     android:layout_width="0dp"
-                    android:layout_height="48dp"
+                    android:layout_height="44dp"
                     android:layout_weight="1"
-                    android:layout_marginEnd="12dp"
+                    android:layout_marginEnd="8dp"
                     android:background="@drawable/bg_filter_chip_selector"
                     android:fontFamily="@font/poppins_semibold"
                     android:gravity="center"
                     android:text="@string/filter_priority_medium"
                     android:textColor="#1B1B1B"
-                    android:textSize="13sp"
+                    android:textSize="12sp"
                     android:clickable="true"
                     android:focusable="true" />
 
                 <TextView
                     android:id="@+id/chipPriorityLow"
                     android:layout_width="0dp"
-                    android:layout_height="48dp"
+                    android:layout_height="44dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_filter_chip_selector"
                     android:fontFamily="@font/poppins_semibold"
                     android:gravity="center"
                     android:text="@string/filter_priority_low"
                     android:textColor="#1B1B1B"
-                    android:textSize="13sp"
+                    android:textSize="12sp"
                     android:clickable="true"
                     android:focusable="true" />
             </LinearLayout>
 
             <!-- ════════════════════════════════════
-                 SORT BY SECTION
-                 Visual style as STATUS — label left, RadioButton right
+                 3. DUE DATE SECTION
             ════════════════════════════════════ -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="12dp"
+                android:fontFamily="@font/poppins_bold"
+                android:letterSpacing="0.12"
+                android:text="@string/filter_section_due_date"
+                android:textAllCaps="true"
+                android:textColor="#737786"
+                android:textSize="11sp" />
+
+            <!-- Due Date All -->
+            <LinearLayout
+                android:id="@+id/dateRangeAll"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="@string/filter_all"
+                    android:textColor="#1B1B1B"
+                    android:textSize="15sp" />
+
+                <RadioButton
+                    android:id="@+id/rbDateRangeAll"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:buttonTint="#0045AE" />
+            </LinearLayout>
+
+            <!-- Due Date Today -->
+            <LinearLayout
+                android:id="@+id/dateRangeToday"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="@string/filter_due_date_today"
+                    android:textColor="#1B1B1B"
+                    android:textSize="15sp" />
+
+                <RadioButton
+                    android:id="@+id/rbDateRangeToday"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:buttonTint="#0045AE" />
+            </LinearLayout>
+
+            <!-- Due Date This Week -->
+            <LinearLayout
+                android:id="@+id/dateRangeThisWeek"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="@string/filter_due_date_this_week"
+                    android:textColor="#1B1B1B"
+                    android:textSize="15sp" />
+
+                <RadioButton
+                    android:id="@+id/rbDateRangeThisWeek"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:buttonTint="#0045AE" />
+            </LinearLayout>
+
+            <!-- Due Date This Month -->
+            <LinearLayout
+                android:id="@+id/dateRangeThisMonth"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="@string/filter_due_date_this_month"
+                    android:textColor="#1B1B1B"
+                    android:textSize="15sp" />
+
+                <RadioButton
+                    android:id="@+id/rbDateRangeThisMonth"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:buttonTint="#0045AE" />
+            </LinearLayout>
+
+            <!-- ════════════════════════════════════
+                 4. SORT BY SECTION
+            ════════════════════════════════════ -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="12dp"
                 android:fontFamily="@font/poppins_bold"
                 android:letterSpacing="0.12"
                 android:text="@string/filter_section_sort_by"
@@ -270,9 +437,8 @@
             <LinearLayout
                 android:id="@+id/sortDueDateAsc"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="44dp"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="4dp"
                 android:orientation="horizontal"
                 android:clickable="true"
                 android:focusable="true"
@@ -285,7 +451,7 @@
                     android:fontFamily="@font/poppins_regular"
                     android:text="@string/sort_due_date_asc"
                     android:textColor="#1B1B1B"
-                    android:textSize="16sp" />
+                    android:textSize="15sp" />
 
                 <RadioButton
                     android:id="@+id/rbSortDueDateAsc"
@@ -300,9 +466,8 @@
             <LinearLayout
                 android:id="@+id/sortDueDateDesc"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="44dp"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="4dp"
                 android:orientation="horizontal"
                 android:clickable="true"
                 android:focusable="true"
@@ -315,7 +480,7 @@
                     android:fontFamily="@font/poppins_regular"
                     android:text="@string/sort_due_date_desc"
                     android:textColor="#1B1B1B"
-                    android:textSize="16sp" />
+                    android:textSize="15sp" />
 
                 <RadioButton
                     android:id="@+id/rbSortDueDateDesc"
@@ -330,9 +495,8 @@
             <LinearLayout
                 android:id="@+id/sortPriority"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="44dp"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="4dp"
                 android:orientation="horizontal"
                 android:clickable="true"
                 android:focusable="true"
@@ -345,7 +509,7 @@
                     android:fontFamily="@font/poppins_regular"
                     android:text="@string/sort_priority"
                     android:textColor="#1B1B1B"
-                    android:textSize="16sp" />
+                    android:textSize="15sp" />
 
                 <RadioButton
                     android:id="@+id/rbSortPriority"
@@ -361,7 +525,7 @@
                 android:id="@+id/btnApplyFilter"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="28dp"
                 android:fontFamily="@font/poppins_bold"
                 android:text="@string/filter_apply"
                 android:textAllCaps="false"

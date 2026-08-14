@@ -55,7 +55,7 @@ interface TaskDao {
     // 11. Lọc công việc nâng cao (Kết hợp nhiều điều kiện)
     @Query("""
         SELECT * FROM tasks 
-        WHERE (:status IS NULL OR status = :status)
+        WHERE (:status IS NULL OR status = :status OR (:status = 'OVERDUE' AND dueDate < :currentTime AND status != 'COMPLETED'))
           AND (:priority IS NULL OR priority = :priority)
           AND (
               (:isOverdueOnly = 0 AND (:startDate IS NULL OR dueDate >= :startDate) AND (:endDate IS NULL OR dueDate <= :endDate))

@@ -4,9 +4,11 @@ import com.team.taskmanagementapp.data.local.dao.TaskDao
 import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.DueDateRange
 import com.team.taskmanagementapp.data.model.FilterCriteria
+import com.team.taskmanagementapp.data.model.SortOption
 import com.team.taskmanagementapp.data.model.enums.Priority
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.util.Calendar
 
 class TaskRepository(
@@ -108,6 +110,12 @@ class TaskRepository(
             endDate = endDate,
             isOverdueOnly = isOverdueOnly,
             currentTime = currentTime
-        )
+        ).map { tasks ->
+            when (criteria.sortOption) {
+                SortOption.DUE_DATE_ASC -> tasks.sortedWith(compareBy({ it.dueDate }, { it.dueTime }))
+                SortOption.DUE_DATE_DESC -> tasks.sortedWith(compareByDescending<Task> { it.dueDate }.thenByDescending { it.dueTime })
+                SortOption.PRIORITY_DESC -> tasks.sortedByDescending { it.priority.ordinal }
+            }
+        }
     }
 }
