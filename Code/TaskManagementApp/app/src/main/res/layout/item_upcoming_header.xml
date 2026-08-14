@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Upcoming Date Header Item — Displays date title (e.g. "Tomorrow" or "Oct 26")
+    Grouping tasks belonging to the same date.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <!-- Date Main Label (e.g. "Tomorrow" or "Oct 26") -->
+        <TextView
+            android:id="@+id/upcomingHeaderLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/poppins_bold"
+            android:textColor="#105CDB"
+            android:textSize="17sp" />
+
+        <!-- Date Subtext (e.g. "Oct 25" or "Monday") -->
+        <TextView
+            android:id="@+id/upcomingHeaderSubtext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_semibold"
+            android:textColor="#737786"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- Divider line -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="#22C3C6D7" />
+
+</LinearLayout>

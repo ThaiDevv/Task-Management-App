@@ -9,36 +9,72 @@ import androidx.recyclerview.widget.RecyclerView
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.enums.Priority
+import com.team.taskmanagementapp.databinding.ItemUpcomingHeaderBinding
 import com.team.taskmanagementapp.databinding.ItemUpcomingTaskBinding
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
 /**
- * UpcomingTaskAdapter — Timeline style matching home_dashboard_polished Stitch spec.
- * Renders upcoming tasks as timeline items (dot + title + time).
+ * Sealed model for items displayed in the Upcoming timeline RecyclerView:
+ * Either a Date Header (grouping tasks for a specific date) or a Task Item.
+ */
+sealed class UpcomingItem {
+    data class Header(val dateLabel: String, val dateSubtext: String) : UpcomingItem()
+    data class TaskItem(val task: Task) : UpcomingItem()
+}
+
+/**
+ * UpcomingTaskAdapter — Timeline adapter supporting grouped date headers and task items.
  */
 class UpcomingTaskAdapter(
     private val onTaskClick: ((Task) -> Unit)? = null
-) : ListAdapter<Task, UpcomingTaskAdapter.UpcomingViewHolder>(UpcomingDiffCallback()) {
+) : ListAdapter<UpcomingItem, RecyclerView.ViewHolder>(UpcomingItemDiffCallback()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UpcomingViewHolder {
-        val binding = ItemUpcomingTaskBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
-        return UpcomingViewHolder(binding)
+    companion object {
+        private const val TYPE_HEADER = 0
+        private const val TYPE_TASK = 1
     }
 
-    override fun onBindViewHolder(holder: UpcomingViewHolder, position: Int) {
-        holder.bind(getItem(position))
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            is UpcomingItem.Header -> TYPE_HEADER
+            is UpcomingItem.TaskItem -> TYPE_TASK
+        }
     }
 
-    inner class UpcomingViewHolder(private val binding: ItemUpcomingTaskBinding) :
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        return if (viewType == TYPE_HEADER) {
+            val binding = ItemUpcomingHeaderBinding.inflate(inflater, parent, false)
+            HeaderViewHolder(binding)
+        } else {
+            val binding = ItemUpcomingTaskBinding.inflate(inflater, parent, false)
+            TaskViewHolder(binding)
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (val item = getItem(position)) {
+            is UpcomingItem.Header -> (holder as HeaderViewHolder).bind(item)
+            is UpcomingItem.TaskItem -> (holder as TaskViewHolder).bind(item)
+        }
+    }
+
+    inner class HeaderViewHolder(private val binding: ItemUpcomingHeaderBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(header: UpcomingItem.Header) {
+            binding.upcomingHeaderLabel.text = header.dateLabel
+            binding.upcomingHeaderSubtext.text = header.dateSubtext
+        }
+    }
+
+    inner class TaskViewHolder(private val binding: ItemUpcomingTaskBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(task: Task) {
+        fun bind(item: UpcomingItem.TaskItem) {
+            val task = item.task
             val context = binding.root.context
 
             binding.upcomingTaskTitle.text = task.title
@@ -47,8 +83,9 @@ class UpcomingTaskAdapter(
             val timeStr = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date(task.dueTime))
             binding.upcomingTaskTime.text = timeStr
 
-            // Dot color: first/active task = blue primary, rest = gray
-            val dotColorRes = if (bindingAdapterPosition == 0) R.color.primary else R.color.surface_container_high
+            // Dot color: first task item = primary blue, others = surface gray
+            val isFirstTask = bindingAdapterPosition == 1 || (bindingAdapterPosition > 0 && getItem(bindingAdapterPosition - 1) is UpcomingItem.Header && bindingAdapterPosition <= 2)
+            val dotColorRes = if (isFirstTask) R.color.primary else R.color.surface_container_high
             binding.timelineDot.setCardBackgroundColor(
                 ContextCompat.getColor(context, dotColorRes)
             )
@@ -66,8 +103,56 @@ class UpcomingTaskAdapter(
         }
     }
 
-    private class UpcomingDiffCallback : DiffUtil.ItemCallback<Task>() {
-        override fun areItemsTheSame(oldItem: Task, newItem: Task) = oldItem.id == newItem.id
-        override fun areContentsTheSame(oldItem: Task, newItem: Task) = oldItem == newItem
+    private class UpcomingItemDiffCallback : DiffUtil.ItemCallback<UpcomingItem>() {
+        override fun areItemsTheSame(oldItem: UpcomingItem, newItem: UpcomingItem): Boolean {
+            return when {
+                oldItem is UpcomingItem.Header && newItem is UpcomingItem.Header ->
+                    oldItem.dateLabel == newItem.dateLabel
+                oldItem is UpcomingItem.TaskItem && newItem is UpcomingItem.TaskItem ->
+                    oldItem.task.id == newItem.task.id
+                else -> false
+            }
+        }
+
+        override fun areContentsTheSame(oldItem: UpcomingItem, newItem: UpcomingItem): Boolean {
+            return oldItem == newItem
+        }
+    }
+
+    /**
+     * Helper to group a flat list of tasks into UpcomingItems (Headers + Tasks).
+     */
+    fun submitTaskList(tasks: List<Task>) {
+        if (tasks.isEmpty()) {
+            submitList(emptyList())
+            return
+        }
+
+        val items = mutableListOf<UpcomingItem>()
+        val dateFormat = SimpleDateFormat("MMM d", Locale.getDefault())
+        val dayFormat = SimpleDateFormat("EEEE", Locale.getDefault())
+
+        val tomorrowCal = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 1) }
+
+        val grouped = tasks.sortedBy { it.dueDate }.groupBy { task ->
+            val cal = Calendar.getInstance().apply { timeInMillis = task.dueDate }
+            Pair(cal.get(Calendar.YEAR), cal.get(Calendar.DAY_OF_YEAR))
+        }
+
+        for ((_, dayTasks) in grouped) {
+            val firstTaskCal = Calendar.getInstance().apply { timeInMillis = dayTasks.first().dueDate }
+
+            val isTomorrow = firstTaskCal.get(Calendar.YEAR) == tomorrowCal.get(Calendar.YEAR)
+                    && firstTaskCal.get(Calendar.DAY_OF_YEAR) == tomorrowCal.get(Calendar.DAY_OF_YEAR)
+
+            val dateLabel = if (isTomorrow) "Tomorrow" else dateFormat.format(firstTaskCal.time)
+            val dateSubtext = if (isTomorrow) dateFormat.format(firstTaskCal.time) else dayFormat.format(firstTaskCal.time)
+
+            items.add(UpcomingItem.Header(dateLabel, dateSubtext))
+            dayTasks.forEach { task ->
+                items.add(UpcomingItem.TaskItem(task))
+            }
+        }
+        submitList(items)
     }
 }

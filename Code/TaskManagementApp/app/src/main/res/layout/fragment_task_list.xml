@@ -438,44 +438,7 @@
                         android:orientation="vertical"
                         android:padding="24dp">
 
-                        <!-- Date Header Row: "Tomorrow" | "Oct 25" -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:paddingBottom="16dp"
-                            android:layout_marginBottom="8dp">
-
-                            <!-- Left: Day label (Tomorrow / date string) -->
-                            <TextView
-                                android:id="@+id/upcomingDayLabel"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:fontFamily="@font/poppins_bold"
-                                android:text="Tomorrow"
-                                android:textColor="#1B1B1B"
-                                android:textSize="15sp" />
-
-                            <!-- Right: Short date (e.g. Oct 25) -->
-                            <TextView
-                                android:id="@+id/upcomingDateText"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/poppins_semibold"
-                                android:textColor="#737786"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <!-- Horizontal divider line below header -->
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginBottom="16dp"
-                            android:background="#22C3C6D7" />
-
-                        <!-- Upcoming Task List (timeline items with embedded vertical line & dots) -->
+                        <!-- Upcoming Task List (grouped by date with headers and timeline items) -->
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/upcomingTasksRecyclerView"
                             android:layout_width="match_parent"

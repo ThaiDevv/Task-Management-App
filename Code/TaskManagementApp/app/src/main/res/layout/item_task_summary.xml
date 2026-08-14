@@ -76,7 +76,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_bold"
                     android:textColor="#1B1B1B"
-                    android:textSize="17sp" />
+                    android:textSize="18sp" />
 
                 <!-- Description -->
                 <TextView
@@ -88,7 +88,7 @@
                     android:fontFamily="@font/poppins_medium"
                     android:maxLines="2"
                     android:textColor="#737786"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
 
                 <!-- Tags Row: Scheduled Time + Priority -->
                 <LinearLayout
@@ -124,7 +124,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_semibold"
                             android:textColor="#424654"
-                            android:textSize="11sp" />
+                            android:textSize="13sp" />
                     </LinearLayout>
 
                     <!-- Priority Badge -->
@@ -139,7 +139,7 @@
                         android:paddingEnd="10dp"
                         android:paddingBottom="6dp"
                         android:textAllCaps="true"
-                        android:textSize="11sp" />
+                        android:textSize="13sp" />
 
                 </LinearLayout>
 
