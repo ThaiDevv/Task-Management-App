@@ -5,7 +5,6 @@
     <!-- Permissions required for Notifications and Alarm Scheduling -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
@@ -44,6 +43,10 @@
 
         <receiver
             android:name=".receiver.TaskNotificationReceiver"
+            android:exported="false" />
+
+        <receiver
+            android:name=".receiver.AlarmReceiver"
             android:exported="false" />
 
     </application>
