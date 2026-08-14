@@ -3,6 +3,7 @@ package com.team.taskmanagementapp.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.team.taskmanagementapp.data.local.entity.Task
+import com.team.taskmanagementapp.data.model.FilterCriteria
 import com.team.taskmanagementapp.data.model.enums.Priority
 import com.team.taskmanagementapp.data.model.enums.RecurrenceType
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
@@ -18,8 +19,11 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
+import android.content.SharedPreferences
+
 class TaskViewModel(
-    private val repository: TaskRepository
+    private val repository: TaskRepository,
+    private val preferences: SharedPreferences? = null
 ) : ViewModel() {
 
     private val _deleteSuccess = MutableSharedFlow<Boolean>()
@@ -32,6 +36,9 @@ class TaskViewModel(
     private val _selectedTask = MutableStateFlow<Task?>(null)
     val selectedTask: StateFlow<Task?> = _selectedTask.asStateFlow()
 
+    private val _filterCriteria = MutableStateFlow(FilterCriteria())
+    val filterCriteria: StateFlow<FilterCriteria> = _filterCriteria.asStateFlow()
+
     init {
         loadAllTasks()
     }
@@ -40,7 +47,7 @@ class TaskViewModel(
     fun loadAllTasks() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            repository.getAllTasks()
+            repository.getFilteredTasks(_filterCriteria.value)
                 .catch { e ->
                     _uiState.value = UiState.Error("Không thể tải danh sách công việc: ${e.localizedMessage}")
                 }
@@ -162,40 +169,24 @@ class TaskViewModel(
         }
     }
 
+    fun applyFilter(criteria: FilterCriteria) {
+        _filterCriteria.value = criteria
+        loadAllTasks()
+    }
+
+    fun clearFilter() {
+        _filterCriteria.value = FilterCriteria()
+        loadAllTasks()
+    }
+
 
     fun filterByStatus(status: TaskStatus) {
-        viewModelScope.launch {
-            _uiState.value = UiState.Loading
-            repository.getTasksByStatus(status)
-                .catch { e ->
-                    _uiState.value = UiState.Error("Lỗi lọc theo trạng thái: ${e.localizedMessage}")
-                }
-                .collect { tasks ->
-                    if (tasks.isEmpty()) {
-                        _uiState.value = UiState.Empty
-                    } else {
-                        _uiState.value = UiState.Success(tasks)
-                    }
-                }
-        }
+        applyFilter(_filterCriteria.value.copy(status = status))
     }
 
 
     fun filterByPriority(priority: Priority) {
-        viewModelScope.launch {
-            _uiState.value = UiState.Loading
-            repository.getTasksByPriority(priority)
-                .catch { e ->
-                    _uiState.value = UiState.Error("Lỗi lọc theo mức độ ưu tiên: ${e.localizedMessage}")
-                }
-                .collect { tasks ->
-                    if (tasks.isEmpty()) {
-                        _uiState.value = UiState.Empty
-                    } else {
-                        _uiState.value = UiState.Success(tasks)
-                    }
-                }
-        }
+        applyFilter(_filterCriteria.value.copy(priority = priority))
     }
 
     fun getTaskById(taskId: Long) {

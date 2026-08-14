@@ -123,4 +123,40 @@
     <string name="settings_logout_all">Logout from all devices</string>
     <string name="settings_deactivate_vault">Deactivate Security Vault</string>
 
+    <!-- Filter Bottom Sheet -->
+    <string name="filter_title">Filter &amp; Sort</string>
+    <string name="filter_reset">Reset</string>
+    <string name="filter_apply">Apply Filters</string>
+    <string name="filter_all">All</string>
+    <string name="filter_section_status">STATUS</string>
+    <string name="filter_status_todo">Todo</string>
+    <string name="filter_status_in_progress">In Progress</string>
+    <string name="filter_status_completed">Completed</string>
+    <string name="filter_status_overdue">Overdue</string>
+    <string name="filter_section_priority">PRIORITY</string>
+    <string name="filter_priority_low">Low</string>
+    <string name="filter_priority_medium">Medium</string>
+    <string name="filter_priority_high">High</string>
+    <string name="filter_priority_urgent">Urgent</string>
+    <string name="filter_section_due_date">DUE DATE</string>
+    <string name="filter_due_date_today">Today</string>
+    <string name="filter_due_date_this_week">This Week</string>
+    <string name="filter_due_date_this_month">This Month</string>
+    <string name="filter_due_date_overdue">Overdue</string>
+    <string name="filter_active_indicator">🔵 Filters active</string>
+
+    <!-- Sort By section labels -->
+    <string name="filter_section_sort_by">SORT BY</string>
+    <string name="sort_due_date_asc">Due date ↑</string>
+    <string name="sort_due_date_desc">Due date ↓</string>
+    <string name="sort_priority">Priority</string>
+
+    <!-- Sort Menu Options -->
+    <string name="sort_title">Sắp xếp</string>
+    <string name="sort_by_due_date">Theo ngày hạn</string>
+    <string name="sort_by_priority">Theo độ ưu tiên</string>
+    <string name="sort_by_created_date">Theo ngày tạo</string>
+    <string name="sort_by_title">Theo tiêu đề</string>
+    <string name="sort_ascending">Tăng dần</string>
+    <string name="sort_descending">Giảm dần</string>
 </resources>

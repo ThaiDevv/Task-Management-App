@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Core brand colors from the TaskFlow design system. -->
-    <color name="primary">#0045AE</color>
+    <color name="primary">#105CDB</color>
     <color name="on_primary">#FFFFFF</color>
     <color name="primary_container">#105CDB</color>
     <color name="on_primary_container">#DAE2FF</color>
@@ -15,7 +15,7 @@
     <color name="secondary_container">#CFE2F7</color>
     <color name="on_secondary_container">#526477</color>
 
-    <color name="tertiary">#9E0514</color>
+    <color name="tertiary">#C12729</color>
     <color name="on_tertiary">#FFFFFF</color>
     <color name="tertiary_container">#C12729</color>
     <color name="on_tertiary_container">#FFDBD7</color>
@@ -25,9 +25,9 @@
     <color name="on_error">#FFFFFF</color>
     <color name="error_container">#FFDAD6</color>
     <color name="on_error_container">#93000A</color>
-    <color name="success">#1B6E3C</color>
+    <color name="success">#10B981</color>
     <color name="on_success">#FFFFFF</color>
-    <color name="warning">#9A6400</color>
+    <color name="warning">#F59E0B</color>
     <color name="on_warning">#FFFFFF</color>
 
     <!-- Surfaces and outlines. -->
@@ -51,16 +51,21 @@
     <color name="surface_tint">#0055D2</color>
 
     <!-- Task-specific semantic colors used by list and detail screens. -->
-    <color name="priority_low">#1B6E3C</color>
-    <color name="priority_medium">#9A6400</color>
-    <color name="priority_high">#C12729</color>
-    <color name="priority_urgent">#93000A</color>
-    <color name="status_todo">#526477</color>
-    <color name="status_in_progress">#0045AE</color>
-    <color name="status_completed">#1B6E3C</color>
-    <color name="status_overdue">#BA1A1A</color>
+    <color name="priority_low">#10B981</color>
+    <color name="priority_low_bg">#DCFCE7</color>
+    <color name="priority_medium">#F59E0B</color>
+    <color name="priority_medium_bg">#FEF3C7</color>
+    <color name="priority_high">#F43F5E</color>
+    <color name="priority_high_bg">#FFE4E6</color>
+    <color name="priority_urgent">#C12729</color>
+    <color name="priority_urgent_bg">#FFDAD6</color>
 
-    <!-- Legacy aliases kept for launcher resources and simple XML usage. -->
+    <color name="status_todo">#105CDB</color>
+    <color name="status_in_progress">#F59E0B</color>
+    <color name="status_completed">#10B981</color>
+    <color name="status_overdue">#F43F5E</color>
+
+    <!-- Legacy aliases. -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>
