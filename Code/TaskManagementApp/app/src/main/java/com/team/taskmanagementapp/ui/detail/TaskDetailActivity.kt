@@ -39,7 +39,7 @@ class TaskDetailActivity : AppCompatActivity() {
             Constants.PREFS_NAME,
             Context.MODE_PRIVATE
         )
-        TaskViewModelFactory(repository, preferences)
+        TaskViewModelFactory(repository, applicationContext, preferences)
     }
 
     private var currentTask: Task? = null

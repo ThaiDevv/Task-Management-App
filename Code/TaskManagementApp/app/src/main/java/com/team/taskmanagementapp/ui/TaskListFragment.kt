@@ -51,7 +51,7 @@ class TaskListFragment : Fragment() {
     private val viewModel: TaskViewModel by viewModels {
         val database = AppDatabase.getInstance(requireContext())
         val repository = TaskRepository(database.taskDao())
-        TaskViewModelFactory(repository)
+        TaskViewModelFactory(repository, requireContext().applicationContext)
     }
 
     override fun onCreateView(

@@ -15,8 +15,8 @@ import kotlinx.coroutines.launch
 
 class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel() {
 
-    private val _uiState = MutableLiveData<UiState<Unit>>()
-    val uiState: LiveData<UiState<Unit>> = _uiState
+    private val _uiState = MutableLiveData<UiState<Task>>()
+    val uiState: LiveData<UiState<Task>> = _uiState
 
     private val _task = MutableLiveData<Task?>()
     val task: LiveData<Task?> = _task
@@ -36,7 +36,7 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
             val result = repository.getTaskById(taskId)
             if (result != null) {
                 _task.value = result
-                _uiState.value = UiState.Success(Unit)
+                _uiState.value = UiState.Success(result)
             } else {
                 _uiState.value = UiState.Error("Task not found")
             }
@@ -63,7 +63,7 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
         viewModelScope.launch {
             _uiState.value = UiState.Loading
             try {
-                if (isEdit) {
+                val savedTask = if (isEdit) {
                     val existingTask = repository.getTaskById(id.toLong())
                     if (existingTask != null) {
                         val updatedTask = existingTask.copy(
@@ -78,6 +78,7 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
                             updatedAt = System.currentTimeMillis()
                         )
                         repository.update(updatedTask)
+                        updatedTask
                     } else {
                         _uiState.value = UiState.Error("Task not found to update")
                         return@launch
@@ -98,9 +99,10 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
                         createdAt = now,
                         updatedAt = now
                     )
-                    repository.insert(task)
+                    val insertedId = repository.insert(task)
+                    task.copy(id = insertedId.toInt())
                 }
-                _uiState.value = UiState.Success(Unit)
+                _uiState.value = UiState.Success(savedTask)
             } catch (e: Exception) {
                 _uiState.value = UiState.Error(e.localizedMessage ?: "Failed to save task")
             }

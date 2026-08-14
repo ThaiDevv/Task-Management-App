@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -28,6 +29,7 @@ import com.team.taskmanagementapp.databinding.ActivityAddEditTaskBinding
 import com.team.taskmanagementapp.ui.base.UiState
 import com.team.taskmanagementapp.ui.viewmodel.AddEditTaskViewModel
 import com.team.taskmanagementapp.ui.viewmodel.AddEditTaskViewModelFactory
+import com.team.taskmanagementapp.util.AlarmScheduler
 import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.ValidationHelper
 import com.team.taskmanagementapp.util.ValidationHelper.ValidationError
@@ -54,6 +56,24 @@ class AddEditTaskActivity : AppCompatActivity() {
     private var isSaving = false
     private var loadedTask: Task? = null
     private var isFormPopulated = false
+    private var retrySaveAfterExactAlarmPermission = false
+
+    private val exactAlarmPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (!retrySaveAfterExactAlarmPermission) return@registerForActivityResult
+
+        retrySaveAfterExactAlarmPermission = false
+        if (AlarmScheduler.canScheduleExactAlarms(this)) {
+            saveTask()
+        } else {
+            Toast.makeText(
+                this,
+                R.string.exact_alarm_permission_required,
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -287,6 +307,8 @@ class AddEditTaskActivity : AppCompatActivity() {
             return
         }
 
+        if (!ensureExactAlarmPermission()) return
+
         val title = binding.titleEditText.text.toString()
         val description = binding.descriptionEditText.text.toString()
         if (isEditMode) {
@@ -318,6 +340,7 @@ class AddEditTaskActivity : AppCompatActivity() {
             when (state) {
                 is UiState.Success -> {
                     if (isSaving) {
+                        AlarmScheduler.scheduleAlarm(this, state.data)
                         val message = if (isEditMode) "Task updated successfully" else "Task created successfully"
                         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                         finish()
@@ -373,6 +396,7 @@ class AddEditTaskActivity : AppCompatActivity() {
                     status = selectedStatus
                 )
                 val updatedTask = viewModel.updateTask(editedTask)
+                AlarmScheduler.rescheduleAlarm(this@AddEditTaskActivity, updatedTask)
 
                 if (hasDueDateOrTimeChanged(existingTask, updatedTask)) {
                     dispatchTaskDateTimeChanged(updatedTask)
@@ -394,6 +418,21 @@ class AddEditTaskActivity : AppCompatActivity() {
 
     private fun hasDueDateOrTimeChanged(oldTask: Task, newTask: Task): Boolean =
         oldTask.dueDate != newTask.dueDate || oldTask.dueTime != newTask.dueTime
+
+    private fun ensureExactAlarmPermission(): Boolean {
+        if (
+            selectedReminderMinutes <= 0 ||
+            AlarmScheduler.canScheduleExactAlarms(this)
+        ) {
+            return true
+        }
+
+        retrySaveAfterExactAlarmPermission = true
+        exactAlarmPermissionLauncher.launch(
+            AlarmScheduler.exactAlarmPermissionIntent(this)
+        )
+        return false
+    }
 
     private fun dispatchTaskDateTimeChanged(task: Task) {
         sendBroadcast(
