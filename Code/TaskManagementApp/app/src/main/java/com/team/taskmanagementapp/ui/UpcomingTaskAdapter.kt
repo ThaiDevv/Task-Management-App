@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.enums.Priority
+import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.databinding.ItemUpcomingHeaderBinding
 import com.team.taskmanagementapp.databinding.ItemUpcomingTaskBinding
 import java.text.SimpleDateFormat
@@ -83,21 +84,30 @@ class UpcomingTaskAdapter(
             val timeStr = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date(task.dueTime))
             binding.upcomingTaskTime.text = timeStr
 
-            // Dot color: first task item = primary blue, others = surface gray
-            val isFirstTask = bindingAdapterPosition == 1 || (bindingAdapterPosition > 0 && getItem(bindingAdapterPosition - 1) is UpcomingItem.Header && bindingAdapterPosition <= 2)
-            val dotColorRes = if (isFirstTask) R.color.primary else R.color.surface_container_high
-            binding.timelineDot.setCardBackgroundColor(
-                ContextCompat.getColor(context, dotColorRes)
-            )
+            val isOverdue = !task.isCompleted && (task.status == TaskStatus.OVERDUE || task.dueDate < System.currentTimeMillis())
 
-            // Priority dot color
-            val priorityColor = ContextCompat.getColor(context, when (task.priority) {
-                Priority.URGENT -> R.color.priority_urgent
-                Priority.HIGH   -> R.color.priority_high
-                Priority.MEDIUM -> R.color.priority_medium
-                Priority.LOW    -> R.color.priority_low
-            })
-            binding.upcomingPriorityDot.setCardBackgroundColor(priorityColor)
+            if (isOverdue) {
+                binding.timelineDot.setCardBackgroundColor(ContextCompat.getColor(context, R.color.status_overdue))
+                binding.upcomingPriorityDot.setCardBackgroundColor(ContextCompat.getColor(context, R.color.status_overdue))
+                binding.upcomingTaskTitle.setTextColor(ContextCompat.getColor(context, R.color.status_overdue))
+            } else {
+                // Dot color: first task item = primary blue, others = surface gray
+                val isFirstTask = bindingAdapterPosition == 1 || (bindingAdapterPosition > 0 && getItem(bindingAdapterPosition - 1) is UpcomingItem.Header && bindingAdapterPosition <= 2)
+                val dotColorRes = if (isFirstTask) R.color.primary else R.color.surface_container_high
+                binding.timelineDot.setCardBackgroundColor(
+                    ContextCompat.getColor(context, dotColorRes)
+                )
+
+                // Priority dot color
+                val priorityColor = ContextCompat.getColor(context, when (task.priority) {
+                    Priority.URGENT -> R.color.priority_urgent
+                    Priority.HIGH   -> R.color.priority_high
+                    Priority.MEDIUM -> R.color.priority_medium
+                    Priority.LOW    -> R.color.priority_low
+                })
+                binding.upcomingPriorityDot.setCardBackgroundColor(priorityColor)
+                binding.upcomingTaskTitle.setTextColor(ContextCompat.getColor(context, R.color.on_background))
+            }
 
             binding.root.setOnClickListener { onTaskClick?.invoke(task) }
         }

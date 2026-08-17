@@ -141,6 +141,24 @@
                         android:textAllCaps="true"
                         android:textSize="13sp" />
 
+                    <!-- Overdue Badge -->
+                    <TextView
+                        android:id="@+id/overdueBadge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_priority_high"
+                        android:fontFamily="@font/poppins_bold"
+                        android:letterSpacing="0.08"
+                        android:paddingStart="8dp"
+                        android:paddingTop="6dp"
+                        android:paddingEnd="8dp"
+                        android:paddingBottom="6dp"
+                        android:text="QUÁ HẠN"
+                        android:textColor="#F43F5E"
+                        android:textSize="11sp"
+                        android:visibility="gone" />
+
                 </LinearLayout>
 
             </LinearLayout>

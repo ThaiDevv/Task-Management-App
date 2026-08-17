@@ -33,6 +33,9 @@ class TaskViewModel(
     private val _deleteSuccess = MutableSharedFlow<Boolean>()
     val deleteSuccess = _deleteSuccess.asSharedFlow()
 
+    private val _userMessage = MutableSharedFlow<String>()
+    val userMessage: SharedFlow<String> = _userMessage.asSharedFlow()
+
     private val _uiState = MutableStateFlow<UiState<List<Task>>>(UiState.Loading)
     val uiState: StateFlow<UiState<List<Task>>> = _uiState.asStateFlow()
 
@@ -97,8 +100,9 @@ class TaskViewModel(
                 repository.delete(task)
                 AlarmScheduler.cancelAlarm(applicationContext, task.id)
                 _deleteSuccess.emit(true)
+                _userMessage.emit("Đã xóa công việc \"${task.title}\"")
             } catch (e: Exception) {
-                _uiState.value = UiState.Error("Lỗi khi xóa công việc: ${e.localizedMessage}")
+                _userMessage.emit("Lỗi khi xóa công việc: ${e.localizedMessage}")
             }
         }
     }
@@ -146,8 +150,15 @@ class TaskViewModel(
                 if (_selectedTask.value?.id == task.id) {
                     _selectedTask.value = updatedTask
                 }
+
+                val msg = if (!wasCompleted) {
+                    "Đã hoàn thành \"${task.title}\""
+                } else {
+                    "Đã đánh dấu chưa xong \"${task.title}\""
+                }
+                _userMessage.emit(msg)
             } catch (e: Exception) {
-                _uiState.value = UiState.Error("Lỗi khi cập nhật trạng thái công việc: ${e.localizedMessage}")
+                _userMessage.emit("Lỗi khi cập nhật trạng thái: ${e.localizedMessage}")
             }
         }
     }

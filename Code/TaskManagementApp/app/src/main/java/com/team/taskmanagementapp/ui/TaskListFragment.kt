@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.snackbar.Snackbar
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.db.AppDatabase
 import com.team.taskmanagementapp.data.local.entity.Task
@@ -173,6 +174,13 @@ class TaskListFragment : Fragment() {
                 launch {
                     viewModel.filterCriteria.collect { criteria ->
                         updateFilterIndicator(criteria)
+                    }
+                }
+                // Observe user feedback messages (Snackbar)
+                launch {
+                    viewModel.userMessage.collect { message ->
+                        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT)
+                            .show()
                     }
                 }
             }
