@@ -110,6 +110,16 @@ class TaskListFragment : Fragment() {
 
         // View Full Calendar button (no-op placeholder)
         binding.btnViewCalendar.setOnClickListener { /* TODO: navigate to calendar */ }
+
+        // State overlay button listeners
+        binding.viewErrorState.btnErrorRetry.setOnClickListener {
+            viewModel.loadAllTasks()
+        }
+
+        binding.viewEmptyState.btnEmptyCreateTask.setOnClickListener {
+            val intent = Intent(requireContext(), AddEditTaskActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun openTaskDetail(task: Task) {
@@ -137,22 +147,24 @@ class TaskListFragment : Fragment() {
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Observe task list
+                // Observe task list uiState
                 launch {
                     viewModel.uiState.collect { uiState ->
                         when (uiState) {
-                            is UiState.Loading -> { /* Loading state */ }
+                            is UiState.Loading -> {
+                                showScreenState(ScreenState.LOADING)
+                            }
                             is UiState.Success -> {
                                 displayTaskList(uiState.data)
                                 updateMetrics(uiState.data)
+                                showScreenState(ScreenState.CONTENT)
                             }
                             is UiState.Empty -> {
-                                displayTaskList(emptyList())
-                                updateMetrics(emptyList())
+                                showScreenState(ScreenState.EMPTY)
                             }
                             is UiState.Error -> {
-                                binding.emptyStateText.text = uiState.message
-                                binding.emptyStateText.visibility = View.VISIBLE
+                                binding.viewErrorState.tvErrorMessage.text = uiState.message
+                                showScreenState(ScreenState.ERROR)
                             }
                         }
                     }
@@ -167,9 +179,55 @@ class TaskListFragment : Fragment() {
         }
     }
 
-    private fun displayTaskList(allTasks: List<Task>) {
-        binding.emptyStateText.visibility = View.GONE
+    /**
+     * Enum representing top-level screen visibility states.
+     */
+    private enum class ScreenState {
+        CONTENT, LOADING, EMPTY, ERROR
+    }
 
+    /**
+     * Switches top-level screen state with smooth crossfade animation.
+     */
+    private fun showScreenState(state: ScreenState) {
+        val targetView = when (state) {
+            ScreenState.CONTENT -> binding.contentContainer
+            ScreenState.LOADING -> binding.viewLoadingState.root
+            ScreenState.EMPTY   -> binding.viewEmptyState.root
+            ScreenState.ERROR   -> binding.viewErrorState.root
+        }
+
+        val allStateViews = listOf(
+            binding.contentContainer,
+            binding.viewLoadingState.root,
+            binding.viewEmptyState.root,
+            binding.viewErrorState.root
+        )
+
+        allStateViews.forEach { view ->
+            if (view == targetView) {
+                if (view.visibility != View.VISIBLE) {
+                    view.alpha = 0f
+                    view.visibility = View.VISIBLE
+                    view.animate()
+                        .alpha(1f)
+                        .setDuration(200)
+                        .setListener(null)
+                }
+            } else {
+                if (view.visibility == View.VISIBLE) {
+                    view.animate()
+                        .alpha(0f)
+                        .setDuration(150)
+                        .withEndAction { view.visibility = View.GONE }
+                } else {
+                    view.visibility = View.GONE
+                }
+            }
+        }
+    }
+
+    private fun displayTaskList(allTasks: List<Task>) {
         val nowEndToday = getEndOfTodayMillis()
         val todayList = allTasks.filter { it.dueDate <= nowEndToday }
         // Sort upcoming by dueDate ascending so earliest appears at top
