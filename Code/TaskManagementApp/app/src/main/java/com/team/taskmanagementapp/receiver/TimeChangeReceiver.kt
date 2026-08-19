@@ -17,52 +17,56 @@ class TimeChangeReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action
+        val pendingResult = goAsync()
         Log.d("TimeChangeReceiver", "Received broadcast action: $action")
 
         when (action) {
             Intent.ACTION_TIME_CHANGED,
             Intent.ACTION_TIMEZONE_CHANGED,
             Intent.ACTION_DATE_CHANGED -> {
-                rescheduleAllAlarms(context)
-                checkAndUpdateOverdueTasks(context)
+                scope.launch {
+                    try {
+                        rescheduleAllAlarms(context)
+                        checkAndUpdateOverdueTasks(context)
+                    } finally {
+                        pendingResult.finish()
+                    }
+                }
             }
+            else -> pendingResult.finish()
         }
     }
 
-    private fun checkAndUpdateOverdueTasks(context: Context) {
+    private suspend fun checkAndUpdateOverdueTasks(context: Context) {
         val appContext = context.applicationContext
-        scope.launch {
-            val db = AppDatabase.getInstance(appContext)
-            val dao = db.taskDao()
-            val currentTime = System.currentTimeMillis()
-            val overdueTasks = dao.getOverdueTasksSync(currentTime)
+        val db = AppDatabase.getInstance(appContext)
+        val dao = db.taskDao()
+        val currentTime = System.currentTimeMillis()
+        val overdueTasks = dao.getOverdueTasksSync(currentTime)
 
-            if (overdueTasks.isNotEmpty()) {
-                Log.d("TimeChangeReceiver", "Found ${overdueTasks.size} overdue tasks. Updating status...")
-                overdueTasks.forEach { task ->
-                    dao.updateTask(task.copy(status = com.team.taskmanagementapp.data.model.enums.TaskStatus.OVERDUE, updatedAt = currentTime))
-                }
+        if (overdueTasks.isNotEmpty()) {
+            Log.d("TimeChangeReceiver", "Found ${overdueTasks.size} overdue tasks. Updating status...")
+            overdueTasks.forEach { task ->
+                dao.updateTask(task.copy(status = com.team.taskmanagementapp.data.model.enums.TaskStatus.OVERDUE, updatedAt = currentTime))
+            }
+        } else {
+            Log.d("TimeChangeReceiver", "No new overdue tasks found.")
+        }
+    }
+
+    private suspend fun rescheduleAllAlarms(context: Context) {
+        val appContext = context.applicationContext
+        val db = AppDatabase.getInstance(appContext)
+        val activeTasks = db.taskDao().getActiveTasksSync()
+        
+        Log.d("TimeChangeReceiver", "Rescheduling ${activeTasks.size} active tasks.")
+        
+        activeTasks.forEach { task ->
+            val triggerAt = AlarmScheduler.calculateTriggerAtMillis(task)
+            if (triggerAt != null && triggerAt > System.currentTimeMillis()) {
+                AlarmScheduler.scheduleAlarm(appContext, task, triggerAt)
             } else {
-                Log.d("TimeChangeReceiver", "No new overdue tasks found.")
-            }
-        }
-    }
-
-    private fun rescheduleAllAlarms(context: Context) {
-        val appContext = context.applicationContext
-        scope.launch {
-            val db = AppDatabase.getInstance(appContext)
-            val activeTasks = db.taskDao().getActiveTasksSync()
-            
-            Log.d("TimeChangeReceiver", "Rescheduling ${activeTasks.size} active tasks.")
-            
-            activeTasks.forEach { task ->
-                val triggerAt = AlarmScheduler.calculateTriggerAtMillis(task)
-                if (triggerAt != null && triggerAt > System.currentTimeMillis()) {
-                    AlarmScheduler.scheduleAlarm(appContext, task, triggerAt)
-                } else {
-                    AlarmScheduler.cancelAlarm(appContext, task.id)
-                }
+                AlarmScheduler.cancelAlarm(appContext, task.id)
             }
         }
     }
