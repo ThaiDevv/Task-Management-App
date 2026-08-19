@@ -25,6 +25,9 @@ interface TaskDao {
     @Query("SELECT * FROM tasks ORDER BY dueDate ASC")
     fun getAllTasks(): Flow<List<Task>>
 
+    @Query("SELECT * FROM tasks WHERE isComplete = 0")
+    suspend fun getActiveTasksSync(): List<Task>
+
     // 5. Lấy 1 công việc theo ID
     @Query("SELECT * FROM tasks WHERE id = :taskId")
     suspend fun getTaskById(taskId: Long): Task?
