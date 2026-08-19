@@ -62,12 +62,19 @@
     <string name="task_detail_description_label">📝 Mô tả</string>
     <string name="task_detail_created_at_label">Tạo lúc:</string>
     <string name="task_detail_updated_at_label">Cập nhật lúc:</string>
-    <string name="task_detail_button_complete">✅ Hoàn thành</string>
-    <string name="task_detail_button_uncomplete">✓ Bỏ hoàn thành</string>
+    <string name="task_detail_button_complete">Hoàn thành</string>
+    <string name="task_detail_button_uncomplete">Bỏ hoàn thành</string>
     <string name="task_detail_button_edit">✏️ Chỉnh sửa</string>
     <string name="task_detail_button_delete">🗑️ Xóa</string>
     <string name="task_detail_delete_confirm_positive">Xóa</string>
     <string name="task_detail_delete_confirm_negative">Hủy</string>
+
+    <!-- Recurring Task Deletion -->
+    <string name="task_detail_delete_recurring_title">Xóa công việc định kỳ</string>
+    <string name="task_detail_delete_recurring_msg">Bạn muốn xóa chỉ công việc này hay tất cả các công việc trong chuỗi định kỳ?</string>
+    <string name="task_detail_delete_only_this">Chỉ công việc này</string>
+    <string name="task_detail_delete_all_occurrences">Tất cả công việc</string>
+    <string name="task_deleted">Task deleted</string>
     <string name="task_detail_recurrence_none">Không lặp lại</string>
     <string name="task_detail_recurrence_daily">Hàng ngày</string>
     <string name="task_detail_recurrence_weekly">Hàng tuần</string>
@@ -115,5 +122,58 @@
     <string name="settings_critical_actions">Critical Actions</string>
     <string name="settings_logout_all">Logout from all devices</string>
     <string name="settings_deactivate_vault">Deactivate Security Vault</string>
+    <!-- Filter Bottom Sheet -->
+    <string name="filter_title">Filter &amp; Sort</string>
+    <string name="filter_reset">Reset</string>
+    <string name="filter_apply">Apply Filters</string>
+    <string name="filter_all">All</string>
+    <string name="filter_section_status">STATUS</string>
+    <string name="filter_status_todo">Todo</string>
+    <string name="filter_status_in_progress">In Progress</string>
+    <string name="filter_status_completed">Completed</string>
+    <string name="filter_status_overdue">Overdue</string>
+    <string name="filter_section_priority">PRIORITY</string>
+    <string name="filter_priority_low">Low</string>
+    <string name="filter_priority_medium">Medium</string>
+    <string name="filter_priority_high">High</string>
+    <string name="filter_priority_urgent">Urgent</string>
+    <string name="filter_section_due_date">DUE DATE</string>
+    <string name="filter_due_date_today">Today</string>
+    <string name="filter_due_date_this_week">This Week</string>
+    <string name="filter_due_date_this_month">This Month</string>
+    <string name="filter_due_date_overdue">Overdue</string>
+    <string name="filter_active_indicator">🔵 Filters active</string>
 
+    <!-- Sort By section labels -->
+    <string name="filter_section_sort_by">SORT BY</string>
+    <string name="sort_due_date_asc">Due date ↑</string>
+    <string name="sort_due_date_desc">Due date ↓</string>
+    <string name="sort_priority">Priority</string>
+
+    <!-- Sort Menu Options -->
+    <string name="sort_title">Sắp xếp</string>
+    <string name="sort_by_due_date">Theo ngày hạn</string>
+    <string name="sort_by_priority">Theo độ ưu tiên</string>
+    <string name="sort_by_created_date">Theo ngày tạo</string>
+    <string name="sort_by_title">Theo tiêu đề</string>
+    <string name="sort_ascending">Tăng dần</string>
+    <string name="sort_descending">Giảm dần</string>
+    <!-- Notification Strings (Task 37, 38 & Task 39) -->
+    <string name="notification_action_complete">Đánh dấu hoàn thành</string>
+    <string name="notification_action_snooze">Báo lại 10 phút</string>
+    <string name="exact_alarm_permission_required">Allow exact alarms to schedule task reminders</string>
+
+    <string name="notif_permission_rationale_title">Cho phép thông báo nhắc việc</string>
+    <string name="notif_permission_rationale_message">TaskFlow cần quyền thông báo để nhắc nhở bạn về các task quan trọng đúng giờ. Bật ngay để không bỏ lỡ bất kỳ deadline nào!</string>
+    <string name="notif_permission_rationale_allow">Cho phép</string>
+    <string name="notif_permission_rationale_skip">Để sau</string>
+    <string name="notif_permission_settings_title">Thông báo bị từ chối</string>
+    <string name="notif_permission_settings_message">Bạn đã từ chối quyền thông báo. Hãy bật lại trong Cài đặt để nhận nhắc nhở đúng hạn từ TaskFlow.</string>
+    <string name="notif_permission_settings_open">Mở Cài đặt</string>
+    <string name="notif_permission_settings_cancel">Để sau</string>
+    <string name="notif_permission_reminder_blocked_title">Không thể đặt nhắc nhở</string>
+    <string name="notif_permission_reminder_blocked_message">Ứng dụng chưa có quyền hiển thị thông báo. Task sẽ được lưu nhưng nhắc nhở sẽ không hoạt động. Bật quyền thông báo trong Cài đặt để kích hoạt tính năng này.</string>
+    <string name="notif_permission_reminder_blocked_settings">Mở Cài đặt</string>
+    <string name="notif_permission_reminder_blocked_save">Lưu bỏ qua</string>
 </resources>
+

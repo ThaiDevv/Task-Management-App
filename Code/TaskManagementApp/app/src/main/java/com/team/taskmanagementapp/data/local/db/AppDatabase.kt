@@ -5,6 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.team.taskmanagementapp.data.local.dao.TaskDao
 import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.local.db.Converters
@@ -31,11 +33,20 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     Constants.DATABASE_NAME
                 )
+                    .addMigrations(MIGRATION_1_2)
                     .fallbackToDestructiveMigration()
                     .build()
 
                 INSTANCE = instance
                 instance
+            }
+        }
+
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE tasks ADD COLUMN reminderMinutes INTEGER NOT NULL DEFAULT 0"
+                )
             }
         }
     }

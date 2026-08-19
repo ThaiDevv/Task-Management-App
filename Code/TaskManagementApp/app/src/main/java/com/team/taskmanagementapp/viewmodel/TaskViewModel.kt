@@ -1,29 +1,47 @@
 package com.team.taskmanagementapp.viewmodel
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.team.taskmanagementapp.data.local.entity.Task
+import com.team.taskmanagementapp.data.model.FilterCriteria
 import com.team.taskmanagementapp.data.model.enums.Priority
 import com.team.taskmanagementapp.data.model.enums.RecurrenceType
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.ui.base.UiState
+import com.team.taskmanagementapp.util.AlarmScheduler
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class TaskViewModel(
-    private val repository: TaskRepository
+    private val repository: TaskRepository,
+    context: Context,
+    private val preferences: SharedPreferences? = null
 ) : ViewModel() {
+
+    private val applicationContext = context.applicationContext
+
+    private val _deleteSuccess = MutableSharedFlow<Boolean>()
+    val deleteSuccess = _deleteSuccess.asSharedFlow()
 
     private val _uiState = MutableStateFlow<UiState<List<Task>>>(UiState.Loading)
     val uiState: StateFlow<UiState<List<Task>>> = _uiState.asStateFlow()
 
+
     private val _selectedTask = MutableStateFlow<Task?>(null)
     val selectedTask: StateFlow<Task?> = _selectedTask.asStateFlow()
+
+    private val _filterCriteria = MutableStateFlow(FilterCriteria())
+    val filterCriteria: StateFlow<FilterCriteria> = _filterCriteria.asStateFlow()
 
     init {
         loadAllTasks()
@@ -33,7 +51,7 @@ class TaskViewModel(
     fun loadAllTasks() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            repository.getAllTasks()
+            repository.getFilteredTasks(_filterCriteria.value)
                 .catch { e ->
                     _uiState.value = UiState.Error("Không thể tải danh sách công việc: ${e.localizedMessage}")
                 }
@@ -50,7 +68,11 @@ class TaskViewModel(
     fun insertTask(task: Task) {
         viewModelScope.launch {
             try {
-                repository.insert(task)
+                val insertedId = repository.insert(task)
+                AlarmScheduler.scheduleAlarm(
+                    applicationContext,
+                    task.copy(id = insertedId.toInt())
+                )
             } catch (e: Exception) {
                 _uiState.value = UiState.Error("Lỗi khi thêm công việc: ${e.localizedMessage}")
             }
@@ -61,6 +83,7 @@ class TaskViewModel(
         viewModelScope.launch {
             try {
                 repository.update(task)
+                AlarmScheduler.rescheduleAlarm(applicationContext, task)
             } catch (e: Exception) {
                 _uiState.value = UiState.Error("Lỗi khi cập nhật công việc: ${e.localizedMessage}")
             }
@@ -72,6 +95,8 @@ class TaskViewModel(
         viewModelScope.launch {
             try {
                 repository.delete(task)
+                AlarmScheduler.cancelAlarm(applicationContext, task.id)
+                _deleteSuccess.emit(true)
             } catch (e: Exception) {
                 _uiState.value = UiState.Error("Lỗi khi xóa công việc: ${e.localizedMessage}")
             }
@@ -93,6 +118,11 @@ class TaskViewModel(
 
                 // Mark task as completed/uncompleted first
                 repository.update(updatedTask)
+                if (updatedTask.isCompleted) {
+                    AlarmScheduler.cancelAlarm(applicationContext, updatedTask.id)
+                } else {
+                    AlarmScheduler.scheduleAlarm(applicationContext, updatedTask)
+                }
 
                 // Recurring task completed -> create the next task instance
                 if (!wasCompleted && task.isRecurring && task.recurrenceType != RecurrenceType.NONE) {
@@ -105,7 +135,11 @@ class TaskViewModel(
                         createdAt = now,
                         updatedAt = now
                     )
-                    repository.insert(nextInstance)
+                    val insertedId = repository.insert(nextInstance)
+                    AlarmScheduler.scheduleAlarm(
+                        applicationContext,
+                        nextInstance.copy(id = insertedId.toInt())
+                    )
                 }
 
                 // Keep detail screen in sync
@@ -154,40 +188,24 @@ class TaskViewModel(
         }
     }
 
+    fun applyFilter(criteria: FilterCriteria) {
+        _filterCriteria.value = criteria
+        loadAllTasks()
+    }
+
+    fun clearFilter() {
+        _filterCriteria.value = FilterCriteria()
+        loadAllTasks()
+    }
+
 
     fun filterByStatus(status: TaskStatus) {
-        viewModelScope.launch {
-            _uiState.value = UiState.Loading
-            repository.getTasksByStatus(status)
-                .catch { e ->
-                    _uiState.value = UiState.Error("Lỗi lọc theo trạng thái: ${e.localizedMessage}")
-                }
-                .collect { tasks ->
-                    if (tasks.isEmpty()) {
-                        _uiState.value = UiState.Empty
-                    } else {
-                        _uiState.value = UiState.Success(tasks)
-                    }
-                }
-        }
+        applyFilter(_filterCriteria.value.copy(status = status))
     }
 
 
     fun filterByPriority(priority: Priority) {
-        viewModelScope.launch {
-            _uiState.value = UiState.Loading
-            repository.getTasksByPriority(priority)
-                .catch { e ->
-                    _uiState.value = UiState.Error("Lỗi lọc theo mức độ ưu tiên: ${e.localizedMessage}")
-                }
-                .collect { tasks ->
-                    if (tasks.isEmpty()) {
-                        _uiState.value = UiState.Empty
-                    } else {
-                        _uiState.value = UiState.Success(tasks)
-                    }
-                }
-        }
+        applyFilter(_filterCriteria.value.copy(priority = priority))
     }
 
     fun getTaskById(taskId: Long) {

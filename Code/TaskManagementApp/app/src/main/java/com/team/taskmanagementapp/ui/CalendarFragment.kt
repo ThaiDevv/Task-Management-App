@@ -1,8 +1,12 @@
 package com.team.taskmanagementapp.ui
 
+
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+=======
+import android.content.Context
+
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -51,7 +55,19 @@ class CalendarFragment : Fragment() {
     private val viewModel: CalendarViewModel by viewModels {
         val database = AppDatabase.getInstance(requireContext())
         val repository = TaskRepository(database.taskDao())
+
         CalendarViewModelFactory(repository)
+=======
+        val preferences = requireContext().getSharedPreferences(
+            Constants.PREFS_NAME,
+            Context.MODE_PRIVATE
+        )
+        TaskViewModelFactory(
+            repository,
+            requireContext().applicationContext,
+            preferences
+        )
+
     }
 
     // Calendar local chỉ dùng để build grid UI — source of truth là ViewModel

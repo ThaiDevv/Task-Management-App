@@ -1,6 +1,8 @@
 package com.team.taskmanagementapp.ui.detail
 
+import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -9,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import android.graphics.drawable.GradientDrawable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.db.AppDatabase
@@ -32,7 +35,11 @@ class TaskDetailActivity : AppCompatActivity() {
     private val viewModel: TaskViewModel by viewModels {
         val database = AppDatabase.getInstance(applicationContext)
         val repository = TaskRepository(database.taskDao())
-        TaskViewModelFactory(repository)
+        val preferences = applicationContext.getSharedPreferences(
+            Constants.PREFS_NAME,
+            Context.MODE_PRIVATE
+        )
+        TaskViewModelFactory(repository, applicationContext, preferences)
     }
 
     private var currentTask: Task? = null
@@ -68,6 +75,9 @@ class TaskDetailActivity : AppCompatActivity() {
         setupCompleteButton()
         setupEditButton()
         setupDeleteButton()
+
+        // 5-second motivational quote rotator with background images
+        setupMotivationQuoteRotator()
     }
 
     private fun bindTaskData(task: Task) {
@@ -77,7 +87,7 @@ class TaskDetailActivity : AppCompatActivity() {
             getString(R.string.task_detail_no_description)
         }
 
-        // Separate Due Date & Scheduled Time display to match polished design
+        // Due Date & Scheduled Time
         val dateStr = DateTimeUtils.formatTimestamp(task.dueDate, "MMM dd, yyyy")
         val timeStr = DateTimeUtils.formatTimestamp(task.dueTime, DateTimeUtils.FORMAT_TIME_ONLY)
         binding.tvDueDate.text = if (dateStr.isBlank()) "No Date" else dateStr
@@ -92,19 +102,35 @@ class TaskDetailActivity : AppCompatActivity() {
 
         // Complete Button state, text, and icons
         if (task.isCompleted) {
+            // Completed → green button
             binding.btnComplete.text = getString(R.string.task_detail_button_uncomplete)
-            binding.btnComplete.setIconResource(R.drawable.ic_time) // Show incomplete symbol or time icon
-            binding.btnComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.outline))
-            
+            binding.btnComplete.setIconResource(R.drawable.ic_time)
+            binding.btnComplete.backgroundTintList =
+                ContextCompat.getColorStateList(this, android.R.color.holo_green_dark)
+            binding.btnComplete.setTextColor(ContextCompat.getColor(this, android.R.color.white))
+            binding.btnComplete.iconTint =
+                ContextCompat.getColorStateList(this, android.R.color.white)
+
             binding.fabComplete.setImageResource(R.drawable.ic_time)
-            binding.fabComplete.backgroundTintList = ContextCompat.getColorStateList(this, R.color.outline)
+            binding.fabComplete.backgroundTintList =
+                ContextCompat.getColorStateList(this, android.R.color.holo_green_dark)
+            binding.fabComplete.contentDescription = getString(R.string.action_mark_incomplete)
         } else {
+            // Not completed → primary_container button (matches Stitch spec)
             binding.btnComplete.text = getString(R.string.task_detail_button_complete)
-            binding.btnComplete.setIconResource(R.drawable.ic_add_task) // Show completed icon
-            binding.btnComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.primary))
-            
-            binding.fabComplete.setImageResource(R.drawable.ic_add_task)
-            binding.fabComplete.backgroundTintList = ContextCompat.getColorStateList(this, R.color.primary)
+            binding.btnComplete.setIconResource(R.drawable.ic_check_circle)
+            binding.btnComplete.backgroundTintList =
+                ContextCompat.getColorStateList(this, R.color.primary_container)
+            binding.btnComplete.setTextColor(
+                ContextCompat.getColor(this, R.color.on_primary_container)
+            )
+            binding.btnComplete.iconTint =
+                ContextCompat.getColorStateList(this, R.color.on_primary_container)
+
+            binding.fabComplete.setImageResource(R.drawable.ic_check_circle)
+            binding.fabComplete.backgroundTintList =
+                ContextCompat.getColorStateList(this, R.color.primary)
+            binding.fabComplete.contentDescription = getString(R.string.action_mark_complete)
         }
     }
 
@@ -122,18 +148,10 @@ class TaskDetailActivity : AppCompatActivity() {
         }
 
         binding.tvStatusBadge.text = getString(textResId)
-        binding.tvStatusBadge.setTextColor(ContextCompat.getColor(this, colorResId))
-
-        val bgDrawable = ContextCompat.getDrawable(this, R.drawable.bg_badge_status)?.mutate()
-        bgDrawable?.setTint(ContextCompat.getColor(this, colorResId).let { color ->
-            android.graphics.Color.argb(
-                51,
-                android.graphics.Color.red(color),
-                android.graphics.Color.green(color),
-                android.graphics.Color.blue(color)
-            )
-        })
-        binding.tvStatusBadge.background = bgDrawable
+        val color = ContextCompat.getColor(this, colorResId)
+        binding.tvStatusBadge.setTextColor(color)
+        binding.badgeStatus.background = createBadgeBackground(color)
+        binding.ivStatusBadge.setColorFilter(color)
     }
 
     private fun bindPriorityBadge(priority: Priority) {
@@ -145,19 +163,18 @@ class TaskDetailActivity : AppCompatActivity() {
         }
 
         binding.tvPriorityBadge.text = getString(textResId)
-        binding.tvPriorityBadge.setTextColor(ContextCompat.getColor(this, colorResId))
-
-        val bgDrawable = ContextCompat.getDrawable(this, R.drawable.bg_badge_priority)?.mutate()
-        bgDrawable?.setTint(ContextCompat.getColor(this, colorResId).let { color ->
-            android.graphics.Color.argb(
-                51,
-                android.graphics.Color.red(color),
-                android.graphics.Color.green(color),
-                android.graphics.Color.blue(color)
-            )
-        })
-        binding.tvPriorityBadge.background = bgDrawable
+        val color = ContextCompat.getColor(this, colorResId)
+        binding.tvPriorityBadge.setTextColor(color)
+        binding.badgePriority.background = createBadgeBackground(color)
+        binding.ivPriorityBadge.setColorFilter(color)
     }
+
+    private fun createBadgeBackground(color: Int): GradientDrawable =
+        GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadius = resources.getDimension(R.dimen.radius_full)
+            setColor(Color.argb(51, Color.red(color), Color.green(color), Color.blue(color)))
+        }
 
     private fun bindRecurrence(task: Task) {
         if (!task.isRecurring || task.recurrenceType == RecurrenceType.NONE) {
@@ -194,6 +211,8 @@ class TaskDetailActivity : AppCompatActivity() {
     }
 
     private fun showDeleteConfirmDialog() {
+        val task = currentTask ?: return
+
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.task_detail_delete_confirm_title)
             .setMessage(R.string.task_detail_delete_confirm_msg)
@@ -201,10 +220,8 @@ class TaskDetailActivity : AppCompatActivity() {
                 dialog.dismiss()
             }
             .setPositiveButton(R.string.task_detail_delete_confirm_positive) { _, _ ->
-                currentTask?.let { task ->
-                    viewModel.deleteTask(task)
-                    finish()
-                }
+                viewModel.deleteTask(task)
+                finish()
             }
             .show()
     }
@@ -215,6 +232,63 @@ class TaskDetailActivity : AppCompatActivity() {
                 val intent = Intent(this, AddEditTaskActivity::class.java)
                 intent.putExtra(Constants.EXTRA_TASK_ID, task.id.toLong())
                 startActivity(intent)
+            }
+        }
+    }
+
+    // ===== Motivation Quote Rotator (5-second random rotation) =====
+
+    private data class MotivationQuote(
+        val content: String,
+        val author: String,
+        val imageResId: Int
+    )
+
+    private val motivationQuotes = listOf(
+        MotivationQuote("“Hành trình vạn dặm bắt đầu bằng một bước chân.”", "— Lão Tử", R.drawable.img_quote_bg_1),
+        MotivationQuote("“Không phải tôi thông minh, tôi chỉ ở lại với vấn đề lâu hơn.”", "— Albert Einstein", R.drawable.img_quote_bg_2),
+        MotivationQuote("“Thành công không phải cuối cùng, thất bại không phải tận cùng. Sức dũng cảm bước tiếp mới là tất cả.”", "— Winston Churchill", R.drawable.img_quote_bg_3),
+        MotivationQuote("“Đừng sợ đi chậm, chỉ sợ đứng yên.”", "— Tục ngữ", R.drawable.img_quote_bg_4),
+        MotivationQuote("“Sự kiên trì là chìa khóa mở mọi cánh cửa của thành công.”", "— Thomas Edison", R.drawable.img_quote_bg_1),
+        MotivationQuote("“Những khó khăn lớn nhất luôn tôi luyện nên những con người mạnh mẽ nhất.”", "— Triết lý cuộc sống", R.drawable.img_quote_bg_2),
+        MotivationQuote("“Bạn chỉ thật sự thất bại khi bạn quyết định từ bỏ.”", "— Napoleon Hill", R.drawable.img_quote_bg_3),
+        MotivationQuote("“Mỗi ngày cố gắng thêm 1%, sau một năm bạn sẽ vượt trội gấp 37 lần.”", "— Atomic Habits", R.drawable.img_quote_bg_4),
+        MotivationQuote("“Giọt nước chảy mãi cũng làm mòn đá cứng.”", "— Thành ngữ", R.drawable.img_quote_bg_1),
+        MotivationQuote("“Mặt trời luôn mọc sau đêm tối. Hãy kiên trì bước tiếp!”", "— Cảm hứng mỗi ngày", R.drawable.img_quote_bg_2),
+        MotivationQuote("“Kỷ luật là cầu nối giữa mục tiêu và thành tựu.”", "— Jim Rohn", R.drawable.img_quote_bg_3),
+        MotivationQuote("“Nỗ lực âm thầm của hôm nay sẽ là ánh hào quang rực rỡ của ngày mai.”", "— Động lực sống", R.drawable.img_quote_bg_4),
+        MotivationQuote("“Người kiên trì là người hoàn thành những gì người khác bắt đầu.”", "— Triết lý thành công", R.drawable.img_quote_bg_1),
+        MotivationQuote("“Ước mơ không tự đến, nó đòi hỏi mồ hôi và sự kiên trì mỗi ngày.”", "— Quản lý công việc", R.drawable.img_quote_bg_2),
+        MotivationQuote("“Lửa thử vàng, gian gian thử sức, khó khăn thử thách lòng kiên trì.”", "— Ca dao Việt Nam", R.drawable.img_quote_bg_3),
+        MotivationQuote("“Chiến thắng bản thân là chiến thắng hiển hách nhất.”", "— Đạo Phật", R.drawable.img_quote_bg_4)
+    )
+
+    private fun setupMotivationQuoteRotator() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                var currentIndex = (motivationQuotes.indices).random()
+                while (true) {
+                    val quote = motivationQuotes[currentIndex % motivationQuotes.size]
+
+                    // Smooth cross-fade animation when switching quote & background image
+                    binding.cardMotivation.animate()
+                        .alpha(0.4f)
+                        .setDuration(350)
+                        .withEndAction {
+                            binding.ivQuoteBg.setImageResource(quote.imageResId)
+                            binding.tvQuoteContent.text = quote.content
+                            binding.tvQuoteAuthor.text = quote.author
+
+                            binding.cardMotivation.animate()
+                                .alpha(1.0f)
+                                .setDuration(350)
+                                .start()
+                        }
+                        .start()
+
+                    currentIndex++
+                    kotlinx.coroutines.delay(5000)
+                }
             }
         }
     }

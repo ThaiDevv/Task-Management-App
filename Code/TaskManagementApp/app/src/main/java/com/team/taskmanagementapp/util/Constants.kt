@@ -7,7 +7,7 @@ package com.team.taskmanagementapp.util
 object Constants {
     // Database Configuration
     const val DATABASE_NAME = "task_management_db"
-    const val DATABASE_VERSION = 1
+    const val DATABASE_VERSION = 2
 
     // Notification Channel
     const val NOTIFICATION_CHANNEL_ID = "task_reminder_channel"
@@ -24,8 +24,16 @@ object Constants {
     const val KEY_SORT_ORDER = "key_sort_order"
     const val KEY_SORT_TYPE = "key_sort_type"
 
+    // Sort Preferences Defaults
+    const val DEFAULT_SORT_TYPE = "DUE_DATE"
+    const val DEFAULT_SORT_ORDER = "ASC"
+
     // Intent Extras & Request Codes
     const val EXTRA_TASK_ID = "extra_task_id"
+    const val EXTRA_TASK_DUE_DATE = "extra_task_due_date"
+    const val EXTRA_TASK_DUE_TIME = "extra_task_due_time"
+    const val ACTION_TASK_DATE_TIME_CHANGED =
+        "com.team.taskmanagementapp.action.TASK_DATE_TIME_CHANGED"
     const val EXTRA_PIN_MODE = "extra_pin_mode"
     const val REQUEST_CODE_NOTIFICATION_PERMISSION = 1001
     const val REQUEST_CODE_EXACT_ALARM_PERMISSION = 1002
