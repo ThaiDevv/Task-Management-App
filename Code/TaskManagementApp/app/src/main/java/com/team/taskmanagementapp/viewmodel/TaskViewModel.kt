@@ -12,6 +12,7 @@ import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.ui.base.UiState
 import com.team.taskmanagementapp.util.AlarmScheduler
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -39,6 +40,8 @@ class TaskViewModel(
     private val _uiState = MutableStateFlow<UiState<List<Task>>>(UiState.Loading)
     val uiState: StateFlow<UiState<List<Task>>> = _uiState.asStateFlow()
 
+    private var taskListJob: Job? = null
+
 
     private val _selectedTask = MutableStateFlow<Task?>(null)
     val selectedTask: StateFlow<Task?> = _selectedTask.asStateFlow()
@@ -52,7 +55,8 @@ class TaskViewModel(
 
 
     fun loadAllTasks() {
-        viewModelScope.launch {
+        taskListJob?.cancel()
+        taskListJob = viewModelScope.launch {
             _uiState.value = UiState.Loading
             repository.getFilteredTasks(_filterCriteria.value)
                 .catch { e ->
@@ -76,6 +80,7 @@ class TaskViewModel(
                     applicationContext,
                     task.copy(id = insertedId.toInt())
                 )
+                _userMessage.emit("Đã thêm công việc \"${task.title}\"")
             } catch (e: Exception) {
                 _uiState.value = UiState.Error("Lỗi khi thêm công việc: ${e.localizedMessage}")
             }
@@ -87,6 +92,7 @@ class TaskViewModel(
             try {
                 repository.update(task)
                 AlarmScheduler.rescheduleAlarm(applicationContext, task)
+                _userMessage.emit("Đã cập nhật công việc \"${task.title}\"")
             } catch (e: Exception) {
                 _uiState.value = UiState.Error("Lỗi khi cập nhật công việc: ${e.localizedMessage}")
             }
