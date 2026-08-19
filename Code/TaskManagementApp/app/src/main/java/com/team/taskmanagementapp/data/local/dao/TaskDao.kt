@@ -48,8 +48,11 @@ interface TaskDao {
     fun getTasksByDateRange(startDate: Long, endDate: Long): Flow<List<Task>>
 
     // 9. Lấy danh sách công việc đã quá hạn
-    @Query("SELECT * FROM tasks WHERE dueDate < :currentTime AND status != 'COMPLETED' ORDER BY dueDate ASC")
+    @Query("SELECT * FROM tasks WHERE dueDate < :currentTime AND status != 'COMPLETED' AND status != 'OVERDUE' ORDER BY dueDate ASC")
     fun getOverdueTasks(currentTime: Long): Flow<List<Task>>
+
+    @Query("SELECT * FROM tasks WHERE dueDate < :currentTime AND status != 'COMPLETED' AND status != 'OVERDUE' ORDER BY dueDate ASC")
+    suspend fun getOverdueTasksSync(currentTime: Long): List<Task>
 
     // 10. Tìm kiếm công việc theo Tiêu đề (Search by Title)
     @Query("SELECT * FROM tasks WHERE title LIKE '%' || :query || '%' ORDER BY dueDate ASC")

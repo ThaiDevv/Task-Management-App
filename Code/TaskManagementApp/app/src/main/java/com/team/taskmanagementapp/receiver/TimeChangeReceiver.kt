@@ -24,6 +24,26 @@ class TimeChangeReceiver : BroadcastReceiver() {
             Intent.ACTION_TIMEZONE_CHANGED,
             Intent.ACTION_DATE_CHANGED -> {
                 rescheduleAllAlarms(context)
+                checkAndUpdateOverdueTasks(context)
+            }
+        }
+    }
+
+    private fun checkAndUpdateOverdueTasks(context: Context) {
+        val appContext = context.applicationContext
+        scope.launch {
+            val db = AppDatabase.getInstance(appContext)
+            val dao = db.taskDao()
+            val currentTime = System.currentTimeMillis()
+            val overdueTasks = dao.getOverdueTasksSync(currentTime)
+
+            if (overdueTasks.isNotEmpty()) {
+                Log.d("TimeChangeReceiver", "Found ${overdueTasks.size} overdue tasks. Updating status...")
+                overdueTasks.forEach { task ->
+                    dao.updateTask(task.copy(status = com.team.taskmanagementapp.data.model.enums.TaskStatus.OVERDUE, updatedAt = currentTime))
+                }
+            } else {
+                Log.d("TimeChangeReceiver", "No new overdue tasks found.")
             }
         }
     }
