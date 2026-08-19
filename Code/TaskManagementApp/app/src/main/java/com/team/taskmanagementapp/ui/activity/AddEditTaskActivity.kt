@@ -2,15 +2,18 @@ package com.team.taskmanagementapp.ui.activity
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.db.AppDatabase
 import com.team.taskmanagementapp.data.local.entity.Task
@@ -20,10 +23,13 @@ import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.databinding.ActivityAddEditTaskBinding
 import com.team.taskmanagementapp.ui.base.UiState
+import com.team.taskmanagementapp.ui.viewmodel.AddEditTaskEvent
 import com.team.taskmanagementapp.ui.viewmodel.AddEditTaskViewModel
 import com.team.taskmanagementapp.ui.viewmodel.AddEditTaskViewModelFactory
+import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.ValidationHelper
 import com.team.taskmanagementapp.util.ValidationHelper.ValidationError
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -44,13 +50,14 @@ class AddEditTaskActivity : AppCompatActivity() {
     private var taskId: Long = -1L
     private var isEditMode = false
     private var isSaving = false
+    private var hasPopulatedTask = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddEditTaskBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        taskId = intent.getLongExtra(EXTRA_TASK_ID, -1L)
+        taskId = intent.getLongExtra(Constants.EXTRA_TASK_ID, -1L)
         isEditMode = taskId != -1L
 
         setupUI()
@@ -267,46 +274,97 @@ class AddEditTaskActivity : AppCompatActivity() {
         error?.let { getString(it.messageRes) }
 
     private fun saveTask() {
-        if (!validateAll()) return
+        if (isSaving || !validateAll()) return
 
         val title = binding.titleEditText.text.toString()
         val description = binding.descriptionEditText.text.toString()
         isSaving = true
 
-        viewModel.saveTask(
-            id = if (isEditMode) taskId.toInt() else 0,
-            title = title,
-            description = description,
-            dueDate = selectedDate.timeInMillis,
-            dueTime = selectedTime.timeInMillis,
-            priority = selectedPriority,
-            recurrenceType = selectedRecurrence,
-            reminderMinutes = selectedReminderMinutes,
-            status = selectedStatus,
-            isEdit = isEditMode
-        )
+        lifecycleScope.launch {
+            if (isEditMode) {
+                viewModel.updateTask(
+                    id = taskId.toInt(),
+                    title = title,
+                    description = description,
+                    dueDate = selectedDate.timeInMillis,
+                    dueTime = selectedTime.timeInMillis,
+                    priority = selectedPriority,
+                    recurrenceType = selectedRecurrence,
+                    reminderMinutes = selectedReminderMinutes,
+                    status = selectedStatus
+                )
+            } else {
+                viewModel.createTask(
+                    title = title,
+                    description = description,
+                    dueDate = selectedDate.timeInMillis,
+                    dueTime = selectedTime.timeInMillis,
+                    priority = selectedPriority,
+                    recurrenceType = selectedRecurrence,
+                    reminderMinutes = selectedReminderMinutes,
+                    status = selectedStatus
+                )
+            }
+        }
     }
 
     private fun observeViewModel() {
-        viewModel.task.observe(this) { task ->
-            task?.let { populateTaskData(it) }
-        }
-
-        viewModel.uiState.observe(this) { state ->
-            when (state) {
-                is UiState.Success -> {
-                    if (isSaving) {
-                        Toast.makeText(this, if (isEditMode) "Task Updated" else "Task Created", Toast.LENGTH_SHORT).show()
-                        finish()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.task.collect { task ->
+                        if (task != null && !hasPopulatedTask) {
+                            hasPopulatedTask = true
+                            populateTaskData(task)
+                        }
                     }
                 }
-                is UiState.Error -> {
-                    isSaving = false
-                    Toast.makeText(this, state.message, Toast.LENGTH_SHORT).show()
+
+                launch {
+                    viewModel.uiState.collect { state ->
+                        if (state is UiState.Error) {
+                            isSaving = false
+                            Toast.makeText(this@AddEditTaskActivity, state.message, Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
                 }
-                else -> {}
+
+                launch {
+                    viewModel.events.collect { event ->
+                        if (event is AddEditTaskEvent.TaskSaved) {
+                            handleTaskSaved(event)
+                        }
+                    }
+                }
             }
         }
+    }
+
+    private fun handleTaskSaved(event: AddEditTaskEvent.TaskSaved) {
+        isSaving = false
+        setResult(
+            RESULT_OK,
+            Intent().apply {
+                putExtra(Constants.EXTRA_TASK_ID, event.task.id.toLong())
+                putExtra(EXTRA_RESCHEDULE_NOTIFICATION, event.shouldRescheduleNotification)
+            }
+        )
+
+        if (event.shouldRescheduleNotification) {
+            onNotificationRescheduleRequired(event.task)
+        }
+
+        Toast.makeText(
+            this,
+            if (isEditMode) "Task Updated" else "Task Created",
+            Toast.LENGTH_SHORT
+        ).show()
+        finish()
+    }
+
+    private fun onNotificationRescheduleRequired(task: Task) {
+        // The notification module can reschedule its alarm from this event using task.id.
     }
 
     private fun populateTaskData(task: Task) {
@@ -329,6 +387,6 @@ class AddEditTaskActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val EXTRA_TASK_ID = "extra_task_id"
+        const val EXTRA_RESCHEDULE_NOTIFICATION = "extra_reschedule_notification"
     }
 }

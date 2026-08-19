@@ -29,6 +29,9 @@ interface TaskDao {
     @Query("SELECT * FROM tasks WHERE id = :taskId")
     suspend fun getTaskById(taskId: Long): Task?
 
+    @Query("SELECT * FROM tasks WHERE id = :taskId")
+    fun observeTaskById(taskId: Long): Flow<Task?>
+
     // 6. Lọc công việc theo Trạng thái (TODO, IN_PROGRESS, COMPLETED, OVERDUE)
     @Query("SELECT * FROM tasks WHERE status = :status ORDER BY dueDate ASC")
     fun getTasksByStatus(status: TaskStatus): Flow<List<Task>>
