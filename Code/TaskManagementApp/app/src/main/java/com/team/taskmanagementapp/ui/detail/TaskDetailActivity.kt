@@ -93,6 +93,13 @@ class TaskDetailActivity : AppCompatActivity() {
         binding.tvDueDate.text = if (dateStr.isBlank()) "No Date" else dateStr
         binding.tvScheduledTime.text = if (timeStr.isBlank()) "No Time" else timeStr
 
+        // Reminder
+        binding.tvReminder.text = when (task.reminderMinutes) {
+            0 -> "None"
+            60 -> "1 hour before"
+            else -> "${task.reminderMinutes} mins before"
+        }
+
         // Status & Priority Badges
         bindStatusBadge(task.status, task)
         bindPriorityBadge(task.priority)
