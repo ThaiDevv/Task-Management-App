@@ -25,9 +25,10 @@ object NotificationHelper {
             val channel = NotificationChannel(
                 Constants.NOTIFICATION_CHANNEL_ID,
                 Constants.NOTIFICATION_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = Constants.NOTIFICATION_CHANNEL_DESC
+                enableVibration(true)
             }
 
             val notificationManager =
@@ -73,15 +74,18 @@ object NotificationHelper {
             pendingIntentFlags
         )
 
+        createNotificationChannel(context)
+
         val notification = NotificationCompat.Builder(
             context,
             Constants.NOTIFICATION_CHANNEL_ID
         )
             .setSmallIcon(R.drawable.ic_notification_task)
             .setContentTitle(task.title)
-            .setContentText(task.description)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(task.description))
-            .setPriority(mapPriority(task.priority))
+            .setContentText(task.description.ifBlank { "Task Reminder" })
+            .setStyle(NotificationCompat.BigTextStyle().bigText(task.description.ifBlank { "Task Reminder" }))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setContentIntent(detailPendingIntent)
             .setAutoCancel(true)
             .addAction(
