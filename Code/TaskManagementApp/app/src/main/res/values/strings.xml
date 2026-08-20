@@ -81,13 +81,13 @@
     <string name="task_detail_recurrence_monthly">Hàng tháng</string>
     <string name="task_detail_recurrence_interval">Cứ %d ngày</string>
 
-    <!-- Screen & UI States -->
-    <string name="state_loading">Đang tải dữ liệu…</string>
-    <string name="state_empty_tasks">Chưa có công việc nào. Bấm + để tạo mới!</string>
-    <string name="state_empty_subtitle">Hãy tạo công việc đầu tiên của bạn để bắt đầu!</string>
-    <string name="state_empty_create_button">Tạo công việc mới</string>
-    <string name="state_error_title">Đã xảy ra lỗi</string>
-    <string name="state_error_generic">Đã xảy ra lỗi. Vui lòng thử lại.</string>
+    <!-- Screen & UI States (Stitch Design) -->
+    <string name="state_loading">Loading tasks...</string>
+    <string name="state_empty_tasks">No tasks yet</string>
+    <string name="state_empty_subtitle">Create your first task to stay organized and boost your daily productivity.</string>
+    <string name="state_empty_create_button">Create Task</string>
+    <string name="state_error_title">Something went wrong</string>
+    <string name="state_error_generic">Unable to load tasks. Please try again.</string>
 
     <!-- Bottom Navigation Labels -->
 
