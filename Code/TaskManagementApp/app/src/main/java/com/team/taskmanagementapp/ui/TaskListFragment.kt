@@ -213,24 +213,16 @@ class TaskListFragment : Fragment() {
         )
 
         allStateViews.forEach { view ->
+            view.animate().cancel()
             if (view == targetView) {
-                if (view.visibility != View.VISIBLE) {
-                    view.alpha = 0f
-                    view.visibility = View.VISIBLE
-                    view.animate()
-                        .alpha(1f)
-                        .setDuration(200)
-                        .setListener(null)
-                }
+                view.visibility = View.VISIBLE
+                view.animate()
+                    .alpha(1f)
+                    .setDuration(200)
+                    .setListener(null)
             } else {
-                if (view.visibility == View.VISIBLE) {
-                    view.animate()
-                        .alpha(0f)
-                        .setDuration(150)
-                        .withEndAction { view.visibility = View.GONE }
-                } else {
-                    view.visibility = View.GONE
-                }
+                view.visibility = View.GONE
+                view.alpha = 0f
             }
         }
     }
