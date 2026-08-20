@@ -67,8 +67,10 @@ class TaskUiStateTest {
         )
 
         // Helper function matching TaskAdapter & UpcomingTaskAdapter logic
-        fun isOverdue(task: Task): Boolean =
-            !task.isCompleted && (task.status == TaskStatus.OVERDUE || task.dueDate < now)
+        fun isOverdue(task: Task): Boolean {
+            val combined = com.team.taskmanagementapp.util.DateTimeUtils.getCombinedDueTimestamp(task.dueDate, task.dueTime)
+            return !task.isCompleted && (task.status == TaskStatus.OVERDUE || (combined > 0L && combined < now))
+        }
 
         assertTrue("Past due incomplete task should be overdue", isOverdue(pastDueTask))
         assertFalse("Completed task should never be overdue", isOverdue(completedPastDueTask))
