@@ -49,6 +49,27 @@ object DateTimeUtils {
     }
 
     /**
+     * Calculates the exact combined target timestamp (Date + Time) for a task.
+     */
+    fun getCombinedDueTimestamp(dueDateMillis: Long, dueTimeMillis: Long): Long {
+        if (dueDateMillis <= 0L) return 0L
+        val dateCal = Calendar.getInstance().apply { timeInMillis = dueDateMillis }
+        val timeCal = Calendar.getInstance().apply { timeInMillis = if (dueTimeMillis > 0L) dueTimeMillis else dueDateMillis }
+        return Calendar.getInstance().apply {
+            clear()
+            set(
+                dateCal.get(Calendar.YEAR),
+                dateCal.get(Calendar.MONTH),
+                dateCal.get(Calendar.DAY_OF_MONTH),
+                timeCal.get(Calendar.HOUR_OF_DAY),
+                timeCal.get(Calendar.MINUTE),
+                59
+            )
+            set(Calendar.MILLISECOND, 999)
+        }.timeInMillis
+    }
+
+    /**
      * Get the start timestamp of today (00:00:00.000).
      */
     fun getStartOfToday(): Long {

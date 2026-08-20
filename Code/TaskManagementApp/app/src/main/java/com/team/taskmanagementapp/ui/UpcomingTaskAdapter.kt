@@ -12,6 +12,7 @@ import com.team.taskmanagementapp.data.model.enums.Priority
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.databinding.ItemUpcomingHeaderBinding
 import com.team.taskmanagementapp.databinding.ItemUpcomingTaskBinding
+import com.team.taskmanagementapp.util.DateTimeUtils
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -84,7 +85,8 @@ class UpcomingTaskAdapter(
             val timeStr = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date(task.dueTime))
             binding.upcomingTaskTime.text = timeStr
 
-            val isOverdue = !task.isCompleted && (task.status == TaskStatus.OVERDUE || task.dueDate < System.currentTimeMillis())
+            val combinedDue = DateTimeUtils.getCombinedDueTimestamp(task.dueDate, task.dueTime)
+            val isOverdue = !task.isCompleted && (task.status == TaskStatus.OVERDUE || (combinedDue > 0L && combinedDue < System.currentTimeMillis()))
 
             if (isOverdue) {
                 binding.timelineDot.setCardBackgroundColor(ContextCompat.getColor(context, R.color.status_overdue))

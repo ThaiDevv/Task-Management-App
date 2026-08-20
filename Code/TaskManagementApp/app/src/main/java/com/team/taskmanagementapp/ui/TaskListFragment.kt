@@ -32,6 +32,7 @@ import com.team.taskmanagementapp.ui.activity.AddEditTaskActivity
 import com.team.taskmanagementapp.ui.base.UiState
 import com.team.taskmanagementapp.ui.detail.TaskDetailActivity
 import com.team.taskmanagementapp.util.Constants
+import com.team.taskmanagementapp.util.DateTimeUtils
 import com.team.taskmanagementapp.viewmodel.TaskViewModel
 import com.team.taskmanagementapp.viewmodel.TaskViewModelFactory
 import kotlinx.coroutines.launch
@@ -282,9 +283,13 @@ class TaskListFragment : Fragment() {
 
     private fun updateMetrics(tasks: List<Task>) {
         val total = tasks.size
+        val now = System.currentTimeMillis()
+        val overdue = tasks.count {
+            val combinedDue = DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime)
+            !it.isCompleted && (it.status == TaskStatus.OVERDUE || (combinedDue > 0L && combinedDue < now))
+        }
         val completed = tasks.count { it.isCompleted }
-        val pending = tasks.count { !it.isCompleted && it.status != TaskStatus.OVERDUE }
-        val overdue = tasks.count { !it.isCompleted && (it.status == TaskStatus.OVERDUE || (it.dueDate < System.currentTimeMillis())) }
+        val pending = (total - completed - overdue).coerceAtLeast(0)
 
         binding.totalTasksValue.text = total.toString()
         binding.completedValue.text = completed.toString()

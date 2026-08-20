@@ -77,8 +77,9 @@ class TaskAdapter(
                 cornerRadius = 16f
             }
 
-            // Determine if the task is overdue
-            val isOverdue = !task.isCompleted && (task.status == TaskStatus.OVERDUE || task.dueDate < System.currentTimeMillis())
+            // Determine if the task is overdue based on combined date and time
+            val combinedDue = DateTimeUtils.getCombinedDueTimestamp(task.dueDate, task.dueTime)
+            val isOverdue = !task.isCompleted && (task.status == TaskStatus.OVERDUE || (combinedDue > 0L && combinedDue < System.currentTimeMillis()))
 
             // Custom Checkbox Circle Button state
             if (task.isCompleted) {

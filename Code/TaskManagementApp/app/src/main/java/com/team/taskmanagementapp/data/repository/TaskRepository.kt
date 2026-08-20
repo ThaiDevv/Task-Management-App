@@ -6,7 +6,9 @@ import com.team.taskmanagementapp.data.model.DueDateRange
 import com.team.taskmanagementapp.data.model.FilterCriteria
 import com.team.taskmanagementapp.data.model.SortOption
 import com.team.taskmanagementapp.data.model.enums.Priority
+import com.team.taskmanagementapp.data.model.enums.RecurrenceType
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
+import com.team.taskmanagementapp.util.DateTimeUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.Calendar
@@ -111,10 +113,19 @@ class TaskRepository(
             isOverdueOnly = isOverdueOnly,
             currentTime = currentTime
         ).map { tasks ->
+            val now = System.currentTimeMillis()
+            val sanitized = tasks.map { task ->
+                val combined = DateTimeUtils.getCombinedDueTimestamp(task.dueDate, task.dueTime)
+                if (!task.isCompleted && task.status == TaskStatus.OVERDUE && combined > now) {
+                    task.copy(status = TaskStatus.TODO)
+                } else {
+                    task
+                }
+            }
             when (criteria.sortOption) {
-                SortOption.DUE_DATE_ASC -> tasks.sortedWith(compareBy({ it.dueDate }, { it.dueTime }))
-                SortOption.DUE_DATE_DESC -> tasks.sortedWith(compareByDescending<Task> { it.dueDate }.thenByDescending { it.dueTime })
-                SortOption.PRIORITY_DESC -> tasks.sortedByDescending { it.priority.ordinal }
+                SortOption.DUE_DATE_ASC -> sanitized.sortedWith(compareBy({ it.dueDate }, { it.dueTime }))
+                SortOption.DUE_DATE_DESC -> sanitized.sortedWith(compareByDescending<Task> { it.dueDate }.thenByDescending { it.dueTime })
+                SortOption.PRIORITY_DESC -> sanitized.sortedByDescending { it.priority.ordinal }
             }
         }
     }
