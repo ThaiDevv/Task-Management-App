@@ -135,6 +135,9 @@ class CalendarViewModel(
      */
     fun navigateMonth(offset: Int) {
         val cal = Calendar.getInstance().apply {
+            // Đặt ngày về 1 trước khi đổi tháng để tránh Calendar tự normalize
+            // sai tháng khi hôm nay là ngày 29, 30 hoặc 31.
+            set(Calendar.DAY_OF_MONTH, 1)
             set(Calendar.YEAR, _currentYear.value)
             set(Calendar.MONTH, _currentMonth.value)
             add(Calendar.MONTH, offset)

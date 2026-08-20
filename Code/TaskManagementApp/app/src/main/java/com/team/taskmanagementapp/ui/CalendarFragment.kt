@@ -22,6 +22,7 @@ import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.db.AppDatabase
 import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.enums.Priority
+import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.databinding.FragmentCalendarBinding
 import com.team.taskmanagementapp.ui.detail.TaskDetailActivity
@@ -85,8 +86,10 @@ class CalendarFragment : Fragment() {
                 val db = AppDatabase.getInstance(requireContext())
                 val repo = TaskRepository(db.taskDao())
                 viewLifecycleOwner.lifecycleScope.launch {
+                    val isNowCompleted = !task.isCompleted
                     val updated = task.copy(
-                        isCompleted = !task.isCompleted,
+                        isCompleted = isNowCompleted,
+                        status = if (isNowCompleted) TaskStatus.COMPLETED else TaskStatus.TODO,
                         updatedAt = System.currentTimeMillis()
                     )
                     repo.update(updated)
@@ -304,6 +307,8 @@ class CalendarFragment : Fragment() {
     private fun priorityColor(tasks: List<Task>): Int {
         val res = requireContext()
         return when {
+            tasks.any { it.priority == Priority.URGENT } ->
+                ContextCompat.getColor(res, R.color.priority_high)
             tasks.any { it.priority == Priority.HIGH } ->
                 ContextCompat.getColor(res, R.color.priority_high)
             tasks.any { it.priority == Priority.MEDIUM } ->
