@@ -12,6 +12,7 @@ import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.ui.base.UiState
 import com.team.taskmanagementapp.util.AlarmScheduler
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -33,8 +34,13 @@ class TaskViewModel(
     private val _deleteSuccess = MutableSharedFlow<Boolean>()
     val deleteSuccess = _deleteSuccess.asSharedFlow()
 
+    private val _userMessage = MutableSharedFlow<String>()
+    val userMessage: SharedFlow<String> = _userMessage.asSharedFlow()
+
     private val _uiState = MutableStateFlow<UiState<List<Task>>>(UiState.Loading)
     val uiState: StateFlow<UiState<List<Task>>> = _uiState.asStateFlow()
+
+    private var taskListJob: Job? = null
 
 
     private val _selectedTask = MutableStateFlow<Task?>(null)
@@ -49,7 +55,8 @@ class TaskViewModel(
 
 
     fun loadAllTasks() {
-        viewModelScope.launch {
+        taskListJob?.cancel()
+        taskListJob = viewModelScope.launch {
             _uiState.value = UiState.Loading
             repository.getFilteredTasks(_filterCriteria.value)
                 .catch { e ->
@@ -73,6 +80,7 @@ class TaskViewModel(
                     applicationContext,
                     task.copy(id = insertedId.toInt())
                 )
+                _userMessage.emit("Đã thêm công việc \"${task.title}\"")
             } catch (e: Exception) {
                 _uiState.value = UiState.Error("Lỗi khi thêm công việc: ${e.localizedMessage}")
             }
@@ -84,6 +92,7 @@ class TaskViewModel(
             try {
                 repository.update(task)
                 AlarmScheduler.rescheduleAlarm(applicationContext, task)
+                _userMessage.emit("Đã cập nhật công việc \"${task.title}\"")
             } catch (e: Exception) {
                 _uiState.value = UiState.Error("Lỗi khi cập nhật công việc: ${e.localizedMessage}")
             }
@@ -97,8 +106,9 @@ class TaskViewModel(
                 repository.delete(task)
                 AlarmScheduler.cancelAlarm(applicationContext, task.id)
                 _deleteSuccess.emit(true)
+                _userMessage.emit("Đã xóa công việc \"${task.title}\"")
             } catch (e: Exception) {
-                _uiState.value = UiState.Error("Lỗi khi xóa công việc: ${e.localizedMessage}")
+                _userMessage.emit("Lỗi khi xóa công việc: ${e.localizedMessage}")
             }
         }
     }
@@ -146,8 +156,15 @@ class TaskViewModel(
                 if (_selectedTask.value?.id == task.id) {
                     _selectedTask.value = updatedTask
                 }
+
+                val msg = if (!wasCompleted) {
+                    "Đã hoàn thành \"${task.title}\""
+                } else {
+                    "Đã đánh dấu chưa xong \"${task.title}\""
+                }
+                _userMessage.emit(msg)
             } catch (e: Exception) {
-                _uiState.value = UiState.Error("Lỗi khi cập nhật trạng thái công việc: ${e.localizedMessage}")
+                _userMessage.emit("Lỗi khi cập nhật trạng thái: ${e.localizedMessage}")
             }
         }
     }

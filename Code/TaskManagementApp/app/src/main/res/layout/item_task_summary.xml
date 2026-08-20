@@ -69,14 +69,44 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <!-- Task Title -->
-                <TextView
-                    android:id="@+id/taskTitle"
-                    android:layout_width="wrap_content"
+                <!-- Task Title + Overdue Badge Header Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins_bold"
-                    android:textColor="#1B1B1B"
-                    android:textSize="18sp" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/taskTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/poppins_bold"
+                        android:maxLines="1"
+                        android:textColor="#1B1B1B"
+                        android:textSize="18sp" />
+
+                    <!-- Overdue Badge -->
+                    <TextView
+                        android:id="@+id/overdueBadge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_overdue_banner"
+                        android:fontFamily="@font/poppins_bold"
+                        android:letterSpacing="0.06"
+                        android:maxLines="1"
+                        android:paddingStart="10dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="4dp"
+                        android:singleLine="true"
+                        android:text="QUÁ HẠN"
+                        android:textColor="@color/status_overdue"
+                        android:textSize="11sp"
+                        android:visibility="gone" />
+                </LinearLayout>
 
                 <!-- Description -->
                 <TextView

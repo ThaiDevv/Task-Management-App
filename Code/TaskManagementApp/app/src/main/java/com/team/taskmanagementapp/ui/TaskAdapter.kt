@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.enums.Priority
+import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.databinding.ItemTaskSummaryBinding
 import com.team.taskmanagementapp.util.DateTimeUtils
 
@@ -76,6 +77,9 @@ class TaskAdapter(
                 cornerRadius = 16f
             }
 
+            // Determine if the task is overdue
+            val isOverdue = !task.isCompleted && (task.status == TaskStatus.OVERDUE || task.dueDate < System.currentTimeMillis())
+
             // Custom Checkbox Circle Button state
             if (task.isCompleted) {
                 // Show blue left stripe only on completed tasks
@@ -90,8 +94,30 @@ class TaskAdapter(
                     binding.taskTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
                 binding.taskTitle.alpha = 0.5f
                 binding.root.alpha = 0.65f
+                
+                binding.overdueBadge.visibility = View.GONE
+                // Reset title color
+                binding.taskTitle.setTextColor(ContextCompat.getColor(context, R.color.on_background))
+            } else if (isOverdue) {
+                // Show red left stripe for overdue tasks
+                binding.priorityStripe.visibility = View.VISIBLE
+                binding.priorityStripe.setBackgroundColor(ContextCompat.getColor(context, R.color.status_overdue))
+
+                binding.checkCircleContainer.setCardBackgroundColor(Color.WHITE)
+                binding.checkCircleContainer.strokeColor = ContextCompat.getColor(context, R.color.status_overdue)
+                binding.checkCircleContainer.strokeWidth = (2 * context.resources.displayMetrics.density).toInt()
+                binding.checkMarkIcon.visibility = View.GONE
+
+                binding.taskTitle.paintFlags =
+                    binding.taskTitle.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+                binding.taskTitle.alpha = 1.0f
+                binding.root.alpha = 1.0f
+
+                binding.overdueBadge.visibility = View.VISIBLE
+                // Highlight title in overdue color
+                binding.taskTitle.setTextColor(ContextCompat.getColor(context, R.color.status_overdue))
             } else {
-                // Hide stripe when task is incomplete
+                // Hide stripe when task is incomplete and not overdue
                 binding.priorityStripe.visibility = View.GONE
 
                 binding.checkCircleContainer.setCardBackgroundColor(Color.WHITE)
@@ -103,6 +129,10 @@ class TaskAdapter(
                     binding.taskTitle.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
                 binding.taskTitle.alpha = 1.0f
                 binding.root.alpha = 1.0f
+
+                binding.overdueBadge.visibility = View.GONE
+                // Reset title color
+                binding.taskTitle.setTextColor(ContextCompat.getColor(context, R.color.on_background))
             }
 
             // Checkbox click -> toggle complete

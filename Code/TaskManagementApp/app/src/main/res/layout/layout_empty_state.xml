@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Stitch UI Design - TaskFlow Empty State
+    100% matching empty_task_state/screen.png and empty_task_state/code.html
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F9F9F9"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingStart="32dp"
+    android:paddingTop="48dp"
+    android:paddingEnd="32dp"
+    android:paddingBottom="48dp">
+
+    <!-- ===== 1. STITCH NOTEPAD & PENCIL ILLUSTRATION ===== -->
+    <FrameLayout
+        android:layout_width="260dp"
+        android:layout_height="220dp"
+        android:layout_gravity="center">
+
+        <!-- Outer Glowing Soft Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="210dp"
+            android:layout_height="190dp"
+            android:layout_gravity="center"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardCornerRadius="32dp"
+            app:cardElevation="2dp"
+            app:strokeColor="#1F105CDB"
+            app:strokeWidth="1dp">
+
+            <!-- Notepad Canvas -->
+            <LinearLayout
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center"
+                android:background="#F3F3F3"
+                android:orientation="vertical">
+
+                <!-- Top Primary Blue Header Bar -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="22dp"
+                    android:background="#105CDB" />
+
+                <!-- Task Item Skeleton Lines -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Line 1 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="14dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/bg_pill_outlined" />
+
+                        <View
+                            android:layout_width="70dp"
+                            android:layout_height="6dp"
+                            android:background="#DADADA" />
+                    </LinearLayout>
+
+                    <!-- Line 2 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="14dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/bg_pill_outlined" />
+
+                        <View
+                            android:layout_width="85dp"
+                            android:layout_height="6dp"
+                            android:background="#DADADA" />
+                    </LinearLayout>
+
+                    <!-- Line 3 (Faded) -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:alpha="0.4"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/bg_pill_outlined" />
+
+                        <View
+                            android:layout_width="55dp"
+                            android:layout_height="6dp"
+                            android:background="#DADADA" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Stylized Floating Pencil (Rotated 15 degrees) -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="34dp"
+            android:layout_height="100dp"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="8dp"
+            android:rotation="15"
+            app:cardBackgroundColor="#4E6072"
+            app:cardCornerRadius="17dp"
+            app:cardElevation="6dp"
+            app:strokeColor="#FFFFFF"
+            app:strokeWidth="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <!-- Red Eraser Top Accent -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp"
+                    android:background="#C12729" />
+
+                <!-- Gold Ring Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:background="#F59E0B" />
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </FrameLayout>
+
+    <!-- ===== 2. TYPOGRAPHY & TEXT CONTENT ===== -->
+    <TextView
+        android:id="@+id/tvEmptyTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:fontFamily="@font/poppins_bold"
+        android:gravity="center"
+        android:text="@string/state_empty_tasks"
+        android:textColor="#1B1B1B"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/tvEmptySubtitle"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/poppins_medium"
+        android:gravity="center"
+        android:lineSpacingMultiplier="1.3"
+        android:text="@string/state_empty_subtitle"
+        android:textColor="#737786"
+        android:textSize="14sp" />
+
+    <!-- ===== 3. PRIMARY ACTION BUTTON ===== -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnEmptyCreateTask"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:layout_marginTop="32dp"
+        android:backgroundTint="#105CDB"
+        android:elevation="4dp"
+        android:fontFamily="@font/poppins_bold"
+        android:letterSpacing="0.02"
+        android:minWidth="220dp"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:text="@string/state_empty_create_button"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        app:cornerRadius="16dp"
+        app:icon="@drawable/ic_add"
+        app:iconGravity="textStart"
+        app:iconPadding="10dp"
+        app:iconSize="22dp"
+        app:iconTint="#FFFFFF" />
+
+</LinearLayout>

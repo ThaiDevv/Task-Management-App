@@ -8,6 +8,7 @@
     tools:context=".ui.TaskListFragment">
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/contentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
@@ -564,5 +565,28 @@
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <!-- ===== UI STATE OVERLAYS (Loading / Empty / Error) ===== -->
+    <!-- Shown/hidden by TaskListFragment based on UiState; contentContainer is hidden when any overlay is visible. -->
+    <include
+        android:id="@+id/viewLoadingState"
+        layout="@layout/layout_loading_state"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/viewEmptyState"
+        layout="@layout/layout_empty_state"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/viewErrorState"
+        layout="@layout/layout_error_state"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
 </FrameLayout>
