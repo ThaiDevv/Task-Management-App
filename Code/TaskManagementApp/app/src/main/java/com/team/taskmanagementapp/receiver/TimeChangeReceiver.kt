@@ -42,15 +42,21 @@ class TimeChangeReceiver : BroadcastReceiver() {
         val db = AppDatabase.getInstance(appContext)
         val dao = db.taskDao()
         val currentTime = System.currentTimeMillis()
-        val overdueTasks = dao.getOverdueTasksSync(currentTime)
+        val activeTasks = dao.getActiveTasksSync()
 
-        if (overdueTasks.isNotEmpty()) {
-            Log.d("TimeChangeReceiver", "Found ${overdueTasks.size} overdue tasks. Updating status...")
-            overdueTasks.forEach { task ->
+        activeTasks.forEach { task ->
+            if (task.isCompleted || task.status == com.team.taskmanagementapp.data.model.enums.TaskStatus.COMPLETED) return@forEach
+            
+            val combinedDue = com.team.taskmanagementapp.util.DateTimeUtils.getCombinedDueTimestamp(task.dueDate, task.dueTime)
+            val isOverdue = combinedDue > 0L && combinedDue < currentTime
+
+            if (isOverdue && task.status != com.team.taskmanagementapp.data.model.enums.TaskStatus.OVERDUE) {
+                Log.d("TimeChangeReceiver", "Marking task ${task.id} as OVERDUE")
                 dao.updateTask(task.copy(status = com.team.taskmanagementapp.data.model.enums.TaskStatus.OVERDUE, updatedAt = currentTime))
+            } else if (!isOverdue && task.status == com.team.taskmanagementapp.data.model.enums.TaskStatus.OVERDUE) {
+                Log.d("TimeChangeReceiver", "Reverting falsely overdue task ${task.id} to TODO")
+                dao.updateTask(task.copy(status = com.team.taskmanagementapp.data.model.enums.TaskStatus.TODO, updatedAt = currentTime))
             }
-        } else {
-            Log.d("TimeChangeReceiver", "No new overdue tasks found.")
         }
     }
 
