@@ -7,6 +7,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.AudioAttributes
+import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -22,6 +24,20 @@ object NotificationHelper {
 
     fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            val existingChannel = notificationManager.getNotificationChannel(Constants.NOTIFICATION_CHANNEL_ID)
+            if (existingChannel != null && existingChannel.importance < NotificationManager.IMPORTANCE_HIGH) {
+                notificationManager.deleteNotificationChannel(Constants.NOTIFICATION_CHANNEL_ID)
+            }
+
+            val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            val audioAttributes = AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                .build()
+
             val channel = NotificationChannel(
                 Constants.NOTIFICATION_CHANNEL_ID,
                 Constants.NOTIFICATION_CHANNEL_NAME,
@@ -29,10 +45,10 @@ object NotificationHelper {
             ).apply {
                 description = Constants.NOTIFICATION_CHANNEL_DESC
                 enableVibration(true)
+                vibrationPattern = longArrayOf(0, 500, 250, 500)
+                setSound(soundUri, audioAttributes)
             }
 
-            val notificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
     }
@@ -76,6 +92,7 @@ object NotificationHelper {
 
         createNotificationChannel(context)
 
+        val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notification = NotificationCompat.Builder(
             context,
             Constants.NOTIFICATION_CHANNEL_ID
@@ -84,7 +101,10 @@ object NotificationHelper {
             .setContentTitle(task.title)
             .setContentText(task.description.ifBlank { "Task Reminder" })
             .setStyle(NotificationCompat.BigTextStyle().bigText(task.description.ifBlank { "Task Reminder" }))
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setSound(soundUri)
+            .setVibrate(longArrayOf(0, 500, 250, 500))
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setContentIntent(detailPendingIntent)
             .setAutoCancel(true)
