@@ -6,11 +6,13 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.team.taskmanagementapp.databinding.ActivityMainBinding
@@ -103,6 +105,7 @@ class MainActivity : AppCompatActivity() {
         // Observe destination changes to update active tab
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val index = tabIds.indexOf(destination.id)
+            updateNavigationChrome(index >= 0)
             if (index >= 0) {
                 updateTabSelection(index)
             }
@@ -110,6 +113,17 @@ class MainActivity : AppCompatActivity() {
 
         // Initialize with home tab selected
         updateTabSelection(0)
+    }
+
+    private fun updateNavigationChrome(isPrimaryDestination: Boolean) {
+        binding.bottomBarContainer.isVisible = isPrimaryDestination
+        val layoutParams = binding.navHostFragment.layoutParams as FrameLayout.LayoutParams
+        layoutParams.bottomMargin = if (isPrimaryDestination) {
+            resources.getDimensionPixelSize(R.dimen.bottom_navigation_height)
+        } else {
+            0
+        }
+        binding.navHostFragment.layoutParams = layoutParams
     }
 
     private fun updateTabSelection(selectedIndex: Int) {

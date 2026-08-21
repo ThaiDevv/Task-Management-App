@@ -17,7 +17,16 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.team.taskmanagementapp.ui.SettingsFragment"
-        android:label="@string/nav_settings" />
+        android:label="@string/nav_settings">
+        <action
+            android:id="@+id/action_settingsFragment_to_dataManagementFragment"
+            app:destination="@id/dataManagementFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/dataManagementFragment"
+        android:name="com.team.taskmanagementapp.ui.DataManagementFragment"
+        android:label="@string/data_management_title" />
 
     <fragment
         android:id="@+id/statsFragment"
