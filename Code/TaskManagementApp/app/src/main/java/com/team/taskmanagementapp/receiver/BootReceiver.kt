@@ -56,17 +56,12 @@ class BootReceiver : BroadcastReceiver() {
 
         Log.d(TAG, "Rescheduling alarms for ${activeTasks.size} active task(s) after boot.")
 
-        if (!AlarmScheduler.canScheduleExactAlarms(appContext)) {
-            Log.w(TAG, "Cannot schedule exact alarms — SCHEDULE_EXACT_ALARM permission not granted.")
-            return
-        }
-
         val now = System.currentTimeMillis()
         activeTasks.forEach { task ->
             val triggerAt = AlarmScheduler.calculateTriggerAtMillis(task)
             if (triggerAt != null && triggerAt > now) {
-                AlarmScheduler.scheduleAlarm(appContext, task, triggerAt)
-                Log.d(TAG, "Rescheduled alarm for task ${task.id} ('${task.title}') at $triggerAt")
+                val res = AlarmScheduler.scheduleAlarm(appContext, task, now)
+                Log.d(TAG, "Rescheduled alarm for task ${task.id} ('${task.title}') at $triggerAt, result=$res")
             } else {
                 // Hủy PendingIntent thừa nếu còn tồn tại
                 AlarmScheduler.cancelAlarm(appContext, task.id)
