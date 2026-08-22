@@ -227,8 +227,9 @@ class TaskViewModel(
 
     fun getTaskById(taskId: Long) {
         viewModelScope.launch {
-            val task = repository.getTaskById(taskId)
-            _selectedTask.value = task
+            repository.observeTaskById(taskId).collect { task ->
+                _selectedTask.value = task
+            }
         }
     }
 }
