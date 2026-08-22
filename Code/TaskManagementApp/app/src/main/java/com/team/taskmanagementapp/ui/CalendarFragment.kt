@@ -12,7 +12,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.gridlayout.widget.GridLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -38,6 +38,9 @@ import java.util.Locale
 /**
  * CalendarFragment — displays month calendar grid + timeline schedule for selected date.
  * Uses CalendarScheduleAdapter (dedicated UI layout item_calendar_task.xml).
+ *
+ * ViewModel scoped to Activity (activityViewModels) to prevent recreation on fragment
+ * navigation, which caused stale StateFlow emissions from old fragment-scoped instances.
  */
 class CalendarFragment : Fragment() {
 
@@ -46,7 +49,7 @@ class CalendarFragment : Fragment() {
 
     private lateinit var scheduleAdapter: CalendarScheduleAdapter
 
-    private val viewModel: CalendarViewModel by viewModels {
+    private val viewModel: CalendarViewModel by activityViewModels {
         val database = AppDatabase.getInstance(requireContext())
         val repository = TaskRepository(database.taskDao())
 
