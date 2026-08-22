@@ -123,8 +123,8 @@ class TaskRepository(
                 }
             }
             when (criteria.sortOption) {
-                SortOption.DUE_DATE_ASC -> sanitized.sortedWith(compareBy({ it.dueDate }, { it.dueTime }))
-                SortOption.DUE_DATE_DESC -> sanitized.sortedWith(compareByDescending<Task> { it.dueDate }.thenByDescending { it.dueTime })
+                SortOption.DUE_DATE_ASC -> sanitized.sortedBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
+                SortOption.DUE_DATE_DESC -> sanitized.sortedByDescending { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
                 SortOption.PRIORITY_DESC -> sanitized.sortedByDescending { it.priority.ordinal }
             }
         }

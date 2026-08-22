@@ -249,7 +249,7 @@ class CalendarFragment : Fragment() {
     // ── Schedule list ─────────────────────────────────────────────────────────
 
     private fun updateScheduleList(tasks: List<Task>) {
-        val sorted = tasks.sortedBy { it.dueTime }
+        val sorted = tasks.sortedBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
         scheduleAdapter.submitList(sorted)
 
         if (sorted.isEmpty()) {

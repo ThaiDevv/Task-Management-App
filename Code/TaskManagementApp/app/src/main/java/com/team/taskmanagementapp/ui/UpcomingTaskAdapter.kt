@@ -152,7 +152,8 @@ class UpcomingTaskAdapter(
         }.entries.take(3)
 
         for ((_, dayTasks) in grouped) {
-            val firstTaskCal = Calendar.getInstance().apply { timeInMillis = dayTasks.first().dueDate }
+            val sortedDayTasks = dayTasks.sortedBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
+            val firstTaskCal = Calendar.getInstance().apply { timeInMillis = sortedDayTasks.first().dueDate }
 
             val isTomorrow = firstTaskCal.get(Calendar.YEAR) == tomorrowCal.get(Calendar.YEAR)
                     && firstTaskCal.get(Calendar.DAY_OF_YEAR) == tomorrowCal.get(Calendar.DAY_OF_YEAR)

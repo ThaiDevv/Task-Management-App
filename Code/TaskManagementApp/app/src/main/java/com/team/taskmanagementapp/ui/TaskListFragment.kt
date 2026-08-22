@@ -231,9 +231,10 @@ class TaskListFragment : Fragment() {
     private fun displayTaskList(allTasks: List<Task>) {
         val nowEndToday = getEndOfTodayMillis()
         val todayList = allTasks.filter { it.dueDate <= nowEndToday }
-        // Sort upcoming by dueDate ascending so earliest appears at top
+            .sortedBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
+        // Sort upcoming by combined due timestamp ascending so earliest appears at top
         val upcomingList = allTasks.filter { it.dueDate > nowEndToday }
-            .sortedBy { it.dueDate }
+            .sortedBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
 
         todayTaskAdapter.submitList(todayList)
         upcomingTaskAdapter.submitTaskList(upcomingList)

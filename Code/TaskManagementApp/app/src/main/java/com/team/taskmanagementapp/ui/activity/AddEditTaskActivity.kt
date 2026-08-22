@@ -380,7 +380,7 @@ class AddEditTaskActivity : AppCompatActivity() {
                 title = title,
                 description = description,
                 dueDate = getNormalizedDueDate(),
-                dueTime = selectedTime.timeInMillis,
+                dueTime = getNormalizedDueTime(),
                 priority = selectedPriority,
                 recurrenceType = selectedRecurrence,
                 reminderMinutes = selectedReminderMinutes,
@@ -396,6 +396,23 @@ class AddEditTaskActivity : AppCompatActivity() {
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+    }
+
+    private fun getNormalizedDueTime(): Long {
+        val dateCal = Calendar.getInstance().apply { timeInMillis = selectedDate.timeInMillis }
+        val timeCal = Calendar.getInstance().apply { timeInMillis = selectedTime.timeInMillis }
+        return Calendar.getInstance().apply {
+            clear()
+            set(
+                dateCal.get(Calendar.YEAR),
+                dateCal.get(Calendar.MONTH),
+                dateCal.get(Calendar.DAY_OF_MONTH),
+                timeCal.get(Calendar.HOUR_OF_DAY),
+                timeCal.get(Calendar.MINUTE),
+                0
+            )
             set(Calendar.MILLISECOND, 0)
         }.timeInMillis
     }
@@ -454,7 +471,7 @@ class AddEditTaskActivity : AppCompatActivity() {
                     title = title,
                     description = description,
                     dueDate = getNormalizedDueDate(),
-                    dueTime = selectedTime.timeInMillis,
+                    dueTime = getNormalizedDueTime(),
                     priority = selectedPriority,
                     recurrenceType = selectedRecurrence,
                     reminderMinutes = selectedReminderMinutes,
