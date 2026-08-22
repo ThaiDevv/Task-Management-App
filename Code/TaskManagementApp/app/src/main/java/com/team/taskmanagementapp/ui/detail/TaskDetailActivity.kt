@@ -143,7 +143,7 @@ class TaskDetailActivity : AppCompatActivity() {
 
     private fun bindStatusBadge(status: TaskStatus, task: Task) {
         val (textResId, colorResId) = when {
-            DateTimeUtils.isOverdue(task.dueDate, task.isCompleted) -> {
+            DateTimeUtils.isOverdue(task) -> {
                 R.string.task_status_overdue to R.color.status_overdue
             }
             else -> when (status) {
