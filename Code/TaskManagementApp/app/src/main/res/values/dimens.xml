@@ -23,6 +23,10 @@
     <dimen name="card_padding">24dp</dimen>
 
     <!-- Shape tokens from the TaskFlow design system. -->
+    <dimen name="corner_radius_small">8dp</dimen>
+    <dimen name="corner_radius_medium">16dp</dimen>
+    <dimen name="corner_radius_large">24dp</dimen>
+
     <dimen name="radius_small">8dp</dimen>
     <dimen name="radius_medium">16dp</dimen>
     <dimen name="radius_large">24dp</dimen>

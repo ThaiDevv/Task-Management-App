@@ -11,13 +11,13 @@
     <!-- Top AppBar -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="64dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingStart="@dimen/spacing_16"
         android:paddingEnd="@dimen/spacing_16"
         android:background="?attr/colorSurface"
-        android:elevation="4dp">
+        android:elevation="2dp">
 
         <TextView
             android:layout_width="0dp"
@@ -28,6 +28,17 @@
             android:textColor="?attr/colorPrimary"
             android:fontFamily="@font/poppins_semibold"
             android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/userAvatar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_account"
+            android:background="@drawable/bg_avatar"
+            android:contentDescription="User Avatar"
+            android:scaleType="centerCrop"
+            android:clipToOutline="true" />
 
     </LinearLayout>
 
@@ -41,27 +52,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/spacing_24">
+            android:padding="@dimen/spacing_16">
 
-            <!-- Month Selector -->
+            <!-- Month Selector with Navigation -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:paddingStart="@dimen/spacing_12"
-                android:paddingEnd="@dimen/spacing_12"
-                android:paddingTop="@dimen/spacing_8"
-                android:paddingBottom="@dimen/spacing_8"
-                android:background="@color/surface_container_lowest"
-                android:layout_marginBottom="@dimen/spacing_16"
-                app:cardCornerRadius="@dimen/radius_medium">
+                android:paddingTop="@dimen/spacing_12"
+                android:paddingBottom="@dimen/spacing_12"
+                android:background="@drawable/bg_month_selector"
+                android:layout_marginBottom="@dimen/spacing_16">
 
-                <ImageView
-                    android:layout_width="@dimen/icon_size_medium"
-                    android:layout_height="@dimen/icon_size_medium"
-                    android:src="@drawable/ic_nav_calendar"
-                    android:contentDescription="@null"
+                <ImageButton
+                    android:id="@+id/btnPrevMonth"
+                    android:layout_width="@dimen/touch_target_minimum"
+                    android:layout_height="@dimen/touch_target_minimum"
+                    android:src="@drawable/ic_chevron_left"
+                    android:contentDescription="Previous Month"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:tint="@color/outline" />
 
                 <TextView
@@ -69,35 +79,131 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="@dimen/spacing_12"
                     android:text="October 2024"
                     android:textSize="@dimen/text_headline_medium"
                     android:textColor="?attr/colorOnSurface"
                     android:fontFamily="@font/poppins_semibold"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:gravity="center" />
+
+                <ImageButton
+                    android:id="@+id/btnNextMonth"
+                    android:layout_width="@dimen/touch_target_minimum"
+                    android:layout_height="@dimen/touch_target_minimum"
+                    android:src="@drawable/ic_chevron_right"
+                    android:contentDescription="Next Month"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:tint="@color/outline" />
 
             </LinearLayout>
 
-            <!-- Calendar Grid -->
-            <GridLayout
-                android:id="@+id/calendarGrid"
+            <!-- Calendar Widget -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:columnCount="7"
-                android:rowCount="6"
-                android:padding="@dimen/spacing_8"
-                android:layout_marginBottom="@dimen/spacing_24"
-                android:background="@color/surface_container_lowest"
-                android:layout_gravity="center_horizontal" />
+                android:orientation="vertical"
+                android:background="@drawable/bg_calendar_container"
+                android:padding="@dimen/spacing_16"
+                android:layout_marginBottom="@dimen/spacing_24">
+
+                <!-- Day Headers -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="@dimen/spacing_12">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="S"
+                        android:textSize="@dimen/text_label_medium"
+                        android:textColor="@color/outline"
+                        android:fontFamily="@font/poppins_medium"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="M"
+                        android:textSize="@dimen/text_label_medium"
+                        android:textColor="@color/outline"
+                        android:fontFamily="@font/poppins_medium"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="T"
+                        android:textSize="@dimen/text_label_medium"
+                        android:textColor="@color/outline"
+                        android:fontFamily="@font/poppins_medium"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="W"
+                        android:textSize="@dimen/text_label_medium"
+                        android:textColor="@color/outline"
+                        android:fontFamily="@font/poppins_medium"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="T"
+                        android:textSize="@dimen/text_label_medium"
+                        android:textColor="@color/outline"
+                        android:fontFamily="@font/poppins_medium"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="F"
+                        android:textSize="@dimen/text_label_medium"
+                        android:textColor="@color/outline"
+                        android:fontFamily="@font/poppins_medium"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="S"
+                        android:textSize="@dimen/text_label_medium"
+                        android:textColor="@color/outline"
+                        android:fontFamily="@font/poppins_medium"
+                        android:gravity="center" />
+
+                </LinearLayout>
+
+                <!-- Calendar Days Grid -->
+                <androidx.gridlayout.widget.GridLayout
+                    android:id="@+id/calendarGrid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:columnCount="7"
+                    app:rowCount="6" />
+
+            </LinearLayout>
 
             <!-- Schedule Title -->
             <TextView
+                android:id="@+id/scheduleTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/calendar_schedule"
-                android:textSize="@dimen/text_headline_large"
+                android:textSize="@dimen/text_headline_medium"
                 android:textColor="?attr/colorOnSurface"
-                android:fontFamily="@font/poppins_bold"
+                android:fontFamily="@font/poppins_semibold"
                 android:textStyle="bold"
                 android:layout_marginBottom="@dimen/spacing_16" />
 
@@ -107,7 +213,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
-                tools:listitem="@layout/item_task_summary" />
+                tools:listitem="@layout/item_calendar_task" />
 
             <!-- Empty State -->
             <TextView
@@ -117,6 +223,7 @@
                 android:text="@string/state_empty_tasks"
                 android:textSize="@dimen/text_body_medium"
                 android:textColor="@color/outline"
+                android:fontFamily="@font/poppins_regular"
                 android:textAlignment="center"
                 android:layout_marginTop="@dimen/spacing_32"
                 android:visibility="gone" />

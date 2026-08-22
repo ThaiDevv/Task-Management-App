@@ -1,71 +1,79 @@
 package com.team.taskmanagementapp.ui
 
-import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.TextView
-import android.content.Intent
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.gridlayout.widget.GridLayout
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.db.AppDatabase
+import com.team.taskmanagementapp.data.local.entity.Task
+import com.team.taskmanagementapp.data.model.enums.Priority
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.databinding.FragmentCalendarBinding
 import com.team.taskmanagementapp.ui.detail.TaskDetailActivity
 import com.team.taskmanagementapp.util.Constants
-import com.team.taskmanagementapp.viewmodel.TaskViewModel
-import com.team.taskmanagementapp.viewmodel.TaskViewModelFactory
+import com.team.taskmanagementapp.viewmodel.CalendarViewModel
+import com.team.taskmanagementapp.viewmodel.CalendarViewModelFactory
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 /**
- * CalendarFragment displays a monthly calendar view with task indicators
- * and a schedule list for the selected date.
+ * CalendarFragment — displays month calendar grid + timeline schedule for selected date.
+ * Uses CalendarScheduleAdapter (dedicated UI layout item_calendar_task.xml).
  */
 class CalendarFragment : Fragment() {
 
-    private lateinit var binding: FragmentCalendarBinding
-    private lateinit var taskAdapter: TaskAdapter
-    private val calendar = Calendar.getInstance()
+    private var _binding: FragmentCalendarBinding? = null
+    private val binding get() = _binding!!
 
-    private val viewModel: TaskViewModel by viewModels {
+    private lateinit var scheduleAdapter: CalendarScheduleAdapter
+
+    private val viewModel: CalendarViewModel by viewModels {
         val database = AppDatabase.getInstance(requireContext())
         val repository = TaskRepository(database.taskDao())
-        val preferences = requireContext().getSharedPreferences(
-            Constants.PREFS_NAME,
-            Context.MODE_PRIVATE
-        )
-        TaskViewModelFactory(
-            repository,
-            requireContext().applicationContext,
-            preferences
-        )
+
+        CalendarViewModelFactory(requireActivity().application, repository)
     }
+
+    private val displayCalendar = Calendar.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentCalendarBinding.inflate(inflater, container, false)
+        _binding = FragmentCalendarBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        setupUI()
+        setupRecyclerView()
+        setupMonthNavigation()
+        observeViewModel()
     }
 
-    private fun setupUI() {
-        // Setup RecyclerView with toggle and click callbacks
-        taskAdapter = TaskAdapter(
-            onTaskToggleComplete = { task ->
-                viewModel.toggleTaskComplete(task)
-            },
+    // ── Setup ─────────────────────────────────────────────────────────────────
+
+    private fun setupRecyclerView() {
+        scheduleAdapter = CalendarScheduleAdapter(
             onTaskClick = { task ->
                 val intent = Intent(requireContext(), TaskDetailActivity::class.java)
                 intent.putExtra(Constants.EXTRA_TASK_ID, task.id.toLong())
@@ -74,68 +82,201 @@ class CalendarFragment : Fragment() {
         )
         binding.scheduleRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = taskAdapter
+            adapter = scheduleAdapter
         }
-
-        // Setup Calendar Grid
-        buildCalendarGrid()
-        updateMonthYear()
     }
 
-    private fun updateMonthYear() {
-        val monthName = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, java.util.Locale.getDefault())
-        val year = calendar.get(Calendar.YEAR)
+    private fun setupMonthNavigation() {
+        binding.btnPrevMonth.setOnClickListener {
+            viewModel.navigateMonth(-1)
+        }
+        binding.btnNextMonth.setOnClickListener {
+            viewModel.navigateMonth(1)
+        }
+    }
+
+    // ── Observe ───────────────────────────────────────────────────────────────
+
+    private fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    combine(
+                        viewModel.currentYear,
+                        viewModel.currentMonth,
+                        viewModel.monthCache
+                    ) { year, month, cache ->
+                        Triple(year, month, cache)
+                    }.collect { (year, month, cache) ->
+                        displayCalendar.set(Calendar.YEAR, year)
+                        displayCalendar.set(Calendar.MONTH, month)
+                        updateMonthYearHeader()
+                        buildCalendarGrid(cache)
+                    }
+                }
+
+                launch {
+                    viewModel.tasksForSelectedDate.collect { tasks ->
+                        updateScheduleList(tasks)
+                        updateScheduleTitle()
+                    }
+                }
+
+                launch {
+                    viewModel.isLoading.collect { }
+                }
+            }
+        }
+    }
+
+    // ── Header ────────────────────────────────────────────────────────────────
+
+    private fun updateMonthYearHeader() {
+        val monthName = displayCalendar.getDisplayName(
+            Calendar.MONTH, Calendar.LONG, Locale.getDefault()
+        )
+        val year = displayCalendar.get(Calendar.YEAR)
         binding.monthYearText.text = "$monthName $year"
     }
 
-    private fun buildCalendarGrid() {
-        val gridLayout = binding.calendarGrid
-        gridLayout.removeAllViews()
+    private fun updateScheduleTitle() {
+        val selectedMs = viewModel.selectedDate.value
+        val cal = Calendar.getInstance().apply { timeInMillis = selectedMs }
+        val fmt = SimpleDateFormat("MMM d", Locale.getDefault())
+        binding.scheduleTitle.text = "Schedule  ${fmt.format(cal.time)}"
+    }
 
-        // Days of week header
-        val daysOfWeek = arrayOf("S", "M", "T", "W", "T", "F", "S")
-        for (day in daysOfWeek) {
-            val dayLabel = TextView(requireContext()).apply {
-                text = day
-                textSize = 12f
-                setTextColor(resources.getColor(R.color.outline, requireContext().theme))
-                layoutParams = GridLayout.LayoutParams().apply {
-                    width = 0
-                    height = GridLayout.LayoutParams.WRAP_CONTENT
-                    columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
-                }
-            }
-            gridLayout.addView(dayLabel)
-        }
+    // ── Calendar Grid ─────────────────────────────────────────────────────────
 
-        // Fill calendar days
-        val maxDays = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-        val firstDayOfWeek = calendar.apply { set(Calendar.DAY_OF_MONTH, 1) }.get(Calendar.DAY_OF_WEEK) - 1
+    private fun buildCalendarGrid(cache: Map<Long, List<Task>>) {
+        val grid = binding.calendarGrid
+        grid.removeAllViews()
 
-        // Empty cells before month starts
-        repeat(firstDayOfWeek) {
-            gridLayout.addView(TextView(requireContext()).apply {
-                layoutParams = GridLayout.LayoutParams().apply {
-                    width = 0
-                    height = 50
-                    columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
-                }
-            })
-        }
+        val tempCal = displayCalendar.clone() as Calendar
+        tempCal.set(Calendar.DAY_OF_MONTH, 1)
 
-        // Days of month
+        val maxDays = tempCal.getActualMaximum(Calendar.DAY_OF_MONTH)
+        val firstDayOffset = tempCal.get(Calendar.DAY_OF_WEEK) - 1
+
+        repeat(firstDayOffset) { grid.addView(createEmptyCell()) }
+
         for (day in 1..maxDays) {
-            val dayLabel = TextView(requireContext()).apply {
-                text = day.toString()
-                textSize = 14f
-                setTextColor(resources.getColor(R.color.on_surface, requireContext().theme))
-                layoutParams = GridLayout.LayoutParams().apply {
-                    width = 0
-                    height = 50
-                    columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+            grid.addView(createDayCell(day, tempCal, cache))
+        }
+
+        val remaining = 42 - (firstDayOffset + maxDays)
+        repeat(remaining) { grid.addView(createEmptyCell()) }
+    }
+
+    private fun createEmptyCell(): View {
+        return View(requireContext()).apply {
+            layoutParams = GridLayout.LayoutParams().apply {
+                width = 0
+                height = resources.getDimensionPixelSize(R.dimen.touch_target_minimum)
+                columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+            }
+        }
+    }
+
+    private fun createDayCell(
+        day: Int,
+        tempCal: Calendar,
+        cache: Map<Long, List<Task>>
+    ): FrameLayout {
+        val container = FrameLayout(requireContext()).apply {
+            layoutParams = GridLayout.LayoutParams().apply {
+                width = 0
+                height = resources.getDimensionPixelSize(R.dimen.touch_target_minimum)
+                columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+            }
+        }
+
+        val dayCal = (tempCal.clone() as Calendar).apply {
+            set(Calendar.DAY_OF_MONTH, day)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        val dayKey = dayCal.timeInMillis
+
+        val dayText = TextView(requireContext()).apply {
+            text = day.toString()
+            textSize = 14f
+            gravity = Gravity.CENTER
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.on_surface))
+            val size = resources.getDimensionPixelSize(R.dimen.spacing_32)
+            layoutParams = FrameLayout.LayoutParams(size, size).apply {
+                gravity = Gravity.CENTER
+            }
+        }
+
+        val isSelected = dayKey == viewModel.selectedDate.value
+        if (isSelected) {
+            dayText.background = GradientDrawable().apply {
+                shape = GradientDrawable.OVAL
+                setColor(ContextCompat.getColor(requireContext(), R.color.primary))
+            }
+            dayText.setTextColor(Color.WHITE)
+        }
+
+        container.addView(dayText)
+
+        val tasksOnDay = cache[dayKey]
+        if (!tasksOnDay.isNullOrEmpty()) {
+            val dotSize = resources.getDimensionPixelSize(R.dimen.spacing_4)
+            val dot = View(requireContext()).apply {
+                layoutParams = FrameLayout.LayoutParams(dotSize, dotSize).apply {
+                    gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+                    bottomMargin = resources.getDimensionPixelSize(R.dimen.spacing_4)
+                }
+                background = GradientDrawable().apply {
+                    shape = GradientDrawable.OVAL
+                    setColor(priorityColor(tasksOnDay))
                 }
             }
-            gridLayout.addView(dayLabel)
+            container.addView(dot)
         }
+
+        container.setOnClickListener {
+            viewModel.selectDate(dayKey)
+            buildCalendarGrid(viewModel.monthCache.value)
+        }
+
+        return container
+    }
+
+    // ── Schedule list ─────────────────────────────────────────────────────────
+
+    private fun updateScheduleList(tasks: List<Task>) {
+        val sorted = tasks.sortedBy { it.dueTime }
+        scheduleAdapter.submitList(sorted)
+
+        if (sorted.isEmpty()) {
+            binding.emptyScheduleText.visibility = View.VISIBLE
+            binding.scheduleRecyclerView.visibility = View.GONE
+        } else {
+            binding.emptyScheduleText.visibility = View.GONE
+            binding.scheduleRecyclerView.visibility = View.VISIBLE
+        }
+    }
+
+    private fun priorityColor(tasks: List<Task>): Int {
+        val res = requireContext()
+        return when {
+            tasks.any { it.priority == Priority.URGENT } ->
+                ContextCompat.getColor(res, R.color.priority_high)
+            tasks.any { it.priority == Priority.HIGH } ->
+                ContextCompat.getColor(res, R.color.priority_high)
+            tasks.any { it.priority == Priority.MEDIUM } ->
+                ContextCompat.getColor(res, R.color.priority_medium)
+            else ->
+                ContextCompat.getColor(res, R.color.priority_low)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

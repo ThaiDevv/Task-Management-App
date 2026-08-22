@@ -39,13 +39,27 @@ object DateTimeUtils {
     }
 
     /**
-     * Check if a task is overdue based on its due date timestamp and completion state.
+     * Check if a task is overdue based on its combined date + time timestamp and completion state.
      */
     fun isOverdue(dueDateTimestamp: Long?, isCompleted: Boolean): Boolean {
         if (dueDateTimestamp == null || dueDateTimestamp == 0L || isCompleted) {
             return false
         }
         return System.currentTimeMillis() > dueDateTimestamp
+    }
+
+    /**
+     * Check if a Task entity is overdue considering both its dueDate and dueTime.
+     */
+    fun isOverdue(task: com.team.taskmanagementapp.data.local.entity.Task): Boolean {
+        if (task.isCompleted || task.status == com.team.taskmanagementapp.data.model.enums.TaskStatus.COMPLETED) {
+            return false
+        }
+        if (task.status == com.team.taskmanagementapp.data.model.enums.TaskStatus.OVERDUE) {
+            return true
+        }
+        val combined = getCombinedDueTimestamp(task.dueDate, task.dueTime)
+        return combined > 0L && combined < System.currentTimeMillis()
     }
 
     /**
