@@ -101,6 +101,12 @@ class AddEditTaskActivity : AppCompatActivity() {
 
         if (isEditMode) {
             observeTask(taskId)
+        } else {
+            val initialDueDate = intent.getLongExtra(Constants.EXTRA_TASK_DUE_DATE, -1L)
+            if (initialDueDate != -1L) {
+                selectedDate.timeInMillis = initialDueDate
+                updateDateLabel()
+            }
         }
     }
 
@@ -373,8 +379,8 @@ class AddEditTaskActivity : AppCompatActivity() {
             viewModel.saveTask(
                 title = title,
                 description = description,
-                dueDate = selectedDate.timeInMillis,
-                dueTime = selectedTime.timeInMillis,
+                dueDate = getNormalizedDueDate(),
+                dueTime = getNormalizedDueTime(),
                 priority = selectedPriority,
                 recurrenceType = selectedRecurrence,
                 reminderMinutes = selectedReminderMinutes,
@@ -382,6 +388,33 @@ class AddEditTaskActivity : AppCompatActivity() {
                 isEdit = false
             )
         }
+    }
+
+    private fun getNormalizedDueDate(): Long {
+        return Calendar.getInstance().apply {
+            timeInMillis = selectedDate.timeInMillis
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+    }
+
+    private fun getNormalizedDueTime(): Long {
+        val dateCal = Calendar.getInstance().apply { timeInMillis = selectedDate.timeInMillis }
+        val timeCal = Calendar.getInstance().apply { timeInMillis = selectedTime.timeInMillis }
+        return Calendar.getInstance().apply {
+            clear()
+            set(
+                dateCal.get(Calendar.YEAR),
+                dateCal.get(Calendar.MONTH),
+                dateCal.get(Calendar.DAY_OF_MONTH),
+                timeCal.get(Calendar.HOUR_OF_DAY),
+                timeCal.get(Calendar.MINUTE),
+                0
+            )
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
     }
 
     private fun observeViewModel() {
@@ -437,8 +470,8 @@ class AddEditTaskActivity : AppCompatActivity() {
                 val editedTask = existingTask.copy(
                     title = title,
                     description = description,
-                    dueDate = selectedDate.timeInMillis,
-                    dueTime = selectedTime.timeInMillis,
+                    dueDate = getNormalizedDueDate(),
+                    dueTime = getNormalizedDueTime(),
                     priority = selectedPriority,
                     recurrenceType = selectedRecurrence,
                     reminderMinutes = selectedReminderMinutes,

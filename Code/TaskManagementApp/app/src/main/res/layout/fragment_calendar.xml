@@ -43,7 +43,7 @@
     </LinearLayout>
 
     <!-- Content -->
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -52,7 +52,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/spacing_16">
+            android:padding="@dimen/spacing_16"
+            android:paddingBottom="80dp">
 
             <!-- Month Selector with Navigation -->
             <LinearLayout
@@ -230,6 +231,6 @@
 
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

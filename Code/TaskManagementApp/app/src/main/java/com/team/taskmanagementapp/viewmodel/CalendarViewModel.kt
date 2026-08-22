@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.repository.TaskRepository
+import com.team.taskmanagementapp.util.DateTimeUtils
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +18,7 @@ import java.util.Calendar
  * ViewModel riêng cho màn hình Calendar.
  *
  * Quản lý:
- * - Load tasks theo từng tháng qua Flow từ Room
+ * - Load tasks theo từng tháng từ Room qua Flow
  * - Cache Map<startOfDay: Long, List<Task>> cho tháng hiện tại
  * - StateFlow tasks của ngày được chọn
  * - Điều hướng tháng (prev/next)
@@ -61,7 +62,6 @@ class CalendarViewModel(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
-    // Job của lần collect hiện tại — cancel khi chuyển tháng
     private var monthJob: Job? = null
 
     init {
@@ -71,11 +71,10 @@ class CalendarViewModel(
     // ── Public API ────────────────────────────────────────────────────────────
 
     /**
-     * Load (hoặc reload) tasks cho tháng [year]/[month] từ Room qua Flow.
-     * Kết quả được nhóm thành Map<startOfDay, List<Task>> và lưu vào cache.
+     * Load tasks cho tháng [year]/[month] từ Room qua Flow toàn bộ task.
+     * Tự động phản ứng với bất kỳ thay đổi thêm/sửa/xóa task nào trong DB.
      */
     fun loadTasksForMonth(year: Int, month: Int) {
-        // Huỷ collect tháng cũ nếu còn đang chạy
         monthJob?.cancel()
 
         _currentYear.value = year
@@ -83,27 +82,25 @@ class CalendarViewModel(
         _isLoading.value = true
         _errorMessage.value = null
 
-        // Không để cache của tháng trước xuất hiện tạm thời khi header đã đổi tháng.
-        _tasksForMonth.value = emptyList()
-        _monthCache.value = emptyMap()
-        _datesWithTasks.value = emptySet()
-        _tasksForSelectedDate.value = emptyList()
-
-        val (startMs, endMs) = monthRange(year, month)
-
         monthJob = viewModelScope.launch {
-            repository.getTasksDateRange(startMs, endMs)
+            repository.getAllTasks()
                 .catch { e ->
                     _isLoading.value = false
                     _errorMessage.value = "Không thể tải lịch: ${e.localizedMessage}"
                 }
-                .collect { tasks ->
+                .collect { allTasks ->
                     _isLoading.value = false
-                    _tasksForMonth.value = tasks
-                    // Nhóm tasks theo ngày
-                    val grouped = buildMonthCache(tasks)
+                    // Lọc tất cả task thuộc năm/tháng đang chọn
+                    val monthTasks = allTasks.filter { task ->
+                        isTaskInMonth(task, year, month)
+                    }
+                    _tasksForMonth.value = monthTasks
+
+                    // Nhóm tasks theo ngày (startOfDay)
+                    val grouped = buildMonthCache(monthTasks)
                     _monthCache.value = grouped
                     _datesWithTasks.value = grouped.keys
+
                     // Cập nhật lại danh sách ngày đang chọn
                     refreshSelectedDateTasks(grouped)
                 }
@@ -131,12 +128,9 @@ class CalendarViewModel(
 
     /**
      * Di chuyển tháng theo [offset]: -1 là tháng trước, 1 là tháng sau.
-     * Sau khi đổi tháng, dữ liệu tháng mới được query lại từ Room.
      */
     fun navigateMonth(offset: Int) {
         val cal = Calendar.getInstance().apply {
-            // Đặt ngày về 1 trước khi đổi tháng để tránh Calendar tự normalize
-            // sai tháng khi hôm nay là ngày 29, 30 hoặc 31.
             set(Calendar.DAY_OF_MONTH, 1)
             set(Calendar.YEAR, _currentYear.value)
             set(Calendar.MONTH, _currentMonth.value)
@@ -152,24 +146,16 @@ class CalendarViewModel(
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     /**
-     * Trả về [startMs, endMs] của tháng [year]/[month] (toàn bộ từ 00:00:00.000
-     * ngày đầu đến 23:59:59.999 ngày cuối tháng).
+     * Kiểm tra task có thuộc [year] và [month] đang hiển thị hay không.
      */
-    private fun monthRange(year: Int, month: Int): Pair<Long, Long> {
-        val start = Calendar.getInstance().apply {
-            set(year, month, 1, 0, 0, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-        val end = Calendar.getInstance().apply {
-            set(year, month, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59)
-            set(Calendar.MILLISECOND, 999)
-        }
-        return start.timeInMillis to end.timeInMillis
+    private fun isTaskInMonth(task: Task, year: Int, month: Int): Boolean {
+        if (task.dueDate <= 0L) return false
+        val cal = Calendar.getInstance().apply { timeInMillis = task.dueDate }
+        return cal.get(Calendar.YEAR) == year && cal.get(Calendar.MONTH) == month
     }
 
     /**
      * Nhóm danh sách [tasks] thành Map<startOfDay, List<Task>>.
-     * Mỗi key là timestamp đầu ngày (00:00:00.000) của ngày đó.
      */
     private fun buildMonthCache(tasks: List<Task>): Map<Long, List<Task>> {
         return tasks.groupBy { task -> startOfDay(task.dueDate) }
@@ -181,18 +167,9 @@ class CalendarViewModel(
     }
 
     /** Trả về timestamp 00:00:00.000 của ngày chứa [millis] */
-    private fun startOfDay(millis: Long): Long {
-        return Calendar.getInstance().apply {
-            timeInMillis = millis
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }.timeInMillis
-    }
+    private fun startOfDay(millis: Long): Long = DateTimeUtils.getStartOfDay(millis)
 
-    /** Overload: nhận Calendar thay vì Long */
-    private fun startOfDay(cal: Calendar): Long = startOfDay(cal.timeInMillis)
+    private fun startOfDay(cal: Calendar): Long = DateTimeUtils.getStartOfDay(cal.timeInMillis)
 
     override fun onCleared() {
         super.onCleared()

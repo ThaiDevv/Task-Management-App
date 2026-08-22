@@ -12,7 +12,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.gridlayout.widget.GridLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -26,6 +26,7 @@ import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.databinding.FragmentCalendarBinding
 import com.team.taskmanagementapp.ui.detail.TaskDetailActivity
 import com.team.taskmanagementapp.util.Constants
+import com.team.taskmanagementapp.util.DateTimeUtils
 import com.team.taskmanagementapp.viewmodel.CalendarViewModel
 import com.team.taskmanagementapp.viewmodel.CalendarViewModelFactory
 import kotlinx.coroutines.flow.combine
@@ -37,6 +38,9 @@ import java.util.Locale
 /**
  * CalendarFragment — displays month calendar grid + timeline schedule for selected date.
  * Uses CalendarScheduleAdapter (dedicated UI layout item_calendar_task.xml).
+ *
+ * ViewModel scoped to Activity (activityViewModels) to prevent recreation on fragment
+ * navigation, which caused stale StateFlow emissions from old fragment-scoped instances.
  */
 class CalendarFragment : Fragment() {
 
@@ -45,7 +49,7 @@ class CalendarFragment : Fragment() {
 
     private lateinit var scheduleAdapter: CalendarScheduleAdapter
 
-    private val viewModel: CalendarViewModel by viewModels {
+    private val viewModel: CalendarViewModel by activityViewModels {
         val database = AppDatabase.getInstance(requireContext())
         val repository = TaskRepository(database.taskDao())
 
@@ -193,12 +197,8 @@ class CalendarFragment : Fragment() {
 
         val dayCal = (tempCal.clone() as Calendar).apply {
             set(Calendar.DAY_OF_MONTH, day)
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
         }
-        val dayKey = dayCal.timeInMillis
+        val dayKey = DateTimeUtils.getStartOfDay(dayCal.timeInMillis)
 
         val dayText = TextView(requireContext()).apply {
             text = day.toString()
@@ -249,7 +249,7 @@ class CalendarFragment : Fragment() {
     // ── Schedule list ─────────────────────────────────────────────────────────
 
     private fun updateScheduleList(tasks: List<Task>) {
-        val sorted = tasks.sortedBy { it.dueTime }
+        val sorted = tasks.sortedBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
         scheduleAdapter.submitList(sorted)
 
         if (sorted.isEmpty()) {

@@ -146,13 +146,16 @@ class UpcomingTaskAdapter(
 
         val tomorrowCal = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 1) }
 
-        val grouped = tasks.sortedBy { it.dueDate }.groupBy { task ->
+        val sortedTasks = tasks.sortedBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
+
+        val grouped = sortedTasks.groupBy { task ->
             val cal = Calendar.getInstance().apply { timeInMillis = task.dueDate }
             Pair(cal.get(Calendar.YEAR), cal.get(Calendar.DAY_OF_YEAR))
         }.entries.take(3)
 
         for ((_, dayTasks) in grouped) {
-            val firstTaskCal = Calendar.getInstance().apply { timeInMillis = dayTasks.first().dueDate }
+            val sortedDayTasks = dayTasks.sortedBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
+            val firstTaskCal = Calendar.getInstance().apply { timeInMillis = sortedDayTasks.first().dueDate }
 
             val isTomorrow = firstTaskCal.get(Calendar.YEAR) == tomorrowCal.get(Calendar.YEAR)
                     && firstTaskCal.get(Calendar.DAY_OF_YEAR) == tomorrowCal.get(Calendar.DAY_OF_YEAR)
@@ -161,7 +164,7 @@ class UpcomingTaskAdapter(
             val dateSubtext = if (isTomorrow) dateFormat.format(firstTaskCal.time) else dayFormat.format(firstTaskCal.time)
 
             items.add(UpcomingItem.Header(dateLabel, dateSubtext))
-            dayTasks.forEach { task ->
+            sortedDayTasks.forEach { task ->
                 items.add(UpcomingItem.TaskItem(task))
             }
         }

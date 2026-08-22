@@ -44,14 +44,31 @@ object AlarmScheduler {
         }
 
         return try {
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                triggerAtMillis,
-                reminderPendingIntent(applicationContext, task.id)
-            )
+            if (canScheduleExactAlarms(alarmManager)) {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    triggerAtMillis,
+                    reminderPendingIntent(applicationContext, task.id)
+                )
+            } else {
+                alarmManager.setAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    triggerAtMillis,
+                    reminderPendingIntent(applicationContext, task.id)
+                )
+            }
             ScheduleResult.SCHEDULED
         } catch (_: SecurityException) {
-            ScheduleResult.PERMISSION_REQUIRED
+            try {
+                alarmManager.setAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    triggerAtMillis,
+                    reminderPendingIntent(applicationContext, task.id)
+                )
+                ScheduleResult.SCHEDULED
+            } catch (_: Exception) {
+                ScheduleResult.PERMISSION_REQUIRED
+            }
         }
     }
 
@@ -94,7 +111,7 @@ object AlarmScheduler {
         dueTimeMillis: Long,
         reminderMinutes: Int
     ): Long? {
-        if (dueDateMillis <= 0L || dueTimeMillis <= 0L || reminderMinutes <= 0) {
+        if (dueDateMillis <= 0L || dueTimeMillis <= 0L || reminderMinutes < 0) {
             return null
         }
 
