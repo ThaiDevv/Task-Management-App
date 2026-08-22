@@ -6,6 +6,7 @@ import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewOutlineProvider
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -24,16 +25,13 @@ class TaskAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         val binding = ItemTaskSummaryBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
+            LayoutInflater.from(parent.context), parent, false
         )
         return TaskViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        val task = getItem(position)
-        holder.bind(task)
+        holder.bind(getItem(position))
     }
 
     inner class TaskViewHolder(private val binding: ItemTaskSummaryBinding) :
@@ -41,8 +39,16 @@ class TaskAdapter(
 
         fun bind(task: Task) {
             val context = binding.root.context
+            val dp = context.resources.displayMetrics.density
+
+            // Ensure MaterialCardView clips its children (like priorityStripe) to its rounded corners
+            binding.cardContainer.outlineProvider = ViewOutlineProvider.BACKGROUND
+            binding.cardContainer.clipToOutline = true
+
+            // --- 1. Title ---
             binding.taskTitle.text = task.title
 
+            // --- 2. Description ---
             if (task.description.isBlank()) {
                 binding.taskDescription.visibility = View.GONE
             } else {
@@ -50,98 +56,109 @@ class TaskAdapter(
                 binding.taskDescription.text = task.description
             }
 
-            // Format date and time
+            // --- 3. Date + Time ---
             val dateStr = DateTimeUtils.formatTimestamp(task.dueDate, "MMM dd")
             val timeStr = DateTimeUtils.formatTimestamp(task.dueTime, "hh:mm a")
             binding.taskTime.text = "$dateStr, $timeStr"
 
-            // Set priority pill styling and left stripe
-            val (priorityBgRes, priorityColorRes) = when (task.priority) {
-                Priority.LOW -> R.color.priority_low_bg to R.color.priority_low
-                Priority.MEDIUM -> R.color.priority_medium_bg to R.color.priority_medium
-                Priority.HIGH -> R.color.priority_high_bg to R.color.priority_high
-                Priority.URGENT -> R.color.priority_urgent_bg to R.color.priority_urgent
+            // --- 4. Priority Pill Styling ---
+            data class PriorityStyle(val label: String, val textColor: Int, val bgColor: Int)
+            val pStyle = when (task.priority) {
+                Priority.LOW    -> PriorityStyle("LOW",    Color.parseColor("#16A34A"), Color.parseColor("#DCFCE7"))
+                Priority.MEDIUM -> PriorityStyle("MEDIUM", Color.parseColor("#D97706"), Color.parseColor("#FEF3C7"))
+                Priority.HIGH   -> PriorityStyle("HIGH",   Color.parseColor("#EF4444"), Color.parseColor("#FFF1F2"))
+                Priority.URGENT -> PriorityStyle("URGENT", Color.parseColor("#9333EA"), Color.parseColor("#F3E8FF"))
             }
-
-            val priorityColor = ContextCompat.getColor(context, priorityColorRes)
-            val priorityBg = ContextCompat.getColor(context, priorityBgRes)
-
-            // Priority left border stripe — only shown on completed tasks (see isCompleted block below)
-            // Background color pre-set to primary blue in XML; visibility controlled below
-
-            // Priority Pill Badge
-            binding.taskPriority.text = task.priority.name
-            binding.taskPriority.setTextColor(priorityColor)
+            binding.taskPriority.text = pStyle.label
+            binding.taskPriority.setTextColor(pStyle.textColor)
             binding.taskPriority.background = GradientDrawable().apply {
-                setColor(priorityBg)
-                cornerRadius = 16f
+                shape = GradientDrawable.RECTANGLE
+                setColor(pStyle.bgColor)
+                cornerRadius = 8f * dp
             }
 
-            // Determine if the task is overdue based on combined date and time
+            // --- 5. Overdue Detection ---
             val combinedDue = DateTimeUtils.getCombinedDueTimestamp(task.dueDate, task.dueTime)
-            val isOverdue = !task.isCompleted && (task.status == TaskStatus.OVERDUE || (combinedDue > 0L && combinedDue < System.currentTimeMillis()))
+            val isOverdue = !task.isCompleted &&
+                    (task.status == TaskStatus.OVERDUE ||
+                            (combinedDue > 0L && combinedDue < System.currentTimeMillis()))
 
-            // Custom Checkbox Circle Button state
-            if (task.isCompleted) {
-                // Show blue left stripe only on completed tasks
-                binding.priorityStripe.visibility = View.VISIBLE
-                binding.priorityStripe.setBackgroundColor(ContextCompat.getColor(context, R.color.primary))
+            // --- 6. Task State Handling ---
+            when {
+                task.isCompleted -> {
+                    // Blue Left Border Stripe (matches reference UI)
+                    binding.priorityStripe.visibility = View.VISIBLE
+                    binding.priorityStripe.setBackgroundColor(Color.parseColor("#0D6EFD"))
 
-                binding.checkCircleContainer.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary))
-                binding.checkCircleContainer.strokeWidth = 0
-                binding.checkMarkIcon.visibility = View.VISIBLE
+                    // Checkbox Container -> Solid Blue Circle with White Checkmark
+                    binding.checkCircleContainer.setCardBackgroundColor(Color.parseColor("#0D6EFD"))
+                    binding.checkCircleContainer.strokeWidth = 0
+                    binding.checkMarkIcon.visibility = View.VISIBLE
 
-                binding.taskTitle.paintFlags =
-                    binding.taskTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                binding.taskTitle.alpha = 0.5f
-                binding.root.alpha = 0.65f
-                
-                binding.overdueBadge.visibility = View.GONE
-                // Reset title color
-                binding.taskTitle.setTextColor(ContextCompat.getColor(context, R.color.on_background))
-            } else if (isOverdue) {
-                // Show red left stripe for overdue tasks
-                binding.priorityStripe.visibility = View.VISIBLE
-                binding.priorityStripe.setBackgroundColor(ContextCompat.getColor(context, R.color.status_overdue))
+                    // Title -> Strike-through & muted text
+                    binding.taskTitle.apply {
+                        paintFlags = paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                        setTextColor(Color.parseColor("#64748B"))
+                        alpha = 0.7f
+                    }
+                    binding.taskDescription.alpha = 0.6f
+                    binding.root.alpha = 0.85f
+                    binding.overdueBadge.visibility = View.GONE
+                }
 
-                binding.checkCircleContainer.setCardBackgroundColor(Color.WHITE)
-                binding.checkCircleContainer.strokeColor = ContextCompat.getColor(context, R.color.status_overdue)
-                binding.checkCircleContainer.strokeWidth = (2 * context.resources.displayMetrics.density).toInt()
-                binding.checkMarkIcon.visibility = View.GONE
+                isOverdue -> {
+                    // Red Left Border Stripe
+                    binding.priorityStripe.visibility = View.VISIBLE
+                    binding.priorityStripe.setBackgroundColor(Color.parseColor("#EF4444"))
 
-                binding.taskTitle.paintFlags =
-                    binding.taskTitle.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
-                binding.taskTitle.alpha = 1.0f
-                binding.root.alpha = 1.0f
+                    // Checkbox Container -> Outline Ring with Red Border
+                    binding.checkCircleContainer.setCardBackgroundColor(Color.WHITE)
+                    binding.checkCircleContainer.strokeColor = Color.parseColor("#EF4444")
+                    binding.checkCircleContainer.strokeWidth = (2 * dp).toInt()
+                    binding.checkMarkIcon.visibility = View.GONE
 
-                binding.overdueBadge.visibility = View.VISIBLE
-                // Highlight title in overdue color
-                binding.taskTitle.setTextColor(ContextCompat.getColor(context, R.color.status_overdue))
-            } else {
-                // Hide stripe when task is incomplete and not overdue
-                binding.priorityStripe.visibility = View.GONE
+                    // Title -> Active bold text
+                    binding.taskTitle.apply {
+                        paintFlags = paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+                        setTextColor(Color.parseColor("#0F172A"))
+                        alpha = 1.0f
+                    }
+                    binding.taskDescription.alpha = 1.0f
+                    binding.root.alpha = 1.0f
+                    binding.overdueBadge.visibility = View.VISIBLE
+                }
 
-                binding.checkCircleContainer.setCardBackgroundColor(Color.WHITE)
-                binding.checkCircleContainer.strokeColor = Color.parseColor("#737786")
-                binding.checkCircleContainer.strokeWidth = (2 * context.resources.displayMetrics.density).toInt()
-                binding.checkMarkIcon.visibility = View.GONE
+                else -> {
+                    // Normal Incomplete Task: Hide stripe for clean white look
+                    binding.priorityStripe.visibility = View.GONE
 
-                binding.taskTitle.paintFlags =
-                    binding.taskTitle.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
-                binding.taskTitle.alpha = 1.0f
-                binding.root.alpha = 1.0f
+                    // Checkbox Container -> Outline Ring with Slate Border
+                    binding.checkCircleContainer.setCardBackgroundColor(Color.WHITE)
+                    binding.checkCircleContainer.strokeColor = Color.parseColor("#94A3B8")
+                    binding.checkCircleContainer.strokeWidth = (2 * dp).toInt()
+                    binding.checkMarkIcon.visibility = View.GONE
 
-                binding.overdueBadge.visibility = View.GONE
-                // Reset title color
-                binding.taskTitle.setTextColor(ContextCompat.getColor(context, R.color.on_background))
+                    // Title -> Normal text
+                    binding.taskTitle.apply {
+                        paintFlags = paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+                        setTextColor(Color.parseColor("#0F172A"))
+                        alpha = 1.0f
+                    }
+                    binding.taskDescription.alpha = 1.0f
+                    binding.root.alpha = 1.0f
+                    binding.overdueBadge.visibility = View.GONE
+                }
             }
 
-            // Checkbox click -> toggle complete
+            // --- 7. Event Listeners ---
             binding.checkCircleContainer.setOnClickListener {
                 onTaskToggleComplete?.invoke(task)
             }
 
-            // Item click -> open detail screen
+            binding.btnMoreOptions.setOnClickListener {
+                onTaskClick?.invoke(task)
+            }
+
             binding.root.setOnClickListener {
                 onTaskClick?.invoke(task)
             }
@@ -149,10 +166,7 @@ class TaskAdapter(
     }
 
     private class TaskDiffCallback : DiffUtil.ItemCallback<Task>() {
-        override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean =
-            oldItem.id == newItem.id
-
-        override fun areContentsTheSame(oldItem: Task, newItem: Task): Boolean =
-            oldItem == newItem
+        override fun areItemsTheSame(oldItem: Task, newItem: Task) = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: Task, newItem: Task) = oldItem == newItem
     }
 }

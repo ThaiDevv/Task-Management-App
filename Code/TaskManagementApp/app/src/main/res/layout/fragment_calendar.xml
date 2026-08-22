@@ -63,7 +63,6 @@
                 android:paddingTop="@dimen/spacing_12"
                 android:paddingBottom="@dimen/spacing_12"
                 android:background="@drawable/bg_month_selector"
-                android:elevation="2dp"
                 android:layout_marginBottom="@dimen/spacing_16">
 
                 <ImageButton
@@ -105,7 +104,6 @@
                 android:orientation="vertical"
                 android:background="@drawable/bg_calendar_container"
                 android:padding="@dimen/spacing_16"
-                android:elevation="2dp"
                 android:layout_marginBottom="@dimen/spacing_24">
 
                 <!-- Day Headers -->
@@ -215,7 +213,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
-                tools:listitem="@layout/item_task_summary" />
+                tools:listitem="@layout/item_calendar_task" />
 
             <!-- Empty State -->
             <TextView

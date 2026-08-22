@@ -1,191 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="6dp"
     android:layout_marginBottom="6dp"
+    android:clipToOutline="true"
     app:cardBackgroundColor="#FFFFFF"
-    app:cardCornerRadius="20dp"
-    app:cardElevation="0dp"
-    app:strokeColor="#4DC3C6D7"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:cardPreventCornerOverlap="false"
+    app:strokeColor="#E2E8F0"
     app:strokeWidth="1dp">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:clipToOutline="true">
 
-        <!-- Priority Left Border Stripe (4dp) — only shown when completed -->
+        <!-- Priority Left Border Stripe: 4.5dp wide, clipped by card's 16dp rounded outline -->
         <View
             android:id="@+id/priorityStripe"
-            android:layout_width="4dp"
+            android:layout_width="4.5dp"
             android:layout_height="match_parent"
-            android:background="#105CDB"
-            android:visibility="gone" />
+            android:layout_gravity="start"
+            android:background="#0D6EFD"
+            android:visibility="visible" />
 
+        <!-- Main Content Area -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="top"
-            android:orientation="horizontal"
-            android:padding="20dp">
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp">
 
-            <!-- Custom Circular Checkbox -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/checkCircleContainer"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="2dp"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:strokeColor="#737786"
-                app:strokeWidth="2dp">
-
-                <ImageView
-                    android:id="@+id/checkMarkIcon"
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_add_task"
-                    android:visibility="gone"
-                    app:tint="#FFFFFF" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Hidden checkbox for logic -->
-            <CheckBox
-                android:id="@+id/taskCheckbox"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:visibility="gone" />
-
-            <!-- Content Column -->
+            <!-- Top Row: Circle Checkbox + Title + More Options -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:gravity="top"
+                android:orientation="horizontal">
 
-                <!-- Task Title + Overdue Badge Header Row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                <!-- Custom Circular Checkbox Button -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/checkCircleContainer"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginEnd="12dp"
+                    app:cardBackgroundColor="#0D6EFD"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp">
 
-                    <TextView
-                        android:id="@+id/taskTitle"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:fontFamily="@font/poppins_bold"
-                        android:maxLines="1"
-                        android:textColor="#1B1B1B"
-                        android:textSize="18sp" />
+                    <ImageView
+                        android:id="@+id/checkMarkIcon"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_check"
+                        android:visibility="visible"
+                        app:tint="#FFFFFF" />
+                </com.google.android.material.card.MaterialCardView>
 
-                    <!-- Overdue Badge -->
-                    <TextView
-                        android:id="@+id/overdueBadge"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:background="@drawable/bg_overdue_banner"
-                        android:fontFamily="@font/poppins_bold"
-                        android:letterSpacing="0.06"
-                        android:maxLines="1"
-                        android:paddingStart="10dp"
-                        android:paddingTop="4dp"
-                        android:paddingEnd="10dp"
-                        android:paddingBottom="4dp"
-                        android:singleLine="true"
-                        android:text="QUÁ HẠN"
-                        android:textColor="@color/status_overdue"
-                        android:textSize="11sp"
-                        android:visibility="gone" />
-                </LinearLayout>
+                <!-- Hidden checkbox for data binding/logic -->
+                <CheckBox
+                    android:id="@+id/taskCheckbox"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:visibility="gone" />
 
-                <!-- Description -->
+                <!-- Task Title -->
                 <TextView
-                    android:id="@+id/taskDescription"
+                    android:id="@+id/taskTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/poppins_bold"
+                    android:lineSpacingExtra="2dp"
+                    android:maxLines="2"
+                    android:textColor="#0F172A"
+                    android:textSize="16sp" />
+
+                <!-- Overdue Badge (shown when task is overdue) -->
+                <TextView
+                    android:id="@+id/overdueBadge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/poppins_medium"
-                    android:maxLines="2"
-                    android:textColor="#737786"
-                    android:textSize="14sp" />
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="4dp"
+                    android:background="@drawable/bg_overdue_banner"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:paddingStart="8dp"
+                    android:paddingTop="3dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="3dp"
+                    android:text="QUÁ HẠN"
+                    android:textColor="@color/status_overdue"
+                    android:textSize="10sp"
+                    android:visibility="gone" />
 
-                <!-- Tags Row: Scheduled Time + Priority -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <!-- Time Tag -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:background="@drawable/bg_tag_time"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingStart="10dp"
-                        android:paddingTop="6dp"
-                        android:paddingEnd="10dp"
-                        android:paddingBottom="6dp">
-
-                        <ImageView
-                            android:layout_width="14dp"
-                            android:layout_height="14dp"
-                            android:layout_marginEnd="4dp"
-                            android:src="@drawable/ic_time"
-                            app:tint="#424654" />
-
-                        <TextView
-                            android:id="@+id/taskTime"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/poppins_semibold"
-                            android:textColor="#424654"
-                            android:textSize="13sp" />
-                    </LinearLayout>
-
-                    <!-- Priority Badge -->
-                    <TextView
-                        android:id="@+id/taskPriority"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/poppins_bold"
-                        android:letterSpacing="0.08"
-                        android:paddingStart="10dp"
-                        android:paddingTop="6dp"
-                        android:paddingEnd="10dp"
-                        android:paddingBottom="6dp"
-                        android:textAllCaps="true"
-                        android:textSize="13sp" />
-
-                </LinearLayout>
-
+                <!-- Three Vertical Dots Options Button -->
+                <ImageView
+                    android:id="@+id/btnMoreOptions"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="4dp"
+                    android:src="@drawable/ic_more_vert"
+                    app:tint="#64748B" />
             </LinearLayout>
 
-            <!-- Chevron Right -->
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="8dp"
-                android:src="@drawable/ic_chevron_right"
-                app:tint="#737786" />
+            <!-- Description (Indented 36dp to align with Title) -->
+            <TextView
+                android:id="@+id/taskDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/poppins_medium"
+                android:maxLines="2"
+                android:textColor="#64748B"
+                android:textSize="13sp" />
 
+            <!-- Bottom Row: Time Tag + Priority Tag -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- Time Pill -->
+                <LinearLayout
+                    android:id="@+id/timePill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/bg_tag_time"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingTop="6dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="6dp">
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_marginEnd="6dp"
+                        android:src="@drawable/ic_time"
+                        app:tint="#334155" />
+
+                    <TextView
+                        android:id="@+id/taskTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:textColor="#334155"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <!-- Priority Badge Pill -->
+                <TextView
+                    android:id="@+id/taskPriority"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_bold"
+                    android:gravity="center"
+                    android:letterSpacing="0.05"
+                    android:paddingStart="12dp"
+                    android:paddingTop="6dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="6dp"
+                    android:textAllCaps="true"
+                    android:textSize="11sp" />
+
+            </LinearLayout>
         </LinearLayout>
-
-    </LinearLayout>
-
+    </FrameLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -22,7 +22,6 @@ import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.db.AppDatabase
 import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.enums.Priority
-import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.databinding.FragmentCalendarBinding
 import com.team.taskmanagementapp.ui.detail.TaskDetailActivity
@@ -36,20 +35,15 @@ import java.util.Calendar
 import java.util.Locale
 
 /**
- * CalendarFragment — hiển thị lịch tháng + danh sách task của ngày được chọn.
- *
- * Logic:
- * - CalendarViewModel.loadTasksForMonth() query Room theo tháng qua Flow
- * - monthCache (Map<startOfDay, List<Task>>) dùng để vẽ dot indicator trên lịch
- * - Tap ngày → CalendarViewModel.selectDate() → tasksForSelectedDate cập nhật từ cache
- * - Navigate tháng → navigateMonth() → re-query DB, rebuild grid
+ * CalendarFragment — displays month calendar grid + timeline schedule for selected date.
+ * Uses CalendarScheduleAdapter (dedicated UI layout item_calendar_task.xml).
  */
 class CalendarFragment : Fragment() {
 
     private var _binding: FragmentCalendarBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var taskAdapter: TaskAdapter
+    private lateinit var scheduleAdapter: CalendarScheduleAdapter
 
     private val viewModel: CalendarViewModel by viewModels {
         val database = AppDatabase.getInstance(requireContext())
@@ -58,7 +52,6 @@ class CalendarFragment : Fragment() {
         CalendarViewModelFactory(requireActivity().application, repository)
     }
 
-    // Calendar local chỉ dùng để build grid UI — source of truth là ViewModel
     private val displayCalendar = Calendar.getInstance()
 
     override fun onCreateView(
@@ -80,21 +73,7 @@ class CalendarFragment : Fragment() {
     // ── Setup ─────────────────────────────────────────────────────────────────
 
     private fun setupRecyclerView() {
-        taskAdapter = TaskAdapter(
-            onTaskToggleComplete = { task ->
-                // Toggle qua TaskViewModel nếu cần; CalendarViewModel tự cập nhật qua Flow
-                val db = AppDatabase.getInstance(requireContext())
-                val repo = TaskRepository(db.taskDao())
-                viewLifecycleOwner.lifecycleScope.launch {
-                    val isNowCompleted = !task.isCompleted
-                    val updated = task.copy(
-                        isCompleted = isNowCompleted,
-                        status = if (isNowCompleted) TaskStatus.COMPLETED else TaskStatus.TODO,
-                        updatedAt = System.currentTimeMillis()
-                    )
-                    repo.update(updated)
-                }
-            },
+        scheduleAdapter = CalendarScheduleAdapter(
             onTaskClick = { task ->
                 val intent = Intent(requireContext(), TaskDetailActivity::class.java)
                 intent.putExtra(Constants.EXTRA_TASK_ID, task.id.toLong())
@@ -103,7 +82,7 @@ class CalendarFragment : Fragment() {
         )
         binding.scheduleRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = taskAdapter
+            adapter = scheduleAdapter
         }
     }
 
@@ -121,7 +100,6 @@ class CalendarFragment : Fragment() {
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Khi year/month/cache thay đổi → rebuild header và calendar grid.
                 launch {
                     combine(
                         viewModel.currentYear,
@@ -137,7 +115,6 @@ class CalendarFragment : Fragment() {
                     }
                 }
 
-                // Khi ngày được chọn hoặc dữ liệu Room đổi → cập nhật RecyclerView.
                 launch {
                     viewModel.tasksForSelectedDate.collect { tasks ->
                         updateScheduleList(tasks)
@@ -145,7 +122,6 @@ class CalendarFragment : Fragment() {
                     }
                 }
 
-                // Thu thập loading theo lifecycle; có thể nối ProgressBar sau.
                 launch {
                     viewModel.isLoading.collect { }
                 }
@@ -167,15 +143,11 @@ class CalendarFragment : Fragment() {
         val selectedMs = viewModel.selectedDate.value
         val cal = Calendar.getInstance().apply { timeInMillis = selectedMs }
         val fmt = SimpleDateFormat("MMM d", Locale.getDefault())
-        binding.scheduleTitle.text = "Schedule ${fmt.format(cal.time)}"
+        binding.scheduleTitle.text = "Schedule  ${fmt.format(cal.time)}"
     }
 
     // ── Calendar Grid ─────────────────────────────────────────────────────────
 
-    /**
-     * Rebuild toàn bộ lưới ngày cho tháng đang hiển thị.
-     * [cache] dùng để biết ngày nào có task → vẽ dot.
-     */
     private fun buildCalendarGrid(cache: Map<Long, List<Task>>) {
         val grid = binding.calendarGrid
         grid.removeAllViews()
@@ -184,18 +156,14 @@ class CalendarFragment : Fragment() {
         tempCal.set(Calendar.DAY_OF_MONTH, 1)
 
         val maxDays = tempCal.getActualMaximum(Calendar.DAY_OF_MONTH)
-        // DAY_OF_WEEK: Sun=1..Sat=7 → offset 0..6
         val firstDayOffset = tempCal.get(Calendar.DAY_OF_WEEK) - 1
 
-        // Ô trống trước ngày đầu tháng
         repeat(firstDayOffset) { grid.addView(createEmptyCell()) }
 
-        // Ô từng ngày
         for (day in 1..maxDays) {
             grid.addView(createDayCell(day, tempCal, cache))
         }
 
-        // Lấp đầy đến 42 ô (6 hàng × 7 cột)
         val remaining = 42 - (firstDayOffset + maxDays)
         repeat(remaining) { grid.addView(createEmptyCell()) }
     }
@@ -223,7 +191,6 @@ class CalendarFragment : Fragment() {
             }
         }
 
-        // Tính startOfDay cho ô này
         val dayCal = (tempCal.clone() as Calendar).apply {
             set(Calendar.DAY_OF_MONTH, day)
             set(Calendar.HOUR_OF_DAY, 0)
@@ -233,7 +200,6 @@ class CalendarFragment : Fragment() {
         }
         val dayKey = dayCal.timeInMillis
 
-        // Số ngày
         val dayText = TextView(requireContext()).apply {
             text = day.toString()
             textSize = 14f
@@ -245,7 +211,6 @@ class CalendarFragment : Fragment() {
             }
         }
 
-        // Highlight ngày được chọn
         val isSelected = dayKey == viewModel.selectedDate.value
         if (isSelected) {
             dayText.background = GradientDrawable().apply {
@@ -257,7 +222,6 @@ class CalendarFragment : Fragment() {
 
         container.addView(dayText)
 
-        // Dot indicator nếu ngày có task
         val tasksOnDay = cache[dayKey]
         if (!tasksOnDay.isNullOrEmpty()) {
             val dotSize = resources.getDimensionPixelSize(R.dimen.spacing_4)
@@ -274,10 +238,8 @@ class CalendarFragment : Fragment() {
             container.addView(dot)
         }
 
-        // Tap ngày → cập nhật ViewModel
         container.setOnClickListener {
             viewModel.selectDate(dayKey)
-            // Rebuild grid để cập nhật highlight
             buildCalendarGrid(viewModel.monthCache.value)
         }
 
@@ -288,7 +250,7 @@ class CalendarFragment : Fragment() {
 
     private fun updateScheduleList(tasks: List<Task>) {
         val sorted = tasks.sortedBy { it.dueTime }
-        taskAdapter.submitList(sorted)
+        scheduleAdapter.submitList(sorted)
 
         if (sorted.isEmpty()) {
             binding.emptyScheduleText.visibility = View.VISIBLE
@@ -299,11 +261,6 @@ class CalendarFragment : Fragment() {
         }
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    /**
-     * Chọn màu dot theo priority cao nhất trong danh sách task của ngày.
-     */
     private fun priorityColor(tasks: List<Task>): Int {
         val res = requireContext()
         return when {
