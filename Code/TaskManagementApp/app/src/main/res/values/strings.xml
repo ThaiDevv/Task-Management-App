@@ -125,6 +125,40 @@
     <string name="settings_critical_actions">Critical Actions</string>
     <string name="settings_logout_all">Logout from all devices</string>
     <string name="settings_deactivate_vault">Deactivate Security Vault</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_subtitle">Manage your TaskFlow experience</string>
+    <string name="settings_section_security">Security</string>
+    <string name="settings_section_notifications">Notifications</string>
+    <string name="settings_section_data">Data</string>
+    <string name="settings_section_about">About</string>
+    <string name="settings_pin_summary">Require a PIN when opening TaskFlow</string>
+    <string name="settings_change_pin_summary">Create or update your security PIN</string>
+    <string name="settings_reminders">Task reminders</string>
+    <string name="settings_reminders_summary">Receive alerts before tasks are due</string>
+    <string name="settings_system_permissions">System permissions</string>
+    <string name="settings_system_permissions_summary">Manage notification access in Android</string>
+    <string name="settings_export_backup">Export JSON backup</string>
+    <string name="settings_export_backup_summary">Save a copy of your task data</string>
+    <string name="settings_restore_backup">Restore JSON backup</string>
+    <string name="settings_restore_backup_summary">Import tasks from a backup file</string>
+    <string name="settings_app_name">TaskFlow</string>
+    <string name="settings_version_format">Version %1$s</string>
+    <string name="settings_privacy_terms">Privacy Policy &amp; Terms of Service</string>
+    <string name="settings_pin_setup_pending">PIN setup is handled in TASK-25</string>
+
+    <!-- Data Management navigation target -->
+    <string name="data_management_title">Data Management</string>
+    <string name="data_management_subtitle">Back up or restore your task history</string>
+    <string name="data_export_title">Export Data</string>
+    <string name="data_export_summary">Create a portable JSON backup of your tasks</string>
+    <string name="data_export_action">Export to JSON</string>
+    <string name="data_restore_title">Restore Data</string>
+    <string name="data_restore_summary">Import tasks from a TaskFlow backup file</string>
+    <string name="data_restore_action">Choose backup file</string>
+    <string name="data_feature_pending">Backup and restore logic will be implemented separately</string>
+    <string name="action_back">Back</string>
     <!-- Filter Bottom Sheet -->
     <string name="filter_title">Filter &amp; Sort</string>
     <string name="filter_reset">Reset</string>

@@ -20,6 +20,7 @@ object Constants {
     const val KEY_PIN_HASH = "key_pin_hash"
     const val KEY_PIN_SALT = "key_pin_salt"
     const val KEY_PIN_ENABLED = "key_pin_enabled"
+    const val KEY_NOTIFICATIONS_ENABLED = "key_notifications_enabled"
     const val KEY_AUTO_LOCK_TIMER = "key_auto_lock_timer"
     const val KEY_SORT_ORDER = "key_sort_order"
     const val KEY_SORT_TYPE = "key_sort_type"

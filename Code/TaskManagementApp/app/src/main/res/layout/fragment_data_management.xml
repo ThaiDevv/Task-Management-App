@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    tools:context=".ui.DataManagementFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/spacing_64"
+        android:background="@color/surface_container_lowest"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/spacing_8"
+        android:paddingEnd="@dimen/spacing_16">
+
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="@dimen/touch_target_minimum"
+            android:layout_height="@dimen/touch_target_minimum"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_back"
+            android:padding="@dimen/spacing_12"
+            android:src="@drawable/ic_back"
+            app:tint="@color/on_surface" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="@string/data_management_title"
+            android:textColor="@color/on_surface"
+            android:textSize="@dimen/text_headline_medium" />
+
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingBottom="@dimen/spacing_32">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/spacing_20"
+            android:paddingTop="@dimen/spacing_24"
+            android:paddingEnd="@dimen/spacing_20">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="@string/data_management_title"
+                android:textColor="@color/on_surface"
+                android:textSize="@dimen/text_headline_large" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_4"
+                android:fontFamily="@font/poppins_regular"
+                android:text="@string/data_management_subtitle"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="@dimen/text_body_medium" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_24"
+                app:cardBackgroundColor="@color/surface_container_lowest"
+                app:cardCornerRadius="@dimen/radius_medium"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/outline_variant"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_20">
+
+                    <ImageView
+                        android:layout_width="@dimen/spacing_48"
+                        android:layout_height="@dimen/spacing_48"
+                        android:background="@drawable/bg_icon_box_primary"
+                        android:contentDescription="@null"
+                        android:padding="@dimen/spacing_12"
+                        android:src="@drawable/ic_settings_backup"
+                        app:tint="@color/primary" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_16"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:text="@string/data_export_title"
+                        android:textColor="@color/on_surface"
+                        android:textSize="@dimen/text_body_large" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_4"
+                        android:fontFamily="@font/poppins_regular"
+                        android:text="@string/data_export_summary"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="@dimen/text_body_medium" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/exportDataButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height_medium"
+                        android:layout_marginTop="@dimen/spacing_20"
+                        android:text="@string/data_export_action"
+                        android:textAllCaps="false"
+                        app:cornerRadius="@dimen/radius_small"
+                        app:icon="@drawable/ic_settings_backup" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_16"
+                app:cardBackgroundColor="@color/surface_container_lowest"
+                app:cardCornerRadius="@dimen/radius_medium"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/outline_variant"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_20">
+
+                    <ImageView
+                        android:layout_width="@dimen/spacing_48"
+                        android:layout_height="@dimen/spacing_48"
+                        android:background="@drawable/bg_icon_box_primary"
+                        android:contentDescription="@null"
+                        android:padding="@dimen/spacing_12"
+                        android:src="@drawable/ic_settings_restore"
+                        app:tint="@color/primary" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_16"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:text="@string/data_restore_title"
+                        android:textColor="@color/on_surface"
+                        android:textSize="@dimen/text_body_large" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_4"
+                        android:fontFamily="@font/poppins_regular"
+                        android:text="@string/data_restore_summary"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="@dimen/text_body_medium" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/restoreDataButton"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height_medium"
+                        android:layout_marginTop="@dimen/spacing_20"
+                        android:text="@string/data_restore_action"
+                        android:textAllCaps="false"
+                        app:cornerRadius="@dimen/radius_small"
+                        app:icon="@drawable/ic_settings_restore" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

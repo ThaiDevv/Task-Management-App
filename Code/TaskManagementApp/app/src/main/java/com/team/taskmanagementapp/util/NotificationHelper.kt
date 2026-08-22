@@ -54,6 +54,12 @@ object NotificationHelper {
     }
 
     fun showTaskReminder(context: Context, task: Task) {
+        val notificationsEnabled = context.getSharedPreferences(
+            Constants.PREFS_NAME,
+            Context.MODE_PRIVATE
+        ).getBoolean(Constants.KEY_NOTIFICATIONS_ENABLED, true)
+        if (!notificationsEnabled) return
+
         val pendingIntentFlags =
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
 
