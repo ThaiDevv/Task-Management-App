@@ -128,21 +128,21 @@
                 android:textColor="#64748B"
                 android:textSize="13sp" />
 
-            <!-- Bottom Row: Time Tag + Priority Tag -->
-            <LinearLayout
+            <!-- Bottom Row: Time Tag + Priority Tag + Recurrence Tag (Flow layout wrapping) -->
+            <com.google.android.material.chip.ChipGroup
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="36dp"
                 android:layout_marginTop="12dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                app:singleLine="false"
+                app:chipSpacingHorizontal="8dp"
+                app:chipSpacingVertical="6dp">
 
                 <!-- Time Pill -->
                 <LinearLayout
                     android:id="@+id/timePill"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
                     android:background="@drawable/bg_tag_time"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
@@ -187,7 +187,6 @@
                     android:id="@+id/recurrenceBadge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
                     android:background="@drawable/bg_tag_time"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
@@ -213,7 +212,7 @@
                         android:textSize="11sp" />
                 </LinearLayout>
 
-            </LinearLayout>
+            </com.google.android.material.chip.ChipGroup>
         </LinearLayout>
     </FrameLayout>
 </com.google.android.material.card.MaterialCardView>
