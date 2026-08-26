@@ -14,9 +14,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.enums.Priority
+import com.team.taskmanagementapp.data.model.enums.RecurrenceType
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.databinding.ItemTaskSummaryBinding
 import com.team.taskmanagementapp.util.DateTimeUtils
+import com.team.taskmanagementapp.util.RecurrenceHelper
 
 class TaskAdapter(
     private val onTaskToggleComplete: ((Task) -> Unit)? = null,
@@ -75,6 +77,16 @@ class TaskAdapter(
                 shape = GradientDrawable.RECTANGLE
                 setColor(pStyle.bgColor)
                 cornerRadius = 8f * dp
+            }
+
+            // --- 4.5. Recurrence Badge ---
+            if (task.isRecurring && task.recurrenceType != RecurrenceType.NONE) {
+                binding.recurrenceBadge.visibility = View.VISIBLE
+                binding.recurrenceText.text = RecurrenceHelper.getRecurrenceDisplayText(
+                    task.recurrenceType, context
+                )
+            } else {
+                binding.recurrenceBadge.visibility = View.GONE
             }
 
             // --- 5. Overdue Detection ---
