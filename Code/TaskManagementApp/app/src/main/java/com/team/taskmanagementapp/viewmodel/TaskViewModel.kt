@@ -140,18 +140,28 @@ class TaskViewModel(
                 }
 
                 // Recurring task completed -> create the next task instance
-                if (!wasCompleted && task.isRecurring && task.recurrenceType != RecurrenceType.NONE) {
+                if (!wasCompleted && (task.isRecurring || task.recurrenceType != RecurrenceType.NONE)) {
                     val nextDueDate = RecurrenceHelper.calculateNextDueDate(
                         task.dueDate,
                         task.recurrenceType,
                         task.recurrenceInterval
                     )
+                    val nextDueTime = if (task.dueTime > 0L) {
+                        RecurrenceHelper.calculateNextDueDate(
+                            task.dueTime,
+                            task.recurrenceType,
+                            task.recurrenceInterval
+                        )
+                    } else task.dueTime
+
                     val nextInstance = task.copy(
                         id = 0,
                         isCompleted = false,
                         status = TaskStatus.TODO,
+                        isRecurring = true,
+                        recurrenceType = task.recurrenceType,
                         dueDate = nextDueDate,
-                        dueTime = task.dueTime,
+                        dueTime = nextDueTime,
                         createdAt = now,
                         updatedAt = now
                     )

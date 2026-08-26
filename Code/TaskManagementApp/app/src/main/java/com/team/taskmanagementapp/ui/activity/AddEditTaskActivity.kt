@@ -498,6 +498,7 @@ class AddEditTaskActivity : AppCompatActivity() {
                     dueDate = getNormalizedDueDate(),
                     dueTime = getNormalizedDueTime(),
                     priority = selectedPriority,
+                    isRecurring = selectedRecurrence != RecurrenceType.NONE,
                     recurrenceType = selectedRecurrence,
                     reminderMinutes = selectedReminderMinutes,
                     status = selectedStatus
