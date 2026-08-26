@@ -12,6 +12,7 @@ import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.ui.base.UiState
 import com.team.taskmanagementapp.util.AlarmScheduler
+import com.team.taskmanagementapp.util.RecurrenceHelper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -100,10 +101,14 @@ class TaskViewModel(
     }
 
 
-    fun deleteTask(task: Task) {
+    fun deleteTask(task: Task, deleteAllFuture: Boolean = false) {
         viewModelScope.launch {
             try {
-                repository.delete(task)
+                if (deleteAllFuture && task.isRecurring && task.recurrenceType != RecurrenceType.NONE) {
+                    repository.deleteFutureRecurringTasks(task.title, task.recurrenceType, task.dueDate)
+                } else {
+                    repository.delete(task)
+                }
                 AlarmScheduler.cancelAlarm(applicationContext, task.id)
                 _deleteSuccess.emit(true)
                 _userMessage.emit("Đã xóa công việc \"${task.title}\"")
@@ -136,11 +141,16 @@ class TaskViewModel(
 
                 // Recurring task completed -> create the next task instance
                 if (!wasCompleted && task.isRecurring && task.recurrenceType != RecurrenceType.NONE) {
+                    val nextDueDate = RecurrenceHelper.calculateNextDueDate(
+                        task.dueDate,
+                        task.recurrenceType,
+                        task.recurrenceInterval
+                    )
                     val nextInstance = task.copy(
                         id = 0,
                         isCompleted = false,
                         status = TaskStatus.TODO,
-                        dueDate = calculateNextDueDate(task),
+                        dueDate = nextDueDate,
                         dueTime = task.dueTime,
                         createdAt = now,
                         updatedAt = now
@@ -167,20 +177,6 @@ class TaskViewModel(
                 _userMessage.emit("Lỗi khi cập nhật trạng thái: ${e.localizedMessage}")
             }
         }
-    }
-
-    /**
-     * Calculate the next due date based on the task's recurrence type and interval.
-     */
-    private fun calculateNextDueDate(task: Task): Long {
-        val calendar = Calendar.getInstance().apply { timeInMillis = task.dueDate }
-        when (task.recurrenceType) {
-            RecurrenceType.DAILY -> calendar.add(Calendar.DAY_OF_YEAR, task.recurrenceInterval)
-            RecurrenceType.WEEKLY -> calendar.add(Calendar.WEEK_OF_YEAR, task.recurrenceInterval)
-            RecurrenceType.MONTHLY -> calendar.add(Calendar.MONTH, task.recurrenceInterval)
-            RecurrenceType.NONE -> Unit
-        }
-        return calendar.timeInMillis
     }
 
 

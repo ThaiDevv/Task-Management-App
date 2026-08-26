@@ -30,6 +30,29 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
         return updatedTask
     }
 
+    suspend fun updateFutureRecurringTasks(
+        originalTitle: String,
+        originalRecurrence: RecurrenceType,
+        startDate: Long,
+        editedTask: Task
+    ): Task {
+        val now = System.currentTimeMillis()
+        val updatedTask = editedTask.copy(updatedAt = maxOf(now, editedTask.updatedAt + 1L))
+        repository.updateFutureRecurringTasks(
+            originalTitle = originalTitle,
+            originalRecurrence = originalRecurrence,
+            startDate = startDate,
+            newTitle = updatedTask.title,
+            newDescription = updatedTask.description,
+            newPriority = updatedTask.priority,
+            newRecurrenceType = updatedTask.recurrenceType,
+            newReminderMinutes = updatedTask.reminderMinutes,
+            updatedAt = updatedTask.updatedAt
+        )
+        repository.update(updatedTask)
+        return updatedTask
+    }
+
     fun loadTask(taskId: Long) {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
