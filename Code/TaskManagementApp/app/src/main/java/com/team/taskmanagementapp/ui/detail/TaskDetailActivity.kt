@@ -24,6 +24,7 @@ import com.team.taskmanagementapp.databinding.ActivityTaskDetailBinding
 import com.team.taskmanagementapp.ui.activity.AddEditTaskActivity
 import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.DateTimeUtils
+import com.team.taskmanagementapp.util.RecurrenceHelper
 import com.team.taskmanagementapp.viewmodel.TaskViewModel
 import com.team.taskmanagementapp.viewmodel.TaskViewModelFactory
 import kotlinx.coroutines.launch
@@ -190,15 +191,7 @@ class TaskDetailActivity : AppCompatActivity() {
         }
 
         binding.cardRecurrence.visibility = View.VISIBLE
-
-        val recurrenceText = when (task.recurrenceType) {
-            RecurrenceType.DAILY -> getString(R.string.task_detail_recurrence_daily)
-            RecurrenceType.WEEKLY -> getString(R.string.task_detail_recurrence_weekly)
-            RecurrenceType.MONTHLY -> getString(R.string.task_detail_recurrence_monthly)
-            RecurrenceType.NONE -> getString(R.string.task_detail_recurrence_none)
-        }
-
-        binding.tvRecurrenceType.text = recurrenceText
+        binding.tvRecurrenceType.text = RecurrenceHelper.getRecurrenceDisplayText(task.recurrenceType, this)
     }
 
     private fun setupCompleteButton() {
@@ -220,17 +213,35 @@ class TaskDetailActivity : AppCompatActivity() {
     private fun showDeleteConfirmDialog() {
         val task = currentTask ?: return
 
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.task_detail_delete_confirm_title)
-            .setMessage(R.string.task_detail_delete_confirm_msg)
-            .setNegativeButton(R.string.task_detail_delete_confirm_negative) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setPositiveButton(R.string.task_detail_delete_confirm_positive) { _, _ ->
-                viewModel.deleteTask(task)
-                finish()
-            }
-            .show()
+        if (task.isRecurring && task.recurrenceType != RecurrenceType.NONE) {
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.task_detail_delete_recurring_title)
+                .setMessage(R.string.task_detail_delete_recurring_msg)
+                .setNegativeButton(R.string.task_detail_delete_only_this) { _, _ ->
+                    viewModel.deleteTask(task, deleteAllFuture = false)
+                    finish()
+                }
+                .setPositiveButton(R.string.task_detail_delete_all_occurrences) { _, _ ->
+                    viewModel.deleteTask(task, deleteAllFuture = true)
+                    finish()
+                }
+                .setNeutralButton(R.string.action_cancel) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
+        } else {
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.task_detail_delete_confirm_title)
+                .setMessage(R.string.task_detail_delete_confirm_msg)
+                .setNegativeButton(R.string.task_detail_delete_confirm_negative) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .setPositiveButton(R.string.task_detail_delete_confirm_positive) { _, _ ->
+                    viewModel.deleteTask(task)
+                    finish()
+                }
+                .show()
+        }
     }
 
     private fun setupEditButton() {
