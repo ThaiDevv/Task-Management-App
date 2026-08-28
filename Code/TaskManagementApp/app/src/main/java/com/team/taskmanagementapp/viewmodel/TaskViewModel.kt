@@ -50,7 +50,14 @@ class TaskViewModel(
     val filterCriteria: StateFlow<FilterCriteria> = _filterCriteria.asStateFlow()
 
     init {
-        loadAllTasks()
+        viewModelScope.launch {
+            // Bước 1: Chờ UPDATE hoàn thành (suspend) trước khi collect Flow.
+            // Đảm bảo database đã commit trạng thái OVERDUE mới nhất
+            // trước khi UI nhận bất kỳ emission nào.
+            repository.checkAndUpdateOverdueTasks()
+            // Bước 2: Bắt đầu collect sau khi UPDATE đã xong.
+            loadAllTasks()
+        }
     }
 
 

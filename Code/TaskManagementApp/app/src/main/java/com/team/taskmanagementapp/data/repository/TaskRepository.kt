@@ -51,6 +51,12 @@ class TaskRepository(
     suspend fun deleteAllTasks() =
         taskDao.deleteAllTasks()
 
+    // Kiểm tra và tự động cập nhật task quá hạn sang OVERDUE
+    suspend fun checkAndUpdateOverdueTasks() {
+        val now = System.currentTimeMillis()
+        taskDao.markOverdueTasks(now)
+    }
+
     fun getFilteredTasks(criteria: FilterCriteria): Flow<List<Task>> {
         val calendar = Calendar.getInstance()
         val currentTime = System.currentTimeMillis()
