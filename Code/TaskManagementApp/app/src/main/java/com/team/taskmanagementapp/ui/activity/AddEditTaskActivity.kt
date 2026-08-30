@@ -464,23 +464,7 @@ class AddEditTaskActivity : AppCompatActivity() {
         title: String,
         description: String
     ) {
-        if (existingTask.isRecurring && existingTask.recurrenceType != RecurrenceType.NONE) {
-            com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.task_detail_edit_recurring_title)
-                .setMessage(R.string.task_detail_edit_recurring_msg)
-                .setNegativeButton(R.string.task_detail_edit_only_this) { _, _ ->
-                    executeTaskUpdate(existingTask, title, description, updateAllFuture = false)
-                }
-                .setPositiveButton(R.string.task_detail_edit_all_occurrences) { _, _ ->
-                    executeTaskUpdate(existingTask, title, description, updateAllFuture = true)
-                }
-                .setNeutralButton(R.string.action_cancel) { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .show()
-        } else {
-            executeTaskUpdate(existingTask, title, description, updateAllFuture = false)
-        }
+        executeTaskUpdate(existingTask, title, description, updateAllFuture = false)
     }
 
     private fun executeTaskUpdate(

@@ -325,193 +325,212 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ===== Sidebar Row: Reminder + Recurrence ===== -->
-            <LinearLayout
+            <!-- ===== Reminder Card (Full-width box) ===== -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardReminder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="@color/surface_container_lowest"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/surface_container"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <!-- Header -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginEnd="8dp"
+                            android:src="@drawable/ic_bell"
+                            app:tint="@color/primary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_bold"
+                            android:letterSpacing="0.08"
+                            android:text="REMINDER"
+                            android:textColor="@color/primary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvReminder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="30 mins before"
+                        android:textColor="@color/on_surface"
+                        android:textSize="18sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ===== Recurrence Card (Full-width box, blue primary-container) ===== -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardRecurrence"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:orientation="horizontal">
+                app:cardBackgroundColor="@color/primary_container"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
 
-                <!-- Reminder Card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:layout_weight="1"
-                    app:cardBackgroundColor="@color/surface_container_lowest"
-                    app:cardCornerRadius="24dp"
-                    app:cardElevation="0dp"
-                    app:strokeColor="@color/surface_container"
-                    app:strokeWidth="1dp">
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
+                    <!-- Header -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="20dp">
+                        android:layout_marginBottom="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
-                        <!-- Header -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:layout_marginEnd="6dp"
-                                android:src="@drawable/ic_bell"
-                                app:tint="@color/primary" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/poppins_bold"
-                                android:letterSpacing="0.08"
-                                android:text="REMINDER"
-                                android:textColor="@color/primary"
-                                android:textSize="11sp" />
-                        </LinearLayout>
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginEnd="8dp"
+                            android:src="@drawable/ic_repeat"
+                            app:tint="@color/primary_fixed_dim" />
 
                         <TextView
-                            android:id="@+id/tvReminder"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_bold"
-                            android:text="30 mins before"
-                            android:textColor="@color/on_surface"
-                            android:textSize="18sp" />
+                            android:letterSpacing="0.08"
+                            android:text="RECURRENCE"
+                            android:textColor="@color/primary_fixed_dim"
+                            android:textSize="12sp" />
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
 
-                <!-- Recurrence Card (blue primary-container background) -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardRecurrence"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:cardBackgroundColor="@color/primary_container"
-                    app:cardCornerRadius="24dp"
-                    app:cardElevation="0dp"
-                    app:strokeWidth="0dp">
+                    <TextView
+                        android:id="@+id/tvRecurrenceType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="Weekly"
+                        android:textColor="@color/on_primary_container"
+                        android:textSize="18sp" />
 
+                    <!-- Day Circles Row: M T W T F S S (All 7 days fit with stylish alternating odd/even decor) -->
                     <LinearLayout
+                        android:id="@+id/layoutDaySelector"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="20dp">
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
-                        <!-- Header -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:layout_marginEnd="6dp"
-                                android:src="@drawable/ic_time"
-                                app:tint="@color/primary_fixed_dim" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/poppins_bold"
-                                android:letterSpacing="0.08"
-                                android:text="RECURRENCE"
-                                android:textColor="@color/primary_fixed_dim"
-                                android:textSize="11sp" />
-                        </LinearLayout>
-
+                        <!-- M (1 - Lẻ) -->
                         <TextView
-                            android:id="@+id/tvRecurrenceType"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="12dp"
+                            android:id="@+id/tvDayM"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/bg_day_circle_odd"
                             android:fontFamily="@font/poppins_bold"
-                            android:text="Weekly"
-                            android:textColor="@color/on_primary_container"
-                            android:textSize="18sp" />
+                            android:gravity="center"
+                            android:text="M"
+                            android:textColor="@color/white"
+                            android:textSize="13sp" />
 
-                        <!-- Day Circles Row: M T W T F -->
-                        <LinearLayout
-                            android:id="@+id/layoutDaySelector"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                        <!-- T (2 - Chẵn: nền trắng tinh, chữ xanh đậm) -->
+                        <TextView
+                            android:id="@+id/tvDayT"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/bg_day_circle_even"
+                            android:fontFamily="@font/poppins_bold"
+                            android:gravity="center"
+                            android:text="T"
+                            android:textColor="@color/primary"
+                            android:textSize="13sp" />
 
-                            <!-- M (Active) -->
-                            <TextView
-                                android:id="@+id/tvDayM"
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:layout_marginEnd="6dp"
-                                android:background="@drawable/bg_day_circle_active"
-                                android:fontFamily="@font/poppins_bold"
-                                android:gravity="center"
-                                android:text="M"
-                                android:textColor="@color/primary"
-                                android:textSize="12sp" />
+                        <!-- W (3 - Lẻ) -->
+                        <TextView
+                            android:id="@+id/tvDayW"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/bg_day_circle_odd"
+                            android:fontFamily="@font/poppins_bold"
+                            android:gravity="center"
+                            android:text="W"
+                            android:textColor="@color/white"
+                            android:textSize="13sp" />
 
-                            <!-- T (Inactive) -->
-                            <TextView
-                                android:id="@+id/tvDayT"
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:layout_marginEnd="6dp"
-                                android:background="@drawable/bg_day_circle_inactive"
-                                android:fontFamily="@font/poppins_bold"
-                                android:gravity="center"
-                                android:text="T"
-                                android:textColor="@color/on_primary_container"
-                                android:textSize="12sp" />
+                        <!-- Th (4 - Chẵn: nền trắng tinh, chữ xanh đậm) -->
+                        <TextView
+                            android:id="@+id/tvDayTh"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/bg_day_circle_even"
+                            android:fontFamily="@font/poppins_bold"
+                            android:gravity="center"
+                            android:text="T"
+                            android:textColor="@color/primary"
+                            android:textSize="13sp" />
 
-                            <!-- W (Active) -->
-                            <TextView
-                                android:id="@+id/tvDayW"
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:layout_marginEnd="6dp"
-                                android:background="@drawable/bg_day_circle_active"
-                                android:fontFamily="@font/poppins_bold"
-                                android:gravity="center"
-                                android:text="W"
-                                android:textColor="@color/primary"
-                                android:textSize="12sp" />
+                        <!-- F (5 - Lẻ) -->
+                        <TextView
+                            android:id="@+id/tvDayF"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/bg_day_circle_odd"
+                            android:fontFamily="@font/poppins_bold"
+                            android:gravity="center"
+                            android:text="F"
+                            android:textColor="@color/white"
+                            android:textSize="13sp" />
 
-                            <!-- T (Inactive) -->
-                            <TextView
-                                android:id="@+id/tvDayTh"
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:layout_marginEnd="6dp"
-                                android:background="@drawable/bg_day_circle_inactive"
-                                android:fontFamily="@font/poppins_bold"
-                                android:gravity="center"
-                                android:text="T"
-                                android:textColor="@color/on_primary_container"
-                                android:textSize="12sp" />
+                        <!-- Sa (6 - Chẵn: nền trắng tinh, chữ xanh đậm) -->
+                        <TextView
+                            android:id="@+id/tvDaySa"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/bg_day_circle_even"
+                            android:fontFamily="@font/poppins_bold"
+                            android:gravity="center"
+                            android:text="S"
+                            android:textColor="@color/primary"
+                            android:textSize="13sp" />
 
-                            <!-- F (Inactive) -->
-                            <TextView
-                                android:id="@+id/tvDayF"
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:background="@drawable/bg_day_circle_inactive"
-                                android:fontFamily="@font/poppins_bold"
-                                android:gravity="center"
-                                android:text="F"
-                                android:textColor="@color/on_primary_container"
-                                android:textSize="12sp" />
-                        </LinearLayout>
+                        <!-- Su (7 - Lẻ) -->
+                        <TextView
+                            android:id="@+id/tvDaySu"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:background="@drawable/bg_day_circle_odd"
+                            android:fontFamily="@font/poppins_bold"
+                            android:gravity="center"
+                            android:text="S"
+                            android:textColor="@color/white"
+                            android:textSize="13sp" />
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- ===== Perseverance Motivation Quote Card (Randomized every 5s with background image) ===== -->
             <com.google.android.material.card.MaterialCardView

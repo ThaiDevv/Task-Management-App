@@ -27,6 +27,7 @@ import com.team.taskmanagementapp.util.DateTimeUtils
 import com.team.taskmanagementapp.util.RecurrenceHelper
 import com.team.taskmanagementapp.viewmodel.TaskViewModel
 import com.team.taskmanagementapp.viewmodel.TaskViewModelFactory
+import java.util.Calendar
 import kotlinx.coroutines.launch
 
 class TaskDetailActivity : AppCompatActivity() {
@@ -192,6 +193,74 @@ class TaskDetailActivity : AppCompatActivity() {
 
         binding.cardRecurrence.visibility = View.VISIBLE
         binding.tvRecurrenceType.text = RecurrenceHelper.getRecurrenceDisplayText(task.recurrenceType, this)
+
+        val dayViews = listOf(
+            binding.tvDayM,   // 0: Thứ 2 (Lẻ)
+            binding.tvDayT,   // 1: Thứ 3 (Chẵn - đậm hơn)
+            binding.tvDayW,   // 2: Thứ 4 (Lẻ)
+            binding.tvDayTh,  // 3: Thứ 5 (Chẵn - đậm hơn)
+            binding.tvDayF,   // 4: Thứ 6 (Lẻ)
+            binding.tvDaySa,  // 5: Thứ 7 (Chẵn - đậm hơn)
+            binding.tvDaySu   // 6: Chủ nhật (Lẻ)
+        )
+
+        val activeBg = ContextCompat.getDrawable(this, R.drawable.bg_day_circle_active)
+        val oddBg = ContextCompat.getDrawable(this, R.drawable.bg_day_circle_odd)
+        val evenBg = ContextCompat.getDrawable(this, R.drawable.bg_day_circle_even)
+
+        val primaryColor = ContextCompat.getColor(this, R.color.primary)
+        val whiteColor = Color.WHITE
+
+        when (task.recurrenceType) {
+            RecurrenceType.DAILY -> {
+                // Với DAILY: Các ngày chẵn T, T, S là màu trắng nền nổi bật chữ xanh đậm, các ngày lẻ M, W, F, S là màu mờ nhẹ chữ trắng
+                dayViews.forEachIndexed { index, tv ->
+                    val isEven = (index + 1) % 2 == 0
+                    if (isEven) {
+                        tv.background = evenBg
+                        tv.setTextColor(primaryColor)
+                    } else {
+                        tv.background = oddBg
+                        tv.setTextColor(whiteColor)
+                    }
+                }
+            }
+            RecurrenceType.WEEKLY -> {
+                val calendar = Calendar.getInstance().apply { timeInMillis = task.dueDate }
+                val dayOfWeekIndex = when (calendar.get(Calendar.DAY_OF_WEEK)) {
+                    Calendar.MONDAY -> 0
+                    Calendar.TUESDAY -> 1
+                    Calendar.WEDNESDAY -> 2
+                    Calendar.THURSDAY -> 3
+                    Calendar.FRIDAY -> 4
+                    Calendar.SATURDAY -> 5
+                    Calendar.SUNDAY -> 6
+                    else -> 0
+                }
+                dayViews.forEachIndexed { index, tv ->
+                    val isSelectedDay = index == dayOfWeekIndex
+                    val isEven = (index + 1) % 2 == 0
+
+                    if (isSelectedDay) {
+                        tv.background = activeBg
+                        tv.setTextColor(primaryColor)
+                    } else if (isEven) {
+                        tv.background = evenBg
+                        tv.setTextColor(primaryColor)
+                    } else {
+                        tv.background = oddBg
+                        tv.setTextColor(whiteColor)
+                    }
+                }
+            }
+            else -> {
+                dayViews.forEachIndexed { index, tv ->
+                    val isEven = (index + 1) % 2 == 0
+                    tv.background = if (isEven) evenBg else oddBg
+                    tv.setTextColor(if (isEven) primaryColor else whiteColor)
+                }
+            }
+        }
     }
 
     private fun setupCompleteButton() {
