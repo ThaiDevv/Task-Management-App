@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.databinding.FragmentSettingsBinding
+import com.team.taskmanagementapp.ui.pin.PinLockActivity
 import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.NotificationPermissionManager
 import com.team.taskmanagementapp.util.PinManager

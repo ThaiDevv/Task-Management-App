@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    item_pin_key_with_letters.xml — Item keypad cho các phím 2–9 có sub-letters.
+    Cấu trúc: số lớn ở trên + chữ cái nhỏ bên dưới, trong vòng tròn nền xám nhạt.
+    Dùng với <include> trong activity_pin_lock.xml.
+-->
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="72dp"
+    android:layout_height="72dp">
+
+    <LinearLayout
+        android:id="@+id/pinKeyRoot"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/bg_keypad_button"
+        android:clickable="true"
+        android:focusable="true"
+        android:elevation="2dp">
+
+        <!-- Số chính: bold, màu primary, 32sp -->
+        <TextView
+            android:id="@+id/tvKeyNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primary"
+            android:textSize="32sp"
+            android:fontFamily="@font/poppins_bold"
+            android:lineSpacingExtra="0dp"
+            tools:text="2" />
+
+        <!-- Sub-letters: uppercase, 10sp, letter-spacing, màu outline -->
+        <TextView
+            android:id="@+id/tvKeyLetters"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/outline"
+            android:textSize="10sp"
+            android:fontFamily="@font/poppins_medium"
+            android:letterSpacing="0.2"
+            android:layout_marginTop="2dp"
+            tools:text="ABC" />
+    </LinearLayout>
+</FrameLayout>

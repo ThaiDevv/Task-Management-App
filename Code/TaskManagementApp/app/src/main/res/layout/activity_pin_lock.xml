@@ -1,304 +1,296 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    activity_pin_lock.xml — Layout màn hình nhập PIN (TASK-25).
+
+    Cấu trúc (từ trên xuống dưới, khớp với design):
+    1. Branding area: icon app + "Welcome Back" + subtitle
+    2. PIN indicator area: 4 chấm dot hiển thị số ký tự đã nhập
+    3. Keypad: 4 hàng × 3 cột (1-9 + fingerprint/0/backspace)
+    4. "Forgot PIN?" link ở dưới cùng
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pinLockRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    android:fitsSystemWindows="true">
+    tools:context=".ui.pin.PinLockActivity">
 
-    <!-- Top Branding Area -->
+    <!-- ================================================================ -->
+    <!-- 1. BRANDING AREA: App icon + Tiêu đề + Subtitle                  -->
+    <!-- ================================================================ -->
     <LinearLayout
         android:id="@+id/brandingContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:orientation="vertical"
+        android:gravity="center_horizontal"
         android:paddingTop="64dp"
-        android:paddingBottom="32dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingBottom="8dp"
+        android:paddingHorizontal="24dp"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- App Logo -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_marginBottom="24dp"
-            app:cardBackgroundColor="@color/surface_container_lowest"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp">
+        <!-- Icon app: hình vuông bo góc 18dp, nền trắng, shadow elevation -->
+        <FrameLayout
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:background="@drawable/bg_app_icon_container"
+            android:elevation="4dp"
+            android:layout_marginBottom="24dp">
 
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/app_name"
-                android:padding="12dp"
-                android:src="@drawable/ic_launcher_foreground"
-                app:tint="@color/primary" />
+                android:id="@+id/ivAppIcon"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:src="@drawable/ic_taskflow_logo"
+                android:scaleType="fitCenter"
+                android:padding="10dp"
+                android:contentDescription="@string/app_name" />
+        </FrameLayout>
 
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Title -->
+        <!-- Title — font Poppins Bold 32sp -->
         <TextView
-            android:id="@+id/titleText"
+            android:id="@+id/tvWelcomeBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/poppins_semibold"
-            android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
+            android:text="@string/pin_welcome_back"
             android:textColor="@color/on_surface"
             android:textSize="32sp"
-            tools:text="Welcome Back" />
+            android:fontFamily="@font/poppins_bold"
+            android:layout_marginBottom="8dp" />
 
-        <!-- Subtitle -->
+        <!-- Subtitle — font Poppins Regular 16sp, màu on_surface_variant -->
         <TextView
-            android:id="@+id/subtitleText"
+            android:id="@+id/tvSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@style/TextAppearance.Material3.BodyMedium"
-            android:gravity="center"
-            android:paddingHorizontal="24dp"
+            android:text="@string/pin_subtitle"
             android:textColor="@color/on_surface_variant"
-            tools:text="Enter your PIN to access TaskFlow" />
-
+            android:textSize="16sp"
+            android:fontFamily="@font/poppins_regular"
+            android:gravity="center" />
     </LinearLayout>
 
-    <!-- PIN Dots Container -->
+    <!-- ================================================================ -->
+    <!-- 2. PIN INDICATOR: 4 chấm tròn hiển thị trạng thái nhập PIN       -->
+    <!-- ================================================================ -->
     <LinearLayout
-        android:id="@+id/pinDotsContainer"
+        android:id="@+id/pinIndicatorContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center"
+        android:layout_marginTop="48dp"
+        app:layout_constraintTop_toBottomOf="@id/brandingContainer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/brandingContainer">
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- Dot 1 -->
         <View
             android:id="@+id/pinDot1"
-            style="@style/PinDotStyle" />
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginHorizontal="12dp"
+            android:background="@drawable/bg_pin_dot_empty" />
 
+        <!-- Dot 2 -->
         <View
             android:id="@+id/pinDot2"
-            style="@style/PinDotStyle" />
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginHorizontal="12dp"
+            android:background="@drawable/bg_pin_dot_empty" />
 
+        <!-- Dot 3 -->
         <View
             android:id="@+id/pinDot3"
-            style="@style/PinDotStyle" />
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginHorizontal="12dp"
+            android:background="@drawable/bg_pin_dot_empty" />
 
+        <!-- Dot 4 -->
         <View
             android:id="@+id/pinDot4"
-            style="@style/PinDotStyle" />
-
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginHorizontal="12dp"
+            android:background="@drawable/bg_pin_dot_empty" />
     </LinearLayout>
 
-    <!-- Error Text -->
+    <!-- Error message (ẩn mặc định, hiện khi PIN sai hoặc lockout) -->
     <TextView
-        android:id="@+id/errorText"
-        android:layout_width="wrap_content"
+        android:id="@+id/tvErrorMessage"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@style/TextAppearance.Material3.BodyMedium"
-        android:textColor="@color/error"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pinDotsContainer"
-        tools:text="Incorrect PIN. Try again."
-        tools:visibility="visible" />
-
-    <!-- Lockout Container (shown during 30s lockout) -->
-    <LinearLayout
-        android:id="@+id/lockoutContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginHorizontal="24dp"
         android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/keypadContainer"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/error"
+        android:textSize="13sp"
+        android:fontFamily="@font/poppins_medium"
+        android:visibility="invisible"
+        tools:text="Sai PIN. Còn 4 lần thử."
+        tools:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/pinIndicatorContainer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/brandingContainer"
-        tools:visibility="gone">
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <ImageView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_settings_lock"
-            app:tint="@color/on_surface_variant" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@style/TextAppearance.Material3.TitleMedium"
-            android:text="@string/pin_lockout_title"
-            android:textColor="@color/on_surface" />
-
-        <TextView
-            android:id="@+id/lockoutTimerText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@style/TextAppearance.Material3.BodyLarge"
-            android:textColor="@color/on_surface_variant"
-            tools:text="Try again in 25 seconds" />
-
-    </LinearLayout>
-
-    <!-- Keypad Container -->
+    <!-- ================================================================ -->
+    <!-- 3. KEYPAD — Đặt ở phần dưới màn hình, push từ bottom lên        -->
+    <!-- ================================================================ -->
     <LinearLayout
         android:id="@+id/keypadContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:gravity="center"
         android:orientation="vertical"
         android:paddingHorizontal="24dp"
-        app:layout_constraintBottom_toTopOf="@id/forgotPinButton"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@id/btnForgotPin"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pinDotsContainer"
-        app:layout_constraintVertical_bias="0.5">
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Row 1: 1, 2, 3 -->
+        <!-- Row 1: 1, 2 (ABC), 3 (DEF) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
+            android:orientation="horizontal"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:layout_marginBottom="24dp">
 
-            <com.google.android.material.button.MaterialButton
+            <Button
                 android:id="@+id/btn1"
-                style="@style/KeypadButtonStyle"
-                android:layout_marginEnd="24dp"
-                android:text="1" />
+                style="@style/Widget.TaskFlow.PinKeypad.Button"
+                android:text="@string/pin_key_1" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn2"
-                style="@style/KeypadButtonStyle"
-                android:layout_marginEnd="24dp"
-                android:text="2" />
+            <include
+                android:id="@+id/keyBtn2"
+                layout="@layout/item_pin_key_with_letters"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginHorizontal="24dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn3"
-                style="@style/KeypadButtonStyle"
-                android:text="3" />
-
+            <include
+                android:id="@+id/keyBtn3"
+                layout="@layout/item_pin_key_with_letters"
+                android:layout_width="72dp"
+                android:layout_height="72dp" />
         </LinearLayout>
 
-        <!-- Row 2: 4, 5, 6 -->
+        <!-- Row 2: 4 (GHI), 5 (JKL), 6 (MNO) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
+            android:orientation="horizontal"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:layout_marginBottom="24dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn4"
-                style="@style/KeypadButtonStyle"
-                android:layout_marginEnd="24dp"
-                android:text="4" />
+            <include
+                android:id="@+id/keyBtn4"
+                layout="@layout/item_pin_key_with_letters"
+                android:layout_width="72dp"
+                android:layout_height="72dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn5"
-                style="@style/KeypadButtonStyle"
-                android:layout_marginEnd="24dp"
-                android:text="5" />
+            <include
+                android:id="@+id/keyBtn5"
+                layout="@layout/item_pin_key_with_letters"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginHorizontal="24dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn6"
-                style="@style/KeypadButtonStyle"
-                android:text="6" />
-
+            <include
+                android:id="@+id/keyBtn6"
+                layout="@layout/item_pin_key_with_letters"
+                android:layout_width="72dp"
+                android:layout_height="72dp" />
         </LinearLayout>
 
-        <!-- Row 3: 7, 8, 9 -->
+        <!-- Row 3: 7 (PQRS), 8 (TUV), 9 (WXYZ) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
+            android:orientation="horizontal"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:layout_marginBottom="24dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn7"
-                style="@style/KeypadButtonStyle"
-                android:layout_marginEnd="24dp"
-                android:text="7" />
+            <include
+                android:id="@+id/keyBtn7"
+                layout="@layout/item_pin_key_with_letters"
+                android:layout_width="72dp"
+                android:layout_height="72dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn8"
-                style="@style/KeypadButtonStyle"
-                android:layout_marginEnd="24dp"
-                android:text="8" />
+            <include
+                android:id="@+id/keyBtn8"
+                layout="@layout/item_pin_key_with_letters"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginHorizontal="24dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn9"
-                style="@style/KeypadButtonStyle"
-                android:text="9" />
-
+            <include
+                android:id="@+id/keyBtn9"
+                layout="@layout/item_pin_key_with_letters"
+                android:layout_width="72dp"
+                android:layout_height="72dp" />
         </LinearLayout>
 
-        <!-- Row 4: Biometric, 0, Delete -->
+        <!-- Row 4: Fingerprint | 0 | Backspace -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnBiometric"
-                style="@style/KeypadButtonStyle.Transparent"
-                android:layout_marginEnd="24dp"
-                android:visibility="gone"
-                app:icon="@drawable/ic_fingerprint"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                app:iconSize="32dp"
-                app:iconTint="@color/on_surface_variant" />
+            <!-- Fingerprint button (icon only, no background) -->
+            <ImageButton
+                android:id="@+id/btnFingerprint"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:src="@drawable/ic_fingerprint"
+                android:scaleType="center"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/pin_biometric"
+                android:padding="20dp" />
 
-            <View
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_marginEnd="24dp"
-                android:visibility="invisible" />
-
-            <com.google.android.material.button.MaterialButton
+            <!-- Key 0 (with background, same as 1–9) -->
+            <Button
                 android:id="@+id/btn0"
-                style="@style/KeypadButtonStyle"
-                android:layout_marginEnd="24dp"
-                android:text="0" />
+                style="@style/Widget.TaskFlow.PinKeypad.Button"
+                android:text="@string/pin_key_0"
+                android:layout_marginHorizontal="24dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDelete"
-                style="@style/KeypadButtonStyle.Transparent"
-                app:icon="@drawable/ic_backspace"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                app:iconSize="32dp"
-                app:iconTint="@color/on_surface_variant" />
-
+            <!-- Backspace button (icon only, no background) -->
+            <ImageButton
+                android:id="@+id/btnBackspace"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:src="@drawable/ic_backspace"
+                android:scaleType="center"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/pin_backspace"
+                android:padding="20dp" />
         </LinearLayout>
-
     </LinearLayout>
 
-    <!-- Forgot PIN Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/forgotPinButton"
-        style="@style/Widget.Material3.Button.TextButton"
+    <!-- ================================================================ -->
+    <!-- 4. FORGOT PIN? — Link text ở dưới cùng                          -->
+    <!-- ================================================================ -->
+    <Button
+        android:id="@+id/btnForgotPin"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:fontFamily="@style/TextAppearance.Material3.BodyMedium"
         android:text="@string/pin_forgot"
         android:textColor="@color/primary"
+        android:textSize="16sp"
+        android:fontFamily="@font/poppins_medium"
+        android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

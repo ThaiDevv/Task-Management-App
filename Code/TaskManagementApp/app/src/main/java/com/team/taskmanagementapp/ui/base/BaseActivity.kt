@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import com.team.taskmanagementapp.ui.PinLockActivity
+import com.team.taskmanagementapp.ui.pin.PinLockActivity
 import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.PinManager
 
