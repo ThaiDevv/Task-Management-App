@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    bg_keypad_button.xml — Drawable selector cho nút keypad PIN.
+    Trạng thái normal: màu surface_container_low + shadow (elevation).
+    Trạng thái pressed: màu surface_container_highest (xám đậm hơn).
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape android:shape="oval">
+            <solid android:color="@color/surface_container_highest" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/surface_container_low" />
+        </shape>
+    </item>
+</selector>

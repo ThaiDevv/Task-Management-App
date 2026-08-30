@@ -212,5 +212,28 @@
     <string name="notif_permission_reminder_blocked_message">Ứng dụng chưa có quyền hiển thị thông báo. Task sẽ được lưu nhưng nhắc nhở sẽ không hoạt động. Bật quyền thông báo trong Cài đặt để kích hoạt tính năng này.</string>
     <string name="notif_permission_reminder_blocked_settings">Mở Cài đặt</string>
     <string name="notif_permission_reminder_blocked_save">Lưu bỏ qua</string>
+
+    <!-- ================================================================ -->
+    <!-- PIN Lock Screen (TASK-25)                                        -->
+    <!-- ================================================================ -->
+    <string name="pin_welcome_back">Welcome Back</string>
+    <string name="pin_subtitle">Enter your PIN to access TaskFlow</string>
+    <string name="pin_forgot">Forgot PIN?</string>
+    <string name="pin_biometric">Use biometric authentication</string>
+    <string name="pin_backspace">Delete last digit</string>
+
+    <!-- Keypad digits -->
+    <string name="pin_key_0">0</string>
+    <string name="pin_key_1">1</string>
+
+    <!-- Error / lockout messages -->
+    <string name="pin_error_wrong">Wrong PIN. %1$d attempts remaining.</string>
+    <string name="pin_error_locked">Too many attempts. Try again in %1$d seconds.</string>
+    <string name="pin_error_wrong_vi">Sai PIN. Còn %1$d lần thử.</string>
+    <string name="pin_error_locked_vi">Quá nhiều lần thử sai. Thử lại sau %1$d giây.</string>
+    <string name="pin_forgot_dialog_title">Quên PIN?</string>
+    <string name="pin_forgot_dialog_message">Để đặt lại PIN, bạn cần đăng nhập lại hoặc liên hệ quản trị viên.</string>
+    <string name="pin_forgot_dialog_ok">Đã hiểu</string>
+
 </resources>
 

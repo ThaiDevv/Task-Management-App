@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    bg_pin_dot_empty.xml — Shape cho 1 chấm PIN chưa điền (empty).
+    Vòng tròn rỗng viền màu primary_fixed_dim (#B2C5FF), nền trong suốt.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@android:color/transparent" />
+    <stroke
+        android:width="2dp"
+        android:color="@color/primary_fixed_dim" />
+    <size
+        android:width="16dp"
+        android:height="16dp" />
+</shape>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    shake_pin.xml — Shake animation cho PIN indicator khi nhập sai.
+    Khớp với CSS @keyframes shake trong design HTML:
+      10%, 90% → translateX(-1px)
+      20%, 80% → translateX(2px)
+      30%, 50%, 70% → translateX(-4px)
+      40%, 60% → translateX(4px)
+    Tổng thời gian: 400ms.
+-->
+<translate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromXDelta="0%"
+    android:toXDelta="0%"
+    android:duration="400"
+    android:interpolator="@android:anim/cycle_interpolator">
+
+    <translate
+        android:fromXDelta="0"
+        android:toXDelta="-8dp"
+        android:duration="40" />
+    <translate
+        android:fromXDelta="-8dp"
+        android:toXDelta="8dp"
+        android:duration="80" />
+    <translate
+        android:fromXDelta="8dp"
+        android:toXDelta="-8dp"
+        android:duration="80" />
+    <translate
+        android:fromXDelta="-8dp"
+        android:toXDelta="8dp"
+        android:duration="80" />
+    <translate
+        android:fromXDelta="8dp"
+        android:toXDelta="0"
+        android:duration="120" />
+</translate>
