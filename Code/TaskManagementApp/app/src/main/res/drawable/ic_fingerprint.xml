@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ic_fingerprint.xml — Vector drawable cho icon vân tay (fingerprint).
+    Dùng trong màn hình PIN Lock (keypad row 4, bên trái).
+    Source: Material Symbols "fingerprint" (outlined, weight 300).
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M12,1C8.59,1 5.77,2.82 4.21,5.51"
+        android:strokeColor="#737786"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M19.79,5.51C18.23,2.82 15.41,1 12,1"
+        android:strokeColor="#737786"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M1,12.05C1.25,8.84 2.84,6.01 5.21,4.13"
+        android:strokeColor="#737786"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M23,12.05C22.75,8.84 21.16,6.01 18.79,4.13"
+        android:strokeColor="#737786"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M12,8C9.79,8 8,9.79 8,12C8,14.97 8.74,17.31 9.61,19.27C9.88,19.87 10.5,20.25 11.15,20.25"
+        android:strokeColor="#737786"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M12,8C14.21,8 16,9.79 16,12C16,15.27 15.08,17.77 14.02,19.69"
+        android:strokeColor="#737786"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M12,12L12,15"
+        android:strokeColor="#737786"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M12,19L12,20"
+        android:strokeColor="#737786"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round" />
+</vector>

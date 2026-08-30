@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ic_backspace.xml — Vector drawable cho icon xóa ký tự (backspace).
+    Dùng trong màn hình PIN Lock (keypad row 4, bên phải).
+    Source: Material Symbols "backspace" (outlined).
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M21,5H10L3,12L10,19H21C21.55,19 22,18.55 22,18V6C22,5.45 21.55,5 21,5Z"
+        android:strokeColor="#424654"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M15,9L11,13"
+        android:strokeColor="#424654"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M11,9L15,13"
+        android:strokeColor="#424654"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round" />
+</vector>

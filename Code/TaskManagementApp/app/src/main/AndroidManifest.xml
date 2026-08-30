@@ -70,6 +70,13 @@
             </intent-filter>
         </receiver>
 
+        <!-- PIN Lock Screen (TASK-25) -->
+        <activity
+            android:name=".ui.pin.PinLockActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
     </application>
 
 </manifest>
