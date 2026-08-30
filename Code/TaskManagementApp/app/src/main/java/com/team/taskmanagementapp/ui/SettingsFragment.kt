@@ -11,8 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.databinding.FragmentSettingsBinding
 import com.team.taskmanagementapp.ui.base.BaseActivity
@@ -35,17 +38,39 @@ class SettingsFragment : Fragment() {
 
     private var isSynchronizingSwitches = false
 
-    // Activity result launchers for PIN operations
-    private val pinLockLauncher = registerForActivityResult(
+    // Enabling is completed inside PinLockActivity after the user sets and confirms a PIN.
+    private val enablePinLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == android.app.Activity.RESULT_OK) {
-            BaseActivity.isAppUnlockedInSession = pinManager.isPinEnabled()
-            synchronizeToggleStates()
-        } else {
-            // User cancelled - revert switch
-            synchronizeToggleStates()
+            BaseActivity.isAppUnlockedInSession = true
+            Toast.makeText(requireContext(), R.string.pin_enabled, Toast.LENGTH_SHORT).show()
         }
+        // Also restores the switch when the user cancels PIN setup.
+        synchronizeToggleStates()
+    }
+
+    // Disabling is intentionally owned by Settings: PinLockActivity only verifies the PIN.
+    private val disablePinLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            pinManager.removePin()
+            BaseActivity.isAppUnlockedInSession = false
+            Toast.makeText(requireContext(), R.string.pin_disabled, Toast.LENGTH_SHORT).show()
+        }
+        // Reflect the persisted repository state for both success and cancellation.
+        synchronizeToggleStates()
+    }
+
+    private val changePinLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            BaseActivity.isAppUnlockedInSession = true
+            showSnackbar(R.string.pin_change_success)
+        }
+        synchronizeToggleStates()
     }
 
     private val notificationPermissionLauncher = registerForActivityResult(
@@ -86,11 +111,11 @@ class SettingsFragment : Fragment() {
             if (isChecked) {
                 // Enable PIN - launch PinLockActivity in SET mode
                 val intent = PinLockActivity.createIntent(requireContext(), PinLockActivity.PinMode.SET)
-                pinLockLauncher.launch(intent)
+                enablePinLauncher.launch(intent)
             } else {
                 // Disable PIN - launch in VERIFY mode to confirm current PIN first
                 val intent = PinLockActivity.createIntent(requireContext(), PinLockActivity.PinMode.VERIFY_DISABLE)
-                pinLockLauncher.launch(intent)
+                disablePinLauncher.launch(intent)
             }
         }
 
@@ -116,13 +141,10 @@ class SettingsFragment : Fragment() {
 
     private fun setupActions() {
         binding.changePinRow.setOnClickListener {
-            if (!pinManager.isPinEnabled()) {
-                Toast.makeText(requireContext(), R.string.settings_pin_enable_first, Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+            if (!pinManager.isPinEnabled()) return@setOnClickListener
             // Launch CHANGE mode - requires verifying old PIN first
             val intent = PinLockActivity.createIntent(requireContext(), PinLockActivity.PinMode.CHANGE)
-            pinLockLauncher.launch(intent)
+            changePinLauncher.launch(intent)
         }
 
         val openDataManagement = View.OnClickListener {
@@ -143,11 +165,11 @@ class SettingsFragment : Fragment() {
 
         isSynchronizingSwitches = true
 
-        // Read PIN enabled state from EncryptedSharedPreferences via PinManager
+        // Read PIN enabled state from EncryptedSharedPreferences via PinManager.
         val pinEnabled = pinManager.isPinEnabled()
         binding.pinLockSwitch.isChecked = pinEnabled
-        binding.changePinRow.isEnabled = pinEnabled
-        binding.changePinRow.alpha = if (pinEnabled) 1.0f else 0.4f
+        binding.changePinDivider.isVisible = pinEnabled
+        binding.changePinRow.isVisible = pinEnabled
 
         val notificationsEnabled = preferences.getBoolean(
             Constants.KEY_NOTIFICATIONS_ENABLED,
@@ -157,6 +179,11 @@ class SettingsFragment : Fragment() {
             NotificationPermissionManager.isGranted(requireContext())
 
         isSynchronizingSwitches = false
+    }
+
+    private fun showSnackbar(@StringRes messageRes: Int) {
+        val root = _binding?.root ?: return
+        Snackbar.make(root, messageRes, Snackbar.LENGTH_SHORT).show()
     }
 
     @Suppress("DEPRECATION")
