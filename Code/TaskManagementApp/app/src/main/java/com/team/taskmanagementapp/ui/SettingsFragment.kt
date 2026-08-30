@@ -34,17 +34,33 @@ class SettingsFragment : Fragment() {
 
     private var isSynchronizingSwitches = false
 
-    // Activity result launchers for PIN operations
-    private val pinLockLauncher = registerForActivityResult(
+    // Enabling is completed inside PinLockActivity after the user sets and confirms a PIN.
+    private val enablePinLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == android.app.Activity.RESULT_OK) {
-            // PIN was set/enabled successfully
-            synchronizeToggleStates()
-        } else {
-            // User cancelled - revert switch
-            synchronizeToggleStates()
+            Toast.makeText(requireContext(), R.string.pin_enabled, Toast.LENGTH_SHORT).show()
         }
+        // Also restores the switch when the user cancels PIN setup.
+        synchronizeToggleStates()
+    }
+
+    // Disabling is intentionally owned by Settings: PinLockActivity only verifies the PIN.
+    private val disablePinLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            pinManager.removePin()
+            Toast.makeText(requireContext(), R.string.pin_disabled, Toast.LENGTH_SHORT).show()
+        }
+        // Reflect the persisted repository state for both success and cancellation.
+        synchronizeToggleStates()
+    }
+
+    private val changePinLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        synchronizeToggleStates()
     }
 
     private val notificationPermissionLauncher = registerForActivityResult(
@@ -85,11 +101,11 @@ class SettingsFragment : Fragment() {
             if (isChecked) {
                 // Enable PIN - launch PinLockActivity in SET mode
                 val intent = PinLockActivity.createIntent(requireContext(), PinLockActivity.PinMode.SET)
-                pinLockLauncher.launch(intent)
+                enablePinLauncher.launch(intent)
             } else {
                 // Disable PIN - launch in VERIFY mode to confirm current PIN first
                 val intent = PinLockActivity.createIntent(requireContext(), PinLockActivity.PinMode.VERIFY_DISABLE)
-                pinLockLauncher.launch(intent)
+                disablePinLauncher.launch(intent)
             }
         }
 
@@ -117,7 +133,7 @@ class SettingsFragment : Fragment() {
         binding.changePinRow.setOnClickListener {
             // Launch CHANGE mode - requires verifying old PIN first
             val intent = PinLockActivity.createIntent(requireContext(), PinLockActivity.PinMode.CHANGE)
-            pinLockLauncher.launch(intent)
+            changePinLauncher.launch(intent)
         }
 
         val openDataManagement = View.OnClickListener {

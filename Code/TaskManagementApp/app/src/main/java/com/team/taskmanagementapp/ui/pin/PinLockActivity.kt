@@ -218,14 +218,7 @@ class PinLockActivity : AppCompatActivity() {
         if (pinRepo.verifyPin(pin)) {
             onPinSuccess()
         } else {
-            val remainingAttempts = Constants.MAX_PIN_ATTEMPTS - pinRepo.recordFailedAttempt()
-            if (pinRepo.isLockedOut()) {
-                startLockoutCountdown()
-            } else {
-                val errMsg = getString(R.string.pin_error_wrong_vi, remainingAttempts)
-                showError(errMsg)
-            }
-            shakeAndClear()
+            handleFailedPinAttempt()
         }
     }
 
@@ -237,7 +230,6 @@ class PinLockActivity : AppCompatActivity() {
         } else {
             if (pin == confirmPin) {
                 pinRepo.setPin(pin)
-                Toast.makeText(this, R.string.pin_change_success, Toast.LENGTH_SHORT).show()
                 setResult(RESULT_OK)
                 finish()
             } else {
@@ -287,14 +279,23 @@ class PinLockActivity : AppCompatActivity() {
 
     private fun handleVerifyDisableMode(pin: String) {
         if (pinRepo.verifyPin(pin)) {
-            pinRepo.clearPin()
-            Toast.makeText(this, R.string.pin_disabled, Toast.LENGTH_SHORT).show()
+            // The caller owns the destructive action. This mode only verifies the current PIN.
+            pinRepo.resetFailedAttempts()
             setResult(RESULT_OK)
             finish()
         } else {
-            showError(getString(R.string.pin_error_wrong))
-            shakeAndClear()
+            handleFailedPinAttempt()
         }
+    }
+
+    private fun handleFailedPinAttempt() {
+        val remainingAttempts = Constants.MAX_PIN_ATTEMPTS - pinRepo.recordFailedAttempt()
+        if (pinRepo.isLockedOut()) {
+            startLockoutCountdown()
+        } else {
+            showError(getString(R.string.pin_error_wrong_vi, remainingAttempts))
+        }
+        shakeAndClear()
     }
 
     private fun onPinSuccess() {

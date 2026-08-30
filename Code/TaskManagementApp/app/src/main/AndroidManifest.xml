@@ -41,12 +41,6 @@
             android:theme="@style/Theme.TaskManagementApp"
             android:windowSoftInputMode="adjustResize" />
 
-        <activity
-            android:name=".ui.PinLockActivity"
-            android:exported="false"
-            android:theme="@style/Theme.TaskManagementApp"
-            android:screenOrientation="portrait" />
-
         <receiver
             android:name=".receiver.TaskNotificationReceiver"
             android:exported="false" />
