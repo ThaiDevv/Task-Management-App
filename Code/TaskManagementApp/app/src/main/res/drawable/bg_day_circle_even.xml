@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    bg_day_circle_active.xml — Chấm ngày đang active: nền trắng tinh (#FFFFFF), chữ màu primary đậm.
+    bg_day_circle_even.xml — Chấm ngày T, T, S (Thứ 3, Thứ 5, Thứ 7): màu trắng tinh (#FFFFFF) nổi bật.
 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">

@@ -33,6 +33,31 @@ class TaskRepository(
     suspend fun delete(task: Task) =
         taskDao.deleteTask(task)
 
+    suspend fun deleteFutureRecurringTasks(title: String, recurrenceType: RecurrenceType, startDate: Long) =
+        taskDao.deleteFutureRecurringTasks(title, recurrenceType, startDate)
+
+    suspend fun updateFutureRecurringTasks(
+        originalTitle: String,
+        originalRecurrence: RecurrenceType,
+        startDate: Long,
+        newTitle: String,
+        newDescription: String,
+        newPriority: Priority,
+        newRecurrenceType: RecurrenceType,
+        newReminderMinutes: Int,
+        updatedAt: Long
+    ) = taskDao.updateFutureRecurringTasks(
+        originalTitle,
+        originalRecurrence,
+        startDate,
+        newTitle,
+        newDescription,
+        newPriority,
+        newRecurrenceType,
+        newReminderMinutes,
+        updatedAt
+    )
+
     fun search(query: String) =
         taskDao.searchTasksByTitle(query)
 

@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.team.taskmanagementapp.data.local.entity.Task
+import com.team.taskmanagementapp.data.model.enums.RecurrenceType
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.util.DateTimeUtils
 import kotlinx.coroutines.Job
@@ -19,7 +20,7 @@ import java.util.Calendar
  *
  * Quản lý:
  * - Load tasks theo từng tháng từ Room qua Flow
- * - Cache Map<startOfDay: Long, List<Task>> cho tháng hiện tại
+ * - Cache Map<startOfDay: Long, List<Task>> cho tháng hiện tại (tự động cập nhật các Recurring Tasks vào Schedule)
  * - StateFlow tasks của ngày được chọn
  * - Điều hướng tháng (prev/next)
  */
@@ -39,7 +40,7 @@ class CalendarViewModel(
     private val _monthCache = MutableStateFlow<Map<Long, List<Task>>>(emptyMap())
     val monthCache: StateFlow<Map<Long, List<Task>>> = _monthCache.asStateFlow()
 
-    // Toàn bộ task thuộc tháng đang hiển thị.
+    // Toàn bộ task thuộc tháng đang hiển thị (bao gồm cả task lặp lại được chiếu vào tháng)
     private val _tasksForMonth = MutableStateFlow<List<Task>>(emptyList())
     val tasksForMonth: StateFlow<List<Task>> = _tasksForMonth.asStateFlow()
 
@@ -72,7 +73,8 @@ class CalendarViewModel(
 
     /**
      * Load tasks cho tháng [year]/[month] từ Room qua Flow toàn bộ task.
-     * Tự động phản ứng với bất kỳ thay đổi thêm/sửa/xóa task nào trong DB.
+     * Tự động phản ứng với bất kỳ thay đổi thêm/sửa/xóa task nào trong DB,
+     * và tự động cập nhật các Recurring Tasks vào toàn bộ các ngày tương ứng trong tháng.
      */
     fun loadTasksForMonth(year: Int, month: Int) {
         monthJob?.cancel()
@@ -90,16 +92,14 @@ class CalendarViewModel(
                 }
                 .collect { allTasks ->
                     _isLoading.value = false
-                    // Lọc tất cả task thuộc năm/tháng đang chọn
-                    val monthTasks = allTasks.filter { task ->
-                        isTaskInMonth(task, year, month)
-                    }
-                    _tasksForMonth.value = monthTasks
 
-                    // Nhóm tasks theo ngày (startOfDay)
-                    val grouped = buildMonthCache(monthTasks)
+                    // Nhóm tasks theo ngày trong tháng, tích hợp chiếu các task lặp lại (Recurrence)
+                    val grouped = buildMonthCacheWithRecurrence(allTasks, year, month)
                     _monthCache.value = grouped
                     _datesWithTasks.value = grouped.keys
+
+                    val allMonthTasks = grouped.values.flatten().distinctBy { it.id to it.dueDate }
+                    _tasksForMonth.value = allMonthTasks
 
                     // Cập nhật lại danh sách ngày đang chọn
                     refreshSelectedDateTasks(grouped)
@@ -146,19 +146,100 @@ class CalendarViewModel(
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     /**
-     * Kiểm tra task có thuộc [year] và [month] đang hiển thị hay không.
+     * Xây dựng cache cho tháng [year]/[month]:
+     * - Đưa task gốc vào đúng ngày dueDate nếu nằm trong tháng.
+     * - Tự động chiếu (project) các công việc lặp lại (DAILY, WEEKLY, MONTHLY)
+     *   vào các ngày tiếp theo trong tháng theo đúng quy luật chu kỳ.
      */
-    private fun isTaskInMonth(task: Task, year: Int, month: Int): Boolean {
-        if (task.dueDate <= 0L) return false
-        val cal = Calendar.getInstance().apply { timeInMillis = task.dueDate }
-        return cal.get(Calendar.YEAR) == year && cal.get(Calendar.MONTH) == month
-    }
+    private fun buildMonthCacheWithRecurrence(
+        allTasks: List<Task>,
+        year: Int,
+        month: Int
+    ): Map<Long, List<Task>> {
+        val result = mutableMapOf<Long, MutableList<Task>>()
 
-    /**
-     * Nhóm danh sách [tasks] thành Map<startOfDay, List<Task>>.
-     */
-    private fun buildMonthCache(tasks: List<Task>): Map<Long, List<Task>> {
-        return tasks.groupBy { task -> startOfDay(task.dueDate) }
+        val tempCal = Calendar.getInstance().apply {
+            set(Calendar.YEAR, year)
+            set(Calendar.MONTH, month)
+            set(Calendar.DAY_OF_MONTH, 1)
+        }
+        val maxDays = tempCal.getActualMaximum(Calendar.DAY_OF_MONTH)
+
+        for (task in allTasks) {
+            if (task.dueDate <= 0L) continue
+
+            val taskDate = startOfDay(task.dueDate)
+            val taskCal = Calendar.getInstance().apply { timeInMillis = task.dueDate }
+
+            // 1. Nếu task gốc có dueDate thuộc tháng này
+            if (taskCal.get(Calendar.YEAR) == year && taskCal.get(Calendar.MONTH) == month) {
+                result.getOrPut(taskDate) { mutableListOf() }.add(task)
+            }
+
+            // 2. Nếu là Recurring Task chưa hoàn thành -> Chiếu vào toàn bộ các ngày lặp lại trong tháng
+            if (!task.isCompleted && (task.isRecurring || task.recurrenceType != RecurrenceType.NONE)) {
+                val taskStartDay = startOfDay(task.dueDate)
+                val startDayOfWeek = taskCal.get(Calendar.DAY_OF_WEEK)
+                val startDayOfMonth = taskCal.get(Calendar.DAY_OF_MONTH)
+
+                for (day in 1..maxDays) {
+                    tempCal.set(Calendar.DAY_OF_MONTH, day)
+                    val currentDayMillis = startOfDay(tempCal)
+
+                    // Chỉ chiếu vào các ngày >= ngày bắt đầu của task
+                    if (currentDayMillis <= taskStartDay) continue
+
+                    val isMatch = when (task.recurrenceType) {
+                        RecurrenceType.DAILY -> true
+                        RecurrenceType.WEEKLY -> tempCal.get(Calendar.DAY_OF_WEEK) == startDayOfWeek
+                        RecurrenceType.MONTHLY -> {
+                            val maxDaysInThisMonth = tempCal.getActualMaximum(Calendar.DAY_OF_MONTH)
+                            val targetDay = minOf(startDayOfMonth, maxDaysInThisMonth)
+                            tempCal.get(Calendar.DAY_OF_MONTH) == targetDay
+                        }
+                        RecurrenceType.NONE -> false
+                    }
+
+                    if (isMatch) {
+                        val dayList = result.getOrPut(currentDayMillis) { mutableListOf() }
+                        // Kiểm tra không thêm trùng lặp
+                        val alreadyExists = dayList.any { it.title == task.title && it.recurrenceType == task.recurrenceType }
+                        if (!alreadyExists) {
+                            val projectedTime = if (task.dueTime > 0L) {
+                                val timeCal = Calendar.getInstance().apply { timeInMillis = task.dueTime }
+                                val h = timeCal.get(Calendar.HOUR_OF_DAY)
+                                val m = timeCal.get(Calendar.MINUTE)
+                                val s = timeCal.get(Calendar.SECOND)
+                                val ms = timeCal.get(Calendar.MILLISECOND)
+                                Calendar.getInstance().apply {
+                                    timeInMillis = currentDayMillis
+                                    set(Calendar.HOUR_OF_DAY, h)
+                                    set(Calendar.MINUTE, m)
+                                    set(Calendar.SECOND, s)
+                                    set(Calendar.MILLISECOND, ms)
+                                }.timeInMillis
+                            } else 0L
+
+                            dayList.add(
+                                task.copy(
+                                    dueDate = currentDayMillis,
+                                    dueTime = projectedTime
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        // Sắp xếp các task trong từng ngày theo thứ tự: Chưa hoàn thành trước, sau đó theo giờ và mức độ ưu tiên
+        return result.mapValues { (_, taskList) ->
+            taskList.sortedWith(
+                compareBy<Task> { it.isCompleted }
+                    .thenBy { if (it.dueTime > 0L) it.dueTime else Long.MAX_VALUE }
+                    .thenBy { it.priority.ordinal }
+            )
+        }
     }
 
     /** Cập nhật tasksForSelectedDate dựa trên cache mới nhất. */

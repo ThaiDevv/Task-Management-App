@@ -464,6 +464,15 @@ class AddEditTaskActivity : AppCompatActivity() {
         title: String,
         description: String
     ) {
+        executeTaskUpdate(existingTask, title, description, updateAllFuture = false)
+    }
+
+    private fun executeTaskUpdate(
+        existingTask: Task,
+        title: String,
+        description: String,
+        updateAllFuture: Boolean
+    ) {
         isSaving = true
         lifecycleScope.launch {
             try {
@@ -473,11 +482,23 @@ class AddEditTaskActivity : AppCompatActivity() {
                     dueDate = getNormalizedDueDate(),
                     dueTime = getNormalizedDueTime(),
                     priority = selectedPriority,
+                    isRecurring = selectedRecurrence != RecurrenceType.NONE,
                     recurrenceType = selectedRecurrence,
                     reminderMinutes = selectedReminderMinutes,
                     status = selectedStatus
                 )
-                val updatedTask = viewModel.updateTask(editedTask)
+
+                val updatedTask = if (updateAllFuture) {
+                    viewModel.updateFutureRecurringTasks(
+                        originalTitle = existingTask.title,
+                        originalRecurrence = existingTask.recurrenceType,
+                        startDate = existingTask.dueDate,
+                        editedTask = editedTask
+                    )
+                } else {
+                    viewModel.updateTask(editedTask)
+                }
+
                 AlarmScheduler.rescheduleAlarm(this@AddEditTaskActivity, updatedTask)
 
                 if (hasDueDateOrTimeChanged(existingTask, updatedTask)) {

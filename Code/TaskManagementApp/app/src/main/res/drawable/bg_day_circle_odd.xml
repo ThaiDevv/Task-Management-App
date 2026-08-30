@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    bg_day_circle_odd.xml — Chấm ngày M, W, F, S (Thứ 2, Thứ 4, Thứ 6, Chủ nhật): màu trong mờ nhẹ nhàng (20% white opacity).
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#33FFFFFF" />
+</shape>
