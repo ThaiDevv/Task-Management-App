@@ -465,7 +465,8 @@ class AddEditTaskActivity : AppCompatActivity() {
         title: String,
         description: String
     ) {
-        executeTaskUpdate(existingTask, title, description, updateAllFuture = false)
+        val isRecurringUpdate = existingTask.isRecurring || existingTask.recurrenceType != RecurrenceType.NONE
+        executeTaskUpdate(existingTask, title, description, updateAllFuture = isRecurringUpdate)
     }
 
     private fun executeTaskUpdate(
@@ -498,16 +499,11 @@ class AddEditTaskActivity : AppCompatActivity() {
                     status = resolvedStatus
                 )
 
-                val updatedTask = if (updateAllFuture) {
-                    viewModel.updateFutureRecurringTasks(
-                        originalTitle = existingTask.title,
-                        originalRecurrence = existingTask.recurrenceType,
-                        startDate = existingTask.dueDate,
-                        editedTask = editedTask
-                    )
-                } else {
-                    viewModel.updateTask(editedTask)
-                }
+                val updatedTask = viewModel.updateTask(
+                    existingTask = existingTask,
+                    editedTask = editedTask,
+                    context = applicationContext
+                )
 
                 AlarmScheduler.rescheduleAlarm(this@AddEditTaskActivity, updatedTask)
 

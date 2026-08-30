@@ -36,6 +36,12 @@ class TaskRepository(
     suspend fun deleteFutureRecurringTasks(title: String, recurrenceType: RecurrenceType, startDate: Long) =
         taskDao.deleteFutureRecurringTasks(title, recurrenceType, startDate)
 
+    suspend fun getFutureRecurringTasks(title: String, recurrenceType: RecurrenceType, startDate: Long): List<Task> =
+        taskDao.getFutureRecurringTasksSync(title, recurrenceType, startDate)
+
+    suspend fun getUncompletedTasksByTitle(title: String, excludeTaskId: Long): List<Task> =
+        taskDao.getUncompletedTasksByTitleSync(title, excludeTaskId)
+
     suspend fun updateFutureRecurringTasks(
         originalTitle: String,
         originalRecurrence: RecurrenceType,

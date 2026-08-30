@@ -42,6 +42,15 @@ private class FakeTaskDao : TaskDao {
         recurrenceType: RecurrenceType,
         startDate: Long
     ) = Unit
+    override suspend fun getFutureRecurringTasksSync(
+        title: String,
+        recurrenceType: RecurrenceType,
+        startDate: Long
+    ): List<Task> = emptyList()
+    override suspend fun getUncompletedTasksByTitleSync(
+        title: String,
+        excludeTaskId: Long
+    ): List<Task> = emptyList()
     override suspend fun updateFutureRecurringTasks(
         originalTitle: String,
         originalRecurrence: RecurrenceType,

@@ -93,6 +93,14 @@ interface TaskDao {
     @Query("DELETE FROM tasks WHERE title = :title AND recurrenceType = :recurrenceType AND dueDate >= :startDate AND isComplete = 0")
     suspend fun deleteFutureRecurringTasks(title: String, recurrenceType: RecurrenceType, startDate: Long)
 
+    // 13b. Lấy danh sách các công việc tương lai chưa hoàn thành cùng title và recurrenceType
+    @Query("SELECT * FROM tasks WHERE title = :title AND recurrenceType = :recurrenceType AND dueDate >= :startDate AND isComplete = 0")
+    suspend fun getFutureRecurringTasksSync(title: String, recurrenceType: RecurrenceType, startDate: Long): List<Task>
+
+    // 13c. Lấy danh sách các công việc chưa hoàn thành theo tiêu đề (trừ task hiện tại)
+    @Query("SELECT * FROM tasks WHERE title = :title AND isComplete = 0 AND id != :excludeTaskId")
+    suspend fun getUncompletedTasksByTitleSync(title: String, excludeTaskId: Long): List<Task>
+
     // 14. Cập nhật các công việc tương lai cùng title và recurrenceType từ một mốc thời gian trở đi
     @Query("""
         UPDATE tasks 
