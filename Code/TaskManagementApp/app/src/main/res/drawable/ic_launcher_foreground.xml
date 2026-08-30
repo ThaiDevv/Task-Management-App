@@ -1,30 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ic_launcher_foreground.xml — TaskFlow logo vector (TASK-25).
+
+    Logo gồm 3 thành phần chính (viewport 108×108):
+    1. Outer rounded-square frame (stroke, gradient blue)
+    2. Stylized checkmark / zigzag (filled gradient blue)
+    3. Upward-right arrow (filled gradient blue)
+
+    Gradient: #55BCFD (light sky blue) → #2563EB (medium blue) → #1A40B8 (dark blue)
+    Background (ic_launcher_background.xml): #FFFFFF (white)
+
+    minSdk 26 → <gradient> được hỗ trợ đầy đủ qua <aapt:attr>.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <path android:pathData="M31,63.928c0,0 6.4,-11 12.1,-13.1c7.2,-2.6 26,-1.4 26,-1.4l38.1,38.1L107,108.928l-32,-1L31,63.928z">
+
+    <!-- ============================================================ -->
+    <!-- 1. Outer rounded square frame (stroke only)                   -->
+    <!--    Bo góc ~14px, stroke 5px, gradient blue                   -->
+    <!-- ============================================================ -->
+    <path
+        android:pathData="
+        M 22,38
+        C 22,29.16 29.16,22 38,22
+        L 70,22
+        C 78.84,22 86,29.16 86,38
+        L 86,70
+        C 86,78.84 78.84,86 70,86
+        L 38,86
+        C 29.16,86 22,78.84 22,70
+        Z"
+        android:strokeWidth="5.5"
+        android:strokeColor="#00000000"
+        android:fillColor="#00000000">
+        <!-- gradient stroke via fillColor trick — dùng clip approach -->
+    </path>
+
+    <!-- Outer frame stroke sử dụng ring shape bằng path difference -->
+    <path
+        android:pathData="
+        M38,19.5
+        C 27.73,19.5 19.5,27.73 19.5,38
+        L 19.5,70
+        C 19.5,80.27 27.73,88.5 38,88.5
+        L 70,88.5
+        C 80.27,88.5 88.5,80.27 88.5,70
+        L 88.5,38
+        C 88.5,27.73 80.27,19.5 70,19.5
+        Z
+        M 38,25.5
+        C 31.04,25.5 25.5,31.04 25.5,38
+        L 25.5,70
+        C 25.5,76.96 31.04,82.5 38,82.5
+        L 70,82.5
+        C 76.96,82.5 82.5,76.96 82.5,70
+        L 82.5,38
+        C 82.5,31.04 76.96,25.5 70,25.5
+        Z"
+        android:fillType="evenOdd">
         <aapt:attr name="android:fillColor">
             <gradient
-                android:endX="85.84757"
-                android:endY="92.4963"
-                android:startX="42.9492"
-                android:startY="49.59793"
-                android:type="linear">
-                <item
-                    android:color="#44000000"
-                    android:offset="0.0" />
-                <item
-                    android:color="#00000000"
-                    android:offset="1.0" />
+                android:type="linear"
+                android:startX="19.5"
+                android:startY="19.5"
+                android:endX="88.5"
+                android:endY="88.5">
+                <item android:offset="0.0" android:color="#55BCFD" />
+                <item android:offset="0.5" android:color="#2563EB" />
+                <item android:offset="1.0" android:color="#1A40B8" />
             </gradient>
         </aapt:attr>
     </path>
+
+    <!-- ============================================================ -->
+    <!-- 2. Stylized checkmark / zigzag shape                         -->
+    <!--    Bắt đầu từ góc dưới trái → lên phải theo zigzag           -->
+    <!-- ============================================================ -->
     <path
-        android:fillColor="#FFFFFF"
-        android:fillType="nonZero"
-        android:pathData="M65.3,45.828l3.8,-6.6c0.2,-0.4 0.1,-0.9 -0.3,-1.1c-0.4,-0.2 -0.9,-0.1 -1.1,0.3l-3.9,6.7c-6.3,-2.8 -13.4,-2.8 -19.7,0l-3.9,-6.7c-0.2,-0.4 -0.7,-0.5 -1.1,-0.3C38.8,38.328 38.7,38.828 38.9,39.228l3.8,6.6C36.2,49.428 31.7,56.028 31,63.928h46C76.3,56.028 71.8,49.428 65.3,45.828zM43.4,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2c-0.3,-0.7 -0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C45.3,56.528 44.5,57.328 43.4,57.328L43.4,57.328zM64.6,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2s-0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C66.5,56.528 65.6,57.328 64.6,57.328L64.6,57.328z"
-        android:strokeWidth="1"
-        android:strokeColor="#00000000" />
+        android:pathData="
+        M 33,68
+        L 40,56
+        L 48,64
+        L 58,40
+        L 65,50
+        L 56,70
+        L 48,62
+        L 42,72
+        Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="33"
+                android:startY="40"
+                android:endX="72"
+                android:endY="72">
+                <item android:offset="0.0" android:color="#55BCFD" />
+                <item android:offset="0.55" android:color="#2563EB" />
+                <item android:offset="1.0" android:color="#1A40B8" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- ============================================================ -->
+    <!-- 3. Upward-right arrow (pointing to top-right corner)         -->
+    <!--    Mũi tên nhô ra phía trên-phải của hình                    -->
+    <!-- ============================================================ -->
+    <!-- Arrow shaft (diagonal line thân mũi tên) -->
+    <path
+        android:pathData="
+        M 58,50
+        L 74,34
+        L 74,46
+        L 82,46
+        L 82,26
+        L 62,26
+        L 62,34
+        L 74,34
+        L 58,50
+        Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="58"
+                android:startY="50"
+                android:endX="82"
+                android:endY="26">
+                <item android:offset="0.0" android:color="#2563EB" />
+                <item android:offset="1.0" android:color="#55BCFD" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
 </vector>
