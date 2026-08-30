@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.databinding.FragmentSettingsBinding
+import com.team.taskmanagementapp.ui.base.BaseActivity
 import com.team.taskmanagementapp.ui.pin.PinLockActivity
 import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.NotificationPermissionManager
@@ -39,7 +40,7 @@ class SettingsFragment : Fragment() {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == android.app.Activity.RESULT_OK) {
-            // PIN was set/enabled successfully
+            BaseActivity.isAppUnlockedInSession = pinManager.isPinEnabled()
             synchronizeToggleStates()
         } else {
             // User cancelled - revert switch
@@ -115,6 +116,10 @@ class SettingsFragment : Fragment() {
 
     private fun setupActions() {
         binding.changePinRow.setOnClickListener {
+            if (!pinManager.isPinEnabled()) {
+                Toast.makeText(requireContext(), R.string.settings_pin_enable_first, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             // Launch CHANGE mode - requires verifying old PIN first
             val intent = PinLockActivity.createIntent(requireContext(), PinLockActivity.PinMode.CHANGE)
             pinLockLauncher.launch(intent)
@@ -139,7 +144,10 @@ class SettingsFragment : Fragment() {
         isSynchronizingSwitches = true
 
         // Read PIN enabled state from EncryptedSharedPreferences via PinManager
-        binding.pinLockSwitch.isChecked = pinManager.isPinEnabled()
+        val pinEnabled = pinManager.isPinEnabled()
+        binding.pinLockSwitch.isChecked = pinEnabled
+        binding.changePinRow.isEnabled = pinEnabled
+        binding.changePinRow.alpha = if (pinEnabled) 1.0f else 0.4f
 
         val notificationsEnabled = preferences.getBoolean(
             Constants.KEY_NOTIFICATIONS_ENABLED,

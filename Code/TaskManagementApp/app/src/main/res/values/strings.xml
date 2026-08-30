@@ -237,6 +237,7 @@
     <string name="pin_disable_title">Disable PIN</string>
     <string name="pin_disable_subtitle">Enter your current PIN to disable</string>
     <string name="pin_disabled">PIN lock has been disabled</string>
+    <string name="settings_pin_enable_first">Vui lòng bật khóa mã PIN trước khi đổi PIN</string>
     <string name="pin_biometric">Use biometric authentication</string>
     <string name="pin_backspace">Delete last digit</string>
 

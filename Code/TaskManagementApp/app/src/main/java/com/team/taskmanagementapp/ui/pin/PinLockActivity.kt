@@ -14,6 +14,7 @@ import com.team.taskmanagementapp.databinding.ActivityPinLockBinding
 import com.team.taskmanagementapp.databinding.ItemPinKeyWithLettersBinding
 import com.team.taskmanagementapp.pinRepository
 import com.team.taskmanagementapp.security.PinRepository
+import com.team.taskmanagementapp.ui.base.BaseActivity
 import com.team.taskmanagementapp.util.Constants
 
 /**
@@ -118,14 +119,8 @@ class PinLockActivity : AppCompatActivity() {
     }
 
     private fun setupKeypad() {
-        // Key 1
-        binding.btn1.setOnClickListener {
-            animateKeyPress(it)
-            onDigitPressed(1)
-        }
-
-        // Keys 2–9 with letters
-        val keysWithLetters = listOf(
+        val allKeys = listOf(
+            Triple(binding.keyBtn1.root, 1, ""),
             Triple(binding.keyBtn2.root, 2, "ABC"),
             Triple(binding.keyBtn3.root, 3, "DEF"),
             Triple(binding.keyBtn4.root, 4, "GHI"),
@@ -133,23 +128,23 @@ class PinLockActivity : AppCompatActivity() {
             Triple(binding.keyBtn6.root, 6, "MNO"),
             Triple(binding.keyBtn7.root, 7, "PQRS"),
             Triple(binding.keyBtn8.root, 8, "TUV"),
-            Triple(binding.keyBtn9.root, 9, "WXYZ")
+            Triple(binding.keyBtn9.root, 9, "WXYZ"),
+            Triple(binding.keyBtn0.root, 0, "")
         )
 
-        keysWithLetters.forEach { (root, digit, letters) ->
+        allKeys.forEach { (root, digit, letters) ->
             val keyBinding = ItemPinKeyWithLettersBinding.bind(root)
             keyBinding.tvKeyNumber.text = digit.toString()
-            keyBinding.tvKeyLetters.text = letters
-            keyBinding.pinKeyRoot.setOnClickListener {
+            if (letters.isNotEmpty()) {
+                keyBinding.tvKeyLetters.text = letters
+                keyBinding.tvKeyLetters.visibility = View.VISIBLE
+            } else {
+                keyBinding.tvKeyLetters.visibility = View.GONE
+            }
+            keyBinding.pinKeyCard.setOnClickListener {
                 animateKeyPress(it)
                 onDigitPressed(digit)
             }
-        }
-
-        // Key 0
-        binding.btn0.setOnClickListener {
-            animateKeyPress(it)
-            onDigitPressed(0)
         }
     }
 
@@ -237,6 +232,7 @@ class PinLockActivity : AppCompatActivity() {
         } else {
             if (pin == confirmPin) {
                 pinRepo.setPin(pin)
+                BaseActivity.isAppUnlockedInSession = true
                 Toast.makeText(this, R.string.pin_change_success, Toast.LENGTH_SHORT).show()
                 setResult(RESULT_OK)
                 finish()
@@ -272,6 +268,7 @@ class PinLockActivity : AppCompatActivity() {
                 // Step 3: Confirm new PIN
                 if (pin == confirmPin) {
                     pinRepo.setPin(pin)
+                    BaseActivity.isAppUnlockedInSession = true
                     Toast.makeText(this, R.string.pin_change_success, Toast.LENGTH_SHORT).show()
                     setResult(RESULT_OK)
                     finish()
@@ -288,6 +285,7 @@ class PinLockActivity : AppCompatActivity() {
     private fun handleVerifyDisableMode(pin: String) {
         if (pinRepo.verifyPin(pin)) {
             pinRepo.clearPin()
+            BaseActivity.isAppUnlockedInSession = false
             Toast.makeText(this, R.string.pin_disabled, Toast.LENGTH_SHORT).show()
             setResult(RESULT_OK)
             finish()
@@ -299,6 +297,7 @@ class PinLockActivity : AppCompatActivity() {
 
     private fun onPinSuccess() {
         pinRepo.resetFailedAttempts()
+        BaseActivity.isAppUnlockedInSession = true
         markPinVerified()
         setResult(RESULT_OK)
         finish()
@@ -335,14 +334,12 @@ class PinLockActivity : AppCompatActivity() {
     private fun updatePinDots() {
         pinDots.forEachIndexed { index, dot ->
             val filled = index < pinBuffer.length
-            dot.background = if (filled) {
-                getDrawable(R.drawable.bg_pin_dot_filled)
-            } else {
-                getDrawable(R.drawable.bg_pin_dot_empty)
-            }
+            dot.setImageResource(
+                if (filled) R.drawable.ic_pin_dot_filled else R.drawable.ic_pin_dot_empty
+            )
             dot.animate()
-                .scaleX(if (filled) 1.1f else 1.0f)
-                .scaleY(if (filled) 1.1f else 1.0f)
+                .scaleX(if (filled) 1.15f else 1.0f)
+                .scaleY(if (filled) 1.15f else 1.0f)
                 .setDuration(120)
                 .start()
         }
@@ -415,15 +412,20 @@ class PinLockActivity : AppCompatActivity() {
     }
 
     private fun setKeypadEnabled(enabled: Boolean) {
-        binding.btn1.isEnabled = enabled
-        binding.btn0.isEnabled = enabled
         binding.btnBackspace.isEnabled = enabled
         binding.btnFingerprint.isEnabled = enabled
 
         listOf(
-            binding.keyBtn2.root, binding.keyBtn3.root,
-            binding.keyBtn4.root, binding.keyBtn5.root, binding.keyBtn6.root,
-            binding.keyBtn7.root, binding.keyBtn8.root, binding.keyBtn9.root
+            binding.keyBtn1.pinKeyCard,
+            binding.keyBtn2.pinKeyCard,
+            binding.keyBtn3.pinKeyCard,
+            binding.keyBtn4.pinKeyCard,
+            binding.keyBtn5.pinKeyCard,
+            binding.keyBtn6.pinKeyCard,
+            binding.keyBtn7.pinKeyCard,
+            binding.keyBtn8.pinKeyCard,
+            binding.keyBtn9.pinKeyCard,
+            binding.keyBtn0.pinKeyCard
         ).forEach { it.isEnabled = enabled }
     }
 

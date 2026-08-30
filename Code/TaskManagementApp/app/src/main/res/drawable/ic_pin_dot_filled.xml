@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ic_pin_dot_filled.xml — Vector hình tròn đặc màu primary (#0045AE) cho chấm PIN đã điền.
+    Vẽ vector path chính xác 100%, khử răng cưa và bo tròn mượt mà trên mọi độ phân giải màn hình.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="16dp"
+    android:height="16dp"
+    android:viewportWidth="16"
+    android:viewportHeight="16">
+    <path
+        android:pathData="M8,8m-7,0a7,7 0 1,1 14,0a7,7 0 1,1 -14,0"
+        android:fillColor="@color/primary" />
+</vector>

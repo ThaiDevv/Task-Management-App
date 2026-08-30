@@ -1,6 +1,5 @@
 package com.team.taskmanagementapp.ui.base
 
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -9,7 +8,6 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.team.taskmanagementapp.ui.pin.PinLockActivity
-import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.PinManager
 
 /**
@@ -17,8 +15,10 @@ import com.team.taskmanagementapp.util.PinManager
  * Uses ProcessLifecycleOwner + DefaultLifecycleObserver to detect app background/foreground transitions.
  *
  * Auto-lock logic:
- * - When app goes to background for > 1 minute, PIN will be required on resume
- * - PIN check happens on app start (if PIN is enabled)
+ * - Cold Start (Mở lại app sau khi thoát/xóa đa nhiệm): Luôn bắt buộc nhập PIN nếu PIN đã bật.
+ * - Warm Resume (Ẩn app xuống nền khi đang dùng):
+ *   - Nếu ẩn quá thời gian chờ (1 phút / AUTO_LOCK_TIMEOUT_MS) -> Tự động khóa và yêu cầu nhập lại PIN.
+ *   - Nếu ẩn dưới 1 phút -> Cho phép tiếp tục sử dụng mà không cần nhập lại PIN.
  */
 abstract class BaseActivity : AppCompatActivity() {
 
@@ -28,20 +28,9 @@ abstract class BaseActivity : AppCompatActivity() {
     // Activity result launcher for PIN verification
     private val pinLockLauncher: ActivityResultLauncher<android.content.Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            when (pendingPinMode) {
-                PinLockActivity.PinMode.ENTER -> {
-                    if (result.resultCode == RESULT_OK) {
-                        markPinVerified()
-                    }
-                }
-                PinLockActivity.PinMode.SET,
-                PinLockActivity.PinMode.CHANGE,
-                PinLockActivity.PinMode.VERIFY_DISABLE -> {
-                    if (result.resultCode == RESULT_OK) {
-                        markPinVerified()
-                    }
-                }
-                null -> { /* No pending PIN action */ }
+            if (result.resultCode == RESULT_OK) {
+                isAppUnlockedInSession = true
+                backgroundTimestamp = 0L
             }
             pendingPinMode = null
         }
@@ -49,14 +38,22 @@ abstract class BaseActivity : AppCompatActivity() {
     private val lifecycleObserver = object : DefaultLifecycleObserver {
         override fun onStart(owner: LifecycleOwner) {
             super.onStart(owner)
-            // Check auto-lock when app comes to foreground
-            checkAutoLock()
+            // Khi app quay lại foreground từ background
+            if (backgroundTimestamp > 0L && isAppUnlockedInSession) {
+                val timeInBackground = System.currentTimeMillis() - backgroundTimestamp
+                val autoLockTimeout = pinManager.getAutoLockTimeout()
+                if (timeInBackground > autoLockTimeout) {
+                    // Đã ở background quá 1 phút -> khóa lại session!
+                    isAppUnlockedInSession = false
+                }
+            }
+            backgroundTimestamp = 0L
         }
 
         override fun onStop(owner: LifecycleOwner) {
             super.onStop(owner)
-            // SAVE timestamp to SharedPreferences when going to background
-            saveBackgroundTimestamp()
+            // Ghi nhận thời điểm app bị đưa xuống background
+            backgroundTimestamp = System.currentTimeMillis()
         }
     }
 
@@ -70,91 +67,14 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Check PIN on app start
-        if (pendingPinMode == null) {
-            checkPinRequired()
-        }
-    }
-
-    /**
-     * Check if PIN verification is required on app start.
-     */
-    private fun checkPinRequired() {
-        if (!pinManager.isPinEnabled()) {
-            return
-        }
-
-        val prefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE)
-        val isVerified = prefs.getBoolean(PinLockActivity.KEY_PIN_VERIFIED, false)
-
-        if (!isVerified) {
+        // Kiểm tra xem có cần yêu cầu nhập PIN không
+        if (pinManager.isPinEnabled() && !isAppUnlockedInSession && pendingPinMode == null) {
             launchPinLock(PinLockActivity.PinMode.ENTER)
         }
     }
 
     /**
-     * Save current timestamp when app goes to background.
-     * This is used to calculate how long app was in background.
-     */
-    private fun saveBackgroundTimestamp() {
-        getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE)
-            .edit()
-            .putLong(PinLockActivity.KEY_LAST_ACTIVE_TIME, System.currentTimeMillis())
-            .apply()
-    }
-
-    /**
-     * Check if auto-lock should trigger based on background duration.
-     */
-    private fun checkAutoLock() {
-        if (!pinManager.isPinEnabled()) {
-            clearPinVerification()
-            return
-        }
-
-        val prefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE)
-        val lastActive = prefs.getLong(PinLockActivity.KEY_LAST_ACTIVE_TIME, 0L)
-        val autoLockTimeout = pinManager.getAutoLockTimeout()
-
-        if (lastActive == 0L) {
-            // First time or PIN just enabled - require PIN
-            clearPinVerification()
-            return
-        }
-
-        val timeInBackground = System.currentTimeMillis() - lastActive
-        if (timeInBackground > autoLockTimeout) {
-            // Background > timeout (e.g., 1 minute) - require PIN again
-            clearPinVerification()
-        }
-        // If timeInBackground <= timeout, PIN is still valid - don't ask again
-    }
-
-    /**
-     * Call this after PIN is successfully verified.
-     * Updates both verified flag and last active timestamp.
-     */
-    protected fun markPinVerified() {
-        getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE)
-            .edit()
-            .putBoolean(PinLockActivity.KEY_PIN_VERIFIED, true)
-            .putLong(PinLockActivity.KEY_LAST_ACTIVE_TIME, System.currentTimeMillis())
-            .apply()
-    }
-
-    /**
-     * Call this to clear PIN verification (e.g., when PIN is disabled).
-     */
-    protected fun clearPinVerification() {
-        getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE)
-            .edit()
-            .putBoolean(PinLockActivity.KEY_PIN_VERIFIED, false)
-            .apply()
-    }
-
-    /**
      * Launch PinLockActivity for the given mode.
-     * @param mode ENTER (verify), SET (enable), or CHANGE (change)
      */
     protected fun launchPinLock(mode: PinLockActivity.PinMode) {
         pendingPinMode = mode
@@ -165,5 +85,20 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         ProcessLifecycleOwner.get().lifecycle.removeObserver(lifecycleObserver)
+    }
+
+    companion object {
+        /**
+         * Trạng thái mở khóa trong phiên chạy hiện tại (in-memory).
+         * Khi ứng dụng bị kill / xóa khỏi đa nhiệm, biến này tự động reset về false!
+         */
+        @Volatile
+        var isAppUnlockedInSession: Boolean = false
+
+        /**
+         * Thời điểm app đi vào background.
+         */
+        @Volatile
+        private var backgroundTimestamp: Long = 0L
     }
 }

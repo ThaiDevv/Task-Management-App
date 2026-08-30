@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    bg_pin_key_circle.xml — Nền hình tròn hoàn hảo (shape="oval") cho phím số PIN.
+    Bao gồm hiệu ứng ripple khi nhấn và nền màu surface_container_low (#F3F3F3).
+    Không dùng elevation để tránh tạo bóng vệt đen ở đáy nút.
+-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/surface_container_highest">
+    <item android:id="@android:id/mask">
+        <shape android:shape="oval">
+            <solid android:color="@android:color/white" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/surface_container_low" />
+        </shape>
+    </item>
+</ripple>
