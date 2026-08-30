@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -110,8 +111,10 @@ class TaskListFragment : Fragment() {
             startActivity(intent)
         }
 
-        // View Full Calendar button (no-op placeholder)
-        binding.btnViewCalendar.setOnClickListener { /* TODO: navigate to calendar */ }
+        // View Full Calendar button
+        binding.btnViewCalendar.setOnClickListener {
+            findNavController().navigate(R.id.calendarFragment)
+        }
 
         // State overlay button listeners
         binding.viewErrorState.btnErrorRetry.setOnClickListener {

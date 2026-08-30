@@ -33,6 +33,7 @@ import com.team.taskmanagementapp.ui.viewmodel.AddEditTaskViewModel
 import com.team.taskmanagementapp.ui.viewmodel.AddEditTaskViewModelFactory
 import com.team.taskmanagementapp.util.AlarmScheduler
 import com.team.taskmanagementapp.util.Constants
+import com.team.taskmanagementapp.util.DateTimeUtils
 import com.team.taskmanagementapp.util.NotificationPermissionManager
 import com.team.taskmanagementapp.util.ValidationHelper
 import com.team.taskmanagementapp.util.ValidationHelper.ValidationError
@@ -464,7 +465,8 @@ class AddEditTaskActivity : AppCompatActivity() {
         title: String,
         description: String
     ) {
-        executeTaskUpdate(existingTask, title, description, updateAllFuture = false)
+        val isRecurringUpdate = existingTask.isRecurring || existingTask.recurrenceType != RecurrenceType.NONE
+        executeTaskUpdate(existingTask, title, description, updateAllFuture = isRecurringUpdate)
     }
 
     private fun executeTaskUpdate(
@@ -476,28 +478,32 @@ class AddEditTaskActivity : AppCompatActivity() {
         isSaving = true
         lifecycleScope.launch {
             try {
+                val normalizedDueDate = getNormalizedDueDate()
+                val normalizedDueTime = getNormalizedDueTime()
+                val combined = DateTimeUtils.getCombinedDueTimestamp(normalizedDueDate, normalizedDueTime)
+                val resolvedStatus = viewModel.resolveStatusOnUpdate(
+                    currentStatus = existingTask.status,
+                    newStatus = selectedStatus,
+                    combinedDueTimestamp = combined
+                )
+
                 val editedTask = existingTask.copy(
                     title = title,
                     description = description,
-                    dueDate = getNormalizedDueDate(),
-                    dueTime = getNormalizedDueTime(),
+                    dueDate = normalizedDueDate,
+                    dueTime = normalizedDueTime,
                     priority = selectedPriority,
                     isRecurring = selectedRecurrence != RecurrenceType.NONE,
                     recurrenceType = selectedRecurrence,
                     reminderMinutes = selectedReminderMinutes,
-                    status = selectedStatus
+                    status = resolvedStatus
                 )
 
-                val updatedTask = if (updateAllFuture) {
-                    viewModel.updateFutureRecurringTasks(
-                        originalTitle = existingTask.title,
-                        originalRecurrence = existingTask.recurrenceType,
-                        startDate = existingTask.dueDate,
-                        editedTask = editedTask
-                    )
-                } else {
-                    viewModel.updateTask(editedTask)
-                }
+                val updatedTask = viewModel.updateTask(
+                    existingTask = existingTask,
+                    editedTask = editedTask,
+                    context = applicationContext
+                )
 
                 AlarmScheduler.rescheduleAlarm(this@AddEditTaskActivity, updatedTask)
 

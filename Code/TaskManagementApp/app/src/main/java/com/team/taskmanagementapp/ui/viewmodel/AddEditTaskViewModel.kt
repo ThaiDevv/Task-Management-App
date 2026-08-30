@@ -23,6 +23,74 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
 
     fun observeTask(taskId: Long): Flow<Task?> = repository.observeTaskById(taskId)
 
+    suspend fun updateTask(
+        existingTask: Task,
+        editedTask: Task,
+        context: android.content.Context
+    ): Task {
+        val now = System.currentTimeMillis()
+        val updatedTask = editedTask.copy(updatedAt = maxOf(now, editedTask.updatedAt + 1L))
+        repository.update(updatedTask)
+
+        val wasRecurring = existingTask.isRecurring || existingTask.recurrenceType != RecurrenceType.NONE
+        val isNowRecurring = updatedTask.isRecurring || updatedTask.recurrenceType != RecurrenceType.NONE
+
+        if (wasRecurring || isNowRecurring) {
+            // Tìm tất cả task con tương lai chưa hoàn thành trong chuỗi
+            val futureTasks = (
+                repository.getUncompletedTasksByTitle(existingTask.title, updatedTask.id.toLong()) +
+                repository.getUncompletedTasksByTitle(updatedTask.title, updatedTask.id.toLong())
+            ).distinctBy { it.id }
+
+            if (!isNowRecurring) {
+                // Tắt lặp lại -> xóa các task tương lai chưa hoàn thành
+                futureTasks.forEach { futureTask ->
+                    com.team.taskmanagementapp.util.AlarmScheduler.cancelAlarm(context, futureTask.id)
+                    repository.delete(futureTask)
+                }
+            } else {
+                // Đổi chu kỳ (VD: Daily -> Weekly): Dời task con tương lai sang đúng giờ này tuần sau / tháng sau
+                val newNextDueDate = com.team.taskmanagementapp.util.RecurrenceHelper.calculateNextDueDate(
+                    updatedTask.dueDate,
+                    updatedTask.recurrenceType,
+                    updatedTask.recurrenceInterval
+                )
+                val newNextDueTime = if (updatedTask.dueTime > 0L) {
+                    com.team.taskmanagementapp.util.RecurrenceHelper.calculateNextDueDate(
+                        updatedTask.dueTime,
+                        updatedTask.recurrenceType,
+                        updatedTask.recurrenceInterval
+                    )
+                } else 0L
+
+                var isFirst = true
+                for (futureTask in futureTasks) {
+                    if (isFirst) {
+                        isFirst = false
+                        val shiftedFutureTask = futureTask.copy(
+                            title = updatedTask.title,
+                            description = updatedTask.description,
+                            priority = updatedTask.priority,
+                            isRecurring = true,
+                            recurrenceType = updatedTask.recurrenceType,
+                            reminderMinutes = updatedTask.reminderMinutes,
+                            dueDate = newNextDueDate,
+                            dueTime = newNextDueTime,
+                            updatedAt = now
+                        )
+                        repository.update(shiftedFutureTask)
+                        com.team.taskmanagementapp.util.AlarmScheduler.rescheduleAlarm(context, shiftedFutureTask)
+                    } else {
+                        com.team.taskmanagementapp.util.AlarmScheduler.cancelAlarm(context, futureTask.id)
+                        repository.delete(futureTask)
+                    }
+                }
+            }
+        }
+
+        return updatedTask
+    }
+
     suspend fun updateTask(task: Task): Task {
         val now = System.currentTimeMillis()
         val updatedTask = task.copy(updatedAt = maxOf(now, task.updatedAt + 1L))
@@ -89,6 +157,14 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
                 val savedTask = if (isEdit) {
                     val existingTask = repository.getTaskById(id.toLong())
                     if (existingTask != null) {
+                        // Tính combined timestamp để kiểm tra tương lai/quá khứ chính xác
+                        val combined = com.team.taskmanagementapp.util.DateTimeUtils
+                            .getCombinedDueTimestamp(dueDate, dueTime)
+                        val resolvedStatus = resolveStatusOnUpdate(
+                            currentStatus = existingTask.status,
+                            newStatus = status,
+                            combinedDueTimestamp = combined
+                        )
                         val updatedTask = existingTask.copy(
                             title = title,
                             description = description,
@@ -98,7 +174,7 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
                             isRecurring = recurrenceType != RecurrenceType.NONE,
                             recurrenceType = recurrenceType,
                             reminderMinutes = reminderMinutes,
-                            status = status,
+                            status = resolvedStatus,
                             updatedAt = System.currentTimeMillis()
                         )
                         repository.update(updatedTask)
@@ -132,5 +208,32 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
                 _uiState.value = UiState.Error(e.localizedMessage ?: "Failed to save task")
             }
         }
+    }
+    /**
+     * Xác định status đúng khi user cập nhật task:
+     * - COMPLETED → luôn giữ nguyên, không bao giờ thay đổi.
+     * - OVERDUE + dueDate tương lai → revert về TODO.
+     * - Các trường hợp còn lại → giữ nguyên status mà UI truyền vào.
+     *
+     * @param currentStatus  Status hiện tại trong DB.
+     * @param newStatus      Status mà UI muốn lưu.
+     * @param combinedDueTimestamp  getCombinedDueTimestamp(dueDate, dueTime).
+     */
+    internal fun resolveStatusOnUpdate(
+        currentStatus: TaskStatus,
+        newStatus: TaskStatus,
+        combinedDueTimestamp: Long
+    ): TaskStatus {
+        // Rule 1: Không bao giờ thay đổi task COMPLETED
+        if (currentStatus == TaskStatus.COMPLETED) return TaskStatus.COMPLETED
+
+        // Rule 2: OVERDUE + deadline chuyển về tương lai → revert TODO
+        val now = System.currentTimeMillis()
+        if (currentStatus == TaskStatus.OVERDUE && combinedDueTimestamp > now) {
+            return TaskStatus.TODO
+        }
+
+        // Rule 3: Mọi trường hợp còn lại giữ nguyên status từ UI
+        return newStatus
     }
 }

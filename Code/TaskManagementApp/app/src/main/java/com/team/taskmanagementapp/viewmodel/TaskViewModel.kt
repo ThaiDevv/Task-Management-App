@@ -51,7 +51,14 @@ class TaskViewModel(
     val filterCriteria: StateFlow<FilterCriteria> = _filterCriteria.asStateFlow()
 
     init {
-        loadAllTasks()
+        viewModelScope.launch {
+            // Bước 1: Chờ UPDATE hoàn thành (suspend) trước khi collect Flow.
+            // Đảm bảo database đã commit trạng thái OVERDUE mới nhất
+            // trước khi UI nhận bất kỳ emission nào.
+            repository.checkAndUpdateOverdueTasks()
+            // Bước 2: Bắt đầu collect sau khi UPDATE đã xong.
+            loadAllTasks()
+        }
     }
 
 
@@ -139,8 +146,9 @@ class TaskViewModel(
                     AlarmScheduler.scheduleAlarm(applicationContext, updatedTask)
                 }
 
-                // Recurring task completed -> create the next task instance
-                if (!wasCompleted && (task.isRecurring || task.recurrenceType != RecurrenceType.NONE)) {
+                val isRecurringTask = task.isRecurring || task.recurrenceType != RecurrenceType.NONE
+
+                if (isRecurringTask) {
                     val nextDueDate = RecurrenceHelper.calculateNextDueDate(
                         task.dueDate,
                         task.recurrenceType,
@@ -154,22 +162,53 @@ class TaskViewModel(
                         )
                     } else task.dueTime
 
-                    val nextInstance = task.copy(
-                        id = 0,
-                        isCompleted = false,
-                        status = TaskStatus.TODO,
-                        isRecurring = true,
-                        recurrenceType = task.recurrenceType,
-                        dueDate = nextDueDate,
-                        dueTime = nextDueTime,
-                        createdAt = now,
-                        updatedAt = now
-                    )
-                    val insertedId = repository.insert(nextInstance)
-                    AlarmScheduler.scheduleAlarm(
-                        applicationContext,
-                        nextInstance.copy(id = insertedId.toInt())
-                    )
+                    if (!wasCompleted) {
+                        // Khi đánh dấu hoàn thành: Chỉ tạo instance tiếp theo nếu chưa có task tương lai cùng title tồn tại
+                        val existingFutureTasks = repository.getFutureRecurringTasks(
+                            task.title,
+                            task.recurrenceType,
+                            nextDueDate
+                        )
+                        val anyRecurringFutureTasks = if (existingFutureTasks.isNotEmpty()) {
+                            existingFutureTasks
+                        } else {
+                            repository.getFutureRecurringTasks(task.title, RecurrenceType.DAILY, nextDueDate) +
+                            repository.getFutureRecurringTasks(task.title, RecurrenceType.WEEKLY, nextDueDate) +
+                            repository.getFutureRecurringTasks(task.title, RecurrenceType.MONTHLY, nextDueDate)
+                        }
+
+                        if (anyRecurringFutureTasks.isEmpty()) {
+                            val nextInstance = task.copy(
+                                id = 0,
+                                isCompleted = false,
+                                status = TaskStatus.TODO,
+                                isRecurring = true,
+                                recurrenceType = task.recurrenceType,
+                                dueDate = nextDueDate,
+                                dueTime = nextDueTime,
+                                createdAt = now,
+                                updatedAt = now
+                            )
+                            val insertedId = repository.insert(nextInstance)
+                            AlarmScheduler.scheduleAlarm(
+                                applicationContext,
+                                nextInstance.copy(id = insertedId.toInt())
+                            )
+                        }
+                    } else {
+                        // Khi hủy hoàn thành: Hủy alarm và xóa các task tương lai chưa hoàn thành đã tự sinh ra (bất kể kiểu lặp lại)
+                        val futureTasks = (
+                            repository.getFutureRecurringTasks(task.title, task.recurrenceType, nextDueDate) +
+                            repository.getFutureRecurringTasks(task.title, RecurrenceType.DAILY, nextDueDate) +
+                            repository.getFutureRecurringTasks(task.title, RecurrenceType.WEEKLY, nextDueDate) +
+                            repository.getFutureRecurringTasks(task.title, RecurrenceType.MONTHLY, nextDueDate)
+                        ).distinctBy { it.id }
+
+                        futureTasks.forEach { futureTask ->
+                            AlarmScheduler.cancelAlarm(applicationContext, futureTask.id)
+                            repository.delete(futureTask)
+                        }
+                    }
                 }
 
                 // Keep detail screen in sync

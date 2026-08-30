@@ -202,8 +202,8 @@ class CalendarViewModel(
 
                     if (isMatch) {
                         val dayList = result.getOrPut(currentDayMillis) { mutableListOf() }
-                        // Kiểm tra không thêm trùng lặp
-                        val alreadyExists = dayList.any { it.title == task.title && it.recurrenceType == task.recurrenceType }
+                        // Kiểm tra không thêm trùng lặp theo title
+                        val alreadyExists = dayList.any { it.title.trim().equals(task.title.trim(), ignoreCase = true) }
                         if (!alreadyExists) {
                             val projectedTime = if (task.dueTime > 0L) {
                                 val timeCal = Calendar.getInstance().apply { timeInMillis = task.dueTime }

@@ -55,6 +55,11 @@ interface TaskDao {
     @Query("SELECT * FROM tasks WHERE dueDate < :currentTime AND status != 'COMPLETED' AND status != 'OVERDUE' ORDER BY dueDate ASC")
     suspend fun getOverdueTasksSync(currentTime: Long): List<Task>
 
+    // 9b. Tự động cập nhật trạng thái sang OVERDUE
+    // Điều kiện: dueDate < now VÀ status không phải COMPLETED (bảo vệ task đã hoàn thành)
+    @Query("UPDATE tasks SET status = 'OVERDUE' WHERE dueDate < :now AND status != 'COMPLETED'")
+    suspend fun markOverdueTasks(now: Long)
+
     // 10. Tìm kiếm công việc theo Tiêu đề (Search by Title)
     @Query("SELECT * FROM tasks WHERE title LIKE '%' || :query || '%' ORDER BY dueDate ASC")
     fun searchTasksByTitle(query: String): Flow<List<Task>>
@@ -87,6 +92,14 @@ interface TaskDao {
     // 13. Xóa các công việc tương lai cùng title và recurrenceType từ một mốc thời gian trở đi
     @Query("DELETE FROM tasks WHERE title = :title AND recurrenceType = :recurrenceType AND dueDate >= :startDate AND isComplete = 0")
     suspend fun deleteFutureRecurringTasks(title: String, recurrenceType: RecurrenceType, startDate: Long)
+
+    // 13b. Lấy danh sách các công việc tương lai chưa hoàn thành cùng title và recurrenceType
+    @Query("SELECT * FROM tasks WHERE title = :title AND recurrenceType = :recurrenceType AND dueDate >= :startDate AND isComplete = 0")
+    suspend fun getFutureRecurringTasksSync(title: String, recurrenceType: RecurrenceType, startDate: Long): List<Task>
+
+    // 13c. Lấy danh sách các công việc chưa hoàn thành theo tiêu đề (trừ task hiện tại)
+    @Query("SELECT * FROM tasks WHERE title = :title AND isComplete = 0 AND id != :excludeTaskId")
+    suspend fun getUncompletedTasksByTitleSync(title: String, excludeTaskId: Long): List<Task>
 
     // 14. Cập nhật các công việc tương lai cùng title và recurrenceType từ một mốc thời gian trở đi
     @Query("""
