@@ -3,6 +3,7 @@ package com.team.taskmanagementapp.ui
 import com.team.taskmanagementapp.data.local.dao.TaskDao
 import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.enums.Priority
+import com.team.taskmanagementapp.data.model.enums.RecurrenceType
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import kotlinx.coroutines.flow.Flow
@@ -36,6 +37,22 @@ private class FakeTaskDao : TaskDao {
         currentTime: Long
     ): Flow<List<Task>> = emptyFlow()
     override suspend fun deleteAllTasks() = Unit
+    override suspend fun deleteFutureRecurringTasks(
+        title: String,
+        recurrenceType: RecurrenceType,
+        startDate: Long
+    ) = Unit
+    override suspend fun updateFutureRecurringTasks(
+        originalTitle: String,
+        originalRecurrence: RecurrenceType,
+        startDate: Long,
+        newTitle: String,
+        newDescription: String,
+        newPriority: Priority,
+        newRecurrenceType: RecurrenceType,
+        newReminderMinutes: Int,
+        updatedAt: Long
+    ) = Unit
 }
 
 /**
