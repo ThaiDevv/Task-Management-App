@@ -89,6 +89,14 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
                 val savedTask = if (isEdit) {
                     val existingTask = repository.getTaskById(id.toLong())
                     if (existingTask != null) {
+                        // Tính combined timestamp để kiểm tra tương lai/quá khứ chính xác
+                        val combined = com.team.taskmanagementapp.util.DateTimeUtils
+                            .getCombinedDueTimestamp(dueDate, dueTime)
+                        val resolvedStatus = resolveStatusOnUpdate(
+                            currentStatus = existingTask.status,
+                            newStatus = status,
+                            combinedDueTimestamp = combined
+                        )
                         val updatedTask = existingTask.copy(
                             title = title,
                             description = description,
@@ -98,7 +106,7 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
                             isRecurring = recurrenceType != RecurrenceType.NONE,
                             recurrenceType = recurrenceType,
                             reminderMinutes = reminderMinutes,
-                            status = status,
+                            status = resolvedStatus,
                             updatedAt = System.currentTimeMillis()
                         )
                         repository.update(updatedTask)
@@ -132,5 +140,32 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
                 _uiState.value = UiState.Error(e.localizedMessage ?: "Failed to save task")
             }
         }
+    }
+    /**
+     * Xác định status đúng khi user cập nhật task:
+     * - COMPLETED → luôn giữ nguyên, không bao giờ thay đổi.
+     * - OVERDUE + dueDate tương lai → revert về TODO.
+     * - Các trường hợp còn lại → giữ nguyên status mà UI truyền vào.
+     *
+     * @param currentStatus  Status hiện tại trong DB.
+     * @param newStatus      Status mà UI muốn lưu.
+     * @param combinedDueTimestamp  getCombinedDueTimestamp(dueDate, dueTime).
+     */
+    internal fun resolveStatusOnUpdate(
+        currentStatus: TaskStatus,
+        newStatus: TaskStatus,
+        combinedDueTimestamp: Long
+    ): TaskStatus {
+        // Rule 1: Không bao giờ thay đổi task COMPLETED
+        if (currentStatus == TaskStatus.COMPLETED) return TaskStatus.COMPLETED
+
+        // Rule 2: OVERDUE + deadline chuyển về tương lai → revert TODO
+        val now = System.currentTimeMillis()
+        if (currentStatus == TaskStatus.OVERDUE && combinedDueTimestamp > now) {
+            return TaskStatus.TODO
+        }
+
+        // Rule 3: Mọi trường hợp còn lại giữ nguyên status từ UI
+        return newStatus
     }
 }

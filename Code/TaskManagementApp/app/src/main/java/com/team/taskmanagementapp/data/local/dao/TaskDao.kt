@@ -55,6 +55,11 @@ interface TaskDao {
     @Query("SELECT * FROM tasks WHERE dueDate < :currentTime AND status != 'COMPLETED' AND status != 'OVERDUE' ORDER BY dueDate ASC")
     suspend fun getOverdueTasksSync(currentTime: Long): List<Task>
 
+    // 9b. Tự động cập nhật trạng thái sang OVERDUE
+    // Điều kiện: dueDate < now VÀ status không phải COMPLETED (bảo vệ task đã hoàn thành)
+    @Query("UPDATE tasks SET status = 'OVERDUE' WHERE dueDate < :now AND status != 'COMPLETED'")
+    suspend fun markOverdueTasks(now: Long)
+
     // 10. Tìm kiếm công việc theo Tiêu đề (Search by Title)
     @Query("SELECT * FROM tasks WHERE title LIKE '%' || :query || '%' ORDER BY dueDate ASC")
     fun searchTasksByTitle(query: String): Flow<List<Task>>
