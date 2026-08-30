@@ -230,6 +230,10 @@ class PinLockActivity : AppCompatActivity() {
         } else {
             if (pin == confirmPin) {
                 pinRepo.setPin(pin)
+                // Enabling PIN happens inside this activity, so keep the current app session unlocked.
+                // Otherwise BaseActivity sees a newly-enabled PIN before the Fragment callback runs
+                // and immediately opens a second, unnecessary ENTER screen.
+                markPinVerified()
                 setResult(RESULT_OK)
                 finish()
             } else {
