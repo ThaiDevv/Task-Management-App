@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.team.taskmanagementapp.R
@@ -18,7 +17,7 @@ import com.team.taskmanagementapp.ui.base.BaseActivity
 import com.team.taskmanagementapp.util.Constants
 
 /**
- * PinLockActivity — Màn hình nhập và quản lý PIN (TASK-25 & TMA-47).
+ * PinLockActivity — Màn hình nhập và quản lý PIN (TASK-25, TMA-47, TMA-48 & TMA-49).
  *
  * Hỗ trợ 4 chế độ hoạt động:
  * - ENTER: Mở khóa ứng dụng (xác thực PIN khi khởi động hoặc sau auto-lock)
@@ -27,8 +26,8 @@ import com.team.taskmanagementapp.util.Constants
  * - VERIFY_DISABLE: Xác thực PIN trước khi tắt tính năng khóa PIN trong Settings
  *
  * Tính năng UI:
- * - Hiển thị 4 chấm indicator tương ứng với số ký tự đã nhập.
- * - Keypad 3×4 (1–9 + letters + fingerprint/0/backspace) chuẩn thiết kế TaskFlow.
+ * - Hiển thị 4 chấm vector indicator sắc nét tương ứng với số ký tự đã nhập.
+ * - Keypad 3×4 (nút tròn phẳng 76dp, 1–9 + letters + fingerprint/0/backspace) chuẩn thiết kế TaskFlow.
  * - Animation scale khi nhấn phím & Shake animation khi nhập sai PIN.
  * - Brute-force lockout: khoá 30s sau 5 lần sai liên tiếp + CountDownTimer.
  * - Hỗ trợ Forgot PIN dialog trong chế độ ENTER.
@@ -43,7 +42,7 @@ class PinLockActivity : AppCompatActivity() {
     private val maxPinLength = 4
 
     private var confirmPin: String? = null
-    private var oldPin: String? = null
+    private val changePinFlow = ChangePinFlow()
 
     private var lockoutTimer: CountDownTimer? = null
 
@@ -213,14 +212,7 @@ class PinLockActivity : AppCompatActivity() {
         if (pinRepo.verifyPin(pin)) {
             onPinSuccess()
         } else {
-            val remainingAttempts = Constants.MAX_PIN_ATTEMPTS - pinRepo.recordFailedAttempt()
-            if (pinRepo.isLockedOut()) {
-                startLockoutCountdown()
-            } else {
-                val errMsg = getString(R.string.pin_error_wrong_vi, remainingAttempts)
-                showError(errMsg)
-            }
-            shakeAndClear()
+            handleFailedPinAttempt()
         }
     }
 
@@ -233,7 +225,7 @@ class PinLockActivity : AppCompatActivity() {
             if (pin == confirmPin) {
                 pinRepo.setPin(pin)
                 BaseActivity.isAppUnlockedInSession = true
-                Toast.makeText(this, R.string.pin_change_success, Toast.LENGTH_SHORT).show()
+                markPinVerified()
                 setResult(RESULT_OK)
                 finish()
             } else {
@@ -246,53 +238,57 @@ class PinLockActivity : AppCompatActivity() {
     }
 
     private fun handleChangeMode(pin: String) {
-        when {
-            oldPin == null -> {
-                // Step 1: Verify current PIN
-                if (pinRepo.verifyPin(pin)) {
-                    oldPin = pin
-                    binding.tvSubtitle.text = getString(R.string.pin_change_step2)
-                    clearBuffer()
-                } else {
-                    showError(getString(R.string.pin_error_wrong))
-                    shakeAndClear()
-                }
+        when (val submission = changePinFlow.submit(pin, pinRepo::verifyPin)) {
+            is ChangePinFlow.Submission.CurrentPinRejected -> {
+                handleFailedPinAttempt()
             }
-            confirmPin == null -> {
-                // Step 2: Enter new PIN
-                confirmPin = pin
+
+            is ChangePinFlow.Submission.AwaitingNewPin -> {
+                pinRepo.resetFailedAttempts()
+                binding.tvSubtitle.text = getString(R.string.pin_change_step2)
+                clearBuffer()
+            }
+
+            is ChangePinFlow.Submission.AwaitingConfirmation -> {
                 binding.tvSubtitle.text = getString(R.string.pin_change_step3)
                 clearBuffer()
             }
-            else -> {
-                // Step 3: Confirm new PIN
-                if (pin == confirmPin) {
-                    pinRepo.setPin(pin)
-                    BaseActivity.isAppUnlockedInSession = true
-                    Toast.makeText(this, R.string.pin_change_success, Toast.LENGTH_SHORT).show()
-                    setResult(RESULT_OK)
-                    finish()
-                } else {
-                    showError(getString(R.string.pin_error_mismatch))
-                    confirmPin = null
-                    binding.tvSubtitle.text = getString(R.string.pin_change_step2)
-                    shakeAndClear()
-                }
+
+            is ChangePinFlow.Submission.NewPinMismatch -> {
+                showError(getString(R.string.pin_error_mismatch))
+                binding.tvSubtitle.text = getString(R.string.pin_change_step2)
+                shakeAndClear()
+            }
+
+            is ChangePinFlow.Submission.Completed -> {
+                pinRepo.setPin(submission.newPin)
+                BaseActivity.isAppUnlockedInSession = true
+                markPinVerified()
+                setResult(RESULT_OK)
+                finish()
             }
         }
     }
 
     private fun handleVerifyDisableMode(pin: String) {
         if (pinRepo.verifyPin(pin)) {
-            pinRepo.clearPin()
-            BaseActivity.isAppUnlockedInSession = false
-            Toast.makeText(this, R.string.pin_disabled, Toast.LENGTH_SHORT).show()
+            // The caller owns the destructive action. This mode only verifies the current PIN.
+            pinRepo.resetFailedAttempts()
             setResult(RESULT_OK)
             finish()
         } else {
-            showError(getString(R.string.pin_error_wrong))
-            shakeAndClear()
+            handleFailedPinAttempt()
         }
+    }
+
+    private fun handleFailedPinAttempt() {
+        val remainingAttempts = Constants.MAX_PIN_ATTEMPTS - pinRepo.recordFailedAttempt()
+        if (pinRepo.isLockedOut()) {
+            startLockoutCountdown()
+        } else {
+            showError(getString(R.string.pin_error_wrong_vi, remainingAttempts))
+        }
+        shakeAndClear()
     }
 
     private fun onPinSuccess() {
