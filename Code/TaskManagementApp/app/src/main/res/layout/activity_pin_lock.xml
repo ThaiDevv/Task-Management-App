@@ -42,12 +42,13 @@
             android:elevation="4dp"
             android:layout_marginBottom="24dp">
 
-        <ImageView
+            <ImageView
                 android:id="@+id/ivAppIcon"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
                 android:src="@drawable/ic_taskflow_logo"
                 android:scaleType="fitCenter"
+                android:padding="10dp"
                 android:contentDescription="@string/app_name" />
         </FrameLayout>
 

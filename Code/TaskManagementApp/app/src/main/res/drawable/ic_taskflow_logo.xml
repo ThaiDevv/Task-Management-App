@@ -1,120 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    ic_taskflow_logo.xml — TaskFlow logo vector dùng trong giao diện app.
-    (Khác với ic_launcher_foreground: viewport nhỏ hơn, dùng được ở nhiều kích thước)
-
-    Dùng trong:
-    - activity_pin_lock.xml → ivAppIcon
-    - Toolbar (nếu cần)
-    - Màn hình Splash (nếu có)
-
-    Viewport: 100×100 — logo nằm trong vùng safe area
-    Gradient: #55BCFD → #2563EB → #1A40B8
+    ic_taskflow_logo.xml — TaskFlow Official Brand Logo.
+    Design: Circular ring with an energetic checkmark extending past the top-right edge.
+    Brand Gradient: #105CDB (Primary Blue) to #3A97FE (Action Blue).
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="72dp"
     android:height="72dp"
-    android:viewportWidth="100"
-    android:viewportHeight="100">
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
 
-    <!-- ============================================================ -->
-    <!-- 1. Outer rounded-square ring frame                           -->
-    <!--    Dùng evenOdd fill với 2 rounded rect lồng nhau           -->
-    <!-- ============================================================ -->
+    <!-- 1. Circular Ring -->
     <path
-        android:pathData="
-        M 16,32
-        C 16,23.16 23.16,16 32,16
-        L 68,16
-        C 76.84,16 84,23.16 84,32
-        L 84,68
-        C 84,76.84 76.84,84 68,84
-        L 32,84
-        C 23.16,84 16,76.84 16,68
-        Z
-        M 32,21.5
-        C 26.2,21.5 21.5,26.2 21.5,32
-        L 21.5,68
-        C 21.5,73.8 26.2,78.5 32,78.5
-        L 68,78.5
-        C 73.8,78.5 78.5,73.8 78.5,68
-        L 78.5,32
-        C 78.5,26.2 73.8,21.5 68,21.5
-        Z"
-        android:fillType="evenOdd">
-        <aapt:attr name="android:fillColor">
+        android:pathData="M512,512m-294,0a294,294 0,1 1,588 0a294,294 0,1 1,-588 0"
+        android:strokeWidth="90">
+        <aapt:attr name="android:strokeColor">
             <gradient
                 android:type="linear"
-                android:startX="16"
-                android:startY="16"
-                android:endX="84"
-                android:endY="84">
-                <item android:offset="0.0"  android:color="#55BCFD" />
-                <item android:offset="0.5"  android:color="#2563EB" />
-                <item android:offset="1.0"  android:color="#1A40B8" />
+                android:startX="218"
+                android:startY="806"
+                android:endX="806"
+                android:endY="218">
+                <item android:offset="0.0" android:color="#105CDB" />
+                <item android:offset="0.6" android:color="#1A81F4" />
+                <item android:offset="1.0" android:color="#3A97FE" />
             </gradient>
         </aapt:attr>
     </path>
 
-    <!-- ============================================================ -->
-    <!-- 2. Stylized checkmark — Geometric zigzag path               -->
-    <!--    Phản ánh logo gốc: góc cứng, không cong                  -->
-    <!-- ============================================================ -->
+    <!-- 2. Stylized Checkmark -->
     <path
-        android:pathData="
-        M 28,66
-        L 36,52
-        L 45,61
-        L 56,36
-        L 64,47
-        L 53,68
-        L 44,59
-        L 38,71
-        Z"
-        android:fillType="nonZero">
-        <aapt:attr name="android:fillColor">
+        android:pathData="M358,468L500,640L778,272"
+        android:strokeWidth="100"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round">
+        <aapt:attr name="android:strokeColor">
             <gradient
                 android:type="linear"
-                android:startX="28"
-                android:startY="36"
-                android:endX="70"
-                android:endY="72">
-                <item android:offset="0.0"  android:color="#55BCFD" />
-                <item android:offset="0.55" android:color="#2563EB" />
-                <item android:offset="1.0"  android:color="#1A40B8" />
+                android:startX="358"
+                android:startY="640"
+                android:endX="778"
+                android:endY="272">
+                <item android:offset="0.0" android:color="#105CDB" />
+                <item android:offset="0.5" android:color="#1A81F4" />
+                <item android:offset="1.0" android:color="#38BDF8" />
             </gradient>
         </aapt:attr>
     </path>
-
-    <!-- ============================================================ -->
-    <!-- 3. Arrow — Pointing upper-right, breaking out of the frame  -->
-    <!--    Hình mũi tên: thân (stroke dày) + đầu mũi               -->
-    <!-- ============================================================ -->
-    <!-- Arrow body + head (filled polygon) -->
-    <path
-        android:pathData="
-        M 54,47
-        L 71,30
-        L 71,40
-        L 80,40
-        L 80,21
-        L 61,21
-        L 61,30
-        L 71,30
-        L 54,47
-        Z">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:type="linear"
-                android:startX="54"
-                android:startY="47"
-                android:endX="80"
-                android:endY="21">
-                <item android:offset="0.0"  android:color="#2563EB" />
-                <item android:offset="1.0"  android:color="#55BCFD" />
-            </gradient>
-        </aapt:attr>
-    </path>
-
 </vector>

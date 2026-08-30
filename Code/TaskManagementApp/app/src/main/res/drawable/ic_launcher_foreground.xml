@@ -1,138 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    ic_launcher_foreground.xml — TaskFlow logo vector (TASK-25).
-
-    Logo gồm 3 thành phần chính (viewport 108×108):
-    1. Outer rounded-square frame (stroke, gradient blue)
-    2. Stylized checkmark / zigzag (filled gradient blue)
-    3. Upward-right arrow (filled gradient blue)
-
-    Gradient: #55BCFD (light sky blue) → #2563EB (medium blue) → #1A40B8 (dark blue)
-    Background (ic_launcher_background.xml): #FFFFFF (white)
-
-    minSdk 26 → <gradient> được hỗ trợ đầy đủ qua <aapt:attr>.
+    ic_launcher_foreground.xml — TaskFlow Adaptive Icon Foreground.
+    Design: Circular ring with an energetic checkmark extending past the top-right edge.
+    Safe zone compliant for Android adaptive icons.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
 
-    <!-- ============================================================ -->
-    <!-- 1. Outer rounded square frame (stroke only)                   -->
-    <!--    Bo góc ~14px, stroke 5px, gradient blue                   -->
-    <!-- ============================================================ -->
+    <!-- 1. Circular Ring -->
     <path
-        android:pathData="
-        M 22,38
-        C 22,29.16 29.16,22 38,22
-        L 70,22
-        C 78.84,22 86,29.16 86,38
-        L 86,70
-        C 86,78.84 78.84,86 70,86
-        L 38,86
-        C 29.16,86 22,78.84 22,70
-        Z"
-        android:strokeWidth="5.5"
-        android:strokeColor="#00000000"
-        android:fillColor="#00000000">
-        <!-- gradient stroke via fillColor trick — dùng clip approach -->
-    </path>
-
-    <!-- Outer frame stroke sử dụng ring shape bằng path difference -->
-    <path
-        android:pathData="
-        M38,19.5
-        C 27.73,19.5 19.5,27.73 19.5,38
-        L 19.5,70
-        C 19.5,80.27 27.73,88.5 38,88.5
-        L 70,88.5
-        C 80.27,88.5 88.5,80.27 88.5,70
-        L 88.5,38
-        C 88.5,27.73 80.27,19.5 70,19.5
-        Z
-        M 38,25.5
-        C 31.04,25.5 25.5,31.04 25.5,38
-        L 25.5,70
-        C 25.5,76.96 31.04,82.5 38,82.5
-        L 70,82.5
-        C 76.96,82.5 82.5,76.96 82.5,70
-        L 82.5,38
-        C 82.5,31.04 76.96,25.5 70,25.5
-        Z"
-        android:fillType="evenOdd">
-        <aapt:attr name="android:fillColor">
+        android:pathData="M512,512m-294,0a294,294 0,1 1,588 0a294,294 0,1 1,-588 0"
+        android:strokeWidth="90">
+        <aapt:attr name="android:strokeColor">
             <gradient
                 android:type="linear"
-                android:startX="19.5"
-                android:startY="19.5"
-                android:endX="88.5"
-                android:endY="88.5">
-                <item android:offset="0.0" android:color="#55BCFD" />
-                <item android:offset="0.5" android:color="#2563EB" />
-                <item android:offset="1.0" android:color="#1A40B8" />
+                android:startX="218"
+                android:startY="806"
+                android:endX="806"
+                android:endY="218">
+                <item android:offset="0.0" android:color="#105CDB" />
+                <item android:offset="0.6" android:color="#1A81F4" />
+                <item android:offset="1.0" android:color="#3A97FE" />
             </gradient>
         </aapt:attr>
     </path>
 
-    <!-- ============================================================ -->
-    <!-- 2. Stylized checkmark / zigzag shape                         -->
-    <!--    Bắt đầu từ góc dưới trái → lên phải theo zigzag           -->
-    <!-- ============================================================ -->
+    <!-- 2. Stylized Checkmark -->
     <path
-        android:pathData="
-        M 33,68
-        L 40,56
-        L 48,64
-        L 58,40
-        L 65,50
-        L 56,70
-        L 48,62
-        L 42,72
-        Z">
-        <aapt:attr name="android:fillColor">
+        android:pathData="M358,468L500,640L778,272"
+        android:strokeWidth="100"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round">
+        <aapt:attr name="android:strokeColor">
             <gradient
                 android:type="linear"
-                android:startX="33"
-                android:startY="40"
-                android:endX="72"
-                android:endY="72">
-                <item android:offset="0.0" android:color="#55BCFD" />
-                <item android:offset="0.55" android:color="#2563EB" />
-                <item android:offset="1.0" android:color="#1A40B8" />
+                android:startX="358"
+                android:startY="640"
+                android:endX="778"
+                android:endY="272">
+                <item android:offset="0.0" android:color="#105CDB" />
+                <item android:offset="0.5" android:color="#1A81F4" />
+                <item android:offset="1.0" android:color="#38BDF8" />
             </gradient>
         </aapt:attr>
     </path>
-
-    <!-- ============================================================ -->
-    <!-- 3. Upward-right arrow (pointing to top-right corner)         -->
-    <!--    Mũi tên nhô ra phía trên-phải của hình                    -->
-    <!-- ============================================================ -->
-    <!-- Arrow shaft (diagonal line thân mũi tên) -->
-    <path
-        android:pathData="
-        M 58,50
-        L 74,34
-        L 74,46
-        L 82,46
-        L 82,26
-        L 62,26
-        L 62,34
-        L 74,34
-        L 58,50
-        Z">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:type="linear"
-                android:startX="58"
-                android:startY="50"
-                android:endX="82"
-                android:endY="26">
-                <item android:offset="0.0" android:color="#2563EB" />
-                <item android:offset="1.0" android:color="#55BCFD" />
-            </gradient>
-        </aapt:attr>
-    </path>
-
 </vector>
