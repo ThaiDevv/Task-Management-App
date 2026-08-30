@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    ic_launcher_foreground.xml — TaskFlow Adaptive Icon Foreground.
+    ic_taskflow_logo.xml — TaskFlow Official Brand Logo.
     Design: Circular ring with an energetic checkmark extending past the top-right edge.
-    Safe zone compliant for Android adaptive icons.
+    Brand Gradient: #105CDB (Primary Blue) to #3A97FE (Action Blue).
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
-    android:width="108dp"
-    android:height="108dp"
+    android:width="72dp"
+    android:height="72dp"
     android:viewportWidth="1024"
     android:viewportHeight="1024">
 
