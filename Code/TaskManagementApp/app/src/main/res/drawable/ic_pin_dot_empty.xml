@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ic_pin_dot_empty.xml — Vector hình tròn rỗng viền màu primary_fixed_dim (#B2C5FF) cho chấm PIN chưa điền.
+    Vẽ vector path chính xác 100%, khử răng cưa và bo tròn mượt mà trên mọi độ phân giải màn hình.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="16dp"
+    android:height="16dp"
+    android:viewportWidth="16"
+    android:viewportHeight="16">
+    <path
+        android:pathData="M8,8m-6,0a6,6 0 1,1 12,0a6,6 0 1,1 -12,0"
+        android:strokeColor="@color/primary_fixed_dim"
+        android:strokeWidth="2"
+        android:fillColor="@android:color/transparent" />
+</vector>

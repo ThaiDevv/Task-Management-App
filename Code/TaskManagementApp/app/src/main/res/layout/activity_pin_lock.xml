@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     activity_pin_lock.xml — Layout màn hình nhập PIN (TASK-25).
+    Khớp 100% với bản thiết kế DOCX/UI-UX/stitch_taskflow_smart_manager/pin_unlock_updated.
 
-    Cấu trúc (từ trên xuống dưới, khớp với design):
-    1. Branding area: icon app + "Welcome Back" + subtitle
-    2. PIN indicator area: 4 chấm dot hiển thị số ký tự đã nhập
-    3. Keypad: 4 hàng × 3 cột (1-9 + fingerprint/0/backspace)
-    4. "Forgot PIN?" link ở dưới cùng
+    Cấu trúc:
+    1. Top Branding: Logo card (64dp × 64dp) + "Welcome Back" (32sp) + Subtitle (16sp)
+    2. PIN Visual Area: 4 chấm dot indicator (16dp × 16dp) với khoảng cách 24dp
+    3. Keypad 3×4: Nút tròn hoàn hảo 76dp × 76dp, phím 2–9 có sub-letters, Fingerprint & Backspace
+    4. Link "Forgot PIN?" ở dưới cùng
 -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -19,7 +20,7 @@
     tools:context=".ui.pin.PinLockActivity">
 
     <!-- ================================================================ -->
-    <!-- 1. BRANDING AREA: App icon + Tiêu đề + Subtitle                  -->
+    <!-- 1. TOP BRANDING AREA: App icon + Tiêu đề + Subtitle               -->
     <!-- ================================================================ -->
     <LinearLayout
         android:id="@+id/brandingContainer"
@@ -27,32 +28,32 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_horizontal"
-        android:paddingTop="64dp"
-        android:paddingBottom="8dp"
+        android:paddingTop="48dp"
+        android:paddingBottom="4dp"
         android:paddingHorizontal="24dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Icon app: hình vuông bo góc 18dp, nền trắng, shadow elevation -->
+        <!-- App Logo Card: 64dp × 64dp, bo góc 14dp, nền trắng, shadow nhẹ -->
         <FrameLayout
-            android:layout_width="72dp"
-            android:layout_height="72dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:background="@drawable/bg_app_icon_container"
-            android:elevation="4dp"
-            android:layout_marginBottom="24dp">
+            android:elevation="2dp"
+            android:layout_marginBottom="20dp">
 
             <ImageView
                 android:id="@+id/ivAppIcon"
-                android:layout_width="72dp"
-                android:layout_height="72dp"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
                 android:src="@drawable/ic_taskflow_logo"
                 android:scaleType="fitCenter"
-                android:padding="10dp"
+                android:padding="8dp"
                 android:contentDescription="@string/app_name" />
         </FrameLayout>
 
-        <!-- Title — font Poppins Bold 32sp -->
+        <!-- Title — font Poppins Bold 32sp, màu on_surface (#1B1B1B) -->
         <TextView
             android:id="@+id/tvWelcomeBack"
             android:layout_width="wrap_content"
@@ -61,9 +62,10 @@
             android:textColor="@color/on_surface"
             android:textSize="32sp"
             android:fontFamily="@font/poppins_bold"
+            android:includeFontPadding="false"
             android:layout_marginBottom="8dp" />
 
-        <!-- Subtitle — font Poppins Regular 16sp, màu on_surface_variant -->
+        <!-- Subtitle — font Poppins Regular 16sp, màu on_surface_variant (#424654) -->
         <TextView
             android:id="@+id/tvSubtitle"
             android:layout_width="wrap_content"
@@ -72,6 +74,7 @@
             android:textColor="@color/on_surface_variant"
             android:textSize="16sp"
             android:fontFamily="@font/poppins_regular"
+            android:includeFontPadding="false"
             android:gravity="center" />
     </LinearLayout>
 
@@ -84,42 +87,52 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="32dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/brandingContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <!-- Dot 1 -->
-        <View
+        <ImageView
             android:id="@+id/pinDot1"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginHorizontal="12dp"
-            android:background="@drawable/bg_pin_dot_empty" />
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginHorizontal="10dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_pin_dot_empty"
+            android:contentDescription="@null" />
 
         <!-- Dot 2 -->
-        <View
+        <ImageView
             android:id="@+id/pinDot2"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginHorizontal="12dp"
-            android:background="@drawable/bg_pin_dot_empty" />
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginHorizontal="10dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_pin_dot_empty"
+            android:contentDescription="@null" />
 
         <!-- Dot 3 -->
-        <View
+        <ImageView
             android:id="@+id/pinDot3"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginHorizontal="12dp"
-            android:background="@drawable/bg_pin_dot_empty" />
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginHorizontal="10dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_pin_dot_empty"
+            android:contentDescription="@null" />
 
         <!-- Dot 4 -->
-        <View
+        <ImageView
             android:id="@+id/pinDot4"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginHorizontal="12dp"
-            android:background="@drawable/bg_pin_dot_empty" />
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginHorizontal="10dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_pin_dot_empty"
+            android:contentDescription="@null" />
     </LinearLayout>
 
     <!-- Error message (ẩn mặc định, hiện khi PIN sai hoặc lockout) -->
@@ -127,7 +140,7 @@
         android:id="@+id/tvErrorMessage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:layout_marginHorizontal="24dp"
         android:gravity="center"
         android:textColor="@color/error"
@@ -145,133 +158,137 @@
     <!-- ================================================================ -->
     <LinearLayout
         android:id="@+id/keypadContainer"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="24dp"
-        android:paddingBottom="16dp"
+        android:gravity="center_horizontal"
+        android:paddingBottom="12dp"
         app:layout_constraintBottom_toTopOf="@id/btnForgotPin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <!-- Row 1: 1, 2 (ABC), 3 (DEF) -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginBottom="24dp">
+            android:layout_marginBottom="20dp">
 
-            <Button
-                android:id="@+id/btn1"
-                style="@style/Widget.TaskFlow.PinKeypad.Button"
-                android:text="@string/pin_key_1" />
+            <include
+                android:id="@+id/keyBtn1"
+                layout="@layout/item_pin_key_with_letters"
+                android:layout_width="76dp"
+                android:layout_height="76dp" />
 
             <include
                 android:id="@+id/keyBtn2"
                 layout="@layout/item_pin_key_with_letters"
-                android:layout_width="72dp"
-                android:layout_height="72dp"
-                android:layout_marginHorizontal="24dp" />
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:layout_marginHorizontal="20dp" />
 
             <include
                 android:id="@+id/keyBtn3"
                 layout="@layout/item_pin_key_with_letters"
-                android:layout_width="72dp"
-                android:layout_height="72dp" />
+                android:layout_width="76dp"
+                android:layout_height="76dp" />
         </LinearLayout>
 
         <!-- Row 2: 4 (GHI), 5 (JKL), 6 (MNO) -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginBottom="24dp">
+            android:layout_marginBottom="20dp">
 
             <include
                 android:id="@+id/keyBtn4"
                 layout="@layout/item_pin_key_with_letters"
-                android:layout_width="72dp"
-                android:layout_height="72dp" />
+                android:layout_width="76dp"
+                android:layout_height="76dp" />
 
             <include
                 android:id="@+id/keyBtn5"
                 layout="@layout/item_pin_key_with_letters"
-                android:layout_width="72dp"
-                android:layout_height="72dp"
-                android:layout_marginHorizontal="24dp" />
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:layout_marginHorizontal="20dp" />
 
             <include
                 android:id="@+id/keyBtn6"
                 layout="@layout/item_pin_key_with_letters"
-                android:layout_width="72dp"
-                android:layout_height="72dp" />
+                android:layout_width="76dp"
+                android:layout_height="76dp" />
         </LinearLayout>
 
         <!-- Row 3: 7 (PQRS), 8 (TUV), 9 (WXYZ) -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginBottom="24dp">
+            android:layout_marginBottom="20dp">
 
             <include
                 android:id="@+id/keyBtn7"
                 layout="@layout/item_pin_key_with_letters"
-                android:layout_width="72dp"
-                android:layout_height="72dp" />
+                android:layout_width="76dp"
+                android:layout_height="76dp" />
 
             <include
                 android:id="@+id/keyBtn8"
                 layout="@layout/item_pin_key_with_letters"
-                android:layout_width="72dp"
-                android:layout_height="72dp"
-                android:layout_marginHorizontal="24dp" />
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:layout_marginHorizontal="20dp" />
 
             <include
                 android:id="@+id/keyBtn9"
                 layout="@layout/item_pin_key_with_letters"
-                android:layout_width="72dp"
-                android:layout_height="72dp" />
+                android:layout_width="76dp"
+                android:layout_height="76dp" />
         </LinearLayout>
 
         <!-- Row 4: Fingerprint | 0 | Backspace -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center">
 
-            <!-- Fingerprint button (icon only, no background) -->
+            <!-- Fingerprint button (icon only, transparent background) -->
             <ImageButton
                 android:id="@+id/btnFingerprint"
-                android:layout_width="72dp"
-                android:layout_height="72dp"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
                 android:src="@drawable/ic_fingerprint"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/pin_biometric"
-                android:padding="20dp" />
+                android:padding="20dp"
+                app:tint="@color/on_surface_variant" />
 
-            <!-- Key 0 (with background, same as 1–9) -->
-            <Button
-                android:id="@+id/btn0"
-                style="@style/Widget.TaskFlow.PinKeypad.Button"
-                android:text="@string/pin_key_0"
-                android:layout_marginHorizontal="24dp" />
+            <!-- Key 0 (100% circular card, same as 1–9) -->
+            <include
+                android:id="@+id/keyBtn0"
+                layout="@layout/item_pin_key_with_letters"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:layout_marginHorizontal="20dp" />
 
-            <!-- Backspace button (icon only, no background) -->
+            <!-- Backspace button (icon only, transparent background) -->
             <ImageButton
                 android:id="@+id/btnBackspace"
-                android:layout_width="72dp"
-                android:layout_height="72dp"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
                 android:src="@drawable/ic_backspace"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/pin_backspace"
-                android:padding="20dp" />
+                android:padding="20dp"
+                app:tint="@color/on_surface_variant" />
         </LinearLayout>
     </LinearLayout>
 
@@ -283,7 +300,7 @@
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="24dp"
         android:text="@string/pin_forgot"
         android:textColor="@color/primary"
         android:textSize="16sp"

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    bg_app_icon_container.xml — Nền bo góc cho icon app TaskFlow ở đầu màn hình PIN.
-    Bo góc 18dp, màu surface_container_lowest (#FFFFFF), shadow dùng elevation.
+    bg_app_icon_container.xml — Nền bo góc 14dp cho icon app TaskFlow ở đầu màn hình PIN (rounded-xl).
 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <solid android:color="@color/surface_container_lowest" />
-    <corners android:radius="18dp" />
+    <corners android:radius="14dp" />
 </shape>
