@@ -29,6 +29,22 @@ class AlarmSchedulerTest {
             AlarmScheduler.calculateTriggerAtMillis(
                 dueDateMillis = calendar(2026, Calendar.AUGUST, 14, 0, 0),
                 dueTimeMillis = calendar(2026, Calendar.JANUARY, 1, 10, 0),
+                reminderMinutes = -1
+            )
+        )
+    }
+
+    @Test
+    fun `on time reminder creates trigger at exact due time`() {
+        val dueDate = calendar(2026, Calendar.AUGUST, 14, 0, 0)
+        val dueTime = calendar(2026, Calendar.JANUARY, 1, 10, 0)
+        val expectedTrigger = calendar(2026, Calendar.AUGUST, 14, 10, 0)
+
+        assertEquals(
+            expectedTrigger,
+            AlarmScheduler.calculateTriggerAtMillis(
+                dueDateMillis = dueDate,
+                dueTimeMillis = dueTime,
                 reminderMinutes = 0
             )
         )

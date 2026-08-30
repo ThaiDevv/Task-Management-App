@@ -15,8 +15,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.databinding.FragmentSettingsBinding
+import com.team.taskmanagementapp.ui.pin.PinLockActivity
 import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.NotificationPermissionManager
+import com.team.taskmanagementapp.util.PinManager
 
 /** Displays app settings and persists user-controlled toggle states. */
 class SettingsFragment : Fragment() {
@@ -28,7 +30,22 @@ class SettingsFragment : Fragment() {
         requireContext().getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE)
     }
 
+    private lateinit var pinManager: PinManager
+
     private var isSynchronizingSwitches = false
+
+    // Activity result launchers for PIN operations
+    private val pinLockLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            // PIN was set/enabled successfully
+            synchronizeToggleStates()
+        } else {
+            // User cancelled - revert switch
+            synchronizeToggleStates()
+        }
+    }
 
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -50,6 +67,7 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        pinManager = PinManager.getInstance(requireContext())
         showAppVersion()
         setupToggleListeners()
         setupActions()
@@ -63,9 +81,16 @@ class SettingsFragment : Fragment() {
     private fun setupToggleListeners() {
         binding.pinLockSwitch.setOnCheckedChangeListener { _, isChecked ->
             if (isSynchronizingSwitches) return@setOnCheckedChangeListener
-            preferences.edit()
-                .putBoolean(Constants.KEY_PIN_ENABLED, isChecked)
-                .apply()
+
+            if (isChecked) {
+                // Enable PIN - launch PinLockActivity in SET mode
+                val intent = PinLockActivity.createIntent(requireContext(), PinLockActivity.PinMode.SET)
+                pinLockLauncher.launch(intent)
+            } else {
+                // Disable PIN - launch in VERIFY mode to confirm current PIN first
+                val intent = PinLockActivity.createIntent(requireContext(), PinLockActivity.PinMode.VERIFY_DISABLE)
+                pinLockLauncher.launch(intent)
+            }
         }
 
         binding.notificationSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -90,11 +115,9 @@ class SettingsFragment : Fragment() {
 
     private fun setupActions() {
         binding.changePinRow.setOnClickListener {
-            Toast.makeText(
-                requireContext(),
-                R.string.settings_pin_setup_pending,
-                Toast.LENGTH_SHORT
-            ).show()
+            // Launch CHANGE mode - requires verifying old PIN first
+            val intent = PinLockActivity.createIntent(requireContext(), PinLockActivity.PinMode.CHANGE)
+            pinLockLauncher.launch(intent)
         }
 
         val openDataManagement = View.OnClickListener {
@@ -114,10 +137,9 @@ class SettingsFragment : Fragment() {
         if (_binding == null) return
 
         isSynchronizingSwitches = true
-        binding.pinLockSwitch.isChecked = preferences.getBoolean(
-            Constants.KEY_PIN_ENABLED,
-            false
-        )
+
+        // Read PIN enabled state from EncryptedSharedPreferences via PinManager
+        binding.pinLockSwitch.isChecked = pinManager.isPinEnabled()
 
         val notificationsEnabled = preferences.getBoolean(
             Constants.KEY_NOTIFICATIONS_ENABLED,
@@ -125,6 +147,7 @@ class SettingsFragment : Fragment() {
         )
         binding.notificationSwitch.isChecked = notificationsEnabled &&
             NotificationPermissionManager.isGranted(requireContext())
+
         isSynchronizingSwitches = false
     }
 

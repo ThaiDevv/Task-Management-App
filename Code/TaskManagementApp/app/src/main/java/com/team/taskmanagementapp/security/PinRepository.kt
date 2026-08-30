@@ -68,4 +68,14 @@ interface PinRepository {
      * Reset số lần nhập sai và xóa lockout.
      */
     fun resetFailedAttempts()
+
+    /**
+     * Lấy thời gian chờ auto-lock (milliseconds). Mặc định 60_000 (1 phút).
+     */
+    fun getAutoLockTimeout(): Long
+
+    /**
+     * Cài đặt thời gian chờ auto-lock.
+     */
+    fun setAutoLockTimeout(timeoutMs: Long)
 }

@@ -10,20 +10,21 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.team.taskmanagementapp.databinding.ActivityMainBinding
 import com.team.taskmanagementapp.ui.activity.AddEditTaskActivity
+import com.team.taskmanagementapp.ui.base.BaseActivity
 
 /**
  * Main Activity serving as the primary entry point and container for the app's navigation tabs.
  * Uses Navigation Component for tab-based navigation with a custom bottom navigation bar.
  * Automatically preserves fragment state when switching tabs.
+ * Inherits PIN lock auto-lock functionality from BaseActivity.
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController

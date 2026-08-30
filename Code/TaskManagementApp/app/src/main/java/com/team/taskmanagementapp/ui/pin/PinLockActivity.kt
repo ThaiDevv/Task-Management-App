@@ -6,42 +6,52 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.view.animation.AnimationUtils
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.databinding.ActivityPinLockBinding
 import com.team.taskmanagementapp.databinding.ItemPinKeyWithLettersBinding
-import com.team.taskmanagementapp.security.PinRepository
 import com.team.taskmanagementapp.pinRepository
+import com.team.taskmanagementapp.security.PinRepository
 import com.team.taskmanagementapp.util.Constants
 
 /**
- * PinLockActivity — Màn hình nhập PIN để mở khóa ứng dụng (TASK-25).
+ * PinLockActivity — Màn hình nhập và quản lý PIN (TASK-25 & TMA-47).
  *
- * Tính năng:
+ * Hỗ trợ 4 chế độ hoạt động:
+ * - ENTER: Mở khóa ứng dụng (xác thực PIN khi khởi động hoặc sau auto-lock)
+ * - SET: Thiết lập mã PIN mới (2 bước: nhập PIN mới -> xác nhận lại PIN)
+ * - CHANGE: Đổi mã PIN (3 bước: xác thực PIN cũ -> nhập PIN mới -> xác nhận lại PIN)
+ * - VERIFY_DISABLE: Xác thực PIN trước khi tắt tính năng khóa PIN trong Settings
+ *
+ * Tính năng UI:
  * - Hiển thị 4 chấm indicator tương ứng với số ký tự đã nhập.
- * - Keypad 3×4 (1–9 + fingerprint/0/backspace) khớp hoàn toàn với design.
- * - Animation scale-down khi nhấn phím.
- * - Shake animation khi nhập sai PIN.
+ * - Keypad 3×4 (1–9 + letters + fingerprint/0/backspace) chuẩn thiết kế TaskFlow.
+ * - Animation scale khi nhấn phím & Shake animation khi nhập sai PIN.
  * - Brute-force lockout: khoá 30s sau 5 lần sai liên tiếp + CountDownTimer.
- * - "Forgot PIN?" dialog.
- *
- * Cách dùng:
- *   PinLockActivity.start(context)
- *   // hoặc với result
- *   PinLockActivity.createIntent(context)
+ * - Hỗ trợ Forgot PIN dialog trong chế độ ENTER.
  */
 class PinLockActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPinLockBinding
     private lateinit var pinRepo: PinRepository
 
-    // PIN đang được nhập, tối đa 4 ký tự
+    private var mode: PinMode = PinMode.ENTER
     private val pinBuffer = StringBuilder()
     private val maxPinLength = 4
 
-    // CountDownTimer cho lockout
+    private var confirmPin: String? = null
+    private var oldPin: String? = null
+
     private var lockoutTimer: CountDownTimer? = null
+
+    enum class PinMode {
+        ENTER,          // Verify PIN when opening app
+        SET,            // Set new PIN when enabling PIN lock
+        CHANGE,         // Change existing PIN (3 steps: old -> new -> confirm)
+        VERIFY_DISABLE  // Verify PIN before disabling from Settings
+    }
 
     // ──────────────────────────────────────────────────────────────────────
     // Lifecycle
@@ -53,10 +63,15 @@ class PinLockActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         pinRepo = pinRepository()
+        mode = try {
+            PinMode.valueOf(intent.getStringExtra(Constants.EXTRA_PIN_MODE) ?: PinMode.ENTER.name)
+        } catch (e: Exception) {
+            PinMode.ENTER
+        }
 
-        // Ẩn ActionBar nếu có (màn hình toàn màn hình)
         supportActionBar?.hide()
 
+        setupHeader()
         setupKeypad()
         setupActionButtons()
         checkLockoutOnResume()
@@ -73,18 +88,43 @@ class PinLockActivity : AppCompatActivity() {
     }
 
     // ──────────────────────────────────────────────────────────────────────
-    // Setup
+    // UI Setup
     // ──────────────────────────────────────────────────────────────────────
 
-    /**
-     * Gán số + letters cho tất cả keypad buttons (2–9 dùng include layout).
-     * Gán click listener cho từng nút.
-     */
-    private fun setupKeypad() {
-        // Key 1 — số đơn, không có letters
-        binding.btn1.setOnClickListener { onDigitPressed(1) }
+    private fun setupHeader() {
+        when (mode) {
+            PinMode.ENTER -> {
+                binding.tvWelcomeBack.text = getString(R.string.pin_enter_title)
+                binding.tvSubtitle.text = getString(R.string.pin_enter_subtitle)
+                binding.btnForgotPin.visibility = View.VISIBLE
+            }
+            PinMode.SET -> {
+                binding.tvWelcomeBack.text = getString(R.string.pin_set_title)
+                binding.tvSubtitle.text = getString(R.string.pin_set_subtitle)
+                binding.btnForgotPin.visibility = View.GONE
+            }
+            PinMode.CHANGE -> {
+                binding.tvWelcomeBack.text = getString(R.string.pin_change_title)
+                binding.tvSubtitle.text = getString(R.string.pin_change_step1)
+                binding.btnForgotPin.visibility = View.GONE
+            }
+            PinMode.VERIFY_DISABLE -> {
+                binding.tvWelcomeBack.text = getString(R.string.pin_disable_title)
+                binding.tvSubtitle.text = getString(R.string.pin_disable_subtitle)
+                binding.btnForgotPin.visibility = View.GONE
+            }
+        }
+        updatePinDots()
+    }
 
-        // Keys 2–9 với letters
+    private fun setupKeypad() {
+        // Key 1
+        binding.btn1.setOnClickListener {
+            animateKeyPress(it)
+            onDigitPressed(1)
+        }
+
+        // Keys 2–9 with letters
         val keysWithLetters = listOf(
             Triple(binding.keyBtn2.root, 2, "ABC"),
             Triple(binding.keyBtn3.root, 3, "DEF"),
@@ -97,7 +137,6 @@ class PinLockActivity : AppCompatActivity() {
         )
 
         keysWithLetters.forEach { (root, digit, letters) ->
-            // root là FrameLayout — bind inner LinearLayout qua ItemPinKeyWithLettersBinding
             val keyBinding = ItemPinKeyWithLettersBinding.bind(root)
             keyBinding.tvKeyNumber.text = digit.toString()
             keyBinding.tvKeyLetters.text = letters
@@ -108,28 +147,38 @@ class PinLockActivity : AppCompatActivity() {
         }
 
         // Key 0
-        binding.btn0.setOnClickListener { onDigitPressed(0) }
+        binding.btn0.setOnClickListener {
+            animateKeyPress(it)
+            onDigitPressed(0)
+        }
     }
 
     private fun setupActionButtons() {
         // Backspace
         binding.btnBackspace.setOnClickListener {
+            animateKeyPress(it)
             onBackspacePressed()
         }
-
-        // Fingerprint (placeholder — TASK-47 sẽ implement BiometricPrompt)
-        binding.btnFingerprint.setOnClickListener {
-            // TODO: Implement biometric in TASK-47
+        binding.btnBackspace.setOnLongClickListener {
+            pinBuffer.clear()
+            updatePinDots()
+            hideError()
+            true
         }
 
-        // Forgot PIN
+        // Biometric button (placeholder for future biometric feature)
+        binding.btnFingerprint.setOnClickListener {
+            animateKeyPress(it)
+        }
+
+        // Forgot PIN (only in ENTER mode)
         binding.btnForgotPin.setOnClickListener {
             showForgotPinDialog()
         }
     }
 
     // ──────────────────────────────────────────────────────────────────────
-    // PIN Logic
+    // PIN Processing Logic
     // ──────────────────────────────────────────────────────────────────────
 
     private fun onDigitPressed(digit: Int) {
@@ -138,71 +187,151 @@ class PinLockActivity : AppCompatActivity() {
 
         pinBuffer.append(digit)
         updatePinDots()
+        hideError()
 
-        // Auto-verify khi đủ 4 ký tự
         if (pinBuffer.length == maxPinLength) {
-            verifyPin()
+            binding.root.postDelayed({
+                processPin()
+            }, 150L)
         }
     }
 
     private fun onBackspacePressed() {
-        if (pinBuffer.isEmpty()) return
-        pinBuffer.deleteCharAt(pinBuffer.length - 1)
-        updatePinDots()
-        // Xóa error message khi người dùng sửa
-        hideError()
+        if (pinBuffer.isNotEmpty()) {
+            pinBuffer.deleteCharAt(pinBuffer.length - 1)
+            updatePinDots()
+            hideError()
+        }
     }
 
-    /**
-     * Xác thực PIN với repository.
-     * - Đúng → finish() (TASK-47 sẽ navigate về MainActivity)
-     * - Sai → shake animation + ghi nhận lần thất bại + kiểm tra lockout
-     */
-    private fun verifyPin() {
-        val inputPin = pinBuffer.toString()
+    private fun processPin() {
+        val pin = pinBuffer.toString()
+        when (mode) {
+            PinMode.ENTER -> handleEnterMode(pin)
+            PinMode.SET -> handleSetMode(pin)
+            PinMode.CHANGE -> handleChangeMode(pin)
+            PinMode.VERIFY_DISABLE -> handleVerifyDisableMode(pin)
+        }
+    }
 
-        if (pinRepo.verifyPin(inputPin)) {
-            // ✅ PIN đúng
+    private fun handleEnterMode(pin: String) {
+        if (pinRepo.verifyPin(pin)) {
             onPinSuccess()
         } else {
-            // ❌ PIN sai
             val remainingAttempts = Constants.MAX_PIN_ATTEMPTS - pinRepo.recordFailedAttempt()
-
             if (pinRepo.isLockedOut()) {
                 startLockoutCountdown()
             } else {
                 val errMsg = getString(R.string.pin_error_wrong_vi, remainingAttempts)
                 showError(errMsg)
             }
+            shakeAndClear()
+        }
+    }
 
-            shakePinIndicator()
-            // Reset buffer sau shake animation
-            binding.pinIndicatorContainer.postDelayed({
-                pinBuffer.clear()
-                updatePinDots()
-            }, 400L)
+    private fun handleSetMode(pin: String) {
+        if (confirmPin == null) {
+            confirmPin = pin
+            binding.tvSubtitle.text = getString(R.string.pin_set_confirm_subtitle)
+            clearBuffer()
+        } else {
+            if (pin == confirmPin) {
+                pinRepo.setPin(pin)
+                Toast.makeText(this, R.string.pin_change_success, Toast.LENGTH_SHORT).show()
+                setResult(RESULT_OK)
+                finish()
+            } else {
+                showError(getString(R.string.pin_error_mismatch))
+                confirmPin = null
+                binding.tvSubtitle.text = getString(R.string.pin_set_subtitle)
+                shakeAndClear()
+            }
+        }
+    }
+
+    private fun handleChangeMode(pin: String) {
+        when {
+            oldPin == null -> {
+                // Step 1: Verify current PIN
+                if (pinRepo.verifyPin(pin)) {
+                    oldPin = pin
+                    binding.tvSubtitle.text = getString(R.string.pin_change_step2)
+                    clearBuffer()
+                } else {
+                    showError(getString(R.string.pin_error_wrong))
+                    shakeAndClear()
+                }
+            }
+            confirmPin == null -> {
+                // Step 2: Enter new PIN
+                confirmPin = pin
+                binding.tvSubtitle.text = getString(R.string.pin_change_step3)
+                clearBuffer()
+            }
+            else -> {
+                // Step 3: Confirm new PIN
+                if (pin == confirmPin) {
+                    pinRepo.setPin(pin)
+                    Toast.makeText(this, R.string.pin_change_success, Toast.LENGTH_SHORT).show()
+                    setResult(RESULT_OK)
+                    finish()
+                } else {
+                    showError(getString(R.string.pin_error_mismatch))
+                    confirmPin = null
+                    binding.tvSubtitle.text = getString(R.string.pin_change_step2)
+                    shakeAndClear()
+                }
+            }
+        }
+    }
+
+    private fun handleVerifyDisableMode(pin: String) {
+        if (pinRepo.verifyPin(pin)) {
+            pinRepo.clearPin()
+            Toast.makeText(this, R.string.pin_disabled, Toast.LENGTH_SHORT).show()
+            setResult(RESULT_OK)
+            finish()
+        } else {
+            showError(getString(R.string.pin_error_wrong))
+            shakeAndClear()
         }
     }
 
     private fun onPinSuccess() {
         pinRepo.resetFailedAttempts()
-        // Đặt result OK để caller biết unlock thành công
+        markPinVerified()
         setResult(RESULT_OK)
         finish()
     }
 
+    private fun markPinVerified() {
+        getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(KEY_PIN_VERIFIED, true)
+            .putLong(KEY_LAST_ACTIVE_TIME, System.currentTimeMillis())
+            .apply()
+    }
+
+    private fun clearBuffer() {
+        pinBuffer.clear()
+        updatePinDots()
+    }
+
+    private fun shakeAndClear() {
+        shakePinIndicator()
+        binding.pinIndicatorContainer.postDelayed({
+            clearBuffer()
+        }, 400L)
+    }
+
     // ──────────────────────────────────────────────────────────────────────
-    // UI — PIN Dots
+    // UI — PIN Dots & Animations
     // ──────────────────────────────────────────────────────────────────────
 
     private val pinDots by lazy {
         listOf(binding.pinDot1, binding.pinDot2, binding.pinDot3, binding.pinDot4)
     }
 
-    /**
-     * Cập nhật 4 chấm: chấm có index < pinBuffer.length → filled (xanh),
-     * còn lại → empty (viền xám).
-     */
     private fun updatePinDots() {
         pinDots.forEachIndexed { index, dot ->
             val filled = index < pinBuffer.length
@@ -211,7 +340,6 @@ class PinLockActivity : AppCompatActivity() {
             } else {
                 getDrawable(R.drawable.bg_pin_dot_empty)
             }
-            // Scale animation: chấm được fill sẽ scale lên 1.1 nhẹ
             dot.animate()
                 .scaleX(if (filled) 1.1f else 1.0f)
                 .scaleY(if (filled) 1.1f else 1.0f)
@@ -220,13 +348,6 @@ class PinLockActivity : AppCompatActivity() {
         }
     }
 
-    // ──────────────────────────────────────────────────────────────────────
-    // UI — Animations
-    // ──────────────────────────────────────────────────────────────────────
-
-    /**
-     * Scale-down animation khi nhấn phím (khớp keypad-btn:active trong design).
-     */
     private fun animateKeyPress(view: View) {
         view.animate()
             .scaleX(0.92f)
@@ -242,18 +363,10 @@ class PinLockActivity : AppCompatActivity() {
             .start()
     }
 
-    /**
-     * Shake animation cho vùng chấm PIN khi nhập sai
-     * (khớp @keyframes shake trong design HTML).
-     */
     private fun shakePinIndicator() {
         val shake = AnimationUtils.loadAnimation(this, R.anim.shake_pin)
         binding.pinIndicatorContainer.startAnimation(shake)
     }
-
-    // ──────────────────────────────────────────────────────────────────────
-    // UI — Error & Lockout
-    // ──────────────────────────────────────────────────────────────────────
 
     private fun showError(message: String) {
         binding.tvErrorMessage.text = message
@@ -264,28 +377,27 @@ class PinLockActivity : AppCompatActivity() {
         binding.tvErrorMessage.visibility = View.INVISIBLE
     }
 
-    /**
-     * Kiểm tra nếu đang bị lockout khi resume — hiển thị countdown ngay.
-     */
+    // ──────────────────────────────────────────────────────────────────────
+    // Lockout Management
+    // ──────────────────────────────────────────────────────────────────────
+
     private fun checkLockoutOnResume() {
         if (pinRepo.isLockedOut()) {
             startLockoutCountdown()
         }
     }
 
-    /**
-     * Bắt đầu đếm ngược lockout. Disable toàn bộ keypad trong thời gian lockout.
-     */
     private fun startLockoutCountdown() {
         val remaining = pinRepo.getLockoutEndTime() - System.currentTimeMillis()
         if (remaining <= 0) {
             pinRepo.resetFailedAttempts()
+            setKeypadEnabled(true)
+            hideError()
             return
         }
 
         setKeypadEnabled(false)
-        pinBuffer.clear()
-        updatePinDots()
+        clearBuffer()
 
         lockoutTimer?.cancel()
         lockoutTimer = object : CountDownTimer(remaining, 1000L) {
@@ -308,17 +420,12 @@ class PinLockActivity : AppCompatActivity() {
         binding.btnBackspace.isEnabled = enabled
         binding.btnFingerprint.isEnabled = enabled
 
-        // Keys 2–9
         listOf(
             binding.keyBtn2.root, binding.keyBtn3.root,
             binding.keyBtn4.root, binding.keyBtn5.root, binding.keyBtn6.root,
             binding.keyBtn7.root, binding.keyBtn8.root, binding.keyBtn9.root
         ).forEach { it.isEnabled = enabled }
     }
-
-    // ──────────────────────────────────────────────────────────────────────
-    // Dialogs
-    // ──────────────────────────────────────────────────────────────────────
 
     private fun showForgotPinDialog() {
         AlertDialog.Builder(this)
@@ -328,32 +435,29 @@ class PinLockActivity : AppCompatActivity() {
             .show()
     }
 
-    // ──────────────────────────────────────────────────────────────────────
-    // Back press — Không cho back về app khi đang ở màn hình PIN
-    // ──────────────────────────────────────────────────────────────────────
-
     @Deprecated("Use OnBackPressedDispatcher", level = DeprecationLevel.WARNING)
     override fun onBackPressed() {
-        // Chặn back press — người dùng phải nhập đúng PIN mới thoát
-        // TASK-47 sẽ quyết định flow điều hướng chính xác
+        if (mode != PinMode.ENTER) {
+            super.onBackPressed()
+        }
+        // In ENTER mode, block back to prevent bypassing lock screen
     }
 
     // ──────────────────────────────────────────────────────────────────────
-    // Companion
+    // Companion Object
     // ──────────────────────────────────────────────────────────────────────
 
     companion object {
-        /**
-         * Tạo Intent để start PinLockActivity.
-         */
-        fun createIntent(context: Context): Intent =
-            Intent(context, PinLockActivity::class.java)
+        const val KEY_PIN_VERIFIED = "key_pin_verified"
+        const val KEY_LAST_ACTIVE_TIME = "key_last_active_time"
 
-        /**
-         * Shorthand start.
-         */
-        fun start(context: Context) {
-            context.startActivity(createIntent(context))
+        fun createIntent(context: Context, mode: PinMode = PinMode.ENTER): Intent =
+            Intent(context, PinLockActivity::class.java).apply {
+                putExtra(Constants.EXTRA_PIN_MODE, mode.name)
+            }
+
+        fun start(context: Context, mode: PinMode = PinMode.ENTER) {
+            context.startActivity(createIntent(context, mode))
         }
     }
 }

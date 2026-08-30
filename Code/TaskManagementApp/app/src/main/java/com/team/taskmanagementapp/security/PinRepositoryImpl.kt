@@ -119,6 +119,13 @@ class PinRepositoryImpl private constructor(context: Context) : PinRepository {
             .apply()
     }
 
+    override fun getAutoLockTimeout(): Long =
+        prefs.getLong(Constants.KEY_AUTO_LOCK_TIMER, Constants.AUTO_LOCK_TIMEOUT_MS)
+
+    override fun setAutoLockTimeout(timeoutMs: Long) {
+        prefs.edit().putLong(Constants.KEY_AUTO_LOCK_TIMER, timeoutMs).apply()
+    }
+
     // ──────────────────────────────────────────────────────────────────────
     // Cryptography Helpers
     // ──────────────────────────────────────────────────────────────────────
