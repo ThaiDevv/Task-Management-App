@@ -3,6 +3,7 @@ package com.team.taskmanagementapp.data.local.dao
 import androidx.room.*
 import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.enums.Priority
+import com.team.taskmanagementapp.data.model.enums.RecurrenceType
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import kotlinx.coroutines.flow.Flow
 
@@ -82,4 +83,34 @@ interface TaskDao {
     // 12. Xóa tất cả công việc
     @Query("DELETE FROM tasks")
     suspend fun deleteAllTasks()
+
+    // 13. Xóa các công việc tương lai cùng title và recurrenceType từ một mốc thời gian trở đi
+    @Query("DELETE FROM tasks WHERE title = :title AND recurrenceType = :recurrenceType AND dueDate >= :startDate AND isComplete = 0")
+    suspend fun deleteFutureRecurringTasks(title: String, recurrenceType: RecurrenceType, startDate: Long)
+
+    // 14. Cập nhật các công việc tương lai cùng title và recurrenceType từ một mốc thời gian trở đi
+    @Query("""
+        UPDATE tasks 
+        SET title = :newTitle, 
+            description = :newDescription, 
+            priority = :newPriority, 
+            recurrenceType = :newRecurrenceType, 
+            reminderMinutes = :newReminderMinutes,
+            updatedAt = :updatedAt
+        WHERE title = :originalTitle 
+          AND recurrenceType = :originalRecurrence 
+          AND dueDate >= :startDate 
+          AND isComplete = 0
+    """)
+    suspend fun updateFutureRecurringTasks(
+        originalTitle: String,
+        originalRecurrence: RecurrenceType,
+        startDate: Long,
+        newTitle: String,
+        newDescription: String,
+        newPriority: Priority,
+        newRecurrenceType: RecurrenceType,
+        newReminderMinutes: Int,
+        updatedAt: Long
+    )
 }
