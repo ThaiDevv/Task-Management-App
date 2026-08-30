@@ -14,6 +14,7 @@ import com.team.taskmanagementapp.databinding.ActivityPinLockBinding
 import com.team.taskmanagementapp.databinding.ItemPinKeyWithLettersBinding
 import com.team.taskmanagementapp.pinRepository
 import com.team.taskmanagementapp.security.PinRepository
+import com.team.taskmanagementapp.ui.base.BaseActivity
 import com.team.taskmanagementapp.util.Constants
 
 /**
@@ -237,6 +238,7 @@ class PinLockActivity : AppCompatActivity() {
         } else {
             if (pin == confirmPin) {
                 pinRepo.setPin(pin)
+                BaseActivity.isAppUnlockedInSession = true
                 Toast.makeText(this, R.string.pin_change_success, Toast.LENGTH_SHORT).show()
                 setResult(RESULT_OK)
                 finish()
@@ -272,6 +274,7 @@ class PinLockActivity : AppCompatActivity() {
                 // Step 3: Confirm new PIN
                 if (pin == confirmPin) {
                     pinRepo.setPin(pin)
+                    BaseActivity.isAppUnlockedInSession = true
                     Toast.makeText(this, R.string.pin_change_success, Toast.LENGTH_SHORT).show()
                     setResult(RESULT_OK)
                     finish()
@@ -288,6 +291,7 @@ class PinLockActivity : AppCompatActivity() {
     private fun handleVerifyDisableMode(pin: String) {
         if (pinRepo.verifyPin(pin)) {
             pinRepo.clearPin()
+            BaseActivity.isAppUnlockedInSession = false
             Toast.makeText(this, R.string.pin_disabled, Toast.LENGTH_SHORT).show()
             setResult(RESULT_OK)
             finish()
@@ -299,6 +303,7 @@ class PinLockActivity : AppCompatActivity() {
 
     private fun onPinSuccess() {
         pinRepo.resetFailedAttempts()
+        BaseActivity.isAppUnlockedInSession = true
         markPinVerified()
         setResult(RESULT_OK)
         finish()
