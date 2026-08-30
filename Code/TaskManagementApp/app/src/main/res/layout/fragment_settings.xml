@@ -108,9 +108,12 @@
                 </LinearLayout>
 
                 <View
+                    android:id="@+id/changePinDivider"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/divider_height"
-                    android:background="@color/surface_container" />
+                    android:background="@color/surface_container"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <LinearLayout
                     android:id="@+id/changePinRow"
@@ -121,7 +124,9 @@
                     android:focusable="true"
                     android:gravity="center_vertical"
                     android:minHeight="72dp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    tools:visibility="visible">
 
                     <ImageView
                         android:layout_width="@dimen/icon_size_medium"

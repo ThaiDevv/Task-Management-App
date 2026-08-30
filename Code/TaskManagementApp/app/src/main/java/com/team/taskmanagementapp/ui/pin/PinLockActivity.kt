@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.team.taskmanagementapp.R
@@ -17,7 +16,7 @@ import com.team.taskmanagementapp.security.PinRepository
 import com.team.taskmanagementapp.util.Constants
 
 /**
- * PinLockActivity — Màn hình nhập và quản lý PIN (TASK-25 & TMA-47).
+ * PinLockActivity — Màn hình nhập và quản lý PIN (TASK-25, TMA-47, TMA-48 & TMA-49).
  *
  * Hỗ trợ 4 chế độ hoạt động:
  * - ENTER: Mở khóa ứng dụng (xác thực PIN khi khởi động hoặc sau auto-lock)
@@ -42,7 +41,7 @@ class PinLockActivity : AppCompatActivity() {
     private val maxPinLength = 4
 
     private var confirmPin: String? = null
-    private var oldPin: String? = null
+    private val changePinFlow = ChangePinFlow()
 
     private var lockoutTimer: CountDownTimer? = null
 
@@ -246,37 +245,32 @@ class PinLockActivity : AppCompatActivity() {
     }
 
     private fun handleChangeMode(pin: String) {
-        when {
-            oldPin == null -> {
-                // Step 1: Verify current PIN
-                if (pinRepo.verifyPin(pin)) {
-                    oldPin = pin
-                    binding.tvSubtitle.text = getString(R.string.pin_change_step2)
-                    clearBuffer()
-                } else {
-                    showError(getString(R.string.pin_error_wrong))
-                    shakeAndClear()
-                }
+        when (val submission = changePinFlow.submit(pin, pinRepo::verifyPin)) {
+            is ChangePinFlow.Submission.CurrentPinRejected -> {
+                handleFailedPinAttempt()
             }
-            confirmPin == null -> {
-                // Step 2: Enter new PIN
-                confirmPin = pin
+
+            is ChangePinFlow.Submission.AwaitingNewPin -> {
+                pinRepo.resetFailedAttempts()
+                binding.tvSubtitle.text = getString(R.string.pin_change_step2)
+                clearBuffer()
+            }
+
+            is ChangePinFlow.Submission.AwaitingConfirmation -> {
                 binding.tvSubtitle.text = getString(R.string.pin_change_step3)
                 clearBuffer()
             }
-            else -> {
-                // Step 3: Confirm new PIN
-                if (pin == confirmPin) {
-                    pinRepo.setPin(pin)
-                    Toast.makeText(this, R.string.pin_change_success, Toast.LENGTH_SHORT).show()
-                    setResult(RESULT_OK)
-                    finish()
-                } else {
-                    showError(getString(R.string.pin_error_mismatch))
-                    confirmPin = null
-                    binding.tvSubtitle.text = getString(R.string.pin_change_step2)
-                    shakeAndClear()
-                }
+
+            is ChangePinFlow.Submission.NewPinMismatch -> {
+                showError(getString(R.string.pin_error_mismatch))
+                binding.tvSubtitle.text = getString(R.string.pin_change_step2)
+                shakeAndClear()
+            }
+
+            is ChangePinFlow.Submission.Completed -> {
+                pinRepo.setPin(submission.newPin)
+                setResult(RESULT_OK)
+                finish()
             }
         }
     }

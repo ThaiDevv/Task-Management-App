@@ -11,8 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.databinding.FragmentSettingsBinding
 import com.team.taskmanagementapp.ui.pin.PinLockActivity
@@ -59,7 +62,10 @@ class SettingsFragment : Fragment() {
 
     private val changePinLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ) {
+    ) { result ->
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            showSnackbar(R.string.pin_change_success)
+        }
         synchronizeToggleStates()
     }
 
@@ -131,6 +137,7 @@ class SettingsFragment : Fragment() {
 
     private fun setupActions() {
         binding.changePinRow.setOnClickListener {
+            if (!pinManager.isPinEnabled()) return@setOnClickListener
             // Launch CHANGE mode - requires verifying old PIN first
             val intent = PinLockActivity.createIntent(requireContext(), PinLockActivity.PinMode.CHANGE)
             changePinLauncher.launch(intent)
@@ -154,8 +161,11 @@ class SettingsFragment : Fragment() {
 
         isSynchronizingSwitches = true
 
-        // Read PIN enabled state from EncryptedSharedPreferences via PinManager
-        binding.pinLockSwitch.isChecked = pinManager.isPinEnabled()
+        // Read PIN enabled state from EncryptedSharedPreferences via PinManager.
+        val pinEnabled = pinManager.isPinEnabled()
+        binding.pinLockSwitch.isChecked = pinEnabled
+        binding.changePinDivider.isVisible = pinEnabled
+        binding.changePinRow.isVisible = pinEnabled
 
         val notificationsEnabled = preferences.getBoolean(
             Constants.KEY_NOTIFICATIONS_ENABLED,
@@ -165,6 +175,11 @@ class SettingsFragment : Fragment() {
             NotificationPermissionManager.isGranted(requireContext())
 
         isSynchronizingSwitches = false
+    }
+
+    private fun showSnackbar(@StringRes messageRes: Int) {
+        val root = _binding?.root ?: return
+        Snackbar.make(root, messageRes, Snackbar.LENGTH_SHORT).show()
     }
 
     @Suppress("DEPRECATION")
