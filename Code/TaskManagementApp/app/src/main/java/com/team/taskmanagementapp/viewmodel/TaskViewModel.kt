@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.FilterCriteria
 import com.team.taskmanagementapp.data.model.enums.Priority
@@ -84,11 +85,15 @@ class TaskViewModel(
         viewModelScope.launch {
             try {
                 val insertedId = repository.insert(task)
-                AlarmScheduler.scheduleAlarm(
+                val savedTask = task.copy(id = insertedId.toInt())
+                val scheduleResult = AlarmScheduler.scheduleAlarm(
                     applicationContext,
-                    task.copy(id = insertedId.toInt())
+                    savedTask
                 )
-                _userMessage.emit("Đã thêm công việc \"${task.title}\"")
+                _userMessage.emit(
+                    scheduleWarning(scheduleResult, savedTask.reminderMinutes)
+                        ?: "Đã thêm công việc \"${task.title}\""
+                )
             } catch (e: Exception) {
                 _uiState.value = UiState.Error("Lỗi khi thêm công việc: ${e.localizedMessage}")
             }
@@ -99,8 +104,11 @@ class TaskViewModel(
         viewModelScope.launch {
             try {
                 repository.update(task)
-                AlarmScheduler.rescheduleAlarm(applicationContext, task)
-                _userMessage.emit("Đã cập nhật công việc \"${task.title}\"")
+                val scheduleResult = AlarmScheduler.rescheduleAlarm(applicationContext, task)
+                _userMessage.emit(
+                    scheduleWarning(scheduleResult, task.reminderMinutes)
+                        ?: "Đã cập nhật công việc \"${task.title}\""
+                )
             } catch (e: Exception) {
                 _uiState.value = UiState.Error("Lỗi khi cập nhật công việc: ${e.localizedMessage}")
             }
@@ -140,10 +148,12 @@ class TaskViewModel(
 
                 // Mark task as completed/uncompleted first
                 repository.update(updatedTask)
+                var reminderScheduleResult: AlarmScheduler.ScheduleResult? = null
                 if (updatedTask.isCompleted) {
                     AlarmScheduler.cancelAlarm(applicationContext, updatedTask.id)
                 } else {
-                    AlarmScheduler.scheduleAlarm(applicationContext, updatedTask)
+                    reminderScheduleResult =
+                        AlarmScheduler.scheduleAlarm(applicationContext, updatedTask)
                 }
 
                 val isRecurringTask = task.isRecurring || task.recurrenceType != RecurrenceType.NONE
@@ -190,7 +200,7 @@ class TaskViewModel(
                                 updatedAt = now
                             )
                             val insertedId = repository.insert(nextInstance)
-                            AlarmScheduler.scheduleAlarm(
+                            reminderScheduleResult = AlarmScheduler.scheduleAlarm(
                                 applicationContext,
                                 nextInstance.copy(id = insertedId.toInt())
                             )
@@ -221,7 +231,11 @@ class TaskViewModel(
                 } else {
                     "Đã đánh dấu chưa xong \"${task.title}\""
                 }
-                _userMessage.emit(msg)
+                _userMessage.emit(
+                    reminderScheduleResult?.let {
+                        scheduleWarning(it, task.reminderMinutes)
+                    } ?: msg
+                )
             } catch (e: Exception) {
                 _userMessage.emit("Lỗi khi cập nhật trạng thái: ${e.localizedMessage}")
             }
@@ -276,5 +290,23 @@ class TaskViewModel(
                 _selectedTask.value = task
             }
         }
+    }
+
+    private fun scheduleWarning(
+        result: AlarmScheduler.ScheduleResult,
+        reminderMinutes: Int
+    ): String? = when (result) {
+        AlarmScheduler.ScheduleResult.FALLBACK_SCHEDULED ->
+            applicationContext.getString(R.string.notification_schedule_fallback)
+        AlarmScheduler.ScheduleResult.NOTIFICATIONS_DISABLED ->
+            applicationContext.getString(R.string.notification_schedule_disabled)
+        AlarmScheduler.ScheduleResult.FAILED ->
+            applicationContext.getString(R.string.notification_schedule_failed)
+        AlarmScheduler.ScheduleResult.SKIPPED -> if (reminderMinutes > 0) {
+            applicationContext.getString(R.string.notification_schedule_past)
+        } else {
+            null
+        }
+        AlarmScheduler.ScheduleResult.SCHEDULED -> null
     }
 }

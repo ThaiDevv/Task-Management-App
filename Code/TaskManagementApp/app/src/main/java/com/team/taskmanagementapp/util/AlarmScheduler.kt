@@ -7,17 +7,33 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.receiver.AlarmReceiver
+import com.team.taskmanagementapp.worker.TaskReminderWorker
 import java.util.Calendar
+import java.util.concurrent.TimeUnit
 
-/** Schedules and cancels exact task reminder alarms. */
+/** Schedules task reminders without allowing platform scheduling failures to crash the app. */
 object AlarmScheduler {
 
     enum class ScheduleResult {
         SCHEDULED,
+        FALLBACK_SCHEDULED,
         SKIPPED,
-        PERMISSION_REQUIRED
+        NOTIFICATIONS_DISABLED,
+        FAILED
+    }
+
+    internal enum class ScheduleDecision {
+        SKIP,
+        NOTIFICATIONS_DISABLED,
+        EXACT,
+        FALLBACK
     }
 
     fun scheduleAlarm(
@@ -38,37 +54,66 @@ object AlarmScheduler {
             return ScheduleResult.SKIPPED
         }
 
-        val alarmManager = alarmManager(applicationContext)
-        if (!canScheduleExactAlarms(alarmManager)) {
-            return ScheduleResult.PERMISSION_REQUIRED
+        return scheduleReminderAt(
+            context = applicationContext,
+            taskId = task.id,
+            triggerAtMillis = triggerAtMillis,
+            nowMillis = nowMillis
+        )
+    }
+
+    /**
+     * Schedules a reminder at a known timestamp. Snooze uses this entry point so it receives the
+     * same permission checks, exception handling, and WorkManager fallback as normal reminders.
+     */
+    fun scheduleReminderAt(
+        context: Context,
+        taskId: Int,
+        triggerAtMillis: Long,
+        nowMillis: Long = System.currentTimeMillis()
+    ): ScheduleResult {
+        val applicationContext = context.applicationContext
+
+        if (taskId <= 0 || triggerAtMillis <= nowMillis) {
+            cancelAlarm(applicationContext, taskId)
+            return ScheduleResult.SKIPPED
         }
 
-        return try {
-            if (canScheduleExactAlarms(alarmManager)) {
-                alarmManager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    triggerAtMillis,
-                    reminderPendingIntent(applicationContext, task.id)
-                )
-            } else {
-                alarmManager.setAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    triggerAtMillis,
-                    reminderPendingIntent(applicationContext, task.id)
-                )
+        val notificationsEnabled = NotificationHelper.areNotificationsEnabled(applicationContext)
+        if (!notificationsEnabled) {
+            Log.w(TAG, "Reminder scheduling skipped because notifications are disabled")
+            cancelAlarm(applicationContext, taskId)
+            return ScheduleResult.NOTIFICATIONS_DISABLED
+        }
+
+        val alarmManager = runCatching { alarmManager(applicationContext) }
+            .onFailure { Log.w(TAG, "Alarm service unavailable; using deferred fallback") }
+            .getOrNull()
+
+        val exactAlarmAvailable = alarmManager?.let(::canScheduleExactAlarms) == true
+        return when (
+            scheduleDecision(
+                taskId = taskId,
+                isCompleted = false,
+                triggerAtMillis = triggerAtMillis,
+                nowMillis = nowMillis,
+                notificationsEnabled = notificationsEnabled,
+                exactAlarmAvailable = exactAlarmAvailable
+            )
+        ) {
+            ScheduleDecision.SKIP -> ScheduleResult.SKIPPED
+            ScheduleDecision.NOTIFICATIONS_DISABLED -> ScheduleResult.NOTIFICATIONS_DISABLED
+            ScheduleDecision.FALLBACK -> {
+                Log.w(TAG, "Exact alarm access unavailable; using deferred fallback")
+                scheduleFallback(applicationContext, taskId, triggerAtMillis, nowMillis)
             }
-            ScheduleResult.SCHEDULED
-        } catch (_: SecurityException) {
-            try {
-                alarmManager.setAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    triggerAtMillis,
-                    reminderPendingIntent(applicationContext, task.id)
-                )
-                ScheduleResult.SCHEDULED
-            } catch (_: Exception) {
-                ScheduleResult.PERMISSION_REQUIRED
-            }
+            ScheduleDecision.EXACT -> scheduleExactOrFallback(
+                context = applicationContext,
+                alarmManager = requireNotNull(alarmManager),
+                taskId = taskId,
+                triggerAtMillis = triggerAtMillis,
+                nowMillis = nowMillis
+            )
         }
     }
 
@@ -76,9 +121,15 @@ object AlarmScheduler {
         if (taskId <= 0) return
 
         val applicationContext = context.applicationContext
-        val pendingIntent = reminderPendingIntent(applicationContext, taskId)
-        alarmManager(applicationContext).cancel(pendingIntent)
-        pendingIntent.cancel()
+        runCatching {
+            val pendingIntent = reminderPendingIntent(applicationContext, taskId)
+            alarmManager(applicationContext).cancel(pendingIntent)
+            pendingIntent.cancel()
+        }.onFailure {
+            Log.w(TAG, "Unable to cancel platform alarm", it)
+        }
+
+        cancelFallback(applicationContext, taskId)
     }
 
     fun rescheduleAlarm(
@@ -91,13 +142,30 @@ object AlarmScheduler {
     }
 
     fun canScheduleExactAlarms(context: Context): Boolean =
-        canScheduleExactAlarms(alarmManager(context.applicationContext))
+        runCatching { canScheduleExactAlarms(alarmManager(context.applicationContext)) }
+            .onFailure { Log.w(TAG, "Unable to query exact alarm access", it) }
+            .getOrDefault(false)
 
     fun exactAlarmPermissionIntent(context: Context): Intent =
         Intent(
             Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
             Uri.parse("package:${context.packageName}")
         )
+
+    internal fun scheduleDecision(
+        taskId: Int,
+        isCompleted: Boolean,
+        triggerAtMillis: Long?,
+        nowMillis: Long,
+        notificationsEnabled: Boolean,
+        exactAlarmAvailable: Boolean
+    ): ScheduleDecision = when {
+        taskId <= 0 || isCompleted || triggerAtMillis == null || triggerAtMillis <= nowMillis ->
+            ScheduleDecision.SKIP
+        !notificationsEnabled -> ScheduleDecision.NOTIFICATIONS_DISABLED
+        exactAlarmAvailable -> ScheduleDecision.EXACT
+        else -> ScheduleDecision.FALLBACK
+    }
 
     internal fun calculateTriggerAtMillis(task: Task): Long? =
         calculateTriggerAtMillis(
@@ -132,11 +200,77 @@ object AlarmScheduler {
         }.timeInMillis
     }
 
+    private fun scheduleExactOrFallback(
+        context: Context,
+        alarmManager: AlarmManager,
+        taskId: Int,
+        triggerAtMillis: Long,
+        nowMillis: Long
+    ): ScheduleResult {
+        val exactResult = runCatching {
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                triggerAtMillis,
+                reminderPendingIntent(context, taskId)
+            )
+        }
+
+        if (exactResult.isSuccess) {
+            cancelFallback(context, taskId)
+            return ScheduleResult.SCHEDULED
+        }
+
+        val error = exactResult.exceptionOrNull()
+        val reason = when (error) {
+            is SecurityException -> "Exact alarm permission changed while scheduling"
+            is IllegalStateException -> "Platform alarm limit reached"
+            else -> "Exact alarm scheduling failed"
+        }
+        Log.w(TAG, "$reason; using deferred fallback", error)
+        return scheduleFallback(context, taskId, triggerAtMillis, nowMillis)
+    }
+
+    private fun scheduleFallback(
+        context: Context,
+        taskId: Int,
+        triggerAtMillis: Long,
+        nowMillis: Long
+    ): ScheduleResult {
+        val delayMillis = (triggerAtMillis - nowMillis).coerceAtLeast(0L)
+        val request = OneTimeWorkRequestBuilder<TaskReminderWorker>()
+            .setInitialDelay(delayMillis, TimeUnit.MILLISECONDS)
+            .setInputData(workDataOf(TaskReminderWorker.KEY_TASK_ID to taskId))
+            .addTag(FALLBACK_WORK_TAG)
+            .build()
+
+        return runCatching {
+            WorkManager.getInstance(context).enqueueUniqueWork(
+                fallbackWorkName(taskId),
+                ExistingWorkPolicy.REPLACE,
+                request
+            )
+            ScheduleResult.FALLBACK_SCHEDULED
+        }.onFailure {
+            Log.w(TAG, "Unable to enqueue deferred reminder fallback", it)
+        }.getOrDefault(ScheduleResult.FAILED)
+    }
+
+    private fun cancelFallback(context: Context, taskId: Int) {
+        runCatching {
+            WorkManager.getInstance(context).cancelUniqueWork(fallbackWorkName(taskId))
+        }.onFailure {
+            Log.w(TAG, "Unable to cancel deferred reminder fallback", it)
+        }
+    }
+
     private fun alarmManager(context: Context): AlarmManager =
-        context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        requireNotNull(context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager)
 
     private fun canScheduleExactAlarms(alarmManager: AlarmManager): Boolean =
-        Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
+            runCatching { alarmManager.canScheduleExactAlarms() }
+                .onFailure { Log.w(TAG, "Exact alarm access check failed", it) }
+                .getOrDefault(false)
 
     private fun reminderPendingIntent(context: Context, taskId: Int): PendingIntent {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
@@ -150,4 +284,9 @@ object AlarmScheduler {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
     }
+
+    private fun fallbackWorkName(taskId: Int): String = "task-reminder-$taskId"
+
+    private const val TAG = "AlarmScheduler"
+    private const val FALLBACK_WORK_TAG = "task-reminder-fallback"
 }

@@ -8,6 +8,66 @@ import java.util.Calendar
 class AlarmSchedulerTest {
 
     @Test
+    fun `past reminder is skipped before platform scheduling`() {
+        assertEquals(
+            AlarmScheduler.ScheduleDecision.SKIP,
+            AlarmScheduler.scheduleDecision(
+                taskId = 1,
+                isCompleted = false,
+                triggerAtMillis = 999L,
+                nowMillis = 1_000L,
+                notificationsEnabled = true,
+                exactAlarmAvailable = true
+            )
+        )
+    }
+
+    @Test
+    fun `work fallback is selected when exact alarms are unavailable`() {
+        assertEquals(
+            AlarmScheduler.ScheduleDecision.FALLBACK,
+            AlarmScheduler.scheduleDecision(
+                taskId = 1,
+                isCompleted = false,
+                triggerAtMillis = 2_000L,
+                nowMillis = 1_000L,
+                notificationsEnabled = true,
+                exactAlarmAvailable = false
+            )
+        )
+    }
+
+    @Test
+    fun `disabled notifications prevent reminder scheduling`() {
+        assertEquals(
+            AlarmScheduler.ScheduleDecision.NOTIFICATIONS_DISABLED,
+            AlarmScheduler.scheduleDecision(
+                taskId = 1,
+                isCompleted = false,
+                triggerAtMillis = 2_000L,
+                nowMillis = 1_000L,
+                notificationsEnabled = false,
+                exactAlarmAvailable = true
+            )
+        )
+    }
+
+    @Test
+    fun `exact scheduling is selected only when access is available`() {
+        assertEquals(
+            AlarmScheduler.ScheduleDecision.EXACT,
+            AlarmScheduler.scheduleDecision(
+                taskId = 1,
+                isCompleted = false,
+                triggerAtMillis = 2_000L,
+                nowMillis = 1_000L,
+                notificationsEnabled = true,
+                exactAlarmAvailable = true
+            )
+        )
+    }
+
+    @Test
     fun `trigger combines due date and due time then subtracts reminder`() {
         val dueDate = calendar(2026, Calendar.AUGUST, 14, 0, 0)
         val dueTime = calendar(2026, Calendar.JANUARY, 1, 10, 0)

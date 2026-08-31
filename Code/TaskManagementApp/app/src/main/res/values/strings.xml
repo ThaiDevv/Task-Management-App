@@ -205,6 +205,10 @@
     <string name="notification_action_complete">Đánh dấu hoàn thành</string>
     <string name="notification_action_snooze">Báo lại 10 phút</string>
     <string name="exact_alarm_permission_required">Allow exact alarms to schedule task reminders</string>
+    <string name="notification_schedule_fallback">Task saved. Exact alarms are unavailable, so the reminder will use a battery-optimized fallback.</string>
+    <string name="notification_schedule_disabled">Task saved, but notifications are disabled. Enable them in Settings to receive reminders.</string>
+    <string name="notification_schedule_failed">Task saved, but its reminder could not be scheduled.</string>
+    <string name="notification_schedule_past">Task saved, but its reminder time has already passed.</string>
 
     <string name="notif_permission_rationale_title">Cho phép thông báo nhắc việc</string>
     <string name="notif_permission_rationale_message">TaskFlow cần quyền thông báo để nhắc nhở bạn về các task quan trọng đúng giờ. Bật ngay để không bỏ lỡ bất kỳ deadline nào!</string>

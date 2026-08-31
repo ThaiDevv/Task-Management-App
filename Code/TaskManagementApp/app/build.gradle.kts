@@ -77,6 +77,9 @@ dependencies {
     // Security Crypto (EncryptedSharedPreferences for PIN Lock)
     implementation(libs.androidx.security.crypto)
 
+    // Reliable fallback when exact alarms are unavailable
+    implementation(libs.androidx.work.runtime)
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -61,6 +61,7 @@ class AddEditTaskActivity : AppCompatActivity() {
     private var loadedTask: Task? = null
     private var isFormPopulated = false
     private var retrySaveAfterExactAlarmPermission = false
+    private var allowFallbackWithoutExactPermission = false
 
     private val exactAlarmPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -68,15 +69,10 @@ class AddEditTaskActivity : AppCompatActivity() {
         if (!retrySaveAfterExactAlarmPermission) return@registerForActivityResult
 
         retrySaveAfterExactAlarmPermission = false
-        if (AlarmScheduler.canScheduleExactAlarms(this)) {
-            saveTask()
-        } else {
-            Toast.makeText(
-                this,
-                R.string.exact_alarm_permission_required,
-                Toast.LENGTH_LONG
-            ).show()
-        }
+        // Whether permission was granted or not, save the task. AlarmScheduler will use
+        // WorkManager and return a user-visible warning when exact delivery is unavailable.
+        allowFallbackWithoutExactPermission = true
+        saveTask()
     }
 
     // TASK-39: Permission launcher for re-checking after user returns from Settings
@@ -354,6 +350,7 @@ class AddEditTaskActivity : AppCompatActivity() {
                 }
             }
             .setNegativeButton(getString(R.string.notif_permission_reminder_blocked_save)) { _, _ ->
+                allowFallbackWithoutExactPermission = true
                 performSave()
             }
             .setCancelable(true)
@@ -364,7 +361,8 @@ class AddEditTaskActivity : AppCompatActivity() {
      * Executes the actual save / update logic after all permission and validation checks pass.
      */
     private fun performSave() {
-        if (!ensureExactAlarmPermission()) return
+        if (!allowFallbackWithoutExactPermission && !ensureExactAlarmPermission()) return
+        allowFallbackWithoutExactPermission = false
         val title = binding.titleEditText.text.toString()
         val description = binding.descriptionEditText.text.toString()
         if (isEditMode) {
@@ -423,9 +421,13 @@ class AddEditTaskActivity : AppCompatActivity() {
             when (state) {
                 is UiState.Success -> {
                     if (isSaving) {
-                        AlarmScheduler.scheduleAlarm(this, state.data)
-                        val message = if (isEditMode) "Task updated successfully" else "Task created successfully"
-                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                        val scheduleResult = AlarmScheduler.scheduleAlarm(this, state.data)
+                        val successMessage = if (isEditMode) {
+                            "Task updated successfully"
+                        } else {
+                            "Task created successfully"
+                        }
+                        showSaveResult(successMessage, scheduleResult)
                         finish()
                     }
                 }
@@ -505,13 +507,14 @@ class AddEditTaskActivity : AppCompatActivity() {
                     context = applicationContext
                 )
 
-                AlarmScheduler.rescheduleAlarm(this@AddEditTaskActivity, updatedTask)
+                val scheduleResult =
+                    AlarmScheduler.rescheduleAlarm(this@AddEditTaskActivity, updatedTask)
 
                 if (hasDueDateOrTimeChanged(existingTask, updatedTask)) {
                     dispatchTaskDateTimeChanged(updatedTask)
                 }
 
-                Toast.makeText(this@AddEditTaskActivity, "Task Updated", Toast.LENGTH_SHORT).show()
+                showSaveResult("Task updated successfully", scheduleResult)
                 setResult(RESULT_OK)
                 finish()
             } catch (error: Exception) {
@@ -541,6 +544,28 @@ class AddEditTaskActivity : AppCompatActivity() {
             AlarmScheduler.exactAlarmPermissionIntent(this)
         )
         return false
+    }
+
+    private fun showSaveResult(
+        successMessage: String,
+        scheduleResult: AlarmScheduler.ScheduleResult
+    ) {
+        val message = when (scheduleResult) {
+            AlarmScheduler.ScheduleResult.FALLBACK_SCHEDULED ->
+                getString(R.string.notification_schedule_fallback)
+            AlarmScheduler.ScheduleResult.NOTIFICATIONS_DISABLED ->
+                getString(R.string.notification_schedule_disabled)
+            AlarmScheduler.ScheduleResult.FAILED ->
+                getString(R.string.notification_schedule_failed)
+            AlarmScheduler.ScheduleResult.SKIPPED -> if (selectedReminderMinutes > 0) {
+                getString(R.string.notification_schedule_past)
+            } else {
+                successMessage
+            }
+            AlarmScheduler.ScheduleResult.SCHEDULED -> successMessage
+        }
+        val duration = if (message == successMessage) Toast.LENGTH_SHORT else Toast.LENGTH_LONG
+        Toast.makeText(this, message, duration).show()
     }
 
     private fun dispatchTaskDateTimeChanged(task: Task) {
