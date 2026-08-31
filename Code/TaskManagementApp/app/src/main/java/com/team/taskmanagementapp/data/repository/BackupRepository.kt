@@ -10,9 +10,11 @@ import com.team.taskmanagementapp.data.model.ConflictAction
 import com.team.taskmanagementapp.data.model.ImportJsonFile
 import com.team.taskmanagementapp.data.model.ImportResult
 import com.team.taskmanagementapp.data.model.TaskConflict
+import com.team.taskmanagementapp.data.model.ValidationResult
 import com.team.taskmanagementapp.data.model.enums.Priority
 import com.team.taskmanagementapp.data.model.enums.RecurrenceType
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
+import com.team.taskmanagementapp.data.validator.JsonValidator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -116,7 +118,15 @@ class BackupRepository(
             errorMessage = "Empty file"
         )
 
-        // 2. Parse JSON
+        // 2. VALIDATE JSON (Atomic: check all errors before parsing)
+        val validationResult = JsonValidator.validate(jsonString)
+        if (!validationResult.isValid) {
+            return@withContext ImportResult(
+                errorMessage = "Invalid JSON file:\n${validationResult.errorMessages.joinToString("\n")}"
+            )
+        }
+
+        // 3. Parse JSON
         val parseResult = parseJsonFile(jsonString)
         if (parseResult.isFailure) {
             return@withContext ImportResult(
@@ -134,7 +144,7 @@ class BackupRepository(
             )
         }
 
-        // 3. Validate tasks
+        // 4. Validate tasks (second-level validation after JSON schema)
         val (validTasks, validationErrors) = validateTasks(importFile.tasks)
         if (validTasks.isEmpty()) {
             return@withContext ImportResult(
@@ -145,10 +155,10 @@ class BackupRepository(
 
         val failureCount = importFile.tasks.size - validTasks.size
 
-        // 4. Check conflicts
+        // 5. Check conflicts
         val conflicts = checkConflicts(validTasks)
 
-        // 5. Determine tasks to insert based on conflict action
+        // 6. Determine tasks to insert based on conflict action
         val tasksToInsert = when (conflictAction) {
             ConflictAction.SKIP -> {
                 // Insert only non-conflicting tasks
@@ -168,7 +178,7 @@ class BackupRepository(
             }
         }
 
-        // 6. Batch insert with transaction
+        // 7. Batch insert with @Transaction (atomic: all or nothing)
         return@withContext try {
             taskDao.insertBatch(tasksToInsert)
             ImportResult(
