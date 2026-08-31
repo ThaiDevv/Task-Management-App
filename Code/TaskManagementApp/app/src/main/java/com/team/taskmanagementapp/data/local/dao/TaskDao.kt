@@ -126,4 +126,19 @@ interface TaskDao {
         newReminderMinutes: Int,
         updatedAt: Long
     )
+
+    // 15. Batch insert tasks (cho Import JSON) - Atomic transaction
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertBatch(tasks: List<Task>): List<Long>
+
+    // 16. Check conflict: tìm task theo (title + dueDate + recurrenceType)
+    @Query("""
+        SELECT * FROM tasks 
+        WHERE title = :title 
+          AND dueDate = :dueDate 
+          AND recurrenceType = :recurrenceType
+        LIMIT 1
+    """)
+    suspend fun getConflictingTask(title: String, dueDate: Long, recurrenceType: RecurrenceType): Task?
 }
