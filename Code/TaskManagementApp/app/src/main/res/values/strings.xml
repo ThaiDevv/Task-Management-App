@@ -260,5 +260,14 @@
     <string name="pin_forgot_dialog_title">Quên PIN?</string>
     <string name="pin_forgot_dialog_message">Để đặt lại PIN, bạn cần đăng nhập lại hoặc liên hệ quản trị viên.</string>
     <string name="pin_forgot_dialog_ok">Đã hiểu</string>
+
+    <!-- ================================================================ -->
+    <!-- Import/Export Strings                                            -->
+    <!-- ================================================================ -->
+    <string name="import_tasks">Import Tasks</string>
+    <string name="export_tasks">Export Tasks</string>
+    <string name="import_success">✅ Import Thành Công</string>
+    <string name="import_error">❌ Import Thất Bại</string>
 </resources>
+
 

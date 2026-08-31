@@ -47,6 +47,15 @@ class MainActivity : BaseActivity() {
         // If denied, the user can enable it later from the Android app settings.
     }
 
+    private val importActivityLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            // Import successful - navigate back to task list and refresh
+            navController.navigate(R.id.taskListFragment)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)

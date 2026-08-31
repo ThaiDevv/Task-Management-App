@@ -73,6 +73,14 @@ class SettingsFragment : Fragment() {
         synchronizeToggleStates()
     }
 
+    private val importActivityLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            showSnackbar(com.team.taskmanagementapp.R.string.import_success)
+        }
+    }
+
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
@@ -153,7 +161,11 @@ class SettingsFragment : Fragment() {
             )
         }
         binding.backupRow.setOnClickListener(openDataManagement)
-        binding.restoreRow.setOnClickListener(openDataManagement)
+        binding.restoreRow.setOnClickListener {
+            // Launch ImportActivity for JSON import
+            val intent = Intent(requireContext(), com.team.taskmanagementapp.ui.activity.ImportActivity::class.java)
+            importActivityLauncher.launch(intent)
+        }
 
         binding.systemPermissionsRow.setOnClickListener {
             openSystemNotificationSettings()
