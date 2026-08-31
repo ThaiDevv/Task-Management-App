@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?attr/colorBackground">
+    android:background="@color/background">
 
     <!-- Toolbar -->
     <com.google.android.material.appbarcompat.AppBarLayout
@@ -16,7 +16,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/primary"
             android:elevation="4dp"
             app:navigationIcon="@drawable/ic_arrow_back"
             app:title="Import Tasks" />
@@ -41,7 +41,7 @@
                 android:layout_height="100dp"
                 android:src="@drawable/ic_upload"
                 android:contentDescription="@null"
-                android:tint="?attr/colorPrimary"
+                android:tint="@color/primary"
                 android:layout_marginBottom="24dp" />
 
             <!-- Title -->
@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:text="Chọn file JSON để import danh sách công việc"
                 android:textSize="14sp"
-                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textColor="@color/outline"
                 android:gravity="center"
                 android:layout_marginBottom="32dp" />
 
@@ -71,11 +71,11 @@
                 android:layout_height="wrap_content"
                 android:text="Chưa chọn file"
                 android:textSize="12sp"
-                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textColor="@color/outline"
                 android:gravity="center"
                 android:layout_marginBottom="32dp"
                 android:padding="12dp"
-                android:background="?attr/colorSurface"
+                android:background="@color/surface_container_lowest"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp" />
 
@@ -106,7 +106,7 @@
                     android:text="Xử lý Task Trùng:"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    android:textColor="?attr/colorOnBackground"
+                    android:textColor="@color/on_background"
                     android:layout_marginBottom="12dp" />
 
                 <com.google.android.material.button.MaterialButton
