@@ -12,8 +12,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import android.os.Parcelable
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -59,8 +59,15 @@ class TaskListFragment : Fragment() {
         TaskViewModelFactory(repository, requireContext().applicationContext)
     }
 
+    private var todayScrollState: Parcelable? = null
+    private var upcomingScrollState: Parcelable? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (savedInstanceState != null) {
+            todayScrollState = savedInstanceState.getParcelable(STATE_TODAY_SCROLL)
+            upcomingScrollState = savedInstanceState.getParcelable(STATE_UPCOMING_SCROLL)
+        }
         // Register on childFragmentManager because FilterBottomSheet is shown as a child fragment.
         // Registered in onViewCreated (tied to viewLifecycleOwner) so it is re-registered each
         // time the view is recreated, which is exactly what we need after a configuration change.
@@ -94,6 +101,12 @@ class TaskListFragment : Fragment() {
         }
         setupUI()
         observeViewModel()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(STATE_TODAY_SCROLL, binding.todayTasksRecyclerView.layoutManager?.onSaveInstanceState())
+        outState.putParcelable(STATE_UPCOMING_SCROLL, binding.upcomingTasksRecyclerView.layoutManager?.onSaveInstanceState())
     }
 
     override fun onCreateView(
@@ -270,8 +283,18 @@ class TaskListFragment : Fragment() {
         val upcomingList = allTasks.filter { it.dueDate > nowEndToday }
             .sortedBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
 
-        todayTaskAdapter.submitList(todayList)
-        upcomingTaskAdapter.submitTaskList(upcomingList)
+        todayTaskAdapter.submitList(todayList) {
+            todayScrollState?.let {
+                binding.todayTasksRecyclerView.layoutManager?.onRestoreInstanceState(it)
+                todayScrollState = null
+            }
+        }
+        upcomingTaskAdapter.submitTaskList(upcomingList) {
+            upcomingScrollState?.let {
+                binding.upcomingTasksRecyclerView.layoutManager?.onRestoreInstanceState(it)
+                upcomingScrollState = null
+            }
+        }
 
         if (todayList.isEmpty()) {
             binding.todayEmptyStateText.visibility = View.VISIBLE
@@ -342,6 +365,11 @@ class TaskListFragment : Fragment() {
         val pendingParams = binding.pendingProgressBar.layoutParams as? LinearLayout.LayoutParams
         pendingParams?.weight = pendingRatio.coerceIn(0, 100).toFloat()
         binding.pendingProgressBar.layoutParams = pendingParams
+    }
+
+    companion object {
+        private const val STATE_TODAY_SCROLL = "state_today_scroll"
+        private const val STATE_UPCOMING_SCROLL = "state_upcoming_scroll"
     }
 }
 

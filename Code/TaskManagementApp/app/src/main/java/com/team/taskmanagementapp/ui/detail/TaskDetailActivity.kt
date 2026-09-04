@@ -78,6 +78,28 @@ class TaskDetailActivity : AppCompatActivity() {
         setupEditButton()
         setupDeleteButton()
 
+        // Fragment Result for Delete confirmation
+        supportFragmentManager.setFragmentResultListener(
+            DeleteTaskDialogFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            val task = currentTask ?: return@setFragmentResultListener
+            when (bundle.getInt(DeleteTaskDialogFragment.RESULT_DELETE_TYPE)) {
+                DeleteTaskDialogFragment.DELETE_NORMAL -> {
+                    viewModel.deleteTask(task)
+                    finish()
+                }
+                DeleteTaskDialogFragment.DELETE_ONLY_THIS -> {
+                    viewModel.deleteTask(task, deleteAllFuture = false)
+                    finish()
+                }
+                DeleteTaskDialogFragment.DELETE_ALL -> {
+                    viewModel.deleteTask(task, deleteAllFuture = true)
+                    finish()
+                }
+            }
+        }
+
         // 5-second motivational quote rotator with background images
         setupMotivationQuoteRotator()
     }
@@ -282,35 +304,11 @@ class TaskDetailActivity : AppCompatActivity() {
     private fun showDeleteConfirmDialog() {
         val task = currentTask ?: return
 
-        if (task.isRecurring && task.recurrenceType != RecurrenceType.NONE) {
-            MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.task_detail_delete_recurring_title)
-                .setMessage(R.string.task_detail_delete_recurring_msg)
-                .setNegativeButton(R.string.task_detail_delete_only_this) { _, _ ->
-                    viewModel.deleteTask(task, deleteAllFuture = false)
-                    finish()
-                }
-                .setPositiveButton(R.string.task_detail_delete_all_occurrences) { _, _ ->
-                    viewModel.deleteTask(task, deleteAllFuture = true)
-                    finish()
-                }
-                .setNeutralButton(R.string.action_cancel) { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .show()
-        } else {
-            MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.task_detail_delete_confirm_title)
-                .setMessage(R.string.task_detail_delete_confirm_msg)
-                .setNegativeButton(R.string.task_detail_delete_confirm_negative) { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .setPositiveButton(R.string.task_detail_delete_confirm_positive) { _, _ ->
-                    viewModel.deleteTask(task)
-                    finish()
-                }
-                .show()
-        }
+        if (supportFragmentManager.findFragmentByTag(DeleteTaskDialogFragment.TAG) != null) return
+
+        val isRecurring = task.isRecurring && task.recurrenceType != RecurrenceType.NONE
+        DeleteTaskDialogFragment.newInstance(isRecurring)
+            .show(supportFragmentManager, DeleteTaskDialogFragment.TAG)
     }
 
     private fun setupEditButton() {

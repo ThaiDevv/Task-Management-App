@@ -134,9 +134,9 @@ class UpcomingTaskAdapter(
     /**
      * Helper to group a flat list of tasks into UpcomingItems (Headers + Tasks).
      */
-    fun submitTaskList(tasks: List<Task>) {
+    fun submitTaskList(tasks: List<Task>, commitCallback: Runnable? = null) {
         if (tasks.isEmpty()) {
-            submitList(emptyList())
+            submitList(emptyList(), commitCallback)
             return
         }
 
@@ -168,6 +168,6 @@ class UpcomingTaskAdapter(
                 items.add(UpcomingItem.TaskItem(task))
             }
         }
-        submitList(items)
+        submitList(items, commitCallback)
     }
 }

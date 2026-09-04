@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.gridlayout.widget.GridLayout
+import android.os.Parcelable
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -57,6 +58,22 @@ class CalendarFragment : Fragment() {
     }
 
     private val displayCalendar = Calendar.getInstance()
+    private var scheduleScrollState: Parcelable? = null
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (savedInstanceState != null) {
+            scheduleScrollState = savedInstanceState.getParcelable(STATE_SCHEDULE_SCROLL)
+        }
+        setupRecyclerView()
+        setupMonthNavigation()
+        observeViewModel()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(STATE_SCHEDULE_SCROLL, binding.scheduleRecyclerView.layoutManager?.onSaveInstanceState())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,14 +83,6 @@ class CalendarFragment : Fragment() {
         _binding = FragmentCalendarBinding.inflate(inflater, container, false)
         return binding.root
     }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupRecyclerView()
-        setupMonthNavigation()
-        observeViewModel()
-    }
-
     // ── Setup ─────────────────────────────────────────────────────────────────
 
     private fun setupRecyclerView() {
@@ -250,7 +259,12 @@ class CalendarFragment : Fragment() {
 
     private fun updateScheduleList(tasks: List<Task>) {
         val sorted = tasks.sortedBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
-        scheduleAdapter.submitList(sorted)
+        scheduleAdapter.submitList(sorted) {
+            scheduleScrollState?.let {
+                binding.scheduleRecyclerView.layoutManager?.onRestoreInstanceState(it)
+                scheduleScrollState = null
+            }
+        }
 
         if (sorted.isEmpty()) {
             binding.emptyScheduleText.visibility = View.VISIBLE
@@ -278,5 +292,9 @@ class CalendarFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        private const val STATE_SCHEDULE_SCROLL = "state_schedule_scroll"
     }
 }
