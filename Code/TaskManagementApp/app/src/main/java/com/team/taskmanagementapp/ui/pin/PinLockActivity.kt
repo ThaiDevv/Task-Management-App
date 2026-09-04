@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.view.animation.AnimationUtils
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.databinding.ActivityPinLockBinding
@@ -31,6 +30,13 @@ import com.team.taskmanagementapp.util.Constants
  * - Animation scale khi nhấn phím & Shake animation khi nhập sai PIN.
  * - Brute-force lockout: khoá 30s sau 5 lần sai liên tiếp + CountDownTimer.
  * - Hỗ trợ Forgot PIN dialog trong chế độ ENTER.
+ *
+ * Configuration-change safety:
+ * - pinBuffer, confirmPin và toàn bộ ChangePinFlow state được lưu qua onSaveInstanceState
+ *   và khôi phục trong onCreate/onRestoreInstanceState.
+ * - ForgotPinDialogFragment được dùng thay vì AlertDialog trực tiếp để dialog survive rotation.
+ * - Lockout state được lưu trong PinRepository (SharedPreferences) nên tự động tồn tại
+ *   qua recreation mà không cần xử lý thêm.
  */
 class PinLockActivity : AppCompatActivity() {
 
@@ -69,17 +75,57 @@ class PinLockActivity : AppCompatActivity() {
             PinMode.ENTER
         }
 
+        // Restore state saved before configuration change
+        if (savedInstanceState != null) {
+            restoreState(savedInstanceState)
+        }
+
         supportActionBar?.hide()
 
         setupHeader()
         setupKeypad()
         setupActionButtons()
         checkLockoutOnResume()
+
+        // If state was restored, refresh the dot indicator to show saved buffer length
+        if (savedInstanceState != null) {
+            updatePinDots()
+        }
     }
 
     override fun onResume() {
         super.onResume()
         checkLockoutOnResume()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(STATE_PIN_BUFFER, pinBuffer.toString())
+        outState.putString(STATE_CONFIRM_PIN, confirmPin)
+        outState.putString(STATE_CHANGE_STEP, changePinFlow.step.name)
+        outState.putString(STATE_PENDING_NEW_PIN, changePinFlow.pendingNewPin)
+    }
+
+    /**
+     * Restores all in-flight PIN-entry state after a configuration change.
+     * Called from [onCreate] when [savedInstanceState] is non-null.
+     * Security invariant: the actual PIN hash in [pinRepo] is never touched here.
+     */
+    private fun restoreState(state: Bundle) {
+        // Restore pinBuffer
+        val savedBuffer = state.getString(STATE_PIN_BUFFER).orEmpty()
+        pinBuffer.clear()
+        pinBuffer.append(savedBuffer)
+
+        // Restore SET-mode confirmation pin
+        confirmPin = state.getString(STATE_CONFIRM_PIN)
+
+        // Restore ChangePinFlow state (only meaningful in CHANGE mode)
+        val savedStep = state.getString(STATE_CHANGE_STEP)
+            ?.let { runCatching { ChangePinFlow.Step.valueOf(it) }.getOrNull() }
+            ?: ChangePinFlow.Step.VERIFY_CURRENT
+        val savedPendingPin = state.getString(STATE_PENDING_NEW_PIN)
+        changePinFlow.restoreState(savedStep, savedPendingPin)
     }
 
     override fun onDestroy() {
@@ -100,13 +146,23 @@ class PinLockActivity : AppCompatActivity() {
             }
             PinMode.SET -> {
                 binding.tvWelcomeBack.text = getString(R.string.pin_set_title)
-                binding.tvSubtitle.text = getString(R.string.pin_set_subtitle)
                 binding.btnForgotPin.visibility = View.GONE
+                // Restore correct subtitle for SET flow step
+                binding.tvSubtitle.text = if (confirmPin != null) {
+                    getString(R.string.pin_set_confirm_subtitle)
+                } else {
+                    getString(R.string.pin_set_subtitle)
+                }
             }
             PinMode.CHANGE -> {
                 binding.tvWelcomeBack.text = getString(R.string.pin_change_title)
-                binding.tvSubtitle.text = getString(R.string.pin_change_step1)
                 binding.btnForgotPin.visibility = View.GONE
+                // Restore correct subtitle for CHANGE flow step
+                binding.tvSubtitle.text = when (changePinFlow.step) {
+                    ChangePinFlow.Step.VERIFY_CURRENT -> getString(R.string.pin_change_step1)
+                    ChangePinFlow.Step.ENTER_NEW      -> getString(R.string.pin_change_step2)
+                    ChangePinFlow.Step.CONFIRM_NEW    -> getString(R.string.pin_change_step3)
+                }
             }
             PinMode.VERIFY_DISABLE -> {
                 binding.tvWelcomeBack.text = getString(R.string.pin_disable_title)
@@ -425,12 +481,18 @@ class PinLockActivity : AppCompatActivity() {
         ).forEach { it.isEnabled = enabled }
     }
 
+    // ──────────────────────────────────────────────────────────────────────
+    // Forgot PIN Dialog
+    // ──────────────────────────────────────────────────────────────────────
+
+    /**
+     * Shows the Forgot PIN informational dialog via [ForgotPinDialogFragment].
+     * Using DialogFragment instead of a bare AlertDialog ensures the dialog survives rotation.
+     * Guards against duplicate instances by checking if one is already shown with the same tag.
+     */
     private fun showForgotPinDialog() {
-        AlertDialog.Builder(this)
-            .setTitle(R.string.pin_forgot_dialog_title)
-            .setMessage(R.string.pin_forgot_dialog_message)
-            .setPositiveButton(R.string.pin_forgot_dialog_ok, null)
-            .show()
+        if (supportFragmentManager.findFragmentByTag(ForgotPinDialogFragment.TAG) != null) return
+        ForgotPinDialogFragment().show(supportFragmentManager, ForgotPinDialogFragment.TAG)
     }
 
     @Deprecated("Use OnBackPressedDispatcher", level = DeprecationLevel.WARNING)
@@ -448,6 +510,12 @@ class PinLockActivity : AppCompatActivity() {
     companion object {
         const val KEY_PIN_VERIFIED = "key_pin_verified"
         const val KEY_LAST_ACTIVE_TIME = "key_last_active_time"
+
+        // Keys for onSaveInstanceState — all centralized here
+        private const val STATE_PIN_BUFFER      = "state_pin_buffer"
+        private const val STATE_CONFIRM_PIN     = "state_confirm_pin"
+        private const val STATE_CHANGE_STEP     = "state_change_step"
+        private const val STATE_PENDING_NEW_PIN = "state_pending_new_pin"
 
         fun createIntent(context: Context, mode: PinMode = PinMode.ENTER): Intent =
             Intent(context, PinLockActivity::class.java).apply {

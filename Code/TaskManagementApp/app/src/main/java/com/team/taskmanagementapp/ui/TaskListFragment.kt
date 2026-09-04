@@ -9,7 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.lifecycle.Lifecycle
@@ -57,6 +59,43 @@ class TaskListFragment : Fragment() {
         TaskViewModelFactory(repository, requireContext().applicationContext)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // Register on childFragmentManager because FilterBottomSheet is shown as a child fragment.
+        // Registered in onViewCreated (tied to viewLifecycleOwner) so it is re-registered each
+        // time the view is recreated, which is exactly what we need after a configuration change.
+        childFragmentManager.setFragmentResultListener(
+            FilterBottomSheet.REQUEST_KEY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            when (bundle.getString(FilterBottomSheet.RESULT_ACTION)) {
+                FilterBottomSheet.ACTION_APPLY -> {
+                    val status = bundle.getString(FilterBottomSheet.RESULT_STATUS)
+                        ?.let { runCatching { TaskStatus.valueOf(it) }.getOrNull() }
+                    val priority = bundle.getString(FilterBottomSheet.RESULT_PRIORITY)
+                        ?.let { runCatching { Priority.valueOf(it) }.getOrNull() }
+                    val dueDateRange = bundle.getString(FilterBottomSheet.RESULT_DATE_RANGE)
+                        ?.let { runCatching { DueDateRange.valueOf(it) }.getOrNull() }
+                        ?: DueDateRange.ALL
+                    val sortOption = bundle.getString(FilterBottomSheet.RESULT_SORT)
+                        ?.let { runCatching { SortOption.valueOf(it) }.getOrNull() }
+                        ?: SortOption.DUE_DATE_ASC
+                    viewModel.applyFilter(
+                        FilterCriteria(
+                            status = status,
+                            priority = priority,
+                            dueDateRange = dueDateRange,
+                            sortOption = sortOption
+                        )
+                    )
+                }
+                FilterBottomSheet.ACTION_CLEAR -> viewModel.clearFilter()
+            }
+        }
+        setupUI()
+        observeViewModel()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -66,11 +105,7 @@ class TaskListFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupUI()
-        observeViewModel()
-    }
+
 
     private fun setupUI() {
         updateGreeting()
@@ -94,15 +129,11 @@ class TaskListFragment : Fragment() {
             adapter = upcomingTaskAdapter
         }
 
-        // Open filter bottom sheet
+        // Open filter bottom sheet — no lambda passed; results arrive via FragmentResult API
         binding.btnOpenFilter.setOnClickListener {
             val currentCriteria = viewModel.filterCriteria.value
-            FilterBottomSheet.newInstance(currentCriteria) { action ->
-                when (action) {
-                    is FilterAction.Apply -> viewModel.applyFilter(action.criteria)
-                    is FilterAction.Clear -> viewModel.clearFilter()
-                }
-            }.show(childFragmentManager, FilterBottomSheet.TAG)
+            FilterBottomSheet.newInstance(currentCriteria)
+                .show(childFragmentManager, FilterBottomSheet.TAG)
         }
 
         // Quick add task button on Insight Banner
@@ -322,13 +353,18 @@ sealed class FilterAction {
 
 /**
  * Bottom Sheet DialogFragment for task filtering and sorting.
+ *
+ * Configuration-change safety:
+ * - The 4 selection fields are initialised from [arguments] (initial criteria) in [restoreFromArgs].
+ * - Mid-session changes (user picks a new option before rotating) are saved in
+ *   [onSaveInstanceState] and restored first in [onViewCreated] before falling back to [arguments].
+ * - The [onFilterAction] lambda pattern is replaced with the FragmentResult API so Apply/Clear
+ *   work correctly after recreation without depending on the old Fragment instance.
  */
 class FilterBottomSheet : BottomSheetDialogFragment() {
 
     private var _binding: FragmentFilterBottomSheetBinding? = null
     private val binding get() = _binding!!
-
-    private var onFilterAction: ((FilterAction) -> Unit)? = null
 
     private var selectedStatus: TaskStatus? = null
     private var selectedPriority: Priority? = null
@@ -346,7 +382,15 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        restoreFromArgs()
+
+        // Priority: savedInstanceState (mid-session edits) > arguments (initial criteria)
+        if (savedInstanceState != null) {
+            restoreFromSavedState(savedInstanceState)
+        } else {
+            restoreFromArgs()
+        }
+
+        // Sync all UI controls to reflect the restored selection state
         syncStatusUi()
         syncPriorityUi()
         syncDateRangeUi()
@@ -358,25 +402,52 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
         wireSortRows()
 
         binding.btnApplyFilter.setOnClickListener {
-            onFilterAction?.invoke(
-                FilterAction.Apply(
-                    FilterCriteria(
-                        status = selectedStatus,
-                        priority = selectedPriority,
-                        dueDateRange = selectedDueDateRange,
-                        sortOption = selectedSortOption
-                    )
+            setFragmentResult(
+                REQUEST_KEY,
+                bundleOf(
+                    RESULT_ACTION     to ACTION_APPLY,
+                    RESULT_STATUS     to selectedStatus?.name,
+                    RESULT_PRIORITY   to selectedPriority?.name,
+                    RESULT_DATE_RANGE to selectedDueDateRange.name,
+                    RESULT_SORT       to selectedSortOption.name
                 )
             )
             dismiss()
         }
 
         binding.btnReset.setOnClickListener {
-            onFilterAction?.invoke(FilterAction.Clear)
+            setFragmentResult(
+                REQUEST_KEY,
+                bundleOf(RESULT_ACTION to ACTION_CLEAR)
+            )
             dismiss()
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        // Persist mid-session edits across configuration changes
+        outState.putString(STATE_STATUS,     selectedStatus?.name)
+        outState.putString(STATE_PRIORITY,   selectedPriority?.name)
+        outState.putString(STATE_DATE_RANGE, selectedDueDateRange.name)
+        outState.putString(STATE_SORT,       selectedSortOption.name)
+    }
+
+    // ── Restore helpers ───────────────────────────────────────────────────
+
+    /** Restores mid-session selection state saved in [onSaveInstanceState]. */
+    private fun restoreFromSavedState(state: Bundle) {
+        selectedStatus = state.getString(STATE_STATUS)
+            ?.let { runCatching { TaskStatus.valueOf(it) }.getOrNull() }
+        selectedPriority = state.getString(STATE_PRIORITY)
+            ?.let { runCatching { Priority.valueOf(it) }.getOrNull() }
+        selectedDueDateRange = state.getString(STATE_DATE_RANGE)
+            ?.let { runCatching { DueDateRange.valueOf(it) }.getOrNull() } ?: DueDateRange.ALL
+        selectedSortOption = state.getString(STATE_SORT)
+            ?.let { runCatching { SortOption.valueOf(it) }.getOrNull() } ?: SortOption.DUE_DATE_ASC
+    }
+
+    /** Initialises selection state from the initial filter criteria passed via [arguments]. */
     private fun restoreFromArgs() {
         selectedStatus = arguments?.getString(ARG_STATUS)
             ?.let { runCatching { TaskStatus.valueOf(it) }.getOrNull() }
@@ -512,17 +583,39 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
 
     companion object {
         const val TAG = "FilterBottomSheet"
+
+        // FragmentResult key — used by both FilterBottomSheet (sender) and TaskListFragment (receiver)
+        const val REQUEST_KEY = "filter_bottom_sheet_result"
+
+        // Action values inside the result bundle
+        const val ACTION_APPLY = "action_apply"
+        const val ACTION_CLEAR = "action_clear"
+
+        // Result bundle keys
+        const val RESULT_ACTION     = "result_action"
+        const val RESULT_STATUS     = "result_status"
+        const val RESULT_PRIORITY   = "result_priority"
+        const val RESULT_DATE_RANGE = "result_date_range"
+        const val RESULT_SORT       = "result_sort"
+
+        // Arguments keys (initial criteria passed when creating the sheet)
         private const val ARG_STATUS     = "arg_status"
         private const val ARG_PRIORITY   = "arg_priority"
         private const val ARG_DATE_RANGE = "arg_date_range"
         private const val ARG_SORT       = "arg_sort"
 
-        fun newInstance(
-            currentCriteria: FilterCriteria,
-            onAction: (FilterAction) -> Unit
-        ): FilterBottomSheet {
+        // onSaveInstanceState keys (mid-session edits)
+        private const val STATE_STATUS     = "state_status"
+        private const val STATE_PRIORITY   = "state_priority"
+        private const val STATE_DATE_RANGE = "state_date_range"
+        private const val STATE_SORT       = "state_sort"
+
+        /**
+         * Creates a new [FilterBottomSheet] pre-populated with the current filter criteria.
+         * No callback is required — results are delivered via the FragmentResult API.
+         */
+        fun newInstance(currentCriteria: FilterCriteria): FilterBottomSheet {
             return FilterBottomSheet().apply {
-                onFilterAction = onAction
                 arguments = Bundle().apply {
                     currentCriteria.status?.let { putString(ARG_STATUS, it.name) }
                     currentCriteria.priority?.let { putString(ARG_PRIORITY, it.name) }
