@@ -62,6 +62,12 @@ private class FakeTaskDao : TaskDao {
         newReminderMinutes: Int,
         updatedAt: Long
     ) = Unit
+    override suspend fun insertBatch(tasks: List<Task>): List<Long> = emptyList()
+    override suspend fun getConflictingTask(
+        title: String,
+        dueDate: Long,
+        recurrenceType: RecurrenceType
+    ): Task? = null
 }
 
 /**

@@ -247,7 +247,7 @@ object JsonValidator {
                         // Accept ISO 8601 format (actual parsing would happen in BackupRepository)
                         0L // Placeholder, actual parsing done elsewhere
                     } else {
-                        errors.add("Task $index: Invalid dueDate format (expected Long timestamp or ISO 8601 String)")
+                        errors.add("Task $index: Invalid 'dueDate' type (expected Long or ISO 8601 String)")
                         return
                     }
                 } catch (e: Exception) {

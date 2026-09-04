@@ -40,7 +40,10 @@ class DataManagementFragment : Fragment() {
             ).show()
         }
         binding.exportDataButton.setOnClickListener(showPendingMessage)
-        binding.restoreDataButton.setOnClickListener(showPendingMessage)
+        binding.restoreDataButton.setOnClickListener {
+            val intent = android.content.Intent(requireContext(), com.team.taskmanagementapp.ui.activity.ImportActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun onDestroyView() {
