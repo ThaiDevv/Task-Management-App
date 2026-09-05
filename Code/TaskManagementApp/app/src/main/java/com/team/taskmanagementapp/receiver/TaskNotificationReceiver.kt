@@ -59,7 +59,7 @@ class TaskNotificationReceiver : BroadcastReceiver() {
             context,
             snoozeRequestCode(taskId),
             reminderIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
