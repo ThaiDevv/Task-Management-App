@@ -154,35 +154,21 @@
     <string name="settings_privacy_terms">Privacy Policy &amp; Terms of Service</string>
     <string name="settings_pin_setup_pending">PIN setup is handled in TASK-25</string>
 
-    <!-- Data Management Screen (TASK-26) -->
+    <!-- Data Management navigation target -->
     <string name="data_management_title">Data Management</string>
-    <string name="data_management_subtitle">Secure your workflow by backing up or restoring your task history.</string>
+    <string name="data_management_subtitle">Back up or restore your task history</string>
     <string name="data_export_title">Export Data</string>
-    <string name="data_export_summary">Snapshot your current workspace</string>
+    <string name="data_export_summary">Create a portable JSON backup of your tasks</string>
     <string name="data_export_action">Export to JSON</string>
-    <string name="data_export_total_tasks">TOTAL TASKS</string>
-    <string name="data_export_completed">COMPLETED</string>
     <string name="data_restore_title">Restore Data</string>
-    <string name="data_restore_summary">Import tasks from a backup file</string>
-    <string name="data_restore_upload_hint">Click to upload or drag and drop</string>
-    <string name="data_restore_upload_sub">TaskFlow Backup Files (.json) up to 25MB</string>
-    <string name="data_restore_action">Choose Backup File</string>
-    <string name="data_latest_status_label">LATEST STATUS</string>
-    <string name="data_last_backup_success">Last Backup Successful</string>
-    <string name="data_no_backup_yet">No backup yet</string>
-    <string name="data_download_last">Download Last</string>
-    <string name="data_verify_integrity">Verify Integrity</string>
-    <string name="data_recent_backups">Recent Backups</string>
-    <string name="data_view_all_history">View All History</string>
-    <string name="data_backup_status_today">Today at %1$s • %2$s</string>
+    <string name="data_restore_summary">Import tasks from a TaskFlow backup file</string>
+    <string name="data_restore_action">Choose backup file</string>
     <string name="data_feature_pending">Backup and restore logic will be implemented separately</string>
-    <string name="data_export_started">Preparing export file…</string>
-    <string name="data_export_success">Tasks exported successfully</string>
-    <string name="data_export_failed">Export failed. Please try again.</string>
-    <string name="data_restore_started">Reading backup file…</string>
-    <string name="data_restore_success">Tasks restored successfully</string>
-    <string name="data_restore_failed">Restore failed. Invalid or corrupted file.</string>
-    <string name="data_restore_cancel">Cancel</string>
+    <string name="data_task_count">%d tasks in database</string>
+    <string name="data_export_success">Exported %d tasks successfully</string>
+    <string name="data_export_error">Export failed: %s</string>
+    <string name="data_import_success">Imported %d tasks successfully</string>
+    <string name="data_import_error">Import failed: %s</string>
     <string name="action_back">Back</string>
     <!-- Filter Bottom Sheet -->
     <string name="filter_title">Filter &amp; Sort</string>
