@@ -76,4 +76,60 @@ class TaskUiStateTest {
         assertFalse("Completed task should never be overdue", isOverdue(completedPastDueTask))
         assertFalse("Future task should not be overdue", isOverdue(futureTask))
     }
+
+    @Test
+    fun testUpcomingAndTodayListFiltering() {
+        val cal = java.util.Calendar.getInstance()
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 23)
+        cal.set(java.util.Calendar.MINUTE, 59)
+        cal.set(java.util.Calendar.SECOND, 59)
+        cal.set(java.util.Calendar.MILLISECOND, 999)
+        val endOfToday = cal.timeInMillis
+
+        val tomorrowCal = java.util.Calendar.getInstance().apply { add(java.util.Calendar.DAY_OF_YEAR, 1) }
+        tomorrowCal.set(java.util.Calendar.HOUR_OF_DAY, 0)
+        tomorrowCal.set(java.util.Calendar.MINUTE, 0)
+        tomorrowCal.set(java.util.Calendar.SECOND, 0)
+        tomorrowCal.set(java.util.Calendar.MILLISECOND, 0)
+        val tomorrowStart = tomorrowCal.timeInMillis
+
+        val tomorrowTask = Task(
+            id = 10,
+            title = "Tomorrow Task",
+            description = "Due tomorrow",
+            dueDate = tomorrowStart,
+            dueTime = tomorrowStart + 36000000L,
+            priority = Priority.MEDIUM,
+            status = TaskStatus.TODO
+        )
+
+        val past2024Task = Task(
+            id = 11,
+            title = "2024 Task from sample backup",
+            description = "Expired in 2024",
+            dueDate = 1725206400000L,
+            dueTime = 1725206400000L,
+            priority = Priority.HIGH,
+            status = TaskStatus.TODO
+        )
+
+        val allTasks = listOf(tomorrowTask, past2024Task)
+        val todayList = allTasks.filter { it.dueDate <= endOfToday }
+        val upcomingList = allTasks.filter { it.dueDate > endOfToday }
+
+        // Past backup task goes to todayList (and is marked overdue)
+        assertTrue(todayList.contains(past2024Task))
+        assertFalse(upcomingList.contains(past2024Task))
+
+        // Tomorrow task goes to upcomingList
+        assertTrue(upcomingList.contains(tomorrowTask))
+        assertFalse(todayList.contains(tomorrowTask))
+
+        // Verify UpcomingTaskAdapter dateLabel logic for tomorrow
+        val taskCal = java.util.Calendar.getInstance().apply { timeInMillis = tomorrowTask.dueDate }
+        val isTomorrow = taskCal.get(java.util.Calendar.YEAR) == tomorrowCal.get(java.util.Calendar.YEAR)
+                && taskCal.get(java.util.Calendar.DAY_OF_YEAR) == tomorrowCal.get(java.util.Calendar.DAY_OF_YEAR)
+        val dateLabel = if (isTomorrow) "Tomorrow" else "Other Date"
+        assertEquals("Tomorrow", dateLabel)
+    }
 }

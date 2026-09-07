@@ -23,6 +23,7 @@ data class Task (
     val priority: Priority,
     @ColumnInfo(name = "status")
     val status: TaskStatus = TaskStatus.TODO,
+    @com.google.gson.annotations.SerializedName("isCompleted", alternate = ["isComplete"])
     @ColumnInfo(name = "isComplete")
     val isCompleted: Boolean = false,
     @ColumnInfo(name = "isRecurring")
