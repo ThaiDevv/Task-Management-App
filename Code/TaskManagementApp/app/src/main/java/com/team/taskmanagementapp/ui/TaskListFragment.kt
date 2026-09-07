@@ -455,6 +455,15 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        val bottomSheetDialog = dialog as? com.google.android.material.bottomsheet.BottomSheetDialog
+        bottomSheetDialog?.behavior?.apply {
+            state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+            skipCollapsed = true
+        }
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         // Persist mid-session edits across configuration changes
