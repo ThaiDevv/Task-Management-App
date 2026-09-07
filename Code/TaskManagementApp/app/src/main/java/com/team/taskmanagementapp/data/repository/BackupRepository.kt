@@ -22,7 +22,17 @@ class BackupRepository(
     private val context: Context,
     private val taskDao: TaskDao
 ) {
-    private val gson = Gson()
+    private val gson = com.google.gson.GsonBuilder()
+        .registerTypeAdapter(TaskStatus::class.java, com.google.gson.JsonDeserializer { json, _, _ ->
+            val str = json.asString.uppercase()
+            when (str) {
+                "DONE", "COMPLETED" -> TaskStatus.COMPLETED
+                "IN_PROGRESS" -> TaskStatus.IN_PROGRESS
+                "OVERDUE" -> TaskStatus.OVERDUE
+                else -> TaskStatus.TODO
+            }
+        })
+        .create()
 
     /**
      * Read file content from SAF Uri
@@ -155,26 +165,36 @@ class BackupRepository(
 
         val failureCount = importFile.tasks.size - validTasks.size
 
+        // Normalize dueDate to local startOfDay so it matches app conventions
+        val normalizedTasks = validTasks.map { task ->
+            val normalizedDueDate = if (task.dueDate > 0) {
+                com.team.taskmanagementapp.util.DateTimeUtils.getStartOfDay(task.dueDate)
+            } else {
+                task.dueDate
+            }
+            task.copy(dueDate = normalizedDueDate)
+        }
+
         // 5. Check conflicts
-        val conflicts = checkConflicts(validTasks)
+        val conflicts = checkConflicts(normalizedTasks)
 
         // 6. Determine tasks to insert based on conflict action
         val tasksToInsert = when (conflictAction) {
             ConflictAction.SKIP -> {
                 // Insert only non-conflicting tasks
-                validTasks.filterNot { task ->
+                normalizedTasks.filterNot { task ->
                     conflicts.any { it.newTask.title == task.title && it.newTask.dueDate == task.dueDate }
                 }
             }
             ConflictAction.REPLACE -> {
                 // Delete conflicting tasks, then insert all valid tasks
                 deleteConflictingTasks(conflicts)
-                validTasks
+                normalizedTasks
             }
             ConflictAction.REPLACE_ALL -> {
                 // Delete all existing tasks, then insert all new tasks
                 taskDao.deleteAllTasks()
-                validTasks
+                normalizedTasks
             }
         }
 
