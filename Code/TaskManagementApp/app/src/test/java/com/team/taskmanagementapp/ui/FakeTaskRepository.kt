@@ -62,6 +62,9 @@ private class FakeTaskDao : TaskDao {
         newReminderMinutes: Int,
         updatedAt: Long
     ) = Unit
+    override suspend fun getAllTasksSync(): List<Task> = emptyList()
+    override suspend fun getCompletedTasksCount(): Int = 0
+    override suspend fun insertAllTasks(tasks: List<Task>) = Unit
 }
 
 /**
