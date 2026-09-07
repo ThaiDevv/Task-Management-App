@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- item_backup_file.xml — Row item for Recent Backups list -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
+
+    <!-- File icon -->
+    <ImageView
+        android:id="@+id/ivFileIcon"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="@drawable/bg_stat_chip"
+        android:contentDescription="@null"
+        android:padding="8dp"
+        android:src="@drawable/ic_file_json"
+        app:tint="#9CA3AF" />
+
+    <!-- File name + date/size -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvBackupFileName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/poppins_semibold"
+            android:singleLine="true"
+            android:textColor="#1A1A2E"
+            android:textSize="13sp"
+            tools:text="Backup_2023_10_27.json" />
+
+        <TextView
+            android:id="@+id/tvBackupFileMeta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="#9CA3AF"
+            android:textSize="12sp"
+            tools:text="Oct 27, 2023 • 942 KB" />
+
+    </LinearLayout>
+
+</LinearLayout>

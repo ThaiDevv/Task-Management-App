@@ -82,6 +82,18 @@ class TaskRepository(
     suspend fun deleteAllTasks() =
         taskDao.deleteAllTasks()
 
+    /** Returns a synchronous snapshot of all tasks for JSON serialisation. */
+    suspend fun getAllTasksSync(): List<Task> =
+        taskDao.getAllTasksSync()
+
+    /** Returns the count of completed tasks for the export stats chip. */
+    suspend fun getCompletedTasksCount(): Int =
+        taskDao.getCompletedTasksCount()
+
+    /** Bulk-insert a list of tasks during restore (replaces on conflict). */
+    suspend fun insertAllTasks(tasks: List<Task>) =
+        taskDao.insertAllTasks(tasks)
+
     // Kiểm tra và tự động cập nhật task quá hạn sang OVERDUE
     suspend fun checkAndUpdateOverdueTasks() {
         val now = System.currentTimeMillis()

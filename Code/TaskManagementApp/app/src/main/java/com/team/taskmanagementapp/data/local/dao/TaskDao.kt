@@ -29,6 +29,18 @@ interface TaskDao {
     @Query("SELECT * FROM tasks WHERE isComplete = 0")
     suspend fun getActiveTasksSync(): List<Task>
 
+    /** Synchronous snapshot of ALL tasks – used for JSON export. */
+    @Query("SELECT * FROM tasks ORDER BY dueDate ASC")
+    suspend fun getAllTasksSync(): List<Task>
+
+    /** Count of completed tasks – used for export stats chip. */
+    @Query("SELECT COUNT(*) FROM tasks WHERE isComplete = 1")
+    suspend fun getCompletedTasksCount(): Int
+
+    /** Bulk insert for restore – replaces on conflict so IDs are preserved. */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllTasks(tasks: List<Task>)
+
     // 5. Lấy 1 công việc theo ID
     @Query("SELECT * FROM tasks WHERE id = :taskId")
     suspend fun getTaskById(taskId: Long): Task?
