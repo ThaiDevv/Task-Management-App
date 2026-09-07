@@ -1,0 +1,35 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+    <path
+        android:pathData="M512,512m-448,0a448,448 0,1 1,896 0a448,448 0,1 1,-896 0"
+        android:strokeWidth="80"
+        android:strokeColor="#105CDB"/>
+    <path
+        android:pathData="M320,512l128,128l320,-320"
+        android:strokeWidth="100"
+        android:strokeColor="#105CDB"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"/>
+</vector>
+
+<!-- Note: For a true gradient as seen in the icon, use the following fill with aapt: -->
+<!--
+<path
+    android:pathData="...">
+    <aapt:attr name="android:fillColor">
+        <gradient
+            android:startX="0"
+            android:startY="0"
+            android:endX="1024"
+            android:endY="1024"
+            android:type="linear">
+            <item android:offset="0" android:color="#105CDB" />
+            <item android:offset="1" android:color="#3A97FE" />
+        </gradient>
+    </aapt:attr>
+</path>
+-->
