@@ -65,6 +65,12 @@ private class FakeTaskDao : TaskDao {
     override suspend fun getAllTasksSync(): List<Task> = emptyList()
     override suspend fun getCompletedTasksCount(): Int = 0
     override suspend fun insertAllTasks(tasks: List<Task>) = Unit
+    override suspend fun insertBatch(tasks: List<Task>): List<Long> = emptyList()
+    override suspend fun getConflictingTask(
+        title: String,
+        dueDate: Long,
+        recurrenceType: RecurrenceType
+    ): Task? = null
 }
 
 /**
