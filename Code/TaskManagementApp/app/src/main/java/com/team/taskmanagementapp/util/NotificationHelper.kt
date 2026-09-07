@@ -101,7 +101,7 @@ object NotificationHelper {
         }
 
         val pendingIntentFlags =
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_IMMUTABLE
 
         // Opens the task detail screen when the notification body is tapped.
         val detailIntent = Intent(context, TaskDetailActivity::class.java).apply {

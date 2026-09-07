@@ -13,6 +13,7 @@ import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.ui.base.UiState
 import com.team.taskmanagementapp.util.AlarmScheduler
+import com.team.taskmanagementapp.util.NotificationHelper
 import com.team.taskmanagementapp.util.RecurrenceHelper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -120,11 +121,17 @@ class TaskViewModel(
         viewModelScope.launch {
             try {
                 if (deleteAllFuture && task.isRecurring && task.recurrenceType != RecurrenceType.NONE) {
+                    val futureTasks = repository.getFutureRecurringTasks(task.title, task.recurrenceType, task.dueDate)
+                    futureTasks.forEach { futureTask ->
+                        AlarmScheduler.cancelAlarm(applicationContext, futureTask.id)
+                        NotificationHelper.cancelNotification(applicationContext, futureTask.id)
+                    }
                     repository.deleteFutureRecurringTasks(task.title, task.recurrenceType, task.dueDate)
                 } else {
                     repository.delete(task)
                 }
                 AlarmScheduler.cancelAlarm(applicationContext, task.id)
+                NotificationHelper.cancelNotification(applicationContext, task.id)
                 _deleteSuccess.emit(true)
                 _userMessage.emit("Đã xóa công việc \"${task.title}\"")
             } catch (e: Exception) {
@@ -151,6 +158,7 @@ class TaskViewModel(
                 var reminderScheduleResult: AlarmScheduler.ScheduleResult? = null
                 if (updatedTask.isCompleted) {
                     AlarmScheduler.cancelAlarm(applicationContext, updatedTask.id)
+                    NotificationHelper.cancelNotification(applicationContext, updatedTask.id)
                 } else {
                     reminderScheduleResult =
                         AlarmScheduler.scheduleAlarm(applicationContext, updatedTask)
