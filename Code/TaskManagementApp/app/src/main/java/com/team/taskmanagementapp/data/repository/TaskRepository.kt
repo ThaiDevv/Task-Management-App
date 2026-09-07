@@ -10,6 +10,7 @@ import com.team.taskmanagementapp.data.model.enums.RecurrenceType
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.util.DateTimeUtils
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.util.Calendar
 
@@ -17,6 +18,11 @@ class TaskRepository(
     private val taskDao: TaskDao
 ) {
     fun getAllTasks() = taskDao.getAllTasks()
+
+    /**
+     * Get all tasks as a list (synchronous).
+     */
+    suspend fun getAllTasksList(): List<Task> = getAllTasks().first()
 
     suspend fun getTaskById(id: Long) =
         taskDao.getTaskById(id)
