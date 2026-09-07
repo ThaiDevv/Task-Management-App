@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -22,15 +23,55 @@ import com.team.taskmanagementapp.ui.detail.TaskDetailActivity
 /** Utility for creating, showing, and cancelling task reminder notifications. */
 object NotificationHelper {
 
+    /** Returns false when app notifications, runtime access, or the reminder channel is blocked. */
+    fun areNotificationsEnabled(context: Context): Boolean {
+        val applicationContext = context.applicationContext
+        val enabledByUser = applicationContext.getSharedPreferences(
+            Constants.PREFS_NAME,
+            Context.MODE_PRIVATE
+        ).getBoolean(Constants.KEY_NOTIFICATIONS_ENABLED, true)
+        if (!enabledByUser) return false
+
+        if (
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return false
+        }
+
+        val enabledBySystem = runCatching {
+            NotificationManagerCompat.from(applicationContext).areNotificationsEnabled()
+        }.onFailure {
+            Log.w(TAG, "Unable to query app notification state", it)
+        }.getOrDefault(false)
+        if (!enabledBySystem) return false
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelEnabled = runCatching {
+                val manager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE)
+                    as NotificationManager
+                val channel = manager.getNotificationChannel(Constants.NOTIFICATION_CHANNEL_ID)
+                channel == null || channel.importance != NotificationManager.IMPORTANCE_NONE
+            }.onFailure {
+                Log.w(TAG, "Unable to query reminder channel state", it)
+            }.getOrDefault(false)
+            if (!channelEnabled) return false
+        }
+
+        return true
+    }
+
     fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
             val existingChannel = notificationManager.getNotificationChannel(Constants.NOTIFICATION_CHANNEL_ID)
-            if (existingChannel != null && existingChannel.importance < NotificationManager.IMPORTANCE_HIGH) {
-                notificationManager.deleteNotificationChannel(Constants.NOTIFICATION_CHANNEL_ID)
-            }
+            // Never delete/recreate an existing channel: that could disregard the user's choice.
+            if (existingChannel != null) return
 
             val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             val audioAttributes = AudioAttributes.Builder()
@@ -54,11 +95,10 @@ object NotificationHelper {
     }
 
     fun showTaskReminder(context: Context, task: Task) {
-        val notificationsEnabled = context.getSharedPreferences(
-            Constants.PREFS_NAME,
-            Context.MODE_PRIVATE
-        ).getBoolean(Constants.KEY_NOTIFICATIONS_ENABLED, true)
-        if (!notificationsEnabled) return
+        if (!areNotificationsEnabled(context)) {
+            Log.w(TAG, "Reminder notification not shown because notifications are disabled")
+            return
+        }
 
         val pendingIntentFlags =
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
@@ -133,10 +173,15 @@ object NotificationHelper {
                 Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
+            Log.w(TAG, "Reminder notification not shown because runtime access is missing")
             return
         }
 
-        NotificationManagerCompat.from(context).notify(task.id, notification)
+        runCatching {
+            NotificationManagerCompat.from(context).notify(task.id, notification)
+        }.onFailure {
+            Log.w(TAG, "Unable to post reminder notification", it)
+        }
     }
 
     fun cancelNotification(context: Context, taskId: Int) {
@@ -157,4 +202,5 @@ object NotificationHelper {
     private const val REQUEST_OPEN_DETAIL = 0
     private const val REQUEST_MARK_COMPLETE = 1
     private const val REQUEST_SNOOZE = 2
+    private const val TAG = "NotificationHelper"
 }

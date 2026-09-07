@@ -39,7 +39,7 @@ class BootReceiver : BroadcastReceiver() {
                 rescheduleAllAlarms(context)
                 markOverdueTasks(context)
             } catch (e: Exception) {
-                Log.e(TAG, "Error rescheduling alarms after boot", e)
+                Log.w(TAG, "Unable to restore reminders after boot", e)
             } finally {
                 pendingResult.finish()
             }
@@ -61,11 +61,11 @@ class BootReceiver : BroadcastReceiver() {
             val triggerAt = AlarmScheduler.calculateTriggerAtMillis(task)
             if (triggerAt != null && triggerAt > now) {
                 val res = AlarmScheduler.scheduleAlarm(appContext, task, now)
-                Log.d(TAG, "Rescheduled alarm for task ${task.id} ('${task.title}') at $triggerAt, result=$res")
+                Log.d(TAG, "Restored a reminder after boot; result=$res")
             } else {
                 // Hủy PendingIntent thừa nếu còn tồn tại
                 AlarmScheduler.cancelAlarm(appContext, task.id)
-                Log.d(TAG, "Skipped (past) alarm for task ${task.id} ('${task.title}')")
+                Log.d(TAG, "Skipped a past reminder after boot")
             }
         }
     }
@@ -87,7 +87,7 @@ class BootReceiver : BroadcastReceiver() {
             val isOverdue = combinedDue > 0L && combinedDue < now
 
             if (isOverdue && task.status != TaskStatus.OVERDUE) {
-                Log.d(TAG, "Marking task ${task.id} ('${task.title}') as OVERDUE after boot.")
+                Log.d(TAG, "Marking an overdue task after boot")
                 dao.updateTask(task.copy(status = TaskStatus.OVERDUE, updatedAt = now))
             }
         }
