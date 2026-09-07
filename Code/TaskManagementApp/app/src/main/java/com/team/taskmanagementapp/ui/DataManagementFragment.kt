@@ -102,10 +102,13 @@ class DataManagementFragment : Fragment() {
         // ─── Export button ───────────────────────────────────────────────────────
         binding.exportDataButton.setOnClickListener { launchExport() }
 
-        // ─── Restore button & drop-zone ─────────────────────────────────────────
-        val openImportPicker = View.OnClickListener { launchImport() }
-        binding.restoreDataButton.setOnClickListener(openImportPicker)
-        binding.dropZone.setOnClickListener(openImportPicker)
+        // ─── Restore button & drop-zone: launch ImportActivity for JSON import ───
+        val openImportActivity = View.OnClickListener {
+            val intent = android.content.Intent(requireContext(), com.team.taskmanagementapp.ui.activity.ImportActivity::class.java)
+            startActivity(intent)
+        }
+        binding.restoreDataButton.setOnClickListener(openImportActivity)
+        binding.dropZone.setOnClickListener(openImportActivity)
 
         // ─── View All History ─────────────────────────────────────────────────
         binding.btnViewAllHistory.setOnClickListener {
@@ -344,6 +347,11 @@ class DataManagementFragment : Fragment() {
     // ═══════════════════════════════════════════════════════════════════════════
     //  LIFECYCLE
     // ═══════════════════════════════════════════════════════════════════════════
+
+    override fun onResume() {
+        super.onResume()
+        loadExportStats()
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

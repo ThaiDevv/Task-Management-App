@@ -41,6 +41,12 @@
             android:theme="@style/Theme.TaskManagementApp"
             android:windowSoftInputMode="adjustResize" />
 
+        <activity
+            android:name=".ui.activity.ImportActivity"
+            android:exported="false"
+            android:label="@string/import_tasks"
+            android:theme="@style/Theme.TaskManagementApp" />
+
         <receiver
             android:name=".receiver.TaskNotificationReceiver"
             android:exported="false" />
