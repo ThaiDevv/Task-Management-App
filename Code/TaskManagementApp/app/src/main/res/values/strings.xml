@@ -183,6 +183,12 @@
     <string name="data_restore_success">Tasks restored successfully</string>
     <string name="data_restore_failed">Restore failed. Invalid or corrupted file.</string>
     <string name="data_restore_cancel">Cancel</string>
+    <string name="data_task_count">%d tasks in database</string>
+    <string name="data_export_error">Export failed: %s</string>
+    <string name="data_import_success">Imported %d tasks successfully</string>
+    <string name="data_import_error">Import failed: %s</string>
+    <string name="data_error">Error: %s</string>
+    <string name="data_last_backup">Last backup: %s</string>
     <string name="action_back">Back</string>
     <!-- Filter Bottom Sheet -->
     <string name="filter_title">Filter &amp; Sort</string>
