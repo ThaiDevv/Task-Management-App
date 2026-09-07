@@ -1,7 +1,5 @@
 package com.team.taskmanagementapp.ui
 
-import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -52,18 +50,15 @@ class DataManagementFragment : Fragment() {
     private lateinit var viewModel: TaskViewModel
 
     // ─── SAF: Export — CreateDocument ──────────────────────────────────────────
-    private val exportLauncher: ActivityResultLauncher<Intent> =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                result.data?.data?.let { uri -> doExport(uri) }
-            }
+    private val exportLauncher: ActivityResultLauncher<String> =
+        registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri: Uri? ->
+            uri?.let { doExport(it) }
         }
 
     // ─── SAF: Import — OpenDocument ────────────────────────────────────────────
-    private val importLauncher: ActivityResultLauncher<Intent> =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val uri = result.data?.data ?: return@registerForActivityResult
+    private val importLauncher: ActivityResultLauncher<Array<String>> =
+        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
+            if (uri != null) {
                 // Show selected file name
                 val fileName = getFileName(uri)
                 showFilePreview(fileName)
@@ -185,12 +180,7 @@ class DataManagementFragment : Fragment() {
 
     private fun launchExport() {
         val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "application/json"
-            putExtra(Intent.EXTRA_TITLE, "taskflow_backup_$timestamp.json")
-        }
-        exportLauncher.launch(intent)
+        exportLauncher.launch("taskflow_backup_$timestamp.json")
     }
 
     private fun doExport(uri: Uri) {
@@ -221,13 +211,7 @@ class DataManagementFragment : Fragment() {
     // ═══════════════════════════════════════════════════════════════════════════
 
     private fun launchImport() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "application/json"
-            // Also accept files with .json extension on some devices
-            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/json", "text/plain", "*/*"))
-        }
-        importLauncher.launch(intent)
+        importLauncher.launch(arrayOf("application/json"))
     }
 
     private fun doRestore(uri: Uri) {
