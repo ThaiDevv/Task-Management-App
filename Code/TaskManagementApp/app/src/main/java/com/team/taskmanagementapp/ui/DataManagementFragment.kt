@@ -9,15 +9,16 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.team.taskmanagementapp.R
-import com.team.taskmanagementapp.TaskApplication
-import com.team.taskmanagementapp.data.repository.BackupRepository
-import com.team.taskmanagementapp.data.repository.TaskRepository
+import com.team.taskmanagementapp.data.repository.BackupUiState
 import com.team.taskmanagementapp.databinding.FragmentDataManagementBinding
-import com.team.taskmanagementapp.util.DateTimeUtils
+import com.team.taskmanagementapp.ui.viewmodel.BackupViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -32,7 +33,7 @@ class DataManagementFragment : Fragment() {
     private var _binding: FragmentDataManagementBinding? = null
     private val binding get() = requireNotNull(_binding)
 
-    private lateinit var backupRepository: BackupRepository
+    private val viewModel: BackupViewModel by viewModels()
 
     // SAF result launcher for export
     private val exportLauncher = registerForActivityResult(
@@ -40,10 +41,9 @@ class DataManagementFragment : Fragment() {
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.data?.let { uri ->
-                exportToJson(uri)
+                viewModel.exportTasks(uri)
             }
         }
-        hideProgress()
     }
 
     // SAF result launcher for import
@@ -52,10 +52,9 @@ class DataManagementFragment : Fragment() {
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.data?.let { uri ->
-                importFromJson(uri)
+                viewModel.importTasks(uri)
             }
         }
-        hideProgress()
     }
 
     override fun onCreateView(
@@ -69,14 +68,8 @@ class DataManagementFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Initialize BackupRepository
-        val taskApplication = requireActivity().application as TaskApplication
-        val taskRepository = TaskRepository(taskApplication)
-        backupRepository = BackupRepository(taskRepository, requireContext())
-
         setupClickListeners()
-        showTaskCount()
+        observeState()
     }
 
     private fun setupClickListeners() {
@@ -93,10 +86,56 @@ class DataManagementFragment : Fragment() {
         }
     }
 
-    private fun showTaskCount() {
+    private fun observeState() {
         viewLifecycleOwner.lifecycleScope.launch {
-            val count = backupRepository.getTaskCount()
-            binding.taskCountText.text = getString(R.string.data_task_count, count)
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Observe UI state from repository
+                launch {
+                    viewModel.uiState.collect { state ->
+                        handleUiState(state)
+                    }
+                }
+
+                // Observe task count
+                launch {
+                    viewModel.taskCount.collect { count ->
+                        binding.taskCountText.text = getString(R.string.data_task_count, count)
+                    }
+                }
+
+                // Observe last backup time
+                launch {
+                    viewModel.lastBackupTime.collect { lastBackup ->
+                        if (lastBackup != null) {
+                            binding.lastBackupText.text = getString(R.string.data_last_backup, lastBackup)
+                            binding.lastBackupText.isVisible = true
+                        } else {
+                            binding.lastBackupText.isVisible = false
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun handleUiState(state: BackupUiState) {
+        when (state) {
+            is BackupUiState.Idle -> {
+                hideProgress()
+            }
+            is BackupUiState.Loading -> {
+                showProgress(state.message)
+            }
+            is BackupUiState.Success -> {
+                hideProgress()
+                showSnackbar(state.message)
+                viewModel.resetState()
+            }
+            is BackupUiState.Error -> {
+                hideProgress()
+                showSnackbar(getString(R.string.data_error, state.message))
+                viewModel.resetState()
+            }
         }
     }
 
@@ -127,49 +166,17 @@ class DataManagementFragment : Fragment() {
         importLauncher.launch(intent)
     }
 
-    /**
-     * Export tasks to JSON file.
-     */
-    private fun exportToJson(uri: android.net.Uri) {
-        showProgress()
-        viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                val count = backupRepository.exportToJson(uri)
-                showSnackbar(getString(R.string.data_export_success, count))
-            } catch (e: Exception) {
-                showSnackbar(getString(R.string.data_export_error, e.message ?: "Unknown error"))
-            } finally {
-                hideProgress()
-            }
-        }
-    }
-
-    /**
-     * Import tasks from JSON file.
-     */
-    private fun importFromJson(uri: android.net.Uri) {
-        showProgress()
-        viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                val count = backupRepository.importFromJson(uri)
-                showSnackbar(getString(R.string.data_import_success, count))
-                showTaskCount() // Refresh count
-            } catch (e: Exception) {
-                showSnackbar(getString(R.string.data_import_error, e.message ?: "Unknown error"))
-            } finally {
-                hideProgress()
-            }
-        }
-    }
-
-    private fun showProgress() {
+    private fun showProgress(message: String) {
         binding.progressBar.isVisible = true
+        binding.progressText.text = message
+        binding.progressText.isVisible = true
         binding.exportDataButton.isEnabled = false
         binding.restoreDataButton.isEnabled = false
     }
 
     private fun hideProgress() {
         binding.progressBar.isVisible = false
+        binding.progressText.isVisible = false
         binding.exportDataButton.isEnabled = true
         binding.restoreDataButton.isEnabled = true
     }
