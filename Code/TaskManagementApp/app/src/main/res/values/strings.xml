@@ -183,6 +183,12 @@
     <string name="data_restore_success">Tasks restored successfully</string>
     <string name="data_restore_failed">Restore failed. Invalid or corrupted file.</string>
     <string name="data_restore_cancel">Cancel</string>
+    <string name="data_task_count">%d tasks in database</string>
+    <string name="data_export_error">Export failed: %s</string>
+    <string name="data_import_success">Imported %d tasks successfully</string>
+    <string name="data_import_error">Import failed: %s</string>
+    <string name="data_error">Error: %s</string>
+    <string name="data_last_backup">Last backup: %s</string>
     <string name="action_back">Back</string>
     <!-- Filter Bottom Sheet -->
     <string name="filter_title">Filter &amp; Sort</string>
@@ -224,6 +230,10 @@
     <string name="notification_action_complete">Đánh dấu hoàn thành</string>
     <string name="notification_action_snooze">Báo lại 10 phút</string>
     <string name="exact_alarm_permission_required">Allow exact alarms to schedule task reminders</string>
+    <string name="notification_schedule_fallback">Task saved. Exact alarms are unavailable, so the reminder will use a battery-optimized fallback.</string>
+    <string name="notification_schedule_disabled">Task saved, but notifications are disabled. Enable them in Settings to receive reminders.</string>
+    <string name="notification_schedule_failed">Task saved, but its reminder could not be scheduled.</string>
+    <string name="notification_schedule_past">Task saved, but its reminder time has already passed.</string>
 
     <string name="notif_permission_rationale_title">Cho phép thông báo nhắc việc</string>
     <string name="notif_permission_rationale_message">TaskFlow cần quyền thông báo để nhắc nhở bạn về các task quan trọng đúng giờ. Bật ngay để không bỏ lỡ bất kỳ deadline nào!</string>

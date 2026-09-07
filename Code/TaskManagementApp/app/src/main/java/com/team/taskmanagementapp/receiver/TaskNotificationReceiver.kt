@@ -1,13 +1,11 @@
 package com.team.taskmanagementapp.receiver
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import com.team.taskmanagementapp.data.local.db.AppDatabase
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
+import com.team.taskmanagementapp.util.AlarmScheduler
 import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.NotificationHelper
 import kotlinx.coroutines.CoroutineScope
@@ -51,37 +49,8 @@ class TaskNotificationReceiver : BroadcastReceiver() {
     }
 
     private fun snoozeReminder(context: Context, taskId: Int) {
-        val reminderIntent = Intent(context, TaskNotificationReceiver::class.java).apply {
-            action = ACTION_SHOW_REMINDER
-            putExtra(Constants.EXTRA_TASK_ID, taskId)
-        }
-        val reminderPendingIntent = PendingIntent.getBroadcast(
-            context,
-            snoozeRequestCode(taskId),
-            reminderIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val triggerAtMillis = System.currentTimeMillis() + SNOOZE_DURATION_MS
-
-        if (
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
-            alarmManager.canScheduleExactAlarms()
-        ) {
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                triggerAtMillis,
-                reminderPendingIntent
-            )
-        } else {
-            // Still snoozes when exact-alarm access has not been granted, but timing may vary.
-            alarmManager.setAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                triggerAtMillis,
-                reminderPendingIntent
-            )
-        }
+        AlarmScheduler.scheduleReminderAt(context, taskId, triggerAtMillis)
 
         NotificationHelper.cancelNotification(context, taskId)
     }
@@ -115,9 +84,5 @@ class TaskNotificationReceiver : BroadcastReceiver() {
         const val SNOOZE_DURATION_MS = 15 * 60 * 1000L
 
         private const val INVALID_TASK_ID = -1
-        private const val SNOOZE_REQUEST_OFFSET = 3
-
-        private fun snoozeRequestCode(taskId: Int): Int =
-            taskId * 10 + SNOOZE_REQUEST_OFFSET
     }
 }
