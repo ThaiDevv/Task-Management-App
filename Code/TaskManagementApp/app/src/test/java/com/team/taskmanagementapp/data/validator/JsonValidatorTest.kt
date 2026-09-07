@@ -43,6 +43,38 @@ class JsonValidatorTest {
     }
 
     @Test
+    fun testValidJson_withCompletedAndOverdueStatusAndNumericVersion_returnsSuccess() {
+        val json = """
+            {
+                "version": 1,
+                "exportedAt": 1725057600000,
+                "tasks": [
+                    {
+                        "id": 1,
+                        "title": "Completed Task",
+                        "description": "Done",
+                        "dueDate": 1725057600000,
+                        "status": "COMPLETED",
+                        "priority": "HIGH"
+                    },
+                    {
+                        "id": 2,
+                        "title": "Overdue Task",
+                        "description": "Late",
+                        "dueDate": 1725057600000,
+                        "status": "OVERDUE",
+                        "priority": "MEDIUM"
+                    }
+                ]
+            }
+        """.trimIndent()
+
+        val result = JsonValidator.validate(json)
+        assertTrue(result.isValid)
+        assertTrue(result.errorMessages.isEmpty())
+    }
+
+    @Test
     fun testInvalidJsonSyntax_returnsError() {
         val invalidJson = """
             {
@@ -171,7 +203,7 @@ class JsonValidatorTest {
                         "title": "Clean room",
                         "description": "",
                         "dueDate": 1725057600000,
-                        "status": "COMPLETED",
+                        "status": "UNKNOWN_STATUS",
                         "priority": "URGENT_HELL",
                         "recurrenceType": "EVERY_HOUR"
                     }

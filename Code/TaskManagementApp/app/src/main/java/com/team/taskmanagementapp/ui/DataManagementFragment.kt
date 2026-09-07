@@ -176,10 +176,12 @@ class DataManagementFragment : Fragment() {
         showSnack(getString(com.team.taskmanagementapp.R.string.data_export_started))
         viewLifecycleOwner.lifecycleScope.launch {
             try {
+                val dao = AppDatabase.getInstance(requireContext()).taskDao()
                 val tasks = withContext(Dispatchers.IO) {
-                    AppDatabase.getInstance(requireContext()).taskDao().getAllTasksSync()
+                    dao.getAllTasksSync()
                 }
-                val json = tasksToJson(tasks)
+                val repo = com.team.taskmanagementapp.data.repository.BackupRepository(requireContext(), dao)
+                val json = repo.exportToJson(tasks)
                 withContext(Dispatchers.IO) {
                     requireContext().contentResolver.openOutputStream(uri)?.use { out ->
                         out.write(json.toByteArray(Charsets.UTF_8))
@@ -244,6 +246,7 @@ class DataManagementFragment : Fragment() {
                 put("dueTime", task.dueTime)
                 put("priority", task.priority.name)
                 put("status", task.status.name)
+                put("isCompleted", task.isCompleted)
                 put("isComplete", task.isCompleted)
                 put("isRecurring", task.isRecurring)
                 put("recurrenceType", task.recurrenceType.name)
@@ -257,6 +260,8 @@ class DataManagementFragment : Fragment() {
         val root = JSONObject()
         root.put("version", BACKUP_VERSION)
         root.put("exportedAt", System.currentTimeMillis())
+        root.put("exportedBy", "TaskManagementApp")
+        root.put("taskCount", tasks.size)
         root.put("tasks", array)
         return root.toString(2)
     }
@@ -360,6 +365,6 @@ class DataManagementFragment : Fragment() {
 
     companion object {
         private const val TAG = "DataManagementFragment"
-        private const val BACKUP_VERSION = 1
+        private const val BACKUP_VERSION = "1.0"
     }
 }

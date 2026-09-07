@@ -21,7 +21,7 @@ import com.team.taskmanagementapp.data.model.ValidationResult
 object JsonValidator {
 
     // Valid enum values
-    private val VALID_STATUSES = setOf("TODO", "IN_PROGRESS", "DONE")
+    private val VALID_STATUSES = setOf("TODO", "IN_PROGRESS", "DONE", "COMPLETED", "OVERDUE")
     private val VALID_PRIORITIES = setOf("LOW", "MEDIUM", "HIGH", "URGENT")
     private val VALID_RECURRENCES = setOf("NONE", "DAILY", "WEEKLY", "MONTHLY", "YEARLY")
 
@@ -103,8 +103,10 @@ object JsonValidator {
         }
 
         val versionElement = jsonObject.get("version")
-        if (!versionElement.isJsonPrimitive || !versionElement.asJsonPrimitive.isString) {
-            errors.add("Version: Invalid type (must be String)")
+        val isValid = versionElement.isJsonPrimitive &&
+                (versionElement.asJsonPrimitive.isString || versionElement.asJsonPrimitive.isNumber)
+        if (!isValid) {
+            errors.add("Version: Invalid type (must be String or Number)")
         }
     }
 
