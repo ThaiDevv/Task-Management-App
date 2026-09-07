@@ -20,8 +20,6 @@ import com.team.taskmanagementapp.data.model.enums.RecurrenceType
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.databinding.FragmentDataManagementBinding
-import com.team.taskmanagementapp.viewmodel.TaskViewModel
-import com.team.taskmanagementapp.viewmodel.TaskViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -46,8 +44,6 @@ class DataManagementFragment : Fragment() {
 
     private var _binding: FragmentDataManagementBinding? = null
     private val binding get() = requireNotNull(_binding)
-
-    private lateinit var viewModel: TaskViewModel
 
     // ─── SAF: Export — CreateDocument ──────────────────────────────────────────
     private val exportLauncher: ActivityResultLauncher<String> =
@@ -80,14 +76,6 @@ class DataManagementFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // ─── ViewModel ──────────────────────────────────────────────────────────
-        val dao = AppDatabase.getInstance(requireContext()).taskDao()
-        val repository = TaskRepository(dao)
-        viewModel = ViewModelProvider(
-            requireActivity(),
-            TaskViewModelFactory(repository, requireContext())
-        )[TaskViewModel::class.java]
 
         // ─── Navigation ─────────────────────────────────────────────────────────
         binding.backButton.setOnClickListener { findNavController().navigateUp() }
@@ -135,8 +123,10 @@ class DataManagementFragment : Fragment() {
                 val dao = AppDatabase.getInstance(requireContext()).taskDao()
                 val total = withContext(Dispatchers.IO) { dao.getAllTasksSync().size }
                 val completed = withContext(Dispatchers.IO) { dao.getCompletedTasksCount() }
-                binding.tvTotalTasksCount.text = total.toString()
-                binding.tvCompletedCount.text = completed.toString()
+                _binding?.let { b ->
+                    b.tvTotalTasksCount.text = total.toString()
+                    b.tvCompletedCount.text = completed.toString()
+                }
             } catch (e: Exception) {
                 Log.e(TAG, "loadExportStats error", e)
             }
@@ -156,20 +146,16 @@ class DataManagementFragment : Fragment() {
             BackupEntry("Pre_Migration_v2.json", "Oct 14, 2023 • 880 KB"),
             BackupEntry("Initial_Setup.json", "Sep 30, 2023 • 420 KB")
         )
-        val itemViews = listOf(
+        val itemBindings = listOf(
             binding.recentItem1,
             binding.recentItem2,
             binding.recentItem3,
             binding.recentItem4
         )
         placeholders.forEachIndexed { index, entry ->
-            val itemView = itemViews.getOrNull(index) ?: return@forEachIndexed
-            itemView.findViewById<android.widget.TextView>(
-                com.team.taskmanagementapp.R.id.tvBackupFileName
-            )?.text = entry.name
-            itemView.findViewById<android.widget.TextView>(
-                com.team.taskmanagementapp.R.id.tvBackupFileMeta
-            )?.text = entry.meta
+            val itemBinding = itemBindings.getOrNull(index) ?: return@forEachIndexed
+            itemBinding.tvBackupFileName.text = entry.name
+            itemBinding.tvBackupFileMeta.text = entry.meta
         }
     }
 
@@ -234,7 +220,7 @@ class DataManagementFragment : Fragment() {
                 showSnack(getString(com.team.taskmanagementapp.R.string.data_restore_success))
             } catch (e: Exception) {
                 Log.e(TAG, "Restore failed", e)
-                binding.layoutFilePreview.visibility = View.GONE
+                _binding?.layoutFilePreview?.visibility = View.GONE
                 showSnack(getString(com.team.taskmanagementapp.R.string.data_restore_failed))
             }
         }
@@ -310,26 +296,30 @@ class DataManagementFragment : Fragment() {
     // ═══════════════════════════════════════════════════════════════════════════
 
     private fun showFilePreview(name: String) {
-        binding.tvSelectedFileName.text = name
-        binding.layoutFilePreview.visibility = View.VISIBLE
+        _binding?.let { b ->
+            b.tvSelectedFileName.text = name
+            b.layoutFilePreview.visibility = View.VISIBLE
+        }
     }
 
     private fun updateStatusCard(success: Boolean) {
         if (!isAdded) return
         val timestamp = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
         if (success) {
-            binding.tvBackupStatusTitle.text =
-                getString(com.team.taskmanagementapp.R.string.data_last_backup_success)
-            binding.tvBackupStatusSub.text = "Today at $timestamp • —"
-            binding.ivStatusBadge.setImageResource(
-                com.team.taskmanagementapp.R.drawable.ic_check_circle
-            )
+            _binding?.let { b ->
+                b.tvBackupStatusTitle.text =
+                    getString(com.team.taskmanagementapp.R.string.data_last_backup_success)
+                b.tvBackupStatusSub.text = "Today at $timestamp • —"
+                b.ivStatusBadge.setImageResource(
+                    com.team.taskmanagementapp.R.drawable.ic_check_circle
+                )
+            }
         }
     }
 
     private fun showSnack(message: String) {
         if (!isAdded) return
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+        _binding?.root?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT).show() }
     }
 
     /** Resolve human-readable file name from a content:// URI */
