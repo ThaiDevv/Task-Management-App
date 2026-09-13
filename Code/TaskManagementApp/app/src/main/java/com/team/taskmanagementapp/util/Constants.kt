@@ -36,6 +36,16 @@ object Constants {
     const val ACTION_TASK_DATE_TIME_CHANGED =
         "com.team.taskmanagementapp.action.TASK_DATE_TIME_CHANGED"
     const val EXTRA_PIN_MODE = "extra_pin_mode"
+
+    // Home Screen Widget (TMA-56)
+    const val EXTRA_WIDGET_TASK_ID = "extra_widget_task_id"
+    const val EXTRA_WIDGET_ACTION = "extra_widget_action"
+    const val WIDGET_ACTION_OPEN_TASK = 0
+    const val WIDGET_ACTION_TOGGLE_TASK = 1
+    const val ACTION_WIDGET_OPEN_TASK =
+        "com.team.taskmanagementapp.action.WIDGET_OPEN_TASK"
+    const val ACTION_WIDGET_TOGGLE_TASK =
+        "com.team.taskmanagementapp.action.WIDGET_TOGGLE_TASK"
     const val REQUEST_CODE_NOTIFICATION_PERMISSION = 1001
     const val REQUEST_CODE_EXACT_ALARM_PERMISSION = 1002
 

@@ -83,6 +83,24 @@
             android:label="@string/app_name"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
+        <!-- Home Screen Widget (TMA-56) -->
+        <receiver
+            android:name=".widget.TaskWidgetProvider"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_OPTIONS_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_today_tasks_info" />
+        </receiver>
+
+        <service
+            android:name=".widget.TaskWidgetService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
     </application>
 
 </manifest>
