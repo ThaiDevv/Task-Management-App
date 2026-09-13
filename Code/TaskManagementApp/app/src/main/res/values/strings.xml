@@ -170,6 +170,8 @@
     <string name="data_latest_status_label">LATEST STATUS</string>
     <string name="data_last_backup_success">Last Backup Successful</string>
     <string name="data_no_backup_yet">No backup yet</string>
+    <string name="data_no_backup_subtitle">Export your tasks to create your first backup</string>
+    <string name="data_no_recent_backups">No backup files created yet</string>
     <string name="data_download_last">Download Last</string>
     <string name="data_verify_integrity">Verify Integrity</string>
     <string name="data_recent_backups">Recent Backups</string>

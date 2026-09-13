@@ -246,4 +246,40 @@ class BackupRepositoryTest {
         assertTrue(deserialized.tasks.isEmpty())
         assertEquals(BackupRepository.EXPORT_VERSION, deserialized.version)
     }
+
+    @Test
+    fun `BackupHistoryItem serializes and deserializes accurately`() {
+        val gson = com.google.gson.Gson()
+        val item = BackupHistoryItem(
+            fileName = "taskflow_backup_20260914_021500.json",
+            formattedDate = "Sep 14, 2026 • 02:15",
+            sizeString = "42 KB",
+            timestamp = 1788700000000L
+        )
+
+        val json = gson.toJson(item)
+        val deserialized = gson.fromJson(json, BackupHistoryItem::class.java)
+
+        assertEquals(item.fileName, deserialized.fileName)
+        assertEquals(item.formattedDate, deserialized.formattedDate)
+        assertEquals(item.sizeString, deserialized.sizeString)
+        assertEquals(item.timestamp, deserialized.timestamp)
+    }
+
+    @Test
+    fun `list of BackupHistoryItem serializes and deserializes with correct order`() {
+        val gson = com.google.gson.Gson()
+        val list = listOf(
+            BackupHistoryItem("backup_2.json", "Sep 14, 2026 • 02:15", "10 KB", 2000L),
+            BackupHistoryItem("backup_1.json", "Sep 13, 2026 • 10:00", "8 KB", 1000L)
+        )
+
+        val json = gson.toJson(list)
+        val type = object : com.google.gson.reflect.TypeToken<List<BackupHistoryItem>>() {}.type
+        val deserialized: List<BackupHistoryItem> = gson.fromJson(json, type)
+
+        assertEquals(2, deserialized.size)
+        assertEquals("backup_2.json", deserialized[0].fileName)
+        assertEquals("backup_1.json", deserialized[1].fileName)
+    }
 }
