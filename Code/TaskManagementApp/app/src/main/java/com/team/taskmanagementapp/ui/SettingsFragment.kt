@@ -103,8 +103,15 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         pinManager = PinManager.getInstance(requireContext())
         showAppVersion()
+        synchronizeToggleStates()
         setupToggleListeners()
         setupActions()
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        isSynchronizingSwitches = true
+        super.onViewStateRestored(savedInstanceState)
+        isSynchronizingSwitches = false
     }
 
     override fun onResume() {
@@ -219,6 +226,8 @@ class SettingsFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding?.pinLockSwitch?.setOnCheckedChangeListener(null)
+        _binding?.notificationSwitch?.setOnCheckedChangeListener(null)
         _binding = null
     }
 }

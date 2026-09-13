@@ -3,6 +3,8 @@ package com.team.taskmanagementapp.data.repository
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonParseException
 import com.google.gson.JsonSyntaxException
 import com.team.taskmanagementapp.data.local.dao.TaskDao
@@ -29,8 +31,8 @@ import java.util.Date
 import java.util.Locale
 
 /**
- * BackupRepository — Abstraction layer for backup, export, restore, and import operations.
- * Handles SAF reading/writing, JSON serialization/deserialization, and validation.
+ * Repository for backup and restore operations (TMA-50, TMA-51, TMA-52).
+ * Handles export/import of tasks to/from JSON files using SAF (Storage Access Framework).
  */
 class BackupRepository(
     private val context: Context,
@@ -38,7 +40,7 @@ class BackupRepository(
     private val taskRepository: TaskRepository = TaskRepository(taskDao)
 ) {
     /**
-     * Secondary constructor accepting TaskRepository and Context for ViewModel usage.
+     * Secondary constructor accepting TaskRepository and Context for ViewModel or testing usage.
      */
     constructor(taskRepository: TaskRepository, context: Context) : this(
         context = context,
@@ -46,7 +48,8 @@ class BackupRepository(
         taskRepository = taskRepository
     )
 
-    private val gson = com.google.gson.GsonBuilder()
+    val gson: Gson = GsonBuilder()
+        .setPrettyPrinting()
         .registerTypeAdapter(TaskStatus::class.java, com.google.gson.JsonDeserializer { json, _, _ ->
             val str = json.asString.uppercase()
             when (str) {
@@ -70,10 +73,12 @@ class BackupRepository(
     companion object {
         const val EXPORT_VERSION = 1
         private const val KEY_LAST_BACKUP_TIME = "key_last_backup_time"
+        private const val KEY_RECENT_BACKUPS = "key_recent_backups"
+        private const val MAX_RECENT_BACKUPS = 10
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
-    //  TMA-52 / TMA-44: exportTasks & importTasks with StateFlow UI State
+    //  TMA-50 / TMA-52: Export Tasks to JSON via SAF
     // ═══════════════════════════════════════════════════════════════════════════
 
     /**
@@ -114,6 +119,22 @@ class BackupRepository(
             )
         }
     }
+
+    /**
+     * Export all tasks to JSON file at the given URI.
+     * TMA-50 direct API returning task count or throwing exception.
+     *
+     * @param uri The URI from SAF ACTION_CREATE_DOCUMENT
+     * @return Number of tasks exported
+     * @throws Exception if write fails
+     */
+    suspend fun exportToJson(uri: Uri): Int = withContext(Dispatchers.IO) {
+        exportTasks(uri).getOrThrow()
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    //  TMA-52: Import tasks (StateFlow UI State)
+    // ═══════════════════════════════════════════════════════════════════════════
 
     /**
      * Import tasks from JSON file at the given URI.
@@ -188,6 +209,33 @@ class BackupRepository(
 
     fun saveLastBackupTime(timestamp: Long) {
         prefs.edit().putLong(KEY_LAST_BACKUP_TIME, timestamp).apply()
+    }
+
+    /**
+     * Get list of recent backups sorted by newest first.
+     */
+    fun getRecentBackups(): List<BackupHistoryItem> {
+        val json = prefs.getString(KEY_RECENT_BACKUPS, null) ?: return emptyList()
+        return try {
+            val type = object : com.google.gson.reflect.TypeToken<List<BackupHistoryItem>>() {}.type
+            gson.fromJson<List<BackupHistoryItem>>(json, type) ?: emptyList()
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    /**
+     * Add a backup entry to recent history and update last backup time.
+     */
+    fun addRecentBackup(fileName: String, formattedDate: String, sizeString: String, timestamp: Long) {
+        val current = getRecentBackups().toMutableList()
+        current.removeAll { it.fileName == fileName }
+        current.add(0, BackupHistoryItem(fileName, formattedDate, sizeString, timestamp))
+        val limited = current.take(MAX_RECENT_BACKUPS)
+        prefs.edit()
+            .putString(KEY_RECENT_BACKUPS, gson.toJson(limited))
+            .putLong(KEY_LAST_BACKUP_TIME, timestamp)
+            .apply()
     }
 
     private fun getErrorMessage(error: Throwable): String {
@@ -400,7 +448,7 @@ class BackupRepository(
     }
 
     /**
-     * Export tasks to JSON file
+     * Export tasks to JSON file (for TMA-51 / ImportJsonFile)
      */
     suspend fun exportToJson(tasks: List<Task>): String = withContext(Dispatchers.Default) {
         val exportFile = ImportJsonFile(
@@ -510,4 +558,14 @@ fun ExportTask.toEntity() = Task(
     reminderMinutes = reminderMinutes,
     createdAt = createdAt,
     updatedAt = updatedAt
+)
+
+/**
+ * Model representing an entry in recent backups history.
+ */
+data class BackupHistoryItem(
+    val fileName: String,
+    val formattedDate: String,
+    val sizeString: String,
+    val timestamp: Long
 )

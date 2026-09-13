@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
@@ -18,7 +17,7 @@ import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.enums.Priority
 import com.team.taskmanagementapp.data.model.enums.RecurrenceType
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
-import com.team.taskmanagementapp.data.repository.TaskRepository
+import com.team.taskmanagementapp.data.repository.BackupRepository
 import com.team.taskmanagementapp.databinding.FragmentDataManagementBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,15 +29,10 @@ import java.util.Date
 import java.util.Locale
 
 /**
- * TASK-26 / TASK-54 — Backup & Restore screen.
+ * TASK-26 / TASK-50 / TASK-54 — Backup & Restore screen.
  *
- * Export path  : exportLauncher → SAF CreateDocument → writes JSON via ContentResolver
+ * Export path  : exportLauncher → SAF CreateDocument → writes JSON via BackupRepository
  * Restore path : importLauncher → SAF OpenDocument  → reads JSON via ContentResolver
- *
- * JSON schema (per task):
- *   { id, title, description, dueDate, dueTime, priority, status,
- *     isComplete, isRecurring, recurrenceType, recurrenceInterval,
- *     reminderMinutes, createdAt, updatedAt }
  */
 class DataManagementFragment : Fragment() {
 
@@ -63,7 +57,9 @@ class DataManagementFragment : Fragment() {
             }
         }
 
-    // ───────────────────────────────────────────────────────────────────────────
+    // ═══════════════════════════════════════════════════════════════════════════
+    //  LIFECYCLE & INFLATION
+    // ═══════════════════════════════════════════════════════════════════════════
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -96,8 +92,8 @@ class DataManagementFragment : Fragment() {
         // ─── Load export stats ───────────────────────────────────────────────────
         loadExportStats()
 
-        // ─── Populate Recent Backups placeholder rows ─────────────────────────
-        setupRecentBackups()
+        // ─── Populate Recent Backups ─────────────────────────────────────────────
+        loadBackupStatus()
 
         // ─── Export button ───────────────────────────────────────────────────────
         binding.exportDataButton.setOnClickListener { launchExport() }
@@ -137,35 +133,62 @@ class DataManagementFragment : Fragment() {
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
-    //  RECENT BACKUPS (placeholder data — real history in future task)
+    //  BACKUP STATUS & RECENT HISTORY
     // ═══════════════════════════════════════════════════════════════════════════
 
-    private data class BackupEntry(val name: String, val meta: String)
+    private fun loadBackupStatus() {
+        if (_binding == null || !isAdded) return
+        val dao = AppDatabase.getInstance(requireContext()).taskDao()
+        val repo = BackupRepository(requireContext(), dao)
+        val recentBackups = repo.getRecentBackups()
 
-    private fun setupRecentBackups() {
-        val placeholders = listOf(
-            BackupEntry("Backup_2023_10_27.json", "Oct 27, 2023 • 942 KB"),
-            BackupEntry("Weekly_Snapshot_Oct20.j…", "Oct 20, 2023 • 1.1 MB"),
-            BackupEntry("Pre_Migration_v2.json", "Oct 14, 2023 • 880 KB"),
-            BackupEntry("Initial_Setup.json", "Sep 30, 2023 • 420 KB")
-        )
-        val itemBindings = listOf(
-            binding.recentItem1,
-            binding.recentItem2,
-            binding.recentItem3,
-            binding.recentItem4
-        )
-        placeholders.forEachIndexed { index, entry ->
-            val itemBinding = itemBindings.getOrNull(index) ?: return@forEachIndexed
-            itemBinding.tvBackupFileName.text = entry.name
-            itemBinding.tvBackupFileMeta.text = entry.meta
+        _binding?.let { b ->
+            if (recentBackups.isEmpty()) {
+                b.tvBackupStatusTitle.text = getString(com.team.taskmanagementapp.R.string.data_no_backup_yet)
+                b.tvBackupStatusSub.text = getString(com.team.taskmanagementapp.R.string.data_no_backup_subtitle)
+                b.ivStatusBadge.setImageResource(com.team.taskmanagementapp.R.drawable.ic_settings_backup)
+                b.layoutStatusActions.visibility = View.GONE
+
+                b.tvNoRecentBackups.visibility = View.VISIBLE
+                b.recentItem1.root.visibility = View.GONE
+                b.recentItem2.root.visibility = View.GONE
+                b.recentItem3.root.visibility = View.GONE
+                b.recentItem4.root.visibility = View.GONE
+                b.dividerHistory.visibility = View.GONE
+                b.btnViewAllHistory.visibility = View.GONE
+            } else {
+                val latest = recentBackups.first()
+                b.tvBackupStatusTitle.text = getString(com.team.taskmanagementapp.R.string.data_last_backup_success)
+                b.tvBackupStatusSub.text = "${latest.formattedDate} • ${latest.sizeString}"
+                b.ivStatusBadge.setImageResource(com.team.taskmanagementapp.R.drawable.ic_check_circle)
+                b.layoutStatusActions.visibility = View.VISIBLE
+
+                b.tvNoRecentBackups.visibility = View.GONE
+                val itemBindings = listOf(
+                    b.recentItem1,
+                    b.recentItem2,
+                    b.recentItem3,
+                    b.recentItem4
+                )
+                itemBindings.forEachIndexed { index, itemBinding ->
+                    val entry = recentBackups.getOrNull(index)
+                    if (entry != null) {
+                        itemBinding.root.visibility = View.VISIBLE
+                        itemBinding.tvBackupFileName.text = entry.fileName
+                        itemBinding.tvBackupFileMeta.text = "${entry.formattedDate} • ${entry.sizeString}"
+                    } else {
+                        itemBinding.root.visibility = View.GONE
+                    }
+                }
+                b.dividerHistory.visibility = if (recentBackups.size > 4) View.VISIBLE else View.GONE
+                b.btnViewAllHistory.visibility = if (recentBackups.size > 4) View.VISIBLE else View.GONE
+            }
         }
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
-    //  SAF — EXPORT
+    //  SAF — EXPORT (TMA-50)
     // ═══════════════════════════════════════════════════════════════════════════
-
 
     private fun launchExport() {
         val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
@@ -177,19 +200,24 @@ class DataManagementFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val dao = AppDatabase.getInstance(requireContext()).taskDao()
-                val tasks = withContext(Dispatchers.IO) {
-                    dao.getAllTasksSync()
+                val repo = BackupRepository(requireContext(), dao)
+                val count = withContext(Dispatchers.IO) {
+                    repo.exportToJson(uri)
                 }
-                val repo = com.team.taskmanagementapp.data.repository.BackupRepository(requireContext(), dao)
-                val json = repo.exportToJson(tasks)
-                withContext(Dispatchers.IO) {
-                    requireContext().contentResolver.openOutputStream(uri)?.use { out ->
-                        out.write(json.toByteArray(Charsets.UTF_8))
-                    }
+                val fileName = getFileName(uri)
+                val dateFormat = SimpleDateFormat("MMM dd, yyyy • HH:mm", Locale.getDefault())
+                val now = System.currentTimeMillis()
+                val sizeBytes = try {
+                    requireContext().contentResolver.openFileDescriptor(uri, "r")?.use { it.statSize } ?: 0L
+                } catch (e: Exception) {
+                    0L
                 }
-                // Mark latest status success
-                updateStatusCard(success = true)
-                showSnack(getString(com.team.taskmanagementapp.R.string.data_export_success))
+                val sizeKb = if (sizeBytes > 0) (sizeBytes / 1024).coerceAtLeast(1) else 1
+                repo.addRecentBackup(fileName, dateFormat.format(Date(now)), "$sizeKb KB", now)
+
+                loadBackupStatus()
+                loadExportStats()
+                showSnack(getString(com.team.taskmanagementapp.R.string.data_export_success, count))
             } catch (e: Exception) {
                 Log.e(TAG, "Export failed", e)
                 showSnack(getString(com.team.taskmanagementapp.R.string.data_export_failed))
@@ -310,21 +338,6 @@ class DataManagementFragment : Fragment() {
         }
     }
 
-    private fun updateStatusCard(success: Boolean) {
-        if (!isAdded) return
-        val timestamp = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
-        if (success) {
-            _binding?.let { b ->
-                b.tvBackupStatusTitle.text =
-                    getString(com.team.taskmanagementapp.R.string.data_last_backup_success)
-                b.tvBackupStatusSub.text = "Today at $timestamp • —"
-                b.ivStatusBadge.setImageResource(
-                    com.team.taskmanagementapp.R.drawable.ic_check_circle
-                )
-            }
-        }
-    }
-
     private fun showSnack(message: String) {
         if (!isAdded) return
         _binding?.root?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT).show() }
@@ -356,6 +369,7 @@ class DataManagementFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         loadExportStats()
+        loadBackupStatus()
     }
 
     override fun onDestroyView() {

@@ -170,14 +170,15 @@
     <string name="data_latest_status_label">LATEST STATUS</string>
     <string name="data_last_backup_success">Last Backup Successful</string>
     <string name="data_no_backup_yet">No backup yet</string>
+    <string name="data_no_backup_subtitle">Export your tasks to create your first backup</string>
+    <string name="data_no_recent_backups">No backup files created yet</string>
     <string name="data_download_last">Download Last</string>
     <string name="data_verify_integrity">Verify Integrity</string>
     <string name="data_recent_backups">Recent Backups</string>
     <string name="data_view_all_history">View All History</string>
     <string name="data_backup_status_today">Today at %1$s • %2$s</string>
-    <string name="data_feature_pending">Backup and restore logic will be implemented separately</string>
     <string name="data_export_started">Preparing export file…</string>
-    <string name="data_export_success">Tasks exported successfully</string>
+    <string name="data_export_success">Exported %d tasks successfully</string>
     <string name="data_export_failed">Export failed. Please try again.</string>
     <string name="data_restore_started">Reading backup file…</string>
     <string name="data_restore_success">Tasks restored successfully</string>
@@ -189,6 +190,7 @@
     <string name="data_import_error">Import failed: %s</string>
     <string name="data_error">Error: %s</string>
     <string name="data_last_backup">Last backup: %s</string>
+    <string name="data_feature_pending">This feature will be available in an upcoming update</string>
     <string name="action_back">Back</string>
     <!-- Filter Bottom Sheet -->
     <string name="filter_title">Filter &amp; Sort</string>
@@ -297,6 +299,33 @@
     <string name="export_tasks">Export Tasks</string>
     <string name="import_success">✅ Import Thành Công</string>
     <string name="import_error">❌ Import Thất Bại</string>
+
+    <!-- ================================================================ -->
+    <!-- Statistics Dashboard (TASK-55)                                   -->
+    <!-- ================================================================ -->
+    <string name="stats_title">Statistics</string>
+    <string name="stats_filter">Filter</string>
+    <string name="stats_weekly_productivity">Weekly Productivity</string>
+    <string name="stats_tasks_completed_7_days">Tasks completed over the last 7 days</string>
+    <string name="stats_completion_rate">Completion Rate</string>
+    <string name="stats_on_track">On track</string>
+    <string name="stats_needs_attention">Needs attention</string>
+    <string name="stats_excellent">Excellent</string>
+    <string name="stats_in_progress">In progress</string>
+    <string name="stats_no_tasks">No tasks</string>
+    <string name="stats_completed_label">COMPLETED</string>
+    <string name="stats_this_week">This week</string>
+    <string name="stats_last_week">Last week</string>
+    <string name="stats_this_month">This month</string>
+    <string name="stats_all_time">All time</string>
+    <string name="stats_deep_work_label">DEEP WORK</string>
+    <string name="stats_focused_time">Focused time</string>
+    <string name="stats_tasks_by_priority">Tasks by Priority</string>
+    <string name="stats_high_priority">High Priority</string>
+    <string name="stats_medium_priority">Medium Priority</string>
+    <string name="stats_low_priority">Low Priority</string>
+    <string name="stats_tasks_count_format">%d tasks</string>
+    <string name="stats_filter_dialog_title">Select Time Period</string>
 </resources>
 
 

@@ -81,6 +81,15 @@
                 android:textSize="14sp"
                 android:lineSpacingMultiplier="1.3" />
 
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/spacing_16"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
             <!-- ═══════════════════════════════════════════
                  SECTION 1 — Export Data card
              ═══════════════════════════════════════════ -->
@@ -467,7 +476,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/poppins_semibold"
-                    android:text="@string/data_last_backup_success"
+                    android:text="@string/data_no_backup_yet"
                     android:textColor="#FFFFFF"
                     android:textSize="22sp"
                     android:lineSpacingMultiplier="1.2"
@@ -482,13 +491,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:fontFamily="@font/poppins_regular"
-                    android:text=""
+                    android:text="@string/data_no_backup_subtitle"
                     android:textColor="#BBDEFB"
                     android:textSize="13sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tvBackupStatusTitle"
-                    tools:text="Today at 10:42 AM • 1.2 MB" />
+                    tools:text="Export your tasks to create your first backup" />
 
                 <!-- Action buttons: Download Last | Verify Integrity -->
                 <LinearLayout
@@ -497,8 +506,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:orientation="horizontal"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tvBackupStatusSub">
+                    app:layout_constraintTop_toBottomOf="@id/tvBackupStatusSub"
+                    tools:visibility="visible">
 
                     <TextView
                         android:id="@+id/btnDownloadLast"
@@ -579,13 +590,28 @@
 
                     </LinearLayout>
 
+                    <!-- Empty state when no backups exist yet -->
+                    <TextView
+                        android:id="@+id/tvNoRecentBackups"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:gravity="center"
+                        android:padding="16dp"
+                        android:text="@string/data_no_recent_backups"
+                        android:textColor="#9CA3AF"
+                        android:textSize="13sp"
+                        android:visibility="visible" />
+
                     <!-- Backup item 1 -->
                     <include
                         android:id="@+id/recentItem1"
                         layout="@layout/item_backup_file"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp" />
+                        android:layout_marginTop="16dp"
+                        android:visibility="gone" />
 
                     <!-- Backup item 2 -->
                     <include
@@ -593,7 +619,8 @@
                         layout="@layout/item_backup_file"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp" />
+                        android:layout_marginTop="4dp"
+                        android:visibility="gone" />
 
                     <!-- Backup item 3 -->
                     <include
@@ -601,7 +628,8 @@
                         layout="@layout/item_backup_file"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp" />
+                        android:layout_marginTop="4dp"
+                        android:visibility="gone" />
 
                     <!-- Backup item 4 -->
                     <include
@@ -609,14 +637,17 @@
                         layout="@layout/item_backup_file"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp" />
+                        android:layout_marginTop="4dp"
+                        android:visibility="gone" />
 
                     <!-- Divider -->
                     <View
+                        android:id="@+id/dividerHistory"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginTop="12dp"
-                        android:background="#F3F4F6" />
+                        android:background="#F3F4F6"
+                        android:visibility="gone" />
 
                     <!-- View All History link -->
                     <LinearLayout
@@ -627,7 +658,8 @@
                         android:gravity="center_vertical"
                         android:clickable="true"
                         android:focusable="true"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:visibility="gone">
 
                         <TextView
                             android:layout_width="wrap_content"
