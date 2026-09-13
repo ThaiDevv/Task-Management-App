@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
@@ -18,7 +17,7 @@ import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.enums.Priority
 import com.team.taskmanagementapp.data.model.enums.RecurrenceType
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
-import com.team.taskmanagementapp.data.repository.TaskRepository
+import com.team.taskmanagementapp.data.repository.BackupRepository
 import com.team.taskmanagementapp.databinding.FragmentDataManagementBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,15 +29,10 @@ import java.util.Date
 import java.util.Locale
 
 /**
- * TASK-26 / TASK-54 — Backup & Restore screen.
+ * TASK-26 / TASK-50 / TASK-54 — Backup & Restore screen.
  *
- * Export path  : exportLauncher → SAF CreateDocument → writes JSON via ContentResolver
+ * Export path  : exportLauncher → SAF CreateDocument → writes JSON via BackupRepository
  * Restore path : importLauncher → SAF OpenDocument  → reads JSON via ContentResolver
- *
- * JSON schema (per task):
- *   { id, title, description, dueDate, dueTime, priority, status,
- *     isComplete, isRecurring, recurrenceType, recurrenceInterval,
- *     reminderMinutes, createdAt, updatedAt }
  */
 class DataManagementFragment : Fragment() {
 
@@ -63,7 +57,9 @@ class DataManagementFragment : Fragment() {
             }
         }
 
-    // ───────────────────────────────────────────────────────────────────────────
+    // ═══════════════════════════════════════════════════════════════════════════
+    //  LIFECYCLE & INFLATION
+    // ═══════════════════════════════════════════════════════════════════════════
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -163,9 +159,8 @@ class DataManagementFragment : Fragment() {
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
-    //  SAF — EXPORT
+    //  SAF — EXPORT (TMA-50)
     // ═══════════════════════════════════════════════════════════════════════════
-
 
     private fun launchExport() {
         val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
@@ -177,19 +172,14 @@ class DataManagementFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val dao = AppDatabase.getInstance(requireContext()).taskDao()
-                val tasks = withContext(Dispatchers.IO) {
-                    dao.getAllTasksSync()
-                }
-                val repo = com.team.taskmanagementapp.data.repository.BackupRepository(requireContext(), dao)
-                val json = repo.exportToJson(tasks)
-                withContext(Dispatchers.IO) {
-                    requireContext().contentResolver.openOutputStream(uri)?.use { out ->
-                        out.write(json.toByteArray(Charsets.UTF_8))
-                    }
+                val repo = BackupRepository(requireContext(), dao)
+                val count = withContext(Dispatchers.IO) {
+                    repo.exportToJson(uri)
                 }
                 // Mark latest status success
                 updateStatusCard(success = true)
-                showSnack(getString(com.team.taskmanagementapp.R.string.data_export_success))
+                loadExportStats()
+                showSnack(getString(com.team.taskmanagementapp.R.string.data_export_success, count))
             } catch (e: Exception) {
                 Log.e(TAG, "Export failed", e)
                 showSnack(getString(com.team.taskmanagementapp.R.string.data_export_failed))

@@ -128,4 +128,122 @@ class BackupRepositoryTest {
         assertEquals(1, exportData.taskCount)
         assertEquals("Task 1", exportData.tasks[0].title)
     }
+
+    @Test
+    fun `export to json serialization produces valid json with all expected fields`() {
+        val gson = com.google.gson.GsonBuilder().setPrettyPrinting().create()
+        val originalTask = Task(
+            id = 10,
+            title = "Review PR #45",
+            description = "Check unit tests and merge conflict resolution",
+            dueDate = 1788714000000L,
+            dueTime = 1788775200000L,
+            priority = Priority.HIGH,
+            status = TaskStatus.IN_PROGRESS,
+            isCompleted = false,
+            isRecurring = true,
+            recurrenceType = RecurrenceType.DAILY,
+            recurrenceInterval = 2,
+            reminderMinutes = 30,
+            createdAt = 1788700000000L,
+            updatedAt = 1788705000000L
+        )
+
+        val exportData = ExportData(
+            version = BackupRepository.EXPORT_VERSION,
+            exportDate = "2026-09-14T00:00:00Z",
+            taskCount = 1,
+            tasks = listOf(originalTask.toExportTask())
+        )
+
+        val jsonString = gson.toJson(exportData)
+
+        // Verify JSON string contains required top-level keys
+        assertTrue(jsonString.contains("\"version\": 1"))
+        assertTrue(jsonString.contains("\"exportDate\": \"2026-09-14T00:00:00Z\""))
+        assertTrue(jsonString.contains("\"taskCount\": 1"))
+        assertTrue(jsonString.contains("\"tasks\": ["))
+
+        // Verify JSON string contains task fields
+        assertTrue(jsonString.contains("\"title\": \"Review PR #45\""))
+        assertTrue(jsonString.contains("\"priority\": \"HIGH\""))
+        assertTrue(jsonString.contains("\"status\": \"IN_PROGRESS\""))
+        assertTrue(jsonString.contains("\"recurrenceType\": \"DAILY\""))
+        assertTrue(jsonString.contains("\"reminderMinutes\": 30"))
+
+        // Verify JSON round-trip deserialization
+        val deserialized = gson.fromJson(jsonString, ExportData::class.java)
+        assertEquals(1, deserialized.version)
+        assertEquals(1, deserialized.taskCount)
+        assertEquals(1, deserialized.tasks.size)
+
+        val exportedTask = deserialized.tasks[0]
+        assertEquals(originalTask.title, exportedTask.title)
+        assertEquals(originalTask.description, exportedTask.description)
+        assertEquals(originalTask.priority, exportedTask.priority)
+        assertEquals(originalTask.status, exportedTask.status)
+        assertEquals(originalTask.isRecurring, exportedTask.isRecurring)
+        assertEquals(originalTask.recurrenceType, exportedTask.recurrenceType)
+        assertEquals(originalTask.recurrenceInterval, exportedTask.recurrenceInterval)
+    }
+
+    @Test
+    fun `export multiple tasks maintains accurate count and task order`() {
+        val gson = com.google.gson.GsonBuilder().setPrettyPrinting().create()
+        val tasks = (1..5).map { index ->
+            Task(
+                id = index,
+                title = "Task #$index",
+                description = "Description for task $index",
+                dueDate = 1788714000000L + index * 1000L,
+                dueTime = 1788775200000L,
+                priority = if (index % 2 == 0) Priority.HIGH else Priority.LOW,
+                status = if (index == 1) TaskStatus.COMPLETED else TaskStatus.TODO,
+                isCompleted = index == 1,
+                isRecurring = false,
+                recurrenceType = RecurrenceType.NONE,
+                recurrenceInterval = 0,
+                reminderMinutes = 0,
+                createdAt = 1788700000000L,
+                updatedAt = 1788700000000L
+            )
+        }
+
+        val exportData = ExportData(
+            version = BackupRepository.EXPORT_VERSION,
+            exportDate = "2026-09-14T00:00:00Z",
+            taskCount = tasks.size,
+            tasks = tasks.map { it.toExportTask() }
+        )
+
+        val jsonString = gson.toJson(exportData)
+        val deserialized = gson.fromJson(jsonString, ExportData::class.java)
+
+        assertEquals(5, deserialized.taskCount)
+        assertEquals(5, deserialized.tasks.size)
+        for (i in 0 until 5) {
+            assertEquals("Task #${i + 1}", deserialized.tasks[i].title)
+            val entity = deserialized.tasks[i].toEntity()
+            assertEquals(0, entity.id) // ID is reset for insertion
+            assertEquals("Task #${i + 1}", entity.title)
+        }
+    }
+
+    @Test
+    fun `empty tasks export creates valid JSON with zero count`() {
+        val gson = com.google.gson.GsonBuilder().setPrettyPrinting().create()
+        val exportData = ExportData(
+            version = BackupRepository.EXPORT_VERSION,
+            exportDate = "2026-09-14T00:00:00Z",
+            taskCount = 0,
+            tasks = emptyList()
+        )
+
+        val jsonString = gson.toJson(exportData)
+        val deserialized = gson.fromJson(jsonString, ExportData::class.java)
+
+        assertEquals(0, deserialized.taskCount)
+        assertTrue(deserialized.tasks.isEmpty())
+        assertEquals(BackupRepository.EXPORT_VERSION, deserialized.version)
+    }
 }

@@ -175,9 +175,8 @@
     <string name="data_recent_backups">Recent Backups</string>
     <string name="data_view_all_history">View All History</string>
     <string name="data_backup_status_today">Today at %1$s • %2$s</string>
-    <string name="data_feature_pending">Backup and restore logic will be implemented separately</string>
     <string name="data_export_started">Preparing export file…</string>
-    <string name="data_export_success">Tasks exported successfully</string>
+    <string name="data_export_success">Exported %d tasks successfully</string>
     <string name="data_export_failed">Export failed. Please try again.</string>
     <string name="data_restore_started">Reading backup file…</string>
     <string name="data_restore_success">Tasks restored successfully</string>
@@ -189,6 +188,7 @@
     <string name="data_import_error">Import failed: %s</string>
     <string name="data_error">Error: %s</string>
     <string name="data_last_backup">Last backup: %s</string>
+    <string name="data_feature_pending">This feature will be available in an upcoming update</string>
     <string name="action_back">Back</string>
     <!-- Filter Bottom Sheet -->
     <string name="filter_title">Filter &amp; Sort</string>
