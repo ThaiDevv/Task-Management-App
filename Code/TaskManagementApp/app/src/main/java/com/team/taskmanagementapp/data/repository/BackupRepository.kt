@@ -73,6 +73,8 @@ class BackupRepository(
     companion object {
         const val EXPORT_VERSION = 1
         private const val KEY_LAST_BACKUP_TIME = "key_last_backup_time"
+        private const val KEY_RECENT_BACKUPS = "key_recent_backups"
+        private const val MAX_RECENT_BACKUPS = 10
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
@@ -207,6 +209,33 @@ class BackupRepository(
 
     fun saveLastBackupTime(timestamp: Long) {
         prefs.edit().putLong(KEY_LAST_BACKUP_TIME, timestamp).apply()
+    }
+
+    /**
+     * Get list of recent backups sorted by newest first.
+     */
+    fun getRecentBackups(): List<BackupHistoryItem> {
+        val json = prefs.getString(KEY_RECENT_BACKUPS, null) ?: return emptyList()
+        return try {
+            val type = object : com.google.gson.reflect.TypeToken<List<BackupHistoryItem>>() {}.type
+            gson.fromJson<List<BackupHistoryItem>>(json, type) ?: emptyList()
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    /**
+     * Add a backup entry to recent history and update last backup time.
+     */
+    fun addRecentBackup(fileName: String, formattedDate: String, sizeString: String, timestamp: Long) {
+        val current = getRecentBackups().toMutableList()
+        current.removeAll { it.fileName == fileName }
+        current.add(0, BackupHistoryItem(fileName, formattedDate, sizeString, timestamp))
+        val limited = current.take(MAX_RECENT_BACKUPS)
+        prefs.edit()
+            .putString(KEY_RECENT_BACKUPS, gson.toJson(limited))
+            .putLong(KEY_LAST_BACKUP_TIME, timestamp)
+            .apply()
     }
 
     private fun getErrorMessage(error: Throwable): String {
@@ -529,4 +558,14 @@ fun ExportTask.toEntity() = Task(
     reminderMinutes = reminderMinutes,
     createdAt = createdAt,
     updatedAt = updatedAt
+)
+
+/**
+ * Model representing an entry in recent backups history.
+ */
+data class BackupHistoryItem(
+    val fileName: String,
+    val formattedDate: String,
+    val sizeString: String,
+    val timestamp: Long
 )
