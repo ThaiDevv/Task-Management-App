@@ -153,4 +153,8 @@ interface TaskDao {
         LIMIT 1
     """)
     suspend fun getConflictingTask(title: String, dueDate: Long, recurrenceType: RecurrenceType): Task?
+
+    // 17. Widget: snapshot đồng bộ các task có dueDate trong khoảng [startMillis, endMillis]
+    @Query("SELECT * FROM tasks WHERE dueDate BETWEEN :startMillis AND :endMillis")
+    suspend fun getTasksForDateRangeSync(startMillis: Long, endMillis: Long): List<Task>
 }

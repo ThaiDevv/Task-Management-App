@@ -326,6 +326,16 @@
     <string name="stats_low_priority">Low Priority</string>
     <string name="stats_tasks_count_format">%d tasks</string>
     <string name="stats_filter_dialog_title">Select Time Period</string>
+
+    <!-- Home Screen Widget (TMA-56) -->
+    <string name="widget_today_title">Việc hôm nay</string>
+    <string name="widget_all_done">Xong hết 🎉</string>
+    <string name="widget_pending_count">Còn %d việc</string>
+    <string name="widget_empty_message">Không có việc nào cho hôm nay.\nChạm + để thêm việc đầu tiên!</string>
+    <string name="widget_no_time">Cả ngày</string>
+    <string name="widget_add_task">Thêm việc mới</string>
+    <string name="widget_mark_done">Hoàn thành việc này</string>
+    <string name="widget_description">Xem và hoàn thành các việc hôm nay ngay trên màn hình chính</string>
 </resources>
 
 

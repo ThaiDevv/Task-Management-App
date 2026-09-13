@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Widget palette — dark. Material dark surface, giảm độ tương phản viền. -->
+    <color name="widget_surface">#191B22</color>
+    <color name="widget_stroke">#2A2D3A</color>
+    <color name="widget_header_background">#1F2330</color>
+    <color name="widget_on_surface">#E6E8F0</color>
+    <color name="widget_on_surface_variant">#9BA0B3</color>
+    <color name="widget_chip_background">#253048</color>
+    <color name="widget_on_chip">#B2C5FF</color>
+    <color name="widget_add_button">#105CDB</color>
+    <color name="widget_progress_track">#2A2D3A</color>
+    <color name="widget_progress_fill">#8FAEFF</color>
+    <color name="widget_check_outline">#5A6072</color>
+    <color name="widget_check_filled">#34D399</color>
+    <color name="widget_clock_icon">#6B7180</color>
+</resources>

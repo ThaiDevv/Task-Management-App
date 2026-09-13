@@ -1,9 +1,13 @@
 package com.team.taskmanagementapp
 
 import android.app.Application
+import androidx.room.InvalidationTracker
+import com.team.taskmanagementapp.data.local.db.AppDatabase
 import com.team.taskmanagementapp.security.PinRepository
 import com.team.taskmanagementapp.security.PinRepositoryImpl
 import com.team.taskmanagementapp.util.NotificationHelper
+import com.team.taskmanagementapp.widget.WidgetMidnightScheduler
+import com.team.taskmanagementapp.widget.WidgetUpdater
 
 /**
  * Custom Application class for Task Management App.
@@ -25,6 +29,22 @@ class TaskApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         NotificationHelper.createNotificationChannel(this)
+        setupWidgetAutoRefresh()
+    }
+
+    /**
+     * Widget tự cập nhật khi bảng tasks bị thay đổi (Room InvalidationTracker)
+     * và đổi nội dung sang ngày mới sau nửa đêm (WorkManager periodic).
+     */
+    private fun setupWidgetAutoRefresh() {
+        AppDatabase.getInstance(this).invalidationTracker.addObserver(
+            object : InvalidationTracker.Observer("tasks") {
+                override fun onInvalidated(tables: Set<String>) {
+                    WidgetUpdater.updateAll(this@TaskApplication)
+                }
+            }
+        )
+        WidgetMidnightScheduler.schedule(this)
     }
 }
 
