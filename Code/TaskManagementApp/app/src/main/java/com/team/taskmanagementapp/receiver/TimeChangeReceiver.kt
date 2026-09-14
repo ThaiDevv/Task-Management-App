@@ -6,6 +6,7 @@ import android.content.Intent
 import android.util.Log
 import com.team.taskmanagementapp.data.local.db.AppDatabase
 import com.team.taskmanagementapp.util.AlarmScheduler
+import com.team.taskmanagementapp.widget.WidgetUpdater
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -28,6 +29,7 @@ class TimeChangeReceiver : BroadcastReceiver() {
                     try {
                         rescheduleAllAlarms(context)
                         checkAndUpdateOverdueTasks(context)
+                        WidgetUpdater.updateAllSafe(context)
                     } catch (error: Exception) {
                         Log.w(TAG, "Unable to update reminders after a system time change", error)
                     } finally {
