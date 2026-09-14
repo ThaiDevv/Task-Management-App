@@ -54,6 +54,11 @@ class TaskWidgetProvider : AppWidgetProvider() {
 
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
+        android.util.Log.d(
+            TAG,
+            "onReceive action=${intent.action} taskId=${intent.getIntExtra(Constants.EXTRA_WIDGET_TASK_ID, -1)} " +
+                "widgetAction=${intent.getIntExtra(Constants.EXTRA_WIDGET_ACTION, -99)}"
+        )
 
         when (intent.action) {
             Constants.ACTION_WIDGET_TOGGLE_TASK -> {
@@ -105,6 +110,8 @@ class TaskWidgetProvider : AppWidgetProvider() {
     }
 
     companion object {
+
+        private const val TAG = "TaskWidgetProvider"
 
         /**
          * Vẽ header của widget từ snapshot Room hiện tại và gắn adapter + click template.
@@ -176,6 +183,9 @@ class TaskWidgetProvider : AppWidgetProvider() {
 
             // Click từng dòng trong danh sách: template chung, dòng cụ thể bổ sung
             // extras bằng fill-in intent (xem TaskWidgetViewsFactory).
+            // BẮT BUỘC FLAG_MUTABLE: fill-in intent chỉ merge được extras vào
+            // PendingIntent mutable — dùng IMMUTABLE thì extras bị bỏ và action
+            // luôn rơi vào nhánh mặc định.
             views.setPendingIntentTemplate(
                 android.R.id.list,
                 PendingIntent.getBroadcast(
@@ -184,7 +194,7 @@ class TaskWidgetProvider : AppWidgetProvider() {
                     Intent(context, TaskWidgetProvider::class.java).apply {
                         action = Constants.ACTION_WIDGET_OPEN_TASK
                     },
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
                 )
             )
             return views

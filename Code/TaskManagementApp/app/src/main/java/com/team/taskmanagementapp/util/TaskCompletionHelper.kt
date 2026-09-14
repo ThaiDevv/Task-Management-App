@@ -24,7 +24,9 @@ object TaskCompletionHelper {
         val appContext = context.applicationContext
         val task = AppDatabase.getInstance(appContext)
             .taskDao()
-            .getTaskById(taskId.toLong()) ?: return false
+            .getTaskById(taskId.toLong())
+        android.util.Log.d("TaskCompletionHelper", "toggleById id=$taskId task=${task?.title}")
+        if (task == null) return false
         return setCompleted(appContext, task, targetCompleted = !task.isCompleted)
     }
 

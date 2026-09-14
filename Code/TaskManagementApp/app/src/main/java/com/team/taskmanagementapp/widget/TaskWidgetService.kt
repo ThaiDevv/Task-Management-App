@@ -63,7 +63,9 @@ class TaskWidgetViewsFactory(
             views.setImageViewResource(R.id.widget_item_checkbox, R.drawable.widget_ic_check_circle_outline)
         }
 
-        // Click vào dòng → mở chi tiết; click checkbox → hoàn thành.
+        // Chạm vào dòng = mở chi tiết; chạm checkbox = tick hoàn thành.
+        // Cả hai dùng chung PendingIntent template (đã đặt FLAG_MUTABLE trong
+        // TaskWidgetProvider) và phân biệt hành động qua EXTRA_WIDGET_ACTION.
         views.setOnClickFillInIntent(
             R.id.widget_item_row,
             Intent().apply {
