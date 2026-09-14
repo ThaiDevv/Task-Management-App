@@ -25,6 +25,12 @@ Vì launcher tự inflate view, RemoteViews chỉ cho phép:
 | Gọi hàm setter qua chuỗi: `setInt(id, "setTextColor", ...)`, `setTextViewText(...)`, `setViewVisibility(...)` | Gán listener (`onClickListener` không dùng được) |
 | Tương tác qua **PendingIntent**: Activity / Broadcast / Service | Thao tác trực tiếp trên view object |
 
+> ⚠️ **`<View>` trần (`android.view.View`) KHÔNG nằm trong whitelist.** Launcher sẽ báo
+> `InflateException: Class not allowed to be inflated android.view.View` và hiển thị
+> "Couldn't add widget" cho toàn bộ vùng danh sách. Muốn vẽ một ô/mảng chỉ có nền
+> (như stripe màu priority) thì dùng **`ImageView`** — class này được phép và nhận
+> `setBackgroundResource` như mọi View khác. (Bug đã gặp và fix trong TMA-56.)
+
 Mọi thay đổi động (đổi text, đổi màu) phải đi qua API của RemoteViews, ví dụ trong dự án này:
 
 ```kotlin
@@ -122,9 +128,16 @@ Trong dự án, template chỉ có một action duy nhất, loại click đượ
 | Dòng task | `WIDGET_ACTION_OPEN_TASK` | Mở `TaskDetailActivity` |
 | Checkbox | `WIDGET_ACTION_TOGGLE_TASK` | `TaskCompletionHelper.toggleById()` → cập nhật Room → refresh widget |
 
-> Vì hoạt thành task từ widget **cần ghi DB**, phần xử lý nằm trong `BroadcastReceiver`
+> Vì hoàn thành task từ widget **cần ghi DB**, phần xử lý nằm trong `BroadcastReceiver`
 > với `goAsync()` + coroutine trên `Dispatchers.IO`: giữ receiver sống ~10s (giới hạn
 > của goAsync) đủ để hoàn tất ghi Room rồi mới `finish()`.
+
+> ⚠️ **Bắt buộc `FLAG_MUTABLE` cho PendingIntent template.** Cơ chế fill-in hoạt động
+> bằng cách "điền thêm" extras vào PendingIntent lúc người dùng chạm. Với
+> `FLAG_IMMUTABLE`, Android 12+ **chặn việc merge extras** → broadcast vẫn được gửi
+> nhưng `intent.getIntExtra(EXTRA_TASK_ID, -1)` trả về `-1` và mọi cú chạm rơi vào
+> nhánh mặc định (bug đã gặp và fix trong TMA-56). Template là broadcast nội bộ
+> (explicit component, receiver `exported="false"`), nên `FLAG_MUTABLE` ở đây an toàn.
 
 ---
 
@@ -203,16 +216,39 @@ cập nhật task (kể cả qua đường import JSON, restore backup, notifica
 3. **Thêm trường hiển thị mới** (vd: tag): thêm vào `WidgetTaskUiModel` của
    `WidgetTaskListBuilder`, có unit test tương ứng, rồi mới sửa layout/factory.
 4. **Không thêm custom View hay Material widget vào layout widget** — sẽ crash
-   trong process launcher. Chỉ dùng view framework.
+   trong process launcher. Chỉ dùng view framework. **Đặc biệt không dùng `<View>` trần**
+   — dùng `ImageView` thay thế (xem cảnh báo ở mục 1.1).
 5. **Mọi `setInt` với màu phải truyền giá trị màu đã resolve** (`context.getColor(...)`)
    hoặc drawable resource (`setBackgroundResource`) — truyền `R.color.*` thẳng vào
    setter màu sẽ cho kết quả sai vì RemoteViews không resolve màu tự động.
+6. **PendingIntent template cho collection luôn phải `FLAG_MUTABLE`** — nếu không,
+   fill-in intent mất extras (xem cảnh báo ở mục 2.3).
+7. **Widget hiển thị tiêu đề task kể cả khi app đang bật PIN lock.** Nếu cần bảo mật
+   hơn, có thể ẩn tiêu đề (hiện "Việc riêng tư") khi PIN được bật — hiện chưa làm,
+   đây là quyết định thiết kế cần cân nhắc.
 
 ---
 
-## 6. Cách test
+## 6. Nhật ký lỗi đã gặp & cách xử lý (TMA-56)
 
-### 6.1. Unit test (đã có trong repo)
+Hai lỗi dưới đây đều **build thành công, không crash app** — chỉ biểu hiện trên UI widget,
+nên rất dễ mất thời gian nếu không biết trước:
+
+| Triệu chứng | Nguyên nhân | Fix |
+|---|---|---|
+| Widget hiện header + tiến độ đúng nhưng vùng danh sách trống, có chữ xám "Couldn't add widget" | `widget_task_item.xml` dùng `<View>` cho stripe priority — không có trong whitelist RemoteViews | Đổi `<View>` → `<ImageView>` |
+| Không hiện task (lỗi ban đầu) | Launcher từ chối inflate **cả dòng** task do lỗi trên, nên ListView không có item nào | Như trên |
+| Chạm checkbox không tick; mọi cú chạm đều mở chi tiết; log cho thấy `taskId=-1 widgetAction=-99` | PendingIntent template tạo bằng `FLAG_IMMUTABLE` → extras của fill-in intent không được merge | Đổi template sang `FLAG_MUTABLE` |
+
+Cách chẩn đoán nhanh khi widget "im lặng": logcat của **launcher** (vd `AppWidgetHostView`)
+chứa thông báo inflate lỗi, còn log do app tự thêm trong `onReceive` cho biết extras
+thực tế nhận được.
+
+---
+
+## 7. Cách test
+
+### 7.1. Unit test (đã có trong repo)
 
 `app/src/test/.../widget/WidgetTaskListBuilderTest.kt` — 7 case:
 danh sách rỗng, thứ tự chưa-xong/xong, "có giờ" trước "cả ngày", giờ sớm trước giờ muộn,
@@ -222,7 +258,7 @@ danh sách rỗng, thứ tự chưa-xong/xong, "có giờ" trước "cả ngày"
 ./gradlew :app:testDebugUnitTest --tests "com.team.taskmanagementapp.widget.*"
 ```
 
-### 6.2. Test trên thiết bị / emulator
+### 7.2. Test trên thiết bị / emulator
 
 1. Build: `./gradlew :app:assembleDebug` → cài APK.
 2. Long-press màn hình chính → **Widgets** → tìm **TaskFlow** → kéo widget ra.
