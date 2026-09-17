@@ -85,7 +85,23 @@
     <string name="task_detail_recurrence_daily">Hàng ngày</string>
     <string name="task_detail_recurrence_weekly">Hàng tuần</string>
     <string name="task_detail_recurrence_monthly">Hàng tháng</string>
+    <string name="task_detail_recurrence_yearly">Hàng năm</string>
     <string name="task_detail_recurrence_interval">Cứ %d ngày</string>
+    <string name="task_repeat_end_header">KẾT THÚC LẶP LẠI</string>
+    <string name="task_repeat_end_never">Vô hạn</string>
+    <string name="task_repeat_end_by_date">Theo ngày</string>
+    <string name="task_repeat_end_by_count">Theo số lần</string>
+    <string name="task_repeat_end_count_hint">Nhập số lần lặp (lớn hơn 0)</string>
+    <string name="task_repeat_end_date_hint">Chọn ngày dừng lặp</string>
+    <string name="task_repeat_end_count_error">Số lần lặp phải lớn hơn 0</string>
+    <string name="task_repeat_end_date_error">Ngày kết thúc lặp phải sau ngày bắt đầu</string>
+    <string name="task_repeat_paused">Tạm dừng</string>
+    <string name="task_repeat_action_pause">Tạm dừng lặp</string>
+    <string name="task_repeat_action_resume">Tiếp tục lặp</string>
+    <string name="task_repeat_status_paused_desc">Chuỗi công việc lặp lại này đang tạm dừng</string>
+    <string name="task_repeat_end_summary_date">Dừng vào ngày: %s</string>
+    <string name="task_repeat_end_summary_count">Dừng sau %1$d lần (Lần thứ %2$d)</string>
+    <string name="task_repeat_end_summary_never">Lặp lại vô hạn (Không có điểm dừng)</string>
 
     <!-- Screen & UI States (Stitch Design) -->
     <string name="state_loading">Loading tasks...</string>

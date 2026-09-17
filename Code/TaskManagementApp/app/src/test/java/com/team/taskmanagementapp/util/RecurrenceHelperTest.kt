@@ -63,4 +63,58 @@ class RecurrenceHelperTest {
         val expectedMillis = millisFromDate(2026, 9, 30)
         assertEquals(expectedMillis, nextMillis)
     }
+
+    @Test
+    fun testYearlyRecurrence() {
+        val startMillis = millisFromDate(2026, 8, 26)
+        val nextMillis = RecurrenceHelper.calculateNextDueDate(startMillis, RecurrenceType.YEARLY, 1)
+
+        val expectedMillis = millisFromDate(2027, 8, 26)
+        assertEquals(expectedMillis, nextMillis)
+    }
+
+    @Test
+    fun testCalculateEndDateFromOccurrences() {
+        val startMillis = millisFromDate(2026, 8, 26)
+        // 3 days
+        val dailyEnd = RecurrenceHelper.calculateEndDateFromOccurrences(startMillis, RecurrenceType.DAILY, 3)
+        assertEquals(millisFromDate(2026, 8, 29), dailyEnd)
+
+        // 2 weeks
+        val weeklyEnd = RecurrenceHelper.calculateEndDateFromOccurrences(startMillis, RecurrenceType.WEEKLY, 2)
+        assertEquals(millisFromDate(2026, 9, 9), weeklyEnd)
+
+        // 2 years
+        val yearlyEnd = RecurrenceHelper.calculateEndDateFromOccurrences(startMillis, RecurrenceType.YEARLY, 2)
+        assertEquals(millisFromDate(2028, 8, 26), yearlyEnd)
+    }
+
+    @Test
+    fun testIsRecurrenceEnded() {
+        val startMillis = millisFromDate(2026, 8, 26)
+        val task = com.team.taskmanagementapp.data.local.entity.Task(
+            id = 1,
+            title = "Test",
+            description = "",
+            dueDate = startMillis,
+            dueTime = 0L,
+            priority = com.team.taskmanagementapp.data.model.enums.Priority.MEDIUM,
+            isRecurring = true,
+            recurrenceType = RecurrenceType.DAILY,
+            repeatLimitCount = 3,
+            currentOccurrence = 3
+        )
+        val nextMillis = millisFromDate(2026, 8, 27)
+        assertEquals(true, RecurrenceHelper.isRecurrenceEnded(task, nextMillis))
+
+        val taskNotEnded = task.copy(currentOccurrence = 2)
+        assertEquals(false, RecurrenceHelper.isRecurrenceEnded(taskNotEnded, nextMillis))
+
+        val taskWithEndDate = task.copy(
+            repeatLimitCount = 0,
+            repeatEndDate = millisFromDate(2026, 8, 28)
+        )
+        assertEquals(false, RecurrenceHelper.isRecurrenceEnded(taskWithEndDate, millisFromDate(2026, 8, 27)))
+        assertEquals(true, RecurrenceHelper.isRecurrenceEnded(taskWithEndDate, millisFromDate(2026, 8, 29)))
+    }
 }
