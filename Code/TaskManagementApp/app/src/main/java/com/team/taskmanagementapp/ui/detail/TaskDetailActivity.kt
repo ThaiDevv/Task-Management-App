@@ -214,7 +214,38 @@ class TaskDetailActivity : AppCompatActivity() {
         }
 
         binding.cardRecurrence.visibility = View.VISIBLE
-        binding.tvRecurrenceType.text = RecurrenceHelper.getRecurrenceDisplayText(task.recurrenceType, this)
+        val baseRecurrenceText = RecurrenceHelper.getRecurrenceDisplayText(task.recurrenceType, this)
+        binding.tvRecurrenceType.text = if (task.isPaused) {
+            "$baseRecurrenceText (${getString(R.string.task_repeat_paused)})"
+        } else {
+            baseRecurrenceText
+        }
+
+        // Repeat End Info
+        binding.tvRepeatEndInfo.text = when {
+            task.repeatLimitCount > 0 -> {
+                getString(R.string.task_repeat_end_summary_count, task.repeatLimitCount, task.currentOccurrence)
+            }
+            task.repeatEndDate > 0L -> {
+                val format = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+                getString(R.string.task_repeat_end_summary_date, format.format(java.util.Date(task.repeatEndDate)))
+            }
+            else -> {
+                getString(R.string.task_repeat_end_summary_never)
+            }
+        }
+
+        // Pause / Resume Button
+        if (task.isPaused) {
+            binding.btnTogglePause.text = getString(R.string.task_repeat_action_resume)
+            binding.btnTogglePause.setIconResource(R.drawable.ic_check_circle)
+        } else {
+            binding.btnTogglePause.text = getString(R.string.task_repeat_action_pause)
+            binding.btnTogglePause.setIconResource(R.drawable.ic_time)
+        }
+        binding.btnTogglePause.setOnClickListener {
+            viewModel.toggleTaskPause(task)
+        }
 
         val dayViews = listOf(
             binding.tvDayM,   // 0: Thứ 2 (Lẻ)
@@ -235,7 +266,6 @@ class TaskDetailActivity : AppCompatActivity() {
 
         when (task.recurrenceType) {
             RecurrenceType.DAILY -> {
-                // Với DAILY: Các ngày chẵn T, T, S là màu trắng nền nổi bật chữ xanh đậm, các ngày lẻ M, W, F, S là màu mờ nhẹ chữ trắng
                 dayViews.forEachIndexed { index, tv ->
                     val isEven = (index + 1) % 2 == 0
                     if (isEven) {

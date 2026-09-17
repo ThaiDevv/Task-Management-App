@@ -529,6 +529,30 @@
                             android:textColor="@color/white"
                             android:textSize="13sp" />
                     </LinearLayout>
+
+                    <!-- Repeat End Info -->
+                    <TextView
+                        android:id="@+id/tvRepeatEndInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:textColor="@color/on_primary_container"
+                        android:textSize="13sp"
+                        tools:text="Dừng sau 5 lần (Lần thứ 1)" />
+
+                    <!-- Pause / Resume Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnTogglePause"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="@string/task_repeat_action_pause"
+                        android:textSize="13sp"
+                        app:cornerRadius="12dp"
+                        app:icon="@drawable/ic_time" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
