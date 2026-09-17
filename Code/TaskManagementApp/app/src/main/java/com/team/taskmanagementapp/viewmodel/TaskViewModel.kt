@@ -181,37 +181,45 @@ class TaskViewModel(
                     } else task.dueTime
 
                     if (!wasCompleted) {
-                        // Khi đánh dấu hoàn thành: Chỉ tạo instance tiếp theo nếu chưa có task tương lai cùng title tồn tại
-                        val existingFutureTasks = repository.getFutureRecurringTasks(
-                            task.title,
-                            task.recurrenceType,
-                            nextDueDate
-                        )
-                        val anyRecurringFutureTasks = if (existingFutureTasks.isNotEmpty()) {
-                            existingFutureTasks
-                        } else {
-                            repository.getFutureRecurringTasks(task.title, RecurrenceType.DAILY, nextDueDate) +
-                            repository.getFutureRecurringTasks(task.title, RecurrenceType.WEEKLY, nextDueDate) +
-                            repository.getFutureRecurringTasks(task.title, RecurrenceType.MONTHLY, nextDueDate)
-                        }
+                        val isEnded = RecurrenceHelper.isRecurrenceEnded(task, nextDueDate)
+                        if (!isEnded && !task.isPaused) {
+                            // Khi đánh dấu hoàn thành: Chỉ tạo instance tiếp theo nếu chưa có task tương lai cùng title tồn tại
+                            val existingFutureTasks = repository.getFutureRecurringTasks(
+                                task.title,
+                                task.recurrenceType,
+                                nextDueDate
+                            )
+                            val anyRecurringFutureTasks = if (existingFutureTasks.isNotEmpty()) {
+                                existingFutureTasks
+                            } else {
+                                repository.getFutureRecurringTasks(task.title, RecurrenceType.DAILY, nextDueDate) +
+                                repository.getFutureRecurringTasks(task.title, RecurrenceType.WEEKLY, nextDueDate) +
+                                repository.getFutureRecurringTasks(task.title, RecurrenceType.MONTHLY, nextDueDate) +
+                                repository.getFutureRecurringTasks(task.title, RecurrenceType.YEARLY, nextDueDate)
+                            }
 
-                        if (anyRecurringFutureTasks.isEmpty()) {
-                            val nextInstance = task.copy(
-                                id = 0,
-                                isCompleted = false,
-                                status = TaskStatus.TODO,
-                                isRecurring = true,
-                                recurrenceType = task.recurrenceType,
-                                dueDate = nextDueDate,
-                                dueTime = nextDueTime,
-                                createdAt = now,
-                                updatedAt = now
-                            )
-                            val insertedId = repository.insert(nextInstance)
-                            reminderScheduleResult = AlarmScheduler.scheduleAlarm(
-                                applicationContext,
-                                nextInstance.copy(id = insertedId.toInt())
-                            )
+                            if (anyRecurringFutureTasks.isEmpty()) {
+                                val nextInstance = task.copy(
+                                    id = 0,
+                                    isCompleted = false,
+                                    status = TaskStatus.TODO,
+                                    isRecurring = true,
+                                    recurrenceType = task.recurrenceType,
+                                    dueDate = nextDueDate,
+                                    dueTime = nextDueTime,
+                                    repeatEndDate = task.repeatEndDate,
+                                    repeatLimitCount = task.repeatLimitCount,
+                                    currentOccurrence = task.currentOccurrence + 1,
+                                    isPaused = task.isPaused,
+                                    createdAt = now,
+                                    updatedAt = now
+                                )
+                                val insertedId = repository.insert(nextInstance)
+                                reminderScheduleResult = AlarmScheduler.scheduleAlarm(
+                                    applicationContext,
+                                    nextInstance.copy(id = insertedId.toInt())
+                                )
+                            }
                         }
                     } else {
                         // Khi hủy hoàn thành: Hủy alarm và xóa các task tương lai chưa hoàn thành đã tự sinh ra (bất kể kiểu lặp lại)
@@ -219,7 +227,8 @@ class TaskViewModel(
                             repository.getFutureRecurringTasks(task.title, task.recurrenceType, nextDueDate) +
                             repository.getFutureRecurringTasks(task.title, RecurrenceType.DAILY, nextDueDate) +
                             repository.getFutureRecurringTasks(task.title, RecurrenceType.WEEKLY, nextDueDate) +
-                            repository.getFutureRecurringTasks(task.title, RecurrenceType.MONTHLY, nextDueDate)
+                            repository.getFutureRecurringTasks(task.title, RecurrenceType.MONTHLY, nextDueDate) +
+                            repository.getFutureRecurringTasks(task.title, RecurrenceType.YEARLY, nextDueDate)
                         ).distinctBy { it.id }
 
                         futureTasks.forEach { futureTask ->
@@ -296,6 +305,28 @@ class TaskViewModel(
         viewModelScope.launch {
             repository.observeTaskById(taskId).collect { task ->
                 _selectedTask.value = task
+            }
+        }
+    }
+
+    fun toggleTaskPause(task: Task) {
+        viewModelScope.launch {
+            try {
+                val newPausedState = !task.isPaused
+                val updatedTask = task.copy(
+                    isPaused = newPausedState,
+                    updatedAt = System.currentTimeMillis()
+                )
+                repository.update(updatedTask)
+                if (_selectedTask.value?.id == task.id) {
+                    _selectedTask.value = updatedTask
+                }
+                _userMessage.emit(
+                    if (newPausedState) "Đã tạm dừng lặp lại công việc"
+                    else "Đã tiếp tục lặp lại công việc"
+                )
+            } catch (e: Exception) {
+                _userMessage.emit("Lỗi: ${e.localizedMessage}")
             }
         }
     }

@@ -7,6 +7,7 @@ import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.enums.RecurrenceType
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.util.DateTimeUtils
+import com.team.taskmanagementapp.util.RecurrenceHelper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -176,18 +177,34 @@ class CalendarViewModel(
                 result.getOrPut(taskDate) { mutableListOf() }.add(task)
             }
 
-            // 2. Nếu là Recurring Task chưa hoàn thành -> Chiếu vào toàn bộ các ngày lặp lại trong tháng
-            if (!task.isCompleted && (task.isRecurring || task.recurrenceType != RecurrenceType.NONE)) {
+            // 2. Nếu là Recurring Task chưa hoàn thành và không bị tạm dừng -> Chiếu vào toàn bộ các ngày lặp lại trong tháng
+            if (!task.isCompleted && !task.isPaused && (task.isRecurring || task.recurrenceType != RecurrenceType.NONE)) {
                 val taskStartDay = startOfDay(task.dueDate)
                 val startDayOfWeek = taskCal.get(Calendar.DAY_OF_WEEK)
                 val startDayOfMonth = taskCal.get(Calendar.DAY_OF_MONTH)
+                val startMonth = taskCal.get(Calendar.MONTH)
+
+                // Tính toán giới hạn ngày kết thúc lặp lại
+                val effectiveEndDate = when {
+                    task.repeatLimitCount > 0 -> {
+                        val calcEnd = RecurrenceHelper.calculateEndDateFromOccurrences(
+                            task.dueDate,
+                            task.recurrenceType,
+                            task.repeatLimitCount,
+                            task.recurrenceInterval
+                        )
+                        if (task.repeatEndDate > 0L) minOf(calcEnd, task.repeatEndDate) else calcEnd
+                    }
+                    task.repeatEndDate > 0L -> task.repeatEndDate
+                    else -> Long.MAX_VALUE
+                }
 
                 for (day in 1..maxDays) {
                     tempCal.set(Calendar.DAY_OF_MONTH, day)
                     val currentDayMillis = startOfDay(tempCal)
 
-                    // Chỉ chiếu vào các ngày >= ngày bắt đầu của task
-                    if (currentDayMillis <= taskStartDay) continue
+                    // Chỉ chiếu vào các ngày > ngày bắt đầu của task và <= ngày kết thúc lặp lại
+                    if (currentDayMillis <= taskStartDay || currentDayMillis > effectiveEndDate) continue
 
                     val isMatch = when (task.recurrenceType) {
                         RecurrenceType.DAILY -> true
@@ -196,6 +213,11 @@ class CalendarViewModel(
                             val maxDaysInThisMonth = tempCal.getActualMaximum(Calendar.DAY_OF_MONTH)
                             val targetDay = minOf(startDayOfMonth, maxDaysInThisMonth)
                             tempCal.get(Calendar.DAY_OF_MONTH) == targetDay
+                        }
+                        RecurrenceType.YEARLY -> {
+                            val maxDaysInThisMonth = tempCal.getActualMaximum(Calendar.DAY_OF_MONTH)
+                            val targetDay = minOf(startDayOfMonth, maxDaysInThisMonth)
+                            tempCal.get(Calendar.MONTH) == startMonth && tempCal.get(Calendar.DAY_OF_MONTH) == targetDay
                         }
                         RecurrenceType.NONE -> false
                     }
