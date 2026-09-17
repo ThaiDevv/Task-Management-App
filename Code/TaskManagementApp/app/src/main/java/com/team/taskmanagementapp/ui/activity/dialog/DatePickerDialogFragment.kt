@@ -19,10 +19,11 @@ class DatePickerDialogFragment : DialogFragment() {
         val year = arguments?.getInt(ARG_YEAR) ?: now.get(Calendar.YEAR)
         val month = arguments?.getInt(ARG_MONTH) ?: now.get(Calendar.MONTH)
         val day = arguments?.getInt(ARG_DAY) ?: now.get(Calendar.DAY_OF_MONTH)
+        val requestKey = arguments?.getString(ARG_REQUEST_KEY) ?: REQUEST_KEY
 
         return DatePickerDialog(requireContext(), { _, y, m, d ->
             setFragmentResult(
-                REQUEST_KEY,
+                requestKey,
                 bundleOf(ARG_YEAR to y, ARG_MONTH to m, ARG_DAY to d)
             )
         }, year, month, day)
@@ -33,14 +34,16 @@ class DatePickerDialogFragment : DialogFragment() {
         const val ARG_YEAR = "arg_year"
         const val ARG_MONTH = "arg_month"
         const val ARG_DAY = "arg_day"
+        const val ARG_REQUEST_KEY = "arg_request_key"
 
-        fun newInstance(dateInMillis: Long): DatePickerDialogFragment {
+        fun newInstance(dateInMillis: Long, requestKey: String = REQUEST_KEY): DatePickerDialogFragment {
             val cal = Calendar.getInstance().apply { timeInMillis = dateInMillis }
             return DatePickerDialogFragment().apply {
                 arguments = bundleOf(
                     ARG_YEAR to cal.get(Calendar.YEAR),
                     ARG_MONTH to cal.get(Calendar.MONTH),
-                    ARG_DAY to cal.get(Calendar.DAY_OF_MONTH)
+                    ARG_DAY to cal.get(Calendar.DAY_OF_MONTH),
+                    ARG_REQUEST_KEY to requestKey
                 )
             }
         }

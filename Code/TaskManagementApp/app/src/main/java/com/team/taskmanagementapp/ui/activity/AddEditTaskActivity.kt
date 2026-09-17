@@ -33,6 +33,7 @@ import com.team.taskmanagementapp.util.AlarmScheduler
 import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.DateTimeUtils
 import com.team.taskmanagementapp.util.NotificationPermissionManager
+import com.team.taskmanagementapp.util.RecurrenceHelper
 import com.team.taskmanagementapp.ui.activity.dialog.DatePickerDialogFragment
 import com.team.taskmanagementapp.ui.activity.dialog.SingleChoiceDialogFragment
 import com.team.taskmanagementapp.ui.activity.dialog.TimePickerDialogFragment
@@ -50,10 +51,17 @@ class AddEditTaskActivity : AppCompatActivity() {
         AddEditTaskViewModelFactory(TaskRepository(database.taskDao()))
     }
 
+    enum class RepeatEndMode { NEVER, BY_DATE, BY_COUNT }
+
     private var selectedDate: Calendar = Calendar.getInstance()
     private var selectedTime: Calendar = Calendar.getInstance()
     private var selectedPriority: Priority = Priority.MEDIUM
     private var selectedRecurrence: RecurrenceType = RecurrenceType.NONE
+    private var selectedRepeatEndMode: RepeatEndMode = RepeatEndMode.NEVER
+    private var selectedRepeatEndDate: Calendar = Calendar.getInstance().apply {
+        add(Calendar.MONTH, 1)
+    }
+    private var selectedRepeatCount: Int = 0
     private var selectedReminderMinutes: Int = 30
     private var selectedStatus: TaskStatus = TaskStatus.TODO
     private var taskId: Long = -1L
@@ -115,7 +123,10 @@ class AddEditTaskActivity : AppCompatActivity() {
             val initialDueDate = intent.getLongExtra(Constants.EXTRA_TASK_DUE_DATE, -1L)
             if (initialDueDate != -1L) {
                 selectedDate.timeInMillis = initialDueDate
+                selectedRepeatEndDate.timeInMillis = initialDueDate
+                selectedRepeatEndDate.add(Calendar.MONTH, 1)
                 updateDateLabel()
+                updateRepeatEndDateLabel()
             }
         }
 
@@ -132,8 +143,10 @@ class AddEditTaskActivity : AppCompatActivity() {
 
         updateDateLabel()
         updateTimeLabel()
+        updateRepeatEndDateLabel()
         setupPrioritySelection()
         setupRecurrenceSelection()
+        setupRepeatEndSelection()
         setupStatusSelection()
         setupReminderSelection()
     }
@@ -184,7 +197,8 @@ class AddEditTaskActivity : AppCompatActivity() {
             binding.repeatNone to RecurrenceType.NONE,
             binding.repeatDaily to RecurrenceType.DAILY,
             binding.repeatWeekly to RecurrenceType.WEEKLY,
-            binding.repeatMonthly to RecurrenceType.MONTHLY
+            binding.repeatMonthly to RecurrenceType.MONTHLY,
+            binding.repeatYearly to RecurrenceType.YEARLY
         )
 
         recurrences.forEach { (view, recurrence) ->
@@ -201,11 +215,124 @@ class AddEditTaskActivity : AppCompatActivity() {
         binding.repeatDaily.isSelected = recurrence == RecurrenceType.DAILY
         binding.repeatWeekly.isSelected = recurrence == RecurrenceType.WEEKLY
         binding.repeatMonthly.isSelected = recurrence == RecurrenceType.MONTHLY
+        binding.repeatYearly.isSelected = recurrence == RecurrenceType.YEARLY
 
         updateSelectionTextColor(binding.repeatNone, recurrence == RecurrenceType.NONE)
         updateSelectionTextColor(binding.repeatDaily, recurrence == RecurrenceType.DAILY)
         updateSelectionTextColor(binding.repeatWeekly, recurrence == RecurrenceType.WEEKLY)
         updateSelectionTextColor(binding.repeatMonthly, recurrence == RecurrenceType.MONTHLY)
+        updateSelectionTextColor(binding.repeatYearly, recurrence == RecurrenceType.YEARLY)
+
+        if (recurrence == RecurrenceType.NONE) {
+            binding.repeatEndCardContainer.visibility = View.GONE
+        } else {
+            binding.repeatEndCardContainer.visibility = View.VISIBLE
+            updateRepeatEndUI()
+        }
+    }
+
+    private fun setupRepeatEndSelection() {
+        val modes = mapOf(
+            binding.repeatEndNever to RepeatEndMode.NEVER,
+            binding.repeatEndByDate to RepeatEndMode.BY_DATE,
+            binding.repeatEndByCount to RepeatEndMode.BY_COUNT
+        )
+
+        modes.forEach { (view, mode) ->
+            view.setOnClickListener {
+                selectedRepeatEndMode = mode
+                updateRepeatEndUI()
+            }
+        }
+
+        binding.repeatCountEditText.doAfterTextChanged { text ->
+            val count = text?.toString()?.toIntOrNull() ?: 0
+            selectedRepeatCount = count
+            if (count > 0) {
+                binding.repeatCountInputLayout.error = null
+            }
+            updateRepeatEndSummary()
+        }
+
+        updateRepeatEndUI()
+    }
+
+    private fun updateRepeatEndUI() {
+        val mode = selectedRepeatEndMode
+        binding.repeatEndNever.isSelected = mode == RepeatEndMode.NEVER
+        binding.repeatEndByDate.isSelected = mode == RepeatEndMode.BY_DATE
+        binding.repeatEndByCount.isSelected = mode == RepeatEndMode.BY_COUNT
+
+        updateSelectionTextColor(binding.repeatEndNever, mode == RepeatEndMode.NEVER)
+        updateSelectionTextColor(binding.repeatEndByDate, mode == RepeatEndMode.BY_DATE)
+        updateSelectionTextColor(binding.repeatEndByCount, mode == RepeatEndMode.BY_COUNT)
+
+        when (mode) {
+            RepeatEndMode.NEVER -> {
+                binding.repeatEndDateContainer.visibility = View.GONE
+                binding.repeatCountInputLayout.visibility = View.GONE
+                binding.repeatEndErrorText.visibility = View.GONE
+                binding.repeatEndSummaryText.visibility = View.VISIBLE
+                binding.repeatEndSummaryText.text = getString(R.string.task_repeat_end_summary_never)
+            }
+            RepeatEndMode.BY_DATE -> {
+                binding.repeatEndDateContainer.visibility = View.VISIBLE
+                binding.repeatCountInputLayout.visibility = View.GONE
+                binding.repeatEndErrorText.visibility = View.GONE
+                binding.repeatEndSummaryText.visibility = View.VISIBLE
+                updateRepeatEndDateLabel()
+                updateRepeatEndSummary()
+            }
+            RepeatEndMode.BY_COUNT -> {
+                binding.repeatEndDateContainer.visibility = View.GONE
+                binding.repeatCountInputLayout.visibility = View.VISIBLE
+                binding.repeatEndErrorText.visibility = View.GONE
+                if (selectedRepeatCount > 0 && binding.repeatCountEditText.text?.toString() != selectedRepeatCount.toString()) {
+                    binding.repeatCountEditText.setText(selectedRepeatCount.toString())
+                }
+                updateRepeatEndSummary()
+            }
+        }
+    }
+
+    private fun updateRepeatEndSummary() {
+        if (selectedRecurrence == RecurrenceType.NONE) {
+            binding.repeatEndSummaryText.visibility = View.GONE
+            return
+        }
+
+        when (selectedRepeatEndMode) {
+            RepeatEndMode.NEVER -> {
+                binding.repeatEndSummaryText.visibility = View.VISIBLE
+                binding.repeatEndSummaryText.text = getString(R.string.task_repeat_end_summary_never)
+            }
+            RepeatEndMode.BY_DATE -> {
+                val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                val dateStr = format.format(selectedRepeatEndDate.time)
+                binding.repeatEndSummaryText.visibility = View.VISIBLE
+                binding.repeatEndSummaryText.text = getString(R.string.task_repeat_end_summary_date, dateStr)
+            }
+            RepeatEndMode.BY_COUNT -> {
+                if (selectedRepeatCount > 0) {
+                    val calcEndDate = RecurrenceHelper.calculateEndDateFromOccurrences(
+                        getNormalizedDueDate(),
+                        selectedRecurrence,
+                        selectedRepeatCount
+                    )
+                    val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                    val dateStr = format.format(java.util.Date(calcEndDate))
+                    binding.repeatEndSummaryText.visibility = View.VISIBLE
+                    binding.repeatEndSummaryText.text = "Sẽ dừng sau $selectedRepeatCount lần (ngày $dateStr)"
+                } else {
+                    binding.repeatEndSummaryText.visibility = View.GONE
+                }
+            }
+        }
+    }
+
+    private fun updateRepeatEndDateLabel() {
+        val format = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+        binding.repeatEndDateText.text = format.format(selectedRepeatEndDate.time)
     }
 
     private fun updateSelectionTextColor(view: TextView, isSelected: Boolean) {
@@ -234,6 +361,13 @@ class AddEditTaskActivity : AppCompatActivity() {
         binding.datePickerContainer.setOnClickListener {
             DatePickerDialogFragment.newInstance(selectedDate.timeInMillis)
                 .show(supportFragmentManager, TAG_DATE_DIALOG)
+        }
+
+        binding.repeatEndDateContainer.setOnClickListener {
+            DatePickerDialogFragment.newInstance(
+                selectedRepeatEndDate.timeInMillis,
+                REQUEST_KEY_REPEAT_END_DATE
+            ).show(supportFragmentManager, TAG_REPEAT_END_DATE_DIALOG)
         }
 
         binding.timePickerContainer.setOnClickListener {
@@ -283,6 +417,34 @@ class AddEditTaskActivity : AppCompatActivity() {
             ValidationHelper.validatePriority(selectedPriority)
         )
 
+        var isRepeatEndValid = true
+        if (selectedRecurrence != RecurrenceType.NONE) {
+            when (selectedRepeatEndMode) {
+                RepeatEndMode.BY_COUNT -> {
+                    val count = binding.repeatCountEditText.text?.toString()?.toIntOrNull() ?: 0
+                    if (count <= 0) {
+                        binding.repeatCountInputLayout.error = getString(R.string.task_repeat_end_count_error)
+                        isRepeatEndValid = false
+                    } else {
+                        binding.repeatCountInputLayout.error = null
+                        selectedRepeatCount = count
+                    }
+                }
+                RepeatEndMode.BY_DATE -> {
+                    if (selectedRepeatEndDate.timeInMillis <= selectedDate.timeInMillis) {
+                        binding.repeatEndErrorText.text = getString(R.string.task_repeat_end_date_error)
+                        binding.repeatEndErrorText.visibility = View.VISIBLE
+                        isRepeatEndValid = false
+                    } else {
+                        binding.repeatEndErrorText.visibility = View.GONE
+                    }
+                }
+                RepeatEndMode.NEVER -> {
+                    binding.repeatEndErrorText.visibility = View.GONE
+                }
+            }
+        }
+
         return ValidationHelper.validateAll(
             title = title,
             description = description,
@@ -290,7 +452,7 @@ class AddEditTaskActivity : AppCompatActivity() {
             dueTimeMillis = dueTime,
             priority = selectedPriority,
             isNewTask = !isEditMode
-        )
+        ) && isRepeatEndValid
     }
 
     private fun validateDateField() {
@@ -371,6 +533,23 @@ class AddEditTaskActivity : AppCompatActivity() {
         allowFallbackWithoutExactPermission = false
         val title = binding.titleEditText.text.toString()
         val description = binding.descriptionEditText.text.toString()
+
+        val repeatEndDate = if (selectedRecurrence != RecurrenceType.NONE) {
+            when (selectedRepeatEndMode) {
+                RepeatEndMode.BY_DATE -> getNormalizedRepeatEndDate()
+                RepeatEndMode.BY_COUNT -> RecurrenceHelper.calculateEndDateFromOccurrences(
+                    getNormalizedDueDate(),
+                    selectedRecurrence,
+                    selectedRepeatCount
+                )
+                RepeatEndMode.NEVER -> 0L
+            }
+        } else 0L
+
+        val repeatLimitCount = if (selectedRecurrence != RecurrenceType.NONE && selectedRepeatEndMode == RepeatEndMode.BY_COUNT) {
+            selectedRepeatCount
+        } else 0
+
         if (isEditMode) {
             val task = loadedTask
             if (task == null) {
@@ -378,7 +557,7 @@ class AddEditTaskActivity : AppCompatActivity() {
                 return
             }
 
-            updateExistingTask(task, title, description)
+            updateExistingTask(task, title, description, repeatEndDate, repeatLimitCount)
         } else {
             isSaving = true
             viewModel.saveTask(
@@ -390,9 +569,22 @@ class AddEditTaskActivity : AppCompatActivity() {
                 recurrenceType = selectedRecurrence,
                 reminderMinutes = selectedReminderMinutes,
                 status = selectedStatus,
-                isEdit = false
+                isEdit = false,
+                repeatEndDate = repeatEndDate,
+                repeatLimitCount = repeatLimitCount,
+                isPaused = false
             )
         }
+    }
+
+    private fun getNormalizedRepeatEndDate(): Long {
+        return Calendar.getInstance().apply {
+            timeInMillis = selectedRepeatEndDate.timeInMillis
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 59)
+            set(Calendar.SECOND, 59)
+            set(Calendar.MILLISECOND, 999)
+        }.timeInMillis
     }
 
     private fun getNormalizedDueDate(): Long {
@@ -471,16 +663,27 @@ class AddEditTaskActivity : AppCompatActivity() {
     private fun updateExistingTask(
         existingTask: Task,
         title: String,
-        description: String
+        description: String,
+        repeatEndDate: Long,
+        repeatLimitCount: Int
     ) {
         val isRecurringUpdate = existingTask.isRecurring || existingTask.recurrenceType != RecurrenceType.NONE
-        executeTaskUpdate(existingTask, title, description, updateAllFuture = isRecurringUpdate)
+        executeTaskUpdate(
+            existingTask = existingTask,
+            title = title,
+            description = description,
+            repeatEndDate = repeatEndDate,
+            repeatLimitCount = repeatLimitCount,
+            updateAllFuture = isRecurringUpdate
+        )
     }
 
     private fun executeTaskUpdate(
         existingTask: Task,
         title: String,
         description: String,
+        repeatEndDate: Long,
+        repeatLimitCount: Int,
         updateAllFuture: Boolean
     ) {
         isSaving = true
@@ -504,6 +707,8 @@ class AddEditTaskActivity : AppCompatActivity() {
                     isRecurring = selectedRecurrence != RecurrenceType.NONE,
                     recurrenceType = selectedRecurrence,
                     reminderMinutes = selectedReminderMinutes,
+                    repeatEndDate = repeatEndDate,
+                    repeatLimitCount = repeatLimitCount,
                     status = resolvedStatus
                 )
 
@@ -593,6 +798,9 @@ class AddEditTaskActivity : AppCompatActivity() {
         outState.putLong(KEY_SELECTED_TIME, selectedTime.timeInMillis)
         outState.putString(KEY_SELECTED_PRIORITY, selectedPriority.name)
         outState.putString(KEY_SELECTED_RECURRENCE, selectedRecurrence.name)
+        outState.putString(KEY_SELECTED_REPEAT_END_MODE, selectedRepeatEndMode.name)
+        outState.putLong(KEY_SELECTED_REPEAT_END_DATE, selectedRepeatEndDate.timeInMillis)
+        outState.putInt(KEY_SELECTED_REPEAT_COUNT, selectedRepeatCount)
         outState.putInt(KEY_SELECTED_REMINDER_MINUTES, selectedReminderMinutes)
         outState.putString(KEY_SELECTED_STATUS, selectedStatus.name)
         outState.putString(KEY_TITLE, binding.titleEditText.text?.toString().orEmpty())
@@ -611,6 +819,11 @@ class AddEditTaskActivity : AppCompatActivity() {
             ?.let { runCatching { Priority.valueOf(it) }.getOrNull() } ?: Priority.MEDIUM
         selectedRecurrence = savedInstanceState.getString(KEY_SELECTED_RECURRENCE)
             ?.let { runCatching { RecurrenceType.valueOf(it) }.getOrNull() } ?: RecurrenceType.NONE
+        selectedRepeatEndMode = savedInstanceState.getString(KEY_SELECTED_REPEAT_END_MODE)
+            ?.let { runCatching { RepeatEndMode.valueOf(it) }.getOrNull() } ?: RepeatEndMode.NEVER
+        selectedRepeatEndDate.timeInMillis =
+            savedInstanceState.getLong(KEY_SELECTED_REPEAT_END_DATE, selectedRepeatEndDate.timeInMillis)
+        selectedRepeatCount = savedInstanceState.getInt(KEY_SELECTED_REPEAT_COUNT, 0)
         selectedReminderMinutes = savedInstanceState.getInt(
             KEY_SELECTED_REMINDER_MINUTES, selectedReminderMinutes
         )
@@ -626,8 +839,10 @@ class AddEditTaskActivity : AppCompatActivity() {
 
         updateDateLabel()
         updateTimeLabel()
+        updateRepeatEndDateLabel()
         updatePriorityUI(selectedPriority)
         updateRecurrenceUI(selectedRecurrence)
+        updateRepeatEndUI()
         updateReminderLabel()
         updateStatusLabel()
     }
@@ -645,6 +860,19 @@ class AddEditTaskActivity : AppCompatActivity() {
             updateDateLabel()
             validateDateField()
             validateTimeField()
+            updateRepeatEndSummary()
+        }
+
+        supportFragmentManager.setFragmentResultListener(
+            REQUEST_KEY_REPEAT_END_DATE, this
+        ) { _, bundle ->
+            val year = bundle.getInt(DatePickerDialogFragment.ARG_YEAR)
+            val month = bundle.getInt(DatePickerDialogFragment.ARG_MONTH)
+            val day = bundle.getInt(DatePickerDialogFragment.ARG_DAY)
+            selectedRepeatEndDate.set(year, month, day)
+            updateRepeatEndDateLabel()
+            updateRepeatEndSummary()
+            binding.repeatEndErrorText.visibility = View.GONE
         }
 
         supportFragmentManager.setFragmentResultListener(
@@ -695,7 +923,26 @@ class AddEditTaskActivity : AppCompatActivity() {
         updateDateLabel()
         updateTimeLabel()
         updatePriorityUI(task.priority)
+
+        if (task.isRecurring && task.recurrenceType != RecurrenceType.NONE) {
+            if (task.repeatLimitCount > 0) {
+                selectedRepeatEndMode = RepeatEndMode.BY_COUNT
+                selectedRepeatCount = task.repeatLimitCount
+                binding.repeatCountEditText.setText(task.repeatLimitCount.toString())
+            } else if (task.repeatEndDate > 0L) {
+                selectedRepeatEndMode = RepeatEndMode.BY_DATE
+                selectedRepeatEndDate.timeInMillis = task.repeatEndDate
+                updateRepeatEndDateLabel()
+            } else {
+                selectedRepeatEndMode = RepeatEndMode.NEVER
+            }
+        } else {
+            selectedRepeatEndMode = RepeatEndMode.NEVER
+        }
+
         updateRecurrenceUI(task.recurrenceType)
+        updateRepeatEndUI()
+
         selectedReminderMinutes = task.reminderMinutes
         updateReminderLabel()
         selectedStatus = task.status
@@ -712,6 +959,9 @@ class AddEditTaskActivity : AppCompatActivity() {
         private const val KEY_SELECTED_TIME = "key_selected_time"
         private const val KEY_SELECTED_PRIORITY = "key_selected_priority"
         private const val KEY_SELECTED_RECURRENCE = "key_selected_recurrence"
+        private const val KEY_SELECTED_REPEAT_END_MODE = "key_selected_repeat_end_mode"
+        private const val KEY_SELECTED_REPEAT_END_DATE = "key_selected_repeat_end_date"
+        private const val KEY_SELECTED_REPEAT_COUNT = "key_selected_repeat_count"
         private const val KEY_SELECTED_REMINDER_MINUTES = "key_selected_reminder_minutes"
         private const val KEY_SELECTED_STATUS = "key_selected_status"
         private const val KEY_IS_FORM_POPULATED = "key_is_form_populated"
@@ -721,9 +971,11 @@ class AddEditTaskActivity : AppCompatActivity() {
         // FragmentResult request keys
         private const val REQUEST_KEY_STATUS = "status_choice_result"
         private const val REQUEST_KEY_REMINDER = "reminder_choice_result"
+        private const val REQUEST_KEY_REPEAT_END_DATE = "repeat_end_date_choice_result"
 
         // Dialog tags
         private const val TAG_DATE_DIALOG = "date_picker_dialog"
+        private const val TAG_REPEAT_END_DATE_DIALOG = "repeat_end_date_dialog"
         private const val TAG_TIME_DIALOG = "time_picker_dialog"
         private const val TAG_STATUS_DIALOG = "status_dialog"
         private const val TAG_REMINDER_DIALOG = "reminder_dialog"
