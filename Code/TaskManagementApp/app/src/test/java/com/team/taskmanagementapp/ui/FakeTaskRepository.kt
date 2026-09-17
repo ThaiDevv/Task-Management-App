@@ -19,6 +19,7 @@ private class FakeTaskDao : TaskDao {
     override suspend fun deleteTask(task: Task) = Unit
     override fun getAllTasks(): Flow<List<Task>> = emptyFlow()
     override suspend fun getActiveTasksSync(): List<Task> = emptyList()
+    override suspend fun getTasksForDateRangeSync(startMillis: Long, endMillis: Long): List<Task> = emptyList()
     override suspend fun getTaskById(taskId: Long): Task? = null
     override fun observeTaskById(taskId: Long): Flow<Task?> = emptyFlow()
     override fun getTasksByStatus(status: TaskStatus): Flow<List<Task>> = emptyFlow()

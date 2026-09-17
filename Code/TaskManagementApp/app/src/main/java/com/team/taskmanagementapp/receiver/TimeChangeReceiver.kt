@@ -6,6 +6,7 @@ import android.content.Intent
 import android.util.Log
 import com.team.taskmanagementapp.data.local.db.AppDatabase
 import com.team.taskmanagementapp.util.AlarmScheduler
+import com.team.taskmanagementapp.widget.WidgetUpdater
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -28,6 +29,9 @@ class TimeChangeReceiver : BroadcastReceiver() {
                     try {
                         rescheduleAllAlarms(context)
                         checkAndUpdateOverdueTasks(context)
+                        WidgetUpdater.updateAllSafe(context)
+                    } catch (error: Exception) {
+                        Log.w(TAG, "Unable to update reminders after a system time change", error)
                     } finally {
                         pendingResult.finish()
                     }
@@ -51,10 +55,10 @@ class TimeChangeReceiver : BroadcastReceiver() {
             val isOverdue = combinedDue > 0L && combinedDue < currentTime
 
             if (isOverdue && task.status != com.team.taskmanagementapp.data.model.enums.TaskStatus.OVERDUE) {
-                Log.d("TimeChangeReceiver", "Marking task ${task.id} as OVERDUE")
+                Log.d(TAG, "Marking an overdue task after a system time change")
                 dao.updateTask(task.copy(status = com.team.taskmanagementapp.data.model.enums.TaskStatus.OVERDUE, updatedAt = currentTime))
             } else if (!isOverdue && task.status == com.team.taskmanagementapp.data.model.enums.TaskStatus.OVERDUE) {
-                Log.d("TimeChangeReceiver", "Reverting falsely overdue task ${task.id} to TODO")
+                Log.d(TAG, "Reverting an outdated overdue state after a system time change")
                 dao.updateTask(task.copy(status = com.team.taskmanagementapp.data.model.enums.TaskStatus.TODO, updatedAt = currentTime))
             }
         }
@@ -64,16 +68,21 @@ class TimeChangeReceiver : BroadcastReceiver() {
         val appContext = context.applicationContext
         val db = AppDatabase.getInstance(appContext)
         val activeTasks = db.taskDao().getActiveTasksSync()
+        val now = System.currentTimeMillis()
         
         Log.d("TimeChangeReceiver", "Rescheduling ${activeTasks.size} active tasks.")
         
         activeTasks.forEach { task ->
             val triggerAt = AlarmScheduler.calculateTriggerAtMillis(task)
-            if (triggerAt != null && triggerAt > System.currentTimeMillis()) {
-                AlarmScheduler.scheduleAlarm(appContext, task, triggerAt)
+            if (triggerAt != null && triggerAt > now) {
+                AlarmScheduler.scheduleAlarm(appContext, task, now)
             } else {
                 AlarmScheduler.cancelAlarm(appContext, task.id)
             }
         }
+    }
+
+    companion object {
+        private const val TAG = "TimeChangeReceiver"
     }
 }

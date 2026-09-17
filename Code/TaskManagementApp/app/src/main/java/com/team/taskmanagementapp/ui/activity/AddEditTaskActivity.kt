@@ -1,8 +1,6 @@
 package com.team.taskmanagementapp.ui.activity
 
 import android.Manifest
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -35,6 +33,9 @@ import com.team.taskmanagementapp.util.AlarmScheduler
 import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.DateTimeUtils
 import com.team.taskmanagementapp.util.NotificationPermissionManager
+import com.team.taskmanagementapp.ui.activity.dialog.DatePickerDialogFragment
+import com.team.taskmanagementapp.ui.activity.dialog.SingleChoiceDialogFragment
+import com.team.taskmanagementapp.ui.activity.dialog.TimePickerDialogFragment
 import com.team.taskmanagementapp.util.ValidationHelper
 import com.team.taskmanagementapp.util.ValidationHelper.ValidationError
 import kotlinx.coroutines.launch
@@ -61,6 +62,17 @@ class AddEditTaskActivity : AppCompatActivity() {
     private var loadedTask: Task? = null
     private var isFormPopulated = false
     private var retrySaveAfterExactAlarmPermission = false
+    private var allowFallbackWithoutExactPermission = false
+
+    private val reminderOptions = arrayOf(
+        "None",
+        "5 minutes before",
+        "10 minutes before",
+        "15 minutes before",
+        "30 minutes before",
+        "1 hour before"
+    )
+    private val reminderValues = intArrayOf(0, 5, 10, 15, 30, 60)
 
     private val exactAlarmPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -68,15 +80,10 @@ class AddEditTaskActivity : AppCompatActivity() {
         if (!retrySaveAfterExactAlarmPermission) return@registerForActivityResult
 
         retrySaveAfterExactAlarmPermission = false
-        if (AlarmScheduler.canScheduleExactAlarms(this)) {
-            saveTask()
-        } else {
-            Toast.makeText(
-                this,
-                R.string.exact_alarm_permission_required,
-                Toast.LENGTH_LONG
-            ).show()
-        }
+        // Whether permission was granted or not, save the task. AlarmScheduler will use
+        // WorkManager and return a user-visible warning when exact delivery is unavailable.
+        allowFallbackWithoutExactPermission = true
+        saveTask()
     }
 
     // TASK-39: Permission launcher for re-checking after user returns from Settings
@@ -99,15 +106,23 @@ class AddEditTaskActivity : AppCompatActivity() {
         setupValidation()
         setupClickListeners()
         observeViewModel()
+        registerDialogResultListeners()
 
-        if (isEditMode) {
-            observeTask(taskId)
-        } else {
+        if (savedInstanceState != null) {
+            // Restore form state sau configuration change để không mất dữ liệu user đang nhập/chọn.
+            restoreFormState(savedInstanceState)
+        } else if (!isEditMode) {
             val initialDueDate = intent.getLongExtra(Constants.EXTRA_TASK_DUE_DATE, -1L)
             if (initialDueDate != -1L) {
                 selectedDate.timeInMillis = initialDueDate
                 updateDateLabel()
             }
+        }
+
+        // Ở edit mode luôn observe; dữ liệu DB chỉ populate form lần đầu (guard isFormPopulated),
+        // không ghi đè dữ liệu user đã restore sau recreation.
+        if (isEditMode) {
+            observeTask(taskId)
         }
     }
 
@@ -125,14 +140,14 @@ class AddEditTaskActivity : AppCompatActivity() {
 
     private fun setupStatusSelection() {
         binding.statusContainer.setOnClickListener {
-            val options = TaskStatus.values().map { it.name.lowercase().replaceFirstChar { c -> c.uppercase() } }.toTypedArray()
-            androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Select Initial Status")
-                .setItems(options) { _, which ->
-                    selectedStatus = TaskStatus.values()[which]
-                    binding.statusText.text = options[which]
-                }
-                .show()
+            val options = TaskStatus.values()
+                .map { it.name.lowercase().replaceFirstChar { c -> c.uppercase() } }
+                .toTypedArray()
+            SingleChoiceDialogFragment.newInstance(
+                "Select Initial Status",
+                options,
+                REQUEST_KEY_STATUS
+            ).show(supportFragmentManager, TAG_STATUS_DIALOG)
         }
     }
 
@@ -204,16 +219,11 @@ class AddEditTaskActivity : AppCompatActivity() {
 
     private fun setupReminderSelection() {
         binding.reminderContainer.setOnClickListener {
-            val options = arrayOf("None", "5 minutes before", "10 minutes before", "15 minutes before", "30 minutes before", "1 hour before")
-            val values = intArrayOf(0, 5, 10, 15, 30, 60)
-
-            androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Select Reminder")
-                .setItems(options) { _, which ->
-                    selectedReminderMinutes = values[which]
-                    binding.reminderText.text = options[which]
-                }
-                .show()
+            SingleChoiceDialogFragment.newInstance(
+                "Select Reminder",
+                reminderOptions,
+                REQUEST_KEY_REMINDER
+            ).show(supportFragmentManager, TAG_REMINDER_DIALOG)
         }
     }
 
@@ -222,21 +232,13 @@ class AddEditTaskActivity : AppCompatActivity() {
         binding.createTaskButton.setOnClickListener { saveTask() }
 
         binding.datePickerContainer.setOnClickListener {
-            DatePickerDialog(this, { _, y, m, d ->
-                selectedDate.set(y, m, d)
-                updateDateLabel()
-                validateDateField()
-                validateTimeField()
-            }, selectedDate.get(Calendar.YEAR), selectedDate.get(Calendar.MONTH), selectedDate.get(Calendar.DAY_OF_MONTH)).show()
+            DatePickerDialogFragment.newInstance(selectedDate.timeInMillis)
+                .show(supportFragmentManager, TAG_DATE_DIALOG)
         }
 
         binding.timePickerContainer.setOnClickListener {
-            TimePickerDialog(this, { _, h, min ->
-                selectedTime.set(Calendar.HOUR_OF_DAY, h)
-                selectedTime.set(Calendar.MINUTE, min)
-                updateTimeLabel()
-                validateTimeField()
-            }, selectedTime.get(Calendar.HOUR_OF_DAY), selectedTime.get(Calendar.MINUTE), false).show()
+            TimePickerDialogFragment.newInstance(selectedTime.timeInMillis)
+                .show(supportFragmentManager, TAG_TIME_DIALOG)
         }
     }
 
@@ -354,6 +356,7 @@ class AddEditTaskActivity : AppCompatActivity() {
                 }
             }
             .setNegativeButton(getString(R.string.notif_permission_reminder_blocked_save)) { _, _ ->
+                allowFallbackWithoutExactPermission = true
                 performSave()
             }
             .setCancelable(true)
@@ -364,7 +367,8 @@ class AddEditTaskActivity : AppCompatActivity() {
      * Executes the actual save / update logic after all permission and validation checks pass.
      */
     private fun performSave() {
-        if (!ensureExactAlarmPermission()) return
+        if (!allowFallbackWithoutExactPermission && !ensureExactAlarmPermission()) return
+        allowFallbackWithoutExactPermission = false
         val title = binding.titleEditText.text.toString()
         val description = binding.descriptionEditText.text.toString()
         if (isEditMode) {
@@ -423,9 +427,13 @@ class AddEditTaskActivity : AppCompatActivity() {
             when (state) {
                 is UiState.Success -> {
                     if (isSaving) {
-                        AlarmScheduler.scheduleAlarm(this, state.data)
-                        val message = if (isEditMode) "Task updated successfully" else "Task created successfully"
-                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                        val scheduleResult = AlarmScheduler.scheduleAlarm(this, state.data)
+                        val successMessage = if (isEditMode) {
+                            "Task updated successfully"
+                        } else {
+                            "Task created successfully"
+                        }
+                        showSaveResult(successMessage, scheduleResult)
                         finish()
                     }
                 }
@@ -505,13 +513,14 @@ class AddEditTaskActivity : AppCompatActivity() {
                     context = applicationContext
                 )
 
-                AlarmScheduler.rescheduleAlarm(this@AddEditTaskActivity, updatedTask)
+                val scheduleResult =
+                    AlarmScheduler.rescheduleAlarm(this@AddEditTaskActivity, updatedTask)
 
                 if (hasDueDateOrTimeChanged(existingTask, updatedTask)) {
                     dispatchTaskDateTimeChanged(updatedTask)
                 }
 
-                Toast.makeText(this@AddEditTaskActivity, "Task Updated", Toast.LENGTH_SHORT).show()
+                showSaveResult("Task updated successfully", scheduleResult)
                 setResult(RESULT_OK)
                 finish()
             } catch (error: Exception) {
@@ -543,6 +552,28 @@ class AddEditTaskActivity : AppCompatActivity() {
         return false
     }
 
+    private fun showSaveResult(
+        successMessage: String,
+        scheduleResult: AlarmScheduler.ScheduleResult
+    ) {
+        val message = when (scheduleResult) {
+            AlarmScheduler.ScheduleResult.FALLBACK_SCHEDULED ->
+                getString(R.string.notification_schedule_fallback)
+            AlarmScheduler.ScheduleResult.NOTIFICATIONS_DISABLED ->
+                getString(R.string.notification_schedule_disabled)
+            AlarmScheduler.ScheduleResult.FAILED ->
+                getString(R.string.notification_schedule_failed)
+            AlarmScheduler.ScheduleResult.SKIPPED -> if (selectedReminderMinutes > 0) {
+                getString(R.string.notification_schedule_past)
+            } else {
+                successMessage
+            }
+            AlarmScheduler.ScheduleResult.SCHEDULED -> successMessage
+        }
+        val duration = if (message == successMessage) Toast.LENGTH_SHORT else Toast.LENGTH_LONG
+        Toast.makeText(this, message, duration).show()
+    }
+
     private fun dispatchTaskDateTimeChanged(task: Task) {
         sendBroadcast(
             Intent(Constants.ACTION_TASK_DATE_TIME_CHANGED).apply {
@@ -552,6 +583,108 @@ class AddEditTaskActivity : AppCompatActivity() {
                 putExtra(Constants.EXTRA_TASK_DUE_TIME, task.dueTime)
             }
         )
+    }
+
+    // ── Configuration change: save/restore form state ─────────────────────────
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putLong(KEY_SELECTED_DATE, selectedDate.timeInMillis)
+        outState.putLong(KEY_SELECTED_TIME, selectedTime.timeInMillis)
+        outState.putString(KEY_SELECTED_PRIORITY, selectedPriority.name)
+        outState.putString(KEY_SELECTED_RECURRENCE, selectedRecurrence.name)
+        outState.putInt(KEY_SELECTED_REMINDER_MINUTES, selectedReminderMinutes)
+        outState.putString(KEY_SELECTED_STATUS, selectedStatus.name)
+        outState.putString(KEY_TITLE, binding.titleEditText.text?.toString().orEmpty())
+        outState.putString(KEY_DESCRIPTION, binding.descriptionEditText.text?.toString().orEmpty())
+        outState.putBoolean(KEY_IS_FORM_POPULATED, isFormPopulated)
+        outState.putBoolean(KEY_RETRY_SAVE_AFTER_EXACT_ALARM, retrySaveAfterExactAlarmPermission)
+        outState.putBoolean(KEY_IS_SAVING, isSaving)
+    }
+
+    private fun restoreFormState(savedInstanceState: Bundle) {
+        selectedDate.timeInMillis =
+            savedInstanceState.getLong(KEY_SELECTED_DATE, selectedDate.timeInMillis)
+        selectedTime.timeInMillis =
+            savedInstanceState.getLong(KEY_SELECTED_TIME, selectedTime.timeInMillis)
+        selectedPriority = savedInstanceState.getString(KEY_SELECTED_PRIORITY)
+            ?.let { runCatching { Priority.valueOf(it) }.getOrNull() } ?: Priority.MEDIUM
+        selectedRecurrence = savedInstanceState.getString(KEY_SELECTED_RECURRENCE)
+            ?.let { runCatching { RecurrenceType.valueOf(it) }.getOrNull() } ?: RecurrenceType.NONE
+        selectedReminderMinutes = savedInstanceState.getInt(
+            KEY_SELECTED_REMINDER_MINUTES, selectedReminderMinutes
+        )
+        selectedStatus = savedInstanceState.getString(KEY_SELECTED_STATUS)
+            ?.let { runCatching { TaskStatus.valueOf(it) }.getOrNull() } ?: TaskStatus.TODO
+        isFormPopulated = savedInstanceState.getBoolean(KEY_IS_FORM_POPULATED, false)
+        retrySaveAfterExactAlarmPermission =
+            savedInstanceState.getBoolean(KEY_RETRY_SAVE_AFTER_EXACT_ALARM, false)
+        isSaving = savedInstanceState.getBoolean(KEY_IS_SAVING, false)
+
+        binding.titleEditText.setText(savedInstanceState.getString(KEY_TITLE).orEmpty())
+        binding.descriptionEditText.setText(savedInstanceState.getString(KEY_DESCRIPTION).orEmpty())
+
+        updateDateLabel()
+        updateTimeLabel()
+        updatePriorityUI(selectedPriority)
+        updateRecurrenceUI(selectedRecurrence)
+        updateReminderLabel()
+        updateStatusLabel()
+    }
+
+    // ── Dialog result listeners (auto re-register sau recreation) ─────────────
+
+    private fun registerDialogResultListeners() {
+        supportFragmentManager.setFragmentResultListener(
+            DatePickerDialogFragment.REQUEST_KEY, this
+        ) { _, bundle ->
+            val year = bundle.getInt(DatePickerDialogFragment.ARG_YEAR)
+            val month = bundle.getInt(DatePickerDialogFragment.ARG_MONTH)
+            val day = bundle.getInt(DatePickerDialogFragment.ARG_DAY)
+            selectedDate.set(year, month, day)
+            updateDateLabel()
+            validateDateField()
+            validateTimeField()
+        }
+
+        supportFragmentManager.setFragmentResultListener(
+            TimePickerDialogFragment.REQUEST_KEY, this
+        ) { _, bundle ->
+            val hour = bundle.getInt(TimePickerDialogFragment.ARG_HOUR)
+            val minute = bundle.getInt(TimePickerDialogFragment.ARG_MINUTE)
+            selectedTime.set(Calendar.HOUR_OF_DAY, hour)
+            selectedTime.set(Calendar.MINUTE, minute)
+            updateTimeLabel()
+            validateTimeField()
+        }
+
+        supportFragmentManager.setFragmentResultListener(
+            REQUEST_KEY_STATUS, this
+        ) { _, bundle ->
+            val which = bundle.getInt(SingleChoiceDialogFragment.ARG_SELECTED_INDEX)
+            selectedStatus = TaskStatus.values()[which]
+            updateStatusLabel()
+        }
+
+        supportFragmentManager.setFragmentResultListener(
+            REQUEST_KEY_REMINDER, this
+        ) { _, bundle ->
+            val which = bundle.getInt(SingleChoiceDialogFragment.ARG_SELECTED_INDEX)
+            selectedReminderMinutes = reminderValues[which]
+            updateReminderLabel()
+        }
+    }
+
+    private fun updateReminderLabel() {
+        binding.reminderText.text = when (selectedReminderMinutes) {
+            0 -> "None"
+            60 -> "1 hour before"
+            else -> "$selectedReminderMinutes minutes before"
+        }
+    }
+
+    private fun updateStatusLabel() {
+        binding.statusText.text = selectedStatus.name.lowercase().replaceFirstChar { it.uppercase() }
     }
 
     private fun populateTaskData(task: Task) {
@@ -564,16 +697,35 @@ class AddEditTaskActivity : AppCompatActivity() {
         updatePriorityUI(task.priority)
         updateRecurrenceUI(task.recurrenceType)
         selectedReminderMinutes = task.reminderMinutes
-        binding.reminderText.text = when(task.reminderMinutes) {
-            0 -> "None"
-            60 -> "1 hour before"
-            else -> "${task.reminderMinutes} minutes before"
-        }
+        updateReminderLabel()
         selectedStatus = task.status
-        binding.statusText.text = task.status.name.lowercase().replaceFirstChar { it.uppercase() }
+        updateStatusLabel()
     }
 
     companion object {
         const val EXTRA_TASK_ID = Constants.EXTRA_TASK_ID
+
+        // Saved instance state keys
+        private const val KEY_TITLE = "key_title"
+        private const val KEY_DESCRIPTION = "key_description"
+        private const val KEY_SELECTED_DATE = "key_selected_date"
+        private const val KEY_SELECTED_TIME = "key_selected_time"
+        private const val KEY_SELECTED_PRIORITY = "key_selected_priority"
+        private const val KEY_SELECTED_RECURRENCE = "key_selected_recurrence"
+        private const val KEY_SELECTED_REMINDER_MINUTES = "key_selected_reminder_minutes"
+        private const val KEY_SELECTED_STATUS = "key_selected_status"
+        private const val KEY_IS_FORM_POPULATED = "key_is_form_populated"
+        private const val KEY_RETRY_SAVE_AFTER_EXACT_ALARM = "key_retry_save_after_exact_alarm"
+        private const val KEY_IS_SAVING = "key_is_saving"
+
+        // FragmentResult request keys
+        private const val REQUEST_KEY_STATUS = "status_choice_result"
+        private const val REQUEST_KEY_REMINDER = "reminder_choice_result"
+
+        // Dialog tags
+        private const val TAG_DATE_DIALOG = "date_picker_dialog"
+        private const val TAG_TIME_DIALOG = "time_picker_dialog"
+        private const val TAG_STATUS_DIALOG = "status_dialog"
+        private const val TAG_REMINDER_DIALOG = "reminder_dialog"
     }
 }

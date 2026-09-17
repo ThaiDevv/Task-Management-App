@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Widget palette — light. Tách riêng để values-night override, không đụng palette app. -->
+    <color name="widget_surface">#FBFCFF</color>
+    <color name="widget_stroke">#E4E8F4</color>
+    <color name="widget_header_background">#EDF2FF</color>
+    <color name="widget_on_surface">#1B1B1B</color>
+    <color name="widget_on_surface_variant">#5A6072</color>
+    <color name="widget_chip_background">#DBE5FF</color>
+    <color name="widget_on_chip">#00357C</color>
+    <color name="widget_add_button">#105CDB</color>
+    <color name="widget_progress_track">#E2E6F0</color>
+    <color name="widget_progress_fill">#105CDB</color>
+    <color name="widget_check_outline">#B4B9C9</color>
+    <color name="widget_check_filled">#10B981</color>
+    <color name="widget_clock_icon">#8A90A3</color>
+</resources>

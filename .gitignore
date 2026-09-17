@@ -71,3 +71,4 @@ captures/
 !gradle/wrapper/gradle-wrapper.properties
 !gradlew
 !gradlew.bat
+Code/TaskManagementApp/.idea/
