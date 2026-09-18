@@ -9,10 +9,17 @@ object Constants {
     const val DATABASE_NAME = "task_management_db"
 
     /**
-     * Version 3: thêm bảng `pomodoro_sessions` + 3 cột theo dõi Pomodoro trên `tasks`.
-     * Xem `AppDatabase.MIGRATION_2_3`.
+     * Version 3: công việc lặp lại có thêm `repeatEndDate`, `repeatLimitCount`,
+     * `currentOccurrence`, `isPaused` trên `tasks` (xem `AppDatabase.MIGRATION_2_3`).
+     *
+     * Version 4: tính năng Pomodoro Timer — bảng `pomodoro_sessions` + 3 cột theo dõi
+     * Pomodoro trên `tasks` (xem `AppDatabase.MIGRATION_3_4`).
+     *
+     * ⚠️ Cả hai nhánh đều từng dùng số 3 cho hai schema khác nhau; sau khi merge, 3 là
+     * schema lặp-lịch của `main` còn Pomodoro được nâng lên 4. `MIGRATION_3_4` được viết
+     * theo kiểu "thêm cột nếu chưa có" nên vẫn chạy đúng với cả hai biến thể của v3.
      */
-    const val DATABASE_VERSION = 3
+    const val DATABASE_VERSION = 4
 
     // Notification Channel
     const val NOTIFICATION_CHANNEL_ID = "task_reminder_channel"

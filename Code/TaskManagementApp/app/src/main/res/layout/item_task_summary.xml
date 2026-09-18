@@ -100,7 +100,7 @@
                     android:paddingTop="3dp"
                     android:paddingEnd="8dp"
                     android:paddingBottom="3dp"
-                    android:text="QUÁ HẠN"
+                    android:text="OVERDUE"
                     android:textColor="@color/status_overdue"
                     android:textSize="10sp"
                     android:visibility="gone" />

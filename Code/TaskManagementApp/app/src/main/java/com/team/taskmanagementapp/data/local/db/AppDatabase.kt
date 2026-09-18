@@ -37,7 +37,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     Constants.DATABASE_NAME
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                     .build()
 
                 INSTANCE = instance
@@ -54,7 +54,26 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         /**
-         * v2 → v3: bổ sung tính năng Pomodoro Timer.
+         * v2 → v3: công việc lặp lại nâng cao (schema này do `main` định nghĩa).
+         *
+         * 1. `repeatEndDate`: mốc kết thúc chuỗi lặp.
+         * 2. `repeatLimitCount`: giới hạn số lần lặp.
+         * 3. `currentOccurrence`: lần lặp hiện tại (bắt đầu từ 1).
+         * 4. `isPaused`: tạm dừng chuỗi lặp.
+         *
+         * Tất cả đều có DEFAULT nên dữ liệu Task hiện có được giữ nguyên.
+         */
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.addColumnIfMissing("tasks", "repeatEndDate", "INTEGER NOT NULL DEFAULT 0")
+                db.addColumnIfMissing("tasks", "repeatLimitCount", "INTEGER NOT NULL DEFAULT 0")
+                db.addColumnIfMissing("tasks", "currentOccurrence", "INTEGER NOT NULL DEFAULT 1")
+                db.addColumnIfMissing("tasks", "isPaused", "INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
+        /**
+         * v3 → v4: bổ sung tính năng Pomodoro Timer.
          *
          * 1. Tạo bảng `pomodoro_sessions` (lịch sử các phiên tập trung/nghỉ).
          * 2. Khóa ngoại `taskId` → `tasks.id` với ON DELETE CASCADE
@@ -65,10 +84,14 @@ abstract class AppDatabase : RoomDatabase() {
          *    → toàn bộ dữ liệu Task hiện có được giữ nguyên, không mất mát.
          *
          * DDL dưới đây khớp CHÍNH XÁC với schema mà Room sinh ra cho
-         * [PomodoroSession] và [Task] ở version 3, nếu không khớp Room sẽ báo
+         * [PomodoroSession] và [Task] ở version 4, nếu không khớp Room sẽ báo
          * "Migration didn't properly handle ..." khi mở database.
+         *
+         * Lưu ý khi merge: nhánh Pomodoro từng dùng chính số 3 cho schema Pomodoro, nên
+         * migration ở đây thêm cột theo kiểu "nếu chưa có" và bổ sung luôn 4 cột lặp-lịch
+         * để DB ở biến thể v3 nào cũng về đúng schema v4.
          */
-        private val MIGRATION_2_3 = object : Migration(2, 3) {
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 // 1 + 2. Bảng pomodoro_sessions kèm khóa ngoại tới tasks
                 db.execSQL(
@@ -95,15 +118,45 @@ abstract class AppDatabase : RoomDatabase() {
                 )
 
                 // 4. Cột theo dõi Pomodoro trên bảng tasks (giữ nguyên dữ liệu cũ)
-                db.execSQL(
-                    "ALTER TABLE `tasks` ADD COLUMN `estimatedPomodoros` INTEGER NOT NULL DEFAULT 0"
-                )
-                db.execSQL(
-                    "ALTER TABLE `tasks` ADD COLUMN `completedPomodoros` INTEGER NOT NULL DEFAULT 0"
-                )
-                db.execSQL(
-                    "ALTER TABLE `tasks` ADD COLUMN `totalFocusTimeMinutes` INTEGER NOT NULL DEFAULT 0"
-                )
+                db.addColumnIfMissing("tasks", "estimatedPomodoros", "INTEGER NOT NULL DEFAULT 0")
+                db.addColumnIfMissing("tasks", "completedPomodoros", "INTEGER NOT NULL DEFAULT 0")
+                db.addColumnIfMissing("tasks", "totalFocusTimeMinutes", "INTEGER NOT NULL DEFAULT 0")
+
+                // 5. Cột lặp-lịch: cần cho DB đang ở "v3 của nhánh Pomodoro" (không có các cột này).
+                //    Nếu DB đến từ v3 của main thì các cột đã tồn tại nên bước này không làm gì.
+                db.addColumnIfMissing("tasks", "repeatEndDate", "INTEGER NOT NULL DEFAULT 0")
+                db.addColumnIfMissing("tasks", "repeatLimitCount", "INTEGER NOT NULL DEFAULT 0")
+                db.addColumnIfMissing("tasks", "currentOccurrence", "INTEGER NOT NULL DEFAULT 1")
+                db.addColumnIfMissing("tasks", "isPaused", "INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
+        /**
+         * Thêm cột nếu chưa tồn tại.
+         *
+         * SQLite không có `ALTER TABLE ... ADD COLUMN IF NOT EXISTS`, nên phải hỏi
+         * `PRAGMA table_info`. Nhờ vậy các migration ở trên luôn chạy lại được mà không
+         * lỗi "duplicate column name" (quan trọng khi hai nhánh cùng đánh số version 3).
+         */
+        private fun SupportSQLiteDatabase.addColumnIfMissing(
+            table: String,
+            column: String,
+            definition: String
+        ) {
+            val alreadyExists = query("PRAGMA table_info(`$table`)").use { cursor ->
+                val nameIndex = cursor.getColumnIndex("name")
+                var found = false
+                while (cursor.moveToNext()) {
+                    if (nameIndex >= 0 && cursor.getString(nameIndex) == column) {
+                        found = true
+                        break
+                    }
+                }
+                found
+            }
+
+            if (!alreadyExists) {
+                execSQL("ALTER TABLE `$table` ADD COLUMN `$column` $definition")
             }
         }
     }
