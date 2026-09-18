@@ -102,7 +102,8 @@ class TaskRepository(
         taskDao.markOverdueTasks(now)
     }
 
-    fun getFilteredTasks(criteria: FilterCriteria): Flow<List<Task>> {
+    fun getFilteredTasks(requestedCriteria: FilterCriteria): Flow<List<Task>> {
+        val criteria = requestedCriteria.normalized()
         return taskDao.getAllTasks().map { tasks ->
             val now = System.currentTimeMillis()
             val startOfToday = Calendar.getInstance().apply {
@@ -134,13 +135,14 @@ class TaskRepository(
 
             val filtered = tasks.map { task ->
                 val combined = DateTimeUtils.getCombinedDueTimestamp(task.dueDate, task.dueTime)
+                val completed = task.isCompleted || task.status == TaskStatus.COMPLETED
                 val effectiveStatus = when {
-                    task.isCompleted -> TaskStatus.COMPLETED
+                    completed -> TaskStatus.COMPLETED
                     combined > 0L && combined < now -> TaskStatus.OVERDUE
                     task.status == TaskStatus.OVERDUE && combined > now -> TaskStatus.TODO
                     else -> task.status
                 }
-                task.copy(status = effectiveStatus)
+                task.copy(status = effectiveStatus, isCompleted = completed)
             }.filter { task ->
                 val completionMatches = when (criteria.completion) {
                     CompletionFilter.ALL -> true

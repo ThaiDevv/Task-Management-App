@@ -239,7 +239,11 @@ class TaskListFragment : Fragment() {
                                 showScreenState(ScreenState.CONTENT)
                             }
                             is UiState.Empty -> {
-                                showScreenState(ScreenState.EMPTY)
+                                // Keep the filter reachable when its result is empty.
+                                displayTaskList(emptyList())
+                                updateMetrics(emptyList())
+                                showScreenState(if (viewModel.filterCriteria.value != FilterCriteria())
+                                    ScreenState.CONTENT else ScreenState.EMPTY)
                             }
                             is UiState.Error -> {
                                 binding.viewErrorState.tvErrorMessage.text = uiState.message
@@ -578,6 +582,7 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
                 R.id.completionDone -> CompletionFilter.DONE
                 else -> CompletionFilter.ALL
             }
+            syncCompletionConstraints()
             updatePreview()
         }
     }
@@ -646,6 +651,7 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun syncAllUi() {
+        normalizeCompletionFilters()
         isSynchronizing = true
         binding.completionToggleGroup.check(
             when (selectedCompletion) {
@@ -677,7 +683,29 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
             false
         )
         isSynchronizing = false
+        syncCompletionConstraints()
         syncCustomRangeLabel()
+    }
+
+    private fun normalizeCompletionFilters() {
+        if (selectedCompletion == CompletionFilter.DONE) {
+            selectedStatuses.clear()
+            if (selectedDueDateRange == DueDateRange.OVERDUE) selectedDueDateRange = DueDateRange.ALL
+        }
+    }
+
+    private fun syncCompletionConstraints() {
+        normalizeCompletionFilters()
+        val done = selectedCompletion == CompletionFilter.DONE
+        isSynchronizing = true
+        listOf(binding.chipStatusTodo, binding.chipStatusInProgress, binding.chipStatusOverdue).forEach {
+            it.isEnabled = !done
+            if (done) it.isChecked = false
+        }
+        binding.chipDueOverdue.isEnabled = !done
+        if (done && binding.chipDueOverdue.isChecked) binding.dueDateChipGroup.check(R.id.chipDueAll)
+        binding.completionConstraintHint.visibility = if (done) View.VISIBLE else View.GONE
+        isSynchronizing = false
     }
 
     private fun showCustomDateRangePicker() {
