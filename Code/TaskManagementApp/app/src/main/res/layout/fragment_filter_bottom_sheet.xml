@@ -1,37 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Filter & Sort Bottom Sheet
-  Full support for Status (Todo / In Progress / Completed / Overdue),
-  Priority (Urgent / High / Medium / Low),
-  Due Date (All / Today / This Week / This Month / Overdue),
-  and Sort By options.
--->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@drawable/bg_filter_sheet"
     android:orientation="vertical">
 
-    <!-- ── Drag Handle ── -->
+    <View
+        android:layout_width="44dp"
+        android:layout_height="5dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_filter_handle" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="24dp"
         android:paddingTop="14dp"
-        android:paddingBottom="6dp"
-        android:orientation="horizontal">
+        android:paddingEnd="20dp"
+        android:paddingBottom="14dp">
 
-        <View
-            android:layout_width="48dp"
-            android:layout_height="6dp"
-            android:background="@drawable/bg_filter_handle" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_bold"
+                android:text="@string/filter_title"
+                android:textColor="@color/on_surface"
+                android:textSize="25sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:fontFamily="@font/poppins_regular"
+                android:text="@string/filter_subtitle"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnReset"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="@string/filter_clear_all"
+            android:textAllCaps="false"
+            android:textColor="@color/primary" />
     </LinearLayout>
 
-    <!-- ── Scrollable Content ── -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
         android:scrollbars="none">
 
         <LinearLayout
@@ -40,502 +71,224 @@
             android:orientation="vertical"
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
-            android:paddingBottom="32dp">
+            android:paddingBottom="20dp">
 
-            <!-- ── Header: "Filter & Sort" + Reset ── -->
+            <TextView
+                style="@style/FilterSectionLabel"
+                android:text="@string/filter_section_completion" />
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/completionToggleGroup"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="10dp"
+                app:checkedButton="@id/completionAll"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/completionAll"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="@string/filter_all"
+                    android:textAllCaps="false" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/completionNotDone"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="@string/filter_not_done"
+                    android:textAllCaps="false" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/completionDone"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="@string/filter_done"
+                    android:textAllCaps="false" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
                 android:gravity="center_vertical"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="24dp"
                 android:orientation="horizontal">
 
                 <TextView
+                    style="@style/FilterSectionLabel"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:fontFamily="@font/poppins_bold"
-                    android:text="@string/filter_title"
-                    android:textColor="#1B1B1B"
-                    android:textSize="28sp"
-                    android:letterSpacing="-0.01" />
+                    android:text="@string/filter_section_status" />
 
                 <TextView
-                    android:id="@+id/btnReset"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins_semibold"
-                    android:text="@string/filter_reset"
-                    android:textColor="#105CDB"
-                    android:textSize="15sp"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="4dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:clickable="true"
-                    android:focusable="true" />
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="@string/filter_select_multiple"
+                    android:textColor="@color/on_surface_variant"
+                    android:textSize="11sp" />
             </LinearLayout>
 
-            <!-- ════════════════════════════════════
-                 1. STATUS SECTION
-            ════════════════════════════════════ -->
-            <TextView
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/statusChipGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:fontFamily="@font/poppins_bold"
-                android:letterSpacing="0.12"
-                android:text="@string/filter_section_status"
-                android:textAllCaps="true"
-                android:textColor="#737786"
-                android:textSize="11sp" />
+                android:layout_marginTop="8dp"
+                app:chipSpacingHorizontal="8dp"
+                app:chipSpacingVertical="4dp"
+                app:singleLine="false"
+                app:singleSelection="false">
 
-            <!-- Todo row -->
-            <LinearLayout
-                android:id="@+id/statusTodo"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackground">
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipStatusTodo"
+                    style="@style/FilterChoiceChip"
+                    android:checkable="true"
+                    android:text="@string/filter_status_todo" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/poppins_regular"
-                    android:text="@string/filter_status_todo"
-                    android:textColor="#1B1B1B"
-                    android:textSize="15sp" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipStatusInProgress"
+                    style="@style/FilterChoiceChip"
+                    android:checkable="true"
+                    android:text="@string/filter_status_in_progress" />
 
-                <CheckBox
-                    android:id="@+id/cbStatusTodo"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:buttonTint="#0045AE" />
-            </LinearLayout>
-
-            <!-- In Progress row -->
-            <LinearLayout
-                android:id="@+id/statusInProgress"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackground">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/poppins_regular"
-                    android:text="@string/filter_status_in_progress"
-                    android:textColor="#1B1B1B"
-                    android:textSize="15sp" />
-
-                <CheckBox
-                    android:id="@+id/cbStatusInProgress"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:buttonTint="#0045AE" />
-            </LinearLayout>
-
-            <!-- Completed row -->
-            <LinearLayout
-                android:id="@+id/statusCompleted"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackground">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/poppins_regular"
-                    android:text="@string/filter_status_completed"
-                    android:textColor="#1B1B1B"
-                    android:textSize="15sp" />
-
-                <CheckBox
-                    android:id="@+id/cbStatusCompleted"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:buttonTint="#0045AE" />
-            </LinearLayout>
-
-            <!-- Overdue row -->
-            <LinearLayout
-                android:id="@+id/statusOverdue"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackground">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/poppins_regular"
-                    android:text="@string/filter_status_overdue"
-                    android:textColor="#1B1B1B"
-                    android:textSize="15sp" />
-
-                <CheckBox
-                    android:id="@+id/cbStatusOverdue"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:buttonTint="#0045AE" />
-            </LinearLayout>
-
-            <!-- ════════════════════════════════════
-                 2. PRIORITY SECTION (Urgent, High, Medium, Low)
-            ════════════════════════════════════ -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="12dp"
-                android:fontFamily="@font/poppins_bold"
-                android:letterSpacing="0.12"
-                android:text="@string/filter_section_priority"
-                android:textAllCaps="true"
-                android:textColor="#737786"
-                android:textSize="11sp" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipStatusOverdue"
+                    style="@style/FilterChoiceChip"
+                    android:checkable="true"
+                    android:text="@string/filter_status_overdue" />
+            </com.google.android.material.chip.ChipGroup>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/chipPriorityUrgent"
+                    style="@style/FilterSectionLabel"
                     android:layout_width="0dp"
-                    android:layout_height="44dp"
                     android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/bg_filter_chip_selector"
-                    android:fontFamily="@font/poppins_semibold"
-                    android:gravity="center"
-                    android:text="@string/filter_priority_urgent"
-                    android:textColor="#1B1B1B"
-                    android:textSize="12sp"
-                    android:clickable="true"
-                    android:focusable="true" />
+                    android:text="@string/filter_section_priority" />
 
                 <TextView
-                    android:id="@+id/chipPriorityHigh"
-                    android:layout_width="0dp"
-                    android:layout_height="44dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/bg_filter_chip_selector"
-                    android:fontFamily="@font/poppins_semibold"
-                    android:gravity="center"
-                    android:text="@string/filter_priority_high"
-                    android:textColor="#1B1B1B"
-                    android:textSize="12sp"
-                    android:clickable="true"
-                    android:focusable="true" />
-
-                <TextView
-                    android:id="@+id/chipPriorityMedium"
-                    android:layout_width="0dp"
-                    android:layout_height="44dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/bg_filter_chip_selector"
-                    android:fontFamily="@font/poppins_semibold"
-                    android:gravity="center"
-                    android:text="@string/filter_priority_medium"
-                    android:textColor="#1B1B1B"
-                    android:textSize="12sp"
-                    android:clickable="true"
-                    android:focusable="true" />
-
-                <TextView
-                    android:id="@+id/chipPriorityLow"
-                    android:layout_width="0dp"
-                    android:layout_height="44dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_filter_chip_selector"
-                    android:fontFamily="@font/poppins_semibold"
-                    android:gravity="center"
-                    android:text="@string/filter_priority_low"
-                    android:textColor="#1B1B1B"
-                    android:textSize="12sp"
-                    android:clickable="true"
-                    android:focusable="true" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="@string/filter_select_multiple"
+                    android:textColor="@color/on_surface_variant"
+                    android:textSize="11sp" />
             </LinearLayout>
 
-            <!-- ════════════════════════════════════
-                 3. DUE DATE SECTION
-            ════════════════════════════════════ -->
-            <TextView
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/priorityChipGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="12dp"
-                android:fontFamily="@font/poppins_bold"
-                android:letterSpacing="0.12"
-                android:text="@string/filter_section_due_date"
-                android:textAllCaps="true"
-                android:textColor="#737786"
-                android:textSize="11sp" />
+                android:layout_marginTop="8dp"
+                app:chipSpacingHorizontal="8dp"
+                app:chipSpacingVertical="4dp"
+                app:singleLine="false"
+                app:singleSelection="false">
 
-            <!-- Due Date All -->
-            <LinearLayout
-                android:id="@+id/dateRangeAll"
-                android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackground">
+                <com.google.android.material.chip.Chip android:id="@+id/chipPriorityUrgent" style="@style/FilterChoiceChip" android:checkable="true" android:text="@string/filter_priority_urgent" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipPriorityHigh" style="@style/FilterChoiceChip" android:checkable="true" android:text="@string/filter_priority_high" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipPriorityMedium" style="@style/FilterChoiceChip" android:checkable="true" android:text="@string/filter_priority_medium" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipPriorityLow" style="@style/FilterChoiceChip" android:checkable="true" android:text="@string/filter_priority_low" />
+            </com.google.android.material.chip.ChipGroup>
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/poppins_regular"
-                    android:text="@string/filter_all"
-                    android:textColor="#1B1B1B"
-                    android:textSize="15sp" />
+            <TextView style="@style/FilterSectionLabel" android:layout_marginTop="20dp" android:text="@string/filter_section_due_date" />
 
-                <RadioButton
-                    android:id="@+id/rbDateRangeAll"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:buttonTint="#0045AE" />
-            </LinearLayout>
-
-            <!-- Due Date Today -->
-            <LinearLayout
-                android:id="@+id/dateRangeToday"
-                android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackground">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/poppins_regular"
-                    android:text="@string/filter_due_date_today"
-                    android:textColor="#1B1B1B"
-                    android:textSize="15sp" />
-
-                <RadioButton
-                    android:id="@+id/rbDateRangeToday"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:buttonTint="#0045AE" />
-            </LinearLayout>
-
-            <!-- Due Date This Week -->
-            <LinearLayout
-                android:id="@+id/dateRangeThisWeek"
-                android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackground">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/poppins_regular"
-                    android:text="@string/filter_due_date_this_week"
-                    android:textColor="#1B1B1B"
-                    android:textSize="15sp" />
-
-                <RadioButton
-                    android:id="@+id/rbDateRangeThisWeek"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:buttonTint="#0045AE" />
-            </LinearLayout>
-
-            <!-- Due Date This Month -->
-            <LinearLayout
-                android:id="@+id/dateRangeThisMonth"
-                android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackground">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/poppins_regular"
-                    android:text="@string/filter_due_date_this_month"
-                    android:textColor="#1B1B1B"
-                    android:textSize="15sp" />
-
-                <RadioButton
-                    android:id="@+id/rbDateRangeThisMonth"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:buttonTint="#0045AE" />
-            </LinearLayout>
-
-            <!-- ════════════════════════════════════
-                 4. SORT BY SECTION
-            ════════════════════════════════════ -->
-            <TextView
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/dueDateChipGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="12dp"
-                android:fontFamily="@font/poppins_bold"
-                android:letterSpacing="0.12"
-                android:text="@string/filter_section_sort_by"
-                android:textAllCaps="true"
-                android:textColor="#737786"
-                android:textSize="11sp" />
+                android:layout_marginTop="8dp"
+                app:checkedChip="@id/chipDueAll"
+                app:chipSpacingHorizontal="8dp"
+                app:chipSpacingVertical="4dp"
+                app:selectionRequired="true"
+                app:singleLine="false"
+                app:singleSelection="true">
 
-            <!-- Due date asc -->
-            <LinearLayout
-                android:id="@+id/sortDueDateAsc"
+                <com.google.android.material.chip.Chip android:id="@+id/chipDueAll" style="@style/FilterChoiceChip" android:checkable="true" android:text="@string/filter_all" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipDueOverdue" style="@style/FilterChoiceChip" android:checkable="true" android:text="@string/filter_status_overdue" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipDueToday" style="@style/FilterChoiceChip" android:checkable="true" android:text="@string/filter_due_date_today" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipDueNextSevenDays" style="@style/FilterChoiceChip" android:checkable="true" android:text="@string/filter_due_date_next_7_days" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipDueThisMonth" style="@style/FilterChoiceChip" android:checkable="true" android:text="@string/filter_due_date_this_month" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipDueNoDate" style="@style/FilterChoiceChip" android:checkable="true" android:text="@string/filter_due_date_no_date" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipDueCustom" style="@style/FilterChoiceChip" android:checkable="true" android:text="@string/filter_due_date_custom" />
+            </com.google.android.material.chip.ChipGroup>
+
+            <TextView
+                android:id="@+id/tvCustomDateRange"
                 android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackground">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
+                android:visibility="gone" />
 
-                <TextView
-                    android:layout_width="0dp"
+            <TextView style="@style/FilterSectionLabel" android:layout_marginTop="20dp" android:text="@string/filter_section_sort_by" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="@string/filter_sort_hint">
+
+                <AutoCompleteTextView
+                    android:id="@+id/sortDropdown"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:fontFamily="@font/poppins_regular"
-                    android:text="@string/sort_due_date_asc"
-                    android:textColor="#1B1B1B"
-                    android:textSize="15sp" />
-
-                <RadioButton
-                    android:id="@+id/rbSortDueDateAsc"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:buttonTint="#0045AE" />
-            </LinearLayout>
-
-            <!-- Due date desc -->
-            <LinearLayout
-                android:id="@+id/sortDueDateDesc"
-                android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackground">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/poppins_regular"
-                    android:text="@string/sort_due_date_desc"
-                    android:textColor="#1B1B1B"
-                    android:textSize="15sp" />
-
-                <RadioButton
-                    android:id="@+id/rbSortDueDateDesc"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:buttonTint="#0045AE" />
-            </LinearLayout>
-
-            <!-- Priority sort -->
-            <LinearLayout
-                android:id="@+id/sortPriority"
-                android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackground">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/poppins_regular"
-                    android:text="@string/sort_priority"
-                    android:textColor="#1B1B1B"
-                    android:textSize="15sp" />
-
-                <RadioButton
-                    android:id="@+id/rbSortPriority"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:buttonTint="#0045AE" />
-            </LinearLayout>
-
-            <!-- ── Apply Filters Button ── -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnApplyFilter"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="28dp"
-                android:fontFamily="@font/poppins_bold"
-                android:text="@string/filter_apply"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                app:backgroundTint="#105CDB"
-                app:cornerRadius="16dp"
-                app:elevation="0dp" />
-
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E6E8EE" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="24dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:id="@+id/tvFilterSummary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/poppins_regular"
+            android:text="@string/filter_no_active"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="12sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnApplyFilter"
+            android:layout_width="178dp"
+            android:layout_height="52dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="@string/filter_show_tasks"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@color/primary"
+            app:cornerRadius="14dp" />
+    </LinearLayout>
 </LinearLayout>
