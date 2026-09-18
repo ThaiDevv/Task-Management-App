@@ -370,6 +370,20 @@
     <string name="pomodoro_action_start">Bắt đầu</string>
     <string name="pomodoro_progress_description">Tiến độ phiên Pomodoro</string>
     <string name="pomodoro_entry_content_description">Mở đồng hồ Pomodoro</string>
+
+    <!-- Pomodoro: Task Selector + Cycle Indicator (Task 10) -->
+    <string name="pomodoro_task_label">Công việc</string>
+    <string name="pomodoro_task_label_active">Đang tập trung</string>
+    <string name="pomodoro_task_none">Chưa chọn công việc</string>
+    <string name="pomodoro_task_none_hint">Chạm để chọn công việc cho phiên tập trung</string>
+    <string name="pomodoro_task_locked_hint">Dừng phiên hiện tại để đổi công việc</string>
+    <string name="pomodoro_task_due_format">Hạn %1$s</string>
+    <string name="pomodoro_task_no_due_date">Không có hạn</string>
+    <string name="pomodoro_task_completed">Đã xong</string>
+    <string name="pomodoro_task_selector_title">Chọn công việc</string>
+    <string name="pomodoro_task_selector_empty">Chưa có công việc nào. Hãy thêm công việc trước khi bắt đầu tập trung.</string>
+    <string name="pomodoro_task_count_format">%1$d công việc</string>
+    <string name="pomodoro_task_select_needed">Hãy chọn công việc trước khi bắt đầu</string>
 </resources>
 
 

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -16,30 +17,37 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 import com.team.taskmanagementapp.R
+import com.team.taskmanagementapp.data.local.db.AppDatabase
+import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.enums.SessionType
+import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.databinding.FragmentPomodoroBinding
 import com.team.taskmanagementapp.pomodoro.PomodoroSnapshot
 import com.team.taskmanagementapp.pomodoro.PomodoroTimerState
 import com.team.taskmanagementapp.ui.viewmodel.PomodoroViewModel
 import com.team.taskmanagementapp.ui.viewmodel.PomodoroViewModelFactory
+import com.team.taskmanagementapp.util.Constants
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 /**
- * Pomodoro Timer Screen (Task 9).
+ * Pomodoro Timer Screen (Task 9) + Task Selector & Cycle Indicator (Task 10).
  *
  * ## Nguyên tắc
  * Fragment này **chỉ hiển thị**. Nó không tạo Handler / CountDownTimer / biến `seconds--`,
- * không tính toán thời gian, không tự chạy timer. Toàn bộ dữ liệu đến từ
- * `PomodoroViewModel.uiState`, vốn là `StateFlow` của `PomodoroTimerController` —
- * cùng nguồn state mà `PomodoroService` cập nhật mỗi giây.
+ * không tính toán thời gian, không giữ cycle counter riêng. Toàn bộ dữ liệu đến từ
+ * [PomodoroViewModel]: timer từ `PomodoroTimerController` (cùng nguồn state mà
+ * `PomodoroService` cập nhật mỗi giây), công việc đang chọn từ `TaskRepository`.
  *
- * Nhờ đó:
- * - UI luôn khớp với timer thật, kể cả khi app ở background rồi quay lại
- *   (`repeatOnLifecycle` + `StateFlow` phát lại giá trị mới nhất ngay khi resume);
- * - không bao giờ tồn tại "timer thứ hai" trong UI.
+ * ## Cycle Indicator
+ * Số chấm được tô lấy trực tiếp từ `PomodoroSnapshot.focusSessionsInCurrentSet` — số phiên
+ * FOCUS đã hoàn thành trong chu kỳ hiện tại do state machine đếm. UI không tự đếm:
+ * `○ ○ ○ ○` → hoàn thành Focus 1 → `● ○ ○ ○` → … → hoàn thành Focus 4 → `● ● ● ●` → Long Break.
  *
- * Các nút chỉ chuyển lệnh xuống `PomodoroService` qua ViewModel; Service giữ nguyên vai trò
- * điều khiển timer và foreground notification.
+ * ## Task Selector
+ * Công việc lấy từ Room qua bottom sheet [PomodoroTaskSelectorBottomSheet]; bottom sheet trả
+ * kết quả bằng Fragment Result API. Khi bắt đầu một phiên, `taskId` của công việc đang chọn
+ * được truyền xuống Service (không hard-code, không dữ liệu mẫu).
  */
 class PomodoroFragment : Fragment() {
 
@@ -47,7 +55,11 @@ class PomodoroFragment : Fragment() {
     private val binding get() = requireNotNull(_binding)
 
     private val viewModel: PomodoroViewModel by viewModels {
-        PomodoroViewModelFactory(requireContext())
+        val database = AppDatabase.getInstance(requireContext().applicationContext)
+        PomodoroViewModelFactory(
+            TaskRepository(database.taskDao()),
+            requireContext()
+        )
     }
 
     /** Các chấm cycle được dựng động vì số chu kỳ có thể cấu hình (mặc định 4). */
@@ -67,7 +79,8 @@ class PomodoroFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupClickListeners()
-        observeTimerState()
+        setupTaskSelectorResult()
+        observeState()
     }
 
     override fun onDestroyView() {
@@ -81,21 +94,66 @@ class PomodoroFragment : Fragment() {
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
         }
-        binding.btnPrimary.setOnClickListener { viewModel.onPrimaryAction() }
+        binding.btnPrimary.setOnClickListener { handlePrimaryAction() }
         binding.btnPause.setOnClickListener { viewModel.onPauseClicked() }
         binding.btnSkip.setOnClickListener { viewModel.onSkipClicked() }
         binding.btnStop.setOnClickListener { viewModel.onStopClicked() }
-    }
 
-    private fun observeTimerState() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { snapshot -> render(snapshot) }
+        binding.cardTask.setOnClickListener {
+            // Công việc gắn với phiên đang chạy nên chỉ đổi được khi timer đang IDLE.
+            if (viewModel.canSelectTask(viewModel.uiState.value)) {
+                openTaskSelector()
             }
         }
     }
 
-    private fun render(snapshot: PomodoroSnapshot) {
+    /**
+     * Chưa chọn công việc thì mở Task Selector thay vì bắt đầu — mọi phiên tập trung đều phải
+     * gắn với một công việc có thật (bảng `pomodoro_sessions` có khoá ngoại NOT NULL tới `tasks`).
+     */
+    private fun handlePrimaryAction() {
+        if (!viewModel.onPrimaryAction()) {
+            openTaskSelector()
+        }
+    }
+
+    private fun openTaskSelector() {
+        PomodoroTaskSelectorBottomSheet
+            .newInstance(viewModel.currentSelectedTaskId)
+            .show(childFragmentManager, PomodoroTaskSelectorBottomSheet.TAG)
+    }
+
+    private fun setupTaskSelectorResult() {
+        // Fragment Result API: sống sót qua configuration change (không dùng lambda callback).
+        childFragmentManager.setFragmentResultListener(
+            PomodoroTaskSelectorBottomSheet.REQUEST_KEY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val taskId = bundle.getLong(
+                PomodoroTaskSelectorBottomSheet.RESULT_TASK_ID,
+                Constants.NO_TASK_ID
+            )
+            if (taskId >= 0L) {
+                viewModel.onTaskSelected(taskId)
+            }
+        }
+    }
+
+    private fun observeState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Khi quay lại từ background, StateFlow phát ngay giá trị mới nhất nên UI
+                // hiển thị đúng trạng thái hiện tại mà không cần đồng hồ riêng.
+                combine(viewModel.uiState, viewModel.selectedTask) { snapshot, task ->
+                    snapshot to task
+                }.collect { (snapshot, task) ->
+                    render(snapshot, task)
+                }
+            }
+        }
+    }
+
+    private fun render(snapshot: PomodoroSnapshot, task: Task?) {
         val sessionColor = sessionColor(snapshot.sessionType)
 
         // 1. Session type
@@ -108,7 +166,7 @@ class PomodoroFragment : Fragment() {
         binding.viewProgressRing.setRingColor(sessionColor)
         binding.viewProgressRing.setRemainingFraction(remainingFraction(snapshot))
 
-        // 3. Cycle dots + tổng kết
+        // 3. Cycle indicator + tổng kết
         binding.tvCycleLabel.text = getString(
             R.string.pomodoro_cycle_label,
             snapshot.currentCycle.coerceAtLeast(1),
@@ -120,7 +178,10 @@ class PomodoroFragment : Fragment() {
         )
         renderCycleDots(snapshot, sessionColor)
 
-        // 4. Trạng thái & enable/disable các nút
+        // 4. Công việc đang chọn
+        renderTaskCard(snapshot, task)
+
+        // 5. Trạng thái & enable/disable các nút
         renderControls(snapshot)
     }
 
@@ -131,6 +192,10 @@ class PomodoroFragment : Fragment() {
     private fun remainingFraction(snapshot: PomodoroSnapshot): Float =
         if (snapshot.state == PomodoroTimerState.IDLE) 1f else 1f - snapshot.progressFraction
 
+    /**
+     * Cycle Indicator: số chấm được tô = số phiên FOCUS đã hoàn thành trong chu kỳ hiện tại
+     * (`focusSessionsInCurrentSet`), lấy trực tiếp từ state machine — không đếm lại ở UI.
+     */
     private fun renderCycleDots(snapshot: PomodoroSnapshot, sessionColor: Int) {
         val total = snapshot.totalCycles
         if (total != builtCycleCount) {
@@ -138,7 +203,7 @@ class PomodoroFragment : Fragment() {
             builtCycleCount = total
         }
 
-        val filledCount = snapshot.currentCycle
+        val filledCount = snapshot.focusSessionsInCurrentSet.coerceIn(0, total)
         val filledTint = ColorStateList.valueOf(sessionColor)
 
         cycleDots.forEachIndexed { index, dot ->
@@ -149,6 +214,29 @@ class PomodoroFragment : Fragment() {
             // Chấm đã hoàn thành lấy màu theo loại phiên để khớp với vòng tiến độ.
             if (filled) dot.backgroundTintList = filledTint
         }
+    }
+
+    private fun renderTaskCard(snapshot: PomodoroSnapshot, task: Task?) {
+        val selectable = viewModel.canSelectTask(snapshot)
+
+        binding.tvTaskLabel.setText(
+            if (selectable) R.string.pomodoro_task_label else R.string.pomodoro_task_label_active
+        )
+
+        if (task == null) {
+            binding.tvTaskTitle.setText(R.string.pomodoro_task_none)
+            binding.tvTaskMeta.setText(R.string.pomodoro_task_none_hint)
+            binding.ivTaskIcon.isVisible = false
+        } else {
+            binding.tvTaskTitle.text = task.title
+            binding.tvTaskMeta.text = PomodoroTaskFormatter.dueDateLabel(requireContext(), task)
+            binding.ivTaskIcon.isVisible = true
+        }
+
+        // Không thể đổi công việc giữa phiên -> ẩn mũi tên để thể hiện trạng thái "đang khoá".
+        binding.ivTaskChevron.isVisible = selectable
+        binding.cardTask.isClickable = selectable
+        binding.cardTask.isFocusable = selectable
     }
 
     private fun buildCycleDots(count: Int) {
@@ -196,7 +284,9 @@ class PomodoroFragment : Fragment() {
         binding.btnPause.setEnabledState(state == PomodoroTimerState.RUNNING)
 
         // Bỏ qua chỉ có nghĩa khi đang có phiên (chạy hoặc tạm dừng).
-        binding.btnSkip.setEnabledState(state == PomodoroTimerState.RUNNING || state == PomodoroTimerState.PAUSED)
+        binding.btnSkip.setEnabledState(
+            state == PomodoroTimerState.RUNNING || state == PomodoroTimerState.PAUSED
+        )
 
         // Dừng luôn khả dụng khi có phiên đang tồn tại (kể cả vừa hoàn thành).
         binding.btnStop.setEnabledState(state != PomodoroTimerState.IDLE)
