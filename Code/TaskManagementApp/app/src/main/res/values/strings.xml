@@ -327,6 +327,23 @@
     <string name="stats_tasks_count_format">%d tasks</string>
     <string name="stats_filter_dialog_title">Select Time Period</string>
 
+    <!-- Statistics → Pomodoro Focus card (Task 15) -->
+    <string name="stats_pomodoro_title">Pomodoro Focus</string>
+    <string name="stats_pomodoro_subtitle">Focus time from completed sessions</string>
+    <string name="stats_today_label">TODAY</string>
+    <string name="stats_week_label">THIS WEEK</string>
+    <string name="stats_zero_duration">0m</string>
+    <string name="stats_pomodoro_no_sessions">No focus sessions yet — finish a Pomodoro to see your stats.</string>
+    <string name="stats_top_focus_tasks">TOP TASKS BY FOCUS TIME</string>
+    <plurals name="stats_pomodoro_completed">
+        <item quantity="one">%d pomodoro completed</item>
+        <item quantity="other">%d pomodoros completed</item>
+    </plurals>
+    <plurals name="stats_session_count">
+        <item quantity="one">%d session</item>
+        <item quantity="other">%d sessions</item>
+    </plurals>
+
     <!-- Home Screen Widget (TMA-56) -->
     <string name="widget_today_title">Việc hôm nay</string>
     <string name="widget_all_done">Xong hết 🎉</string>
