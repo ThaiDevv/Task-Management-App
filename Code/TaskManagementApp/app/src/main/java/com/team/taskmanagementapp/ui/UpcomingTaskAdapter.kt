@@ -1,5 +1,6 @@
 package com.team.taskmanagementapp.ui
 
+import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -80,6 +81,12 @@ class UpcomingTaskAdapter(
             val context = binding.root.context
 
             binding.upcomingTaskTitle.text = task.title
+            binding.upcomingTaskTitle.paintFlags = if (task.isCompleted) {
+                binding.upcomingTaskTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+            } else {
+                binding.upcomingTaskTitle.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+            }
+            binding.root.alpha = if (task.isCompleted) 0.55f else 1f
 
             // Format time display
             val timeStr = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date(task.dueTime))
@@ -146,12 +153,16 @@ class UpcomingTaskAdapter(
 
         val tomorrowCal = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 1) }
 
-        val sortedTasks = tasks.sortedBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
-
-        val grouped = sortedTasks.groupBy { task ->
-            val cal = Calendar.getInstance().apply { timeInMillis = task.dueDate }
-            Pair(cal.get(Calendar.YEAR), cal.get(Calendar.DAY_OF_YEAR))
-        }.entries.take(3)
+        // Keep unfinished date groups first, then append completed groups at the bottom.
+        val grouped = listOf(false, true).flatMap { completed ->
+            tasks.filter { it.isCompleted == completed }
+                .sortedBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
+                .groupBy { task ->
+                    val cal = Calendar.getInstance().apply { timeInMillis = task.dueDate }
+                    Pair(cal.get(Calendar.YEAR), cal.get(Calendar.DAY_OF_YEAR))
+                }
+                .entries
+        }.take(3)
 
         for ((_, dayTasks) in grouped) {
             val sortedDayTasks = dayTasks.sortedBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }

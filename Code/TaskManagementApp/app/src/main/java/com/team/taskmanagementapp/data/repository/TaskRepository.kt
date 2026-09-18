@@ -168,17 +168,28 @@ class TaskRepository(
 
             when (criteria.sortOption) {
                 SortOption.DUE_DATE_ASC -> filtered.sortedWith(
-                    compareBy<Task> { it.dueDate <= 0L }
+                    compareBy<Task> { it.isCompleted }
+                        .thenBy { it.dueDate <= 0L }
                         .thenBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
                 )
                 SortOption.DUE_DATE_DESC -> filtered.sortedWith(
-                    compareBy<Task> { it.dueDate <= 0L }
+                    compareBy<Task> { it.isCompleted }
+                        .thenBy { it.dueDate <= 0L }
                         .thenByDescending { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
                 )
-                SortOption.PRIORITY_DESC -> filtered.sortedByDescending { it.priority.ordinal }
-                SortOption.CREATED_DESC -> filtered.sortedByDescending { it.createdAt }
-                SortOption.UPDATED_DESC -> filtered.sortedByDescending { it.updatedAt }
-                SortOption.TITLE_ASC -> filtered.sortedBy { it.title.lowercase(Locale.getDefault()) }
+                SortOption.PRIORITY_DESC -> filtered.sortedWith(
+                    compareBy<Task> { it.isCompleted }.thenByDescending { it.priority.ordinal }
+                )
+                SortOption.CREATED_DESC -> filtered.sortedWith(
+                    compareBy<Task> { it.isCompleted }.thenByDescending { it.createdAt }
+                )
+                SortOption.UPDATED_DESC -> filtered.sortedWith(
+                    compareBy<Task> { it.isCompleted }.thenByDescending { it.updatedAt }
+                )
+                SortOption.TITLE_ASC -> filtered.sortedWith(
+                    compareBy<Task> { it.isCompleted }
+                        .thenBy { it.title.lowercase(Locale.getDefault()) }
+                )
             }
         }
     }
