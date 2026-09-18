@@ -17,6 +17,12 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
+    <!--
+      VIBRATE: cần cho việc rung khi phiên Pomodoro kết thúc — cả cho channel cảnh báo
+      (vibrationPattern) lẫn đường dự phòng PomodoroAlertPlayer khi không đăng được notification.
+    -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:name=".TaskApplication"
         android:allowBackup="true"

@@ -125,6 +125,51 @@ object NotificationHelper {
         notificationManager.createNotificationChannel(channel)
     }
 
+    /**
+     * Mẫu rung khi một phiên Pomodoro kết thúc: rung 400ms – nghỉ 200ms – rung 400ms.
+     * Dùng chung cho channel cảnh báo và cho [com.team.taskmanagementapp.pomodoro.PomodoroAlertPlayer]
+     * (đường dự phòng khi không đăng được notification).
+     */
+    val POMODORO_VIBRATION_PATTERN = longArrayOf(0L, 400L, 200L, 400L)
+
+    /**
+     * Channel CẢNH BÁO hết giờ của Pomodoro — IMPORTANCE_HIGH, CÓ sound và vibration.
+     *
+     * Đây là kênh mà hệ thống dùng để phát âm thanh + rung khi phiên kết thúc, nên app
+     * không cần tự phát MediaPlayer/Vibrator (tránh kêu 2 lần) và tự động tôn trọng
+     * Do Not Disturb cùng lựa chọn của người dùng trong Settings.
+     *
+     * An toàn khi gọi nhiều lần: channel đã tồn tại sẽ không bị tạo lại.
+     */
+    fun createPomodoroAlertChannel(context: Context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (notificationManager.getNotificationChannel(Constants.POMODORO_ALERT_CHANNEL_ID) != null) return
+
+        // TYPE_ALARM hợp với ngữ nghĩa "hết giờ"; fallback về âm báo mặc định nếu máy không có.
+        val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+            ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val audioAttributes = AudioAttributes.Builder()
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .setUsage(AudioAttributes.USAGE_ALARM)
+            .build()
+
+        val channel = NotificationChannel(
+            Constants.POMODORO_ALERT_CHANNEL_ID,
+            Constants.POMODORO_ALERT_CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = Constants.POMODORO_ALERT_CHANNEL_DESC
+            enableVibration(true)
+            vibrationPattern = POMODORO_VIBRATION_PATTERN
+            setSound(soundUri, audioAttributes)
+        }
+
+        notificationManager.createNotificationChannel(channel)
+    }
+
     fun showTaskReminder(context: Context, task: Task) {
         if (!areNotificationsEnabled(context)) {
             Log.w(TAG, "Reminder notification not shown because notifications are disabled")

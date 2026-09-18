@@ -25,6 +25,16 @@ object Constants {
     const val POMODORO_CHANNEL_DESC = "Đồng hồ tập trung đang chạy nền"
 
     /**
+     * Channel CẢNH BÁO cho việc hết giờ. Tách riêng khỏi [POMODORO_CHANNEL_ID] để:
+     * - channel ongoing (đồng hồ) phải im lặng vì được cập nhật mỗi giây;
+     * - channel cảnh báo CÓ sound + vibration và người dùng có thể tắt riêng nó.
+     */
+    const val POMODORO_ALERT_CHANNEL_ID = "pomodoro_alert_channel"
+    const val POMODORO_ALERT_CHANNEL_NAME = "Cảnh báo hết phiên"
+    const val POMODORO_ALERT_CHANNEL_DESC =
+        "Âm thanh và rung khi kết thúc phiên tập trung hoặc phiên nghỉ"
+
+    /**
      * Id của notification ongoing do PomodoroService sở hữu.
      *
      * ⚠️ Dùng dải SỐ ÂM để không bao giờ trùng với notification nhắc việc:
@@ -37,6 +47,18 @@ object Constants {
      * - `-1000` … `-1999`           → notification ongoing của tính năng hệ thống (Pomodoro…)
      */
     const val POMODORO_NOTIFICATION_ID = -1001
+
+    /**
+     * Id notification CẢNH BÁO khi một phiên Pomodoro kết thúc (hết giờ).
+     *
+     * Khác [POMODORO_NOTIFICATION_ID] (notification ongoing hiển thị đồng hồ đang chạy):
+     * notification này thuộc channel CÓ sound + vibration, không ongoing và tự tắt khi chạm.
+     * Vẫn nằm trong dải số âm nên không thể trùng với notification nhắc việc.
+     */
+    const val POMODORO_COMPLETION_NOTIFICATION_ID = -1002
+
+    /** Request code của PendingIntent dùng cho alarm đánh thức lúc phiên kết thúc. */
+    const val POMODORO_SESSION_END_REQUEST_CODE = 2001
 
     /** Giá trị "không gắn task nào" cho [EXTRA_POMODORO_TASK_ID]. */
     const val NO_TASK_ID = -1L

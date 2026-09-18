@@ -1,5 +1,6 @@
 package com.team.taskmanagementapp.pomodoro
 
+import android.app.AlarmManager
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
@@ -15,8 +16,10 @@ import androidx.core.content.ContextCompat
 import com.team.taskmanagementapp.MainActivity
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.model.enums.SessionType
+import com.team.taskmanagementapp.util.AlarmScheduler
 import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.NotificationHelper
+import com.team.taskmanagementapp.util.NotificationPermissionManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -45,15 +48,32 @@ import kotlinx.coroutines.launch
  * `tick()` chỉ **đọc lại** mốc đó; dù tick bị trễ (CPU sleep, Doze, app bị đẩy ra nền)
  * thì thời gian hiển thị vẫn đúng. Không có biến `seconds--` nào ở đây.
  *
- * ## Hạn chế đã biết (chưa xử lý — để dành task sau)
+ * ## Hết phiên: Sound / Vibration / Completion Notification
+ * Khi một phiên chạy hết giờ, service sẽ:
+ * 1. Đăng một **completion notification** trên channel cảnh báo riêng
+ *    (`Constants.POMODORO_ALERT_CHANNEL_ID`, IMPORTANCE_HIGH) — chính channel này khiến
+ *    hệ thống phát **sound + vibration** theo đúng cài đặt và tôn trọng Do Not Disturb.
+ * 2. Chỉ khi KHÔNG thể đăng notification (người dùng từ chối `POST_NOTIFICATIONS` hoặc tắt
+ *    notification của app) thì mới phát trực tiếp qua [PomodoroAlertPlayer].
+ * Nhờ vậy không bao giờ kêu/rung 2 lần.
+ *
+ * Phiên bị Skip **không** phát cảnh báo (người dùng đang chủ động thao tác).
+ *
+ * ## Xử lý deep-sleep
  * FGS **không** tự giữ wakelock, và `delay()` trên main looper dựa trên `uptimeMillis`
- * (không tính thời gian CPU suspend). Khi màn hình tắt lâu và thiết bị vào Doze:
- * - Giá trị đếm ngược vẫn ĐÚNG (vì tính từ `elapsedRealtime`), nhưng notification chỉ
- *   được làm mới ở lần wake kế tiếp.
- * - Việc phát hiện "hết phiên" có thể **trễ**, nên `FOCUS → SHORT_BREAK` và `endTimeMillis`
- *   ghi vào DB (task integration sau) có thể lệch.
- * Cách xử lý đúng: đặt `AlarmManager.setExactAndAllowWhileIdle()` tại mốc kết thúc phiên
- * để đánh thức CPU đúng lúc (sẽ làm cùng task Sound/Vibration).
+ * (không tính thời gian CPU suspend). Nếu chỉ dựa vào vòng lặp tick thì khi màn hình tắt lâu
+ * và thiết bị vào Doze, việc phát hiện "hết phiên" có thể bị trễ.
+ *
+ * Vì vậy mỗi khi có phiên chạy, service đặt thêm một alarm
+ * `setExactAndAllowWhileIdle(ELAPSED_REALTIME_WAKEUP)` tại đúng mốc `targetEndElapsedRealtime`
+ * (xem [syncSessionEndAlarm]) để đánh thức CPU ngay lúc phiên kết thúc.
+ * ⚠️ Alarm này **không phải** nguồn thời gian: cơ chế `targetEndElapsedRealtime` +
+ * `SystemClock.elapsedRealtime()` giữ nguyên hoàn toàn, alarm chỉ là tín hiệu đánh thức.
+ * Mọi đường đi (ticker, alarm, lệnh từ notification) đều hội tụ về `engine.tick()`.
+ *
+ * Việc phát hiện kết thúc có thể đến đồng thời từ nhiều đường, nhưng Sound / Vibration /
+ * Completion Notification chỉ phát **đúng một lần** nhờ [PomodoroCompletionTracker]
+ * (khoá theo `PomodoroSnapshot.completionId`).
  *
  * ## Chống recreate
  * Timer không phụ thuộc Activity/Fragment. UI observe [PomodoroTimerController.state];
@@ -77,11 +97,17 @@ class PomodoroService : Service() {
     private val engine: PomodoroTimerEngine
         get() = PomodoroTimerController.engine
 
+    /** Bảo đảm mỗi phiên chỉ phát cảnh báo hết giờ đúng một lần. */
+    private val completionTracker = PomodoroCompletionTracker()
+
     private var serviceScope: CoroutineScope? = null
     private var tickerJob: Job? = null
 
     private var isForeground = false
     private var lastRenderedKey: String? = null
+
+    private var sessionEndAlarmScheduled = false
+    private var scheduledTargetEndElapsed = 0L
 
     // PendingIntent được tạo 1 lần cho mỗi vòng đời service (chúng là hằng số),
     // tránh phải tạo lại mỗi giây khi cập nhật notification.
@@ -90,6 +116,7 @@ class PomodoroService : Service() {
     private lateinit var resumePendingIntent: PendingIntent
     private lateinit var skipPendingIntent: PendingIntent
     private lateinit var stopPendingIntent: PendingIntent
+    private lateinit var sessionEndPendingIntent: PendingIntent
 
     override fun onCreate() {
         super.onCreate()
@@ -98,10 +125,25 @@ class PomodoroService : Service() {
         // Khối lượng mỗi tick rất nhỏ (đọc elapsedRealtime + cập nhật notification 1 lần/giây).
         serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         NotificationHelper.createPomodoroChannel(this)
+        NotificationHelper.createPomodoroAlertChannel(this)
         buildPendingIntents()
+        // Service instance mới: xoá alarm cũ (nếu còn sót) và bỏ qua các phiên đã kết thúc
+        // trước đó để không phát lại cảnh báo của phiên cũ.
+        cancelSessionEndAlarm()
+        completionTracker.syncTo(engine.currentSnapshot.completionId)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action == ACTION_SESSION_END) {
+            // AlarmManager đánh thức đúng lúc phiên kết thúc (kể cả khi máy đang Doze).
+            // Không promoteToForeground: service vốn đã ở foreground vì phiên đang chạy.
+            handleTick()
+            if (engine.currentSnapshot.state == PomodoroTimerState.IDLE) {
+                shutdownService()
+            }
+            return START_NOT_STICKY
+        }
+
         applyAction(intent)
 
         if (engine.currentSnapshot.state == PomodoroTimerState.IDLE) {
@@ -110,6 +152,7 @@ class PomodoroService : Service() {
         }
 
         promoteToForeground()
+        handleTick()
         syncTicker()
         return START_NOT_STICKY
     }
@@ -118,6 +161,7 @@ class PomodoroService : Service() {
 
     override fun onDestroy() {
         stopTicker()
+        cancelSessionEndAlarm()
         // Không để lại trạng thái RUNNING "ảo" khi service bị hệ thống huỷ.
         if (engine.currentSnapshot.state == PomodoroTimerState.RUNNING) {
             engine.pause()
@@ -202,8 +246,7 @@ class PomodoroService : Service() {
 
         tickerJob = serviceScope?.launch {
             while (isActive) {
-                engine.tick()
-                renderNotification()
+                handleTick()
 
                 // Phiên kết thúc và không auto-start -> dừng ticker (state = COMPLETED),
                 // service + notification vẫn sống để người dùng bắt đầu phiên kế tiếp.
@@ -225,11 +268,194 @@ class PomodoroService : Service() {
         return TICK_INTERVAL_MS - (now % TICK_INTERVAL_MS)
     }
 
+    /**
+     * Một "nhịp" xử lý duy nhất, dùng chung cho MỌI nguồn:
+     * vòng lặp ticker, alarm đánh thức khi Doze, và mỗi lệnh đến từ notification.
+     *
+     * Nhờ gom về một chỗ nên việc phát hiện hết phiên và phát cảnh báo luôn nhất quán,
+     * không phụ thuộc việc nhịp nào chạy trước.
+     */
+    private fun handleTick() {
+        engine.tick()
+        alertIfSessionJustFinished()
+        syncSessionEndAlarm()
+        renderNotification()
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // Sound / Vibration / Completion Notification khi hết phiên
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Phát cảnh báo nếu vừa có một phiên chạy hết giờ.
+     *
+     * [PomodoroCompletionTracker] bảo đảm dù hàm này được gọi ở mọi nhịp tick thì
+     * mỗi phiên chỉ phát đúng một lần; phiên bị Skip sẽ không phát.
+     */
+    private fun alertIfSessionJustFinished() {
+        val record = completionTracker.consumeCompletedSession(engine.currentSnapshot) ?: return
+
+        showCompletionNotification(record)
+
+        if (!canPostNotifications()) {
+            // Không đăng được notification => channel cảnh báo không thể kêu/rung,
+            // nên phát trực tiếp. Chỉ một trong hai đường được chạy nên không kêu 2 lần.
+            PomodoroAlertPlayer.play(this)
+        }
+    }
+
+    /**
+     * Notification báo hết phiên (kèm sound + vibration do channel cảnh báo đảm nhiệm).
+     *
+     * Dùng id [Constants.POMODORO_COMPLETION_NOTIFICATION_ID] — vẫn là số âm nên không thể
+     * đè lên notification nhắc việc của task (task.id luôn dương).
+     */
+    private fun showCompletionNotification(record: CompletedSessionRecord) {
+        val snapshot = engine.currentSnapshot
+        // Nếu phiên kế tiếp đã auto-start thì nó chính là sessionType đang chạy;
+        // còn nếu đang chờ người dùng bấm thì lấy nextSessionType.
+        val nextType = if (snapshot.state == PomodoroTimerState.RUNNING) {
+            snapshot.sessionType
+        } else {
+            snapshot.nextSessionType
+        }
+        val nextMinutes = snapshot.config.durationMinutesFor(nextType)
+
+        val notification = NotificationCompat.Builder(this, Constants.POMODORO_ALERT_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_notification_pomodoro)
+            .setContentTitle(
+                getString(
+                    R.string.pomodoro_completion_title,
+                    getString(sessionLabelRes(record.sessionType))
+                )
+            )
+            .setContentText(
+                getString(
+                    R.string.pomodoro_completion_body,
+                    getString(sessionLabelRes(nextType)),
+                    nextMinutes
+                )
+            )
+            .setContentIntent(contentPendingIntent)
+            .setAutoCancel(true)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .addAction(
+                R.drawable.ic_play,
+                getString(R.string.pomodoro_action_start_next),
+                resumePendingIntent
+            )
+            .addAction(
+                R.drawable.ic_stop,
+                getString(R.string.pomodoro_action_stop),
+                stopPendingIntent
+            )
+            .build()
+
+        runCatching {
+            NotificationManagerCompat.from(this)
+                .notify(Constants.POMODORO_COMPLETION_NOTIFICATION_ID, notification)
+        }.onFailure {
+            Log.w(TAG, "Unable to post Pomodoro completion notification", it)
+        }
+    }
+
+    /** App có thể đăng notification hay không (quyền runtime + công tắc trong Settings). */
+    private fun canPostNotifications(): Boolean =
+        NotificationPermissionManager.isGranted(this) &&
+            runCatching { NotificationManagerCompat.from(this).areNotificationsEnabled() }
+                .getOrDefault(false)
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // Alarm đánh thức đúng mốc kết thúc phiên (chống trễ do Doze)
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Đồng bộ alarm với phiên đang chạy.
+     *
+     * Alarm chỉ có ý nghĩa khi phiên đang RUNNING (lúc đó mới có mốc kết thúc); mọi trạng
+     * thái khác (PAUSED / COMPLETED / IDLE) đều huỷ alarm để không đánh thức vô ích.
+     * Chỉ đặt lại khi mốc kết thúc thực sự đổi, tránh gọi AlarmManager mỗi giây.
+     */
+    private fun syncSessionEndAlarm() {
+        val snapshot = engine.currentSnapshot
+        val target = snapshot.targetEndElapsedRealtime
+        val shouldSchedule = snapshot.state == PomodoroTimerState.RUNNING && target > 0L
+
+        if (!shouldSchedule) {
+            cancelSessionEndAlarm()
+            return
+        }
+        if (sessionEndAlarmScheduled && target == scheduledTargetEndElapsed) return
+
+        cancelSessionEndAlarm()
+        scheduledTargetEndElapsed = target
+        sessionEndAlarmScheduled = true
+        scheduleSessionEndAlarm(target)
+    }
+
+    private fun cancelSessionEndAlarm() {
+        scheduledTargetEndElapsed = 0L
+        sessionEndAlarmScheduled = false
+        runCatching { alarmManager()?.cancel(sessionEndPendingIntent) }.onFailure {
+            Log.w(TAG, "Unable to cancel Pomodoro session end alarm", it)
+        }
+    }
+
+    /**
+     * Đặt alarm đánh thức CPU ngay tại mốc phiên kết thúc.
+     *
+     * Dùng `ELAPSED_REALTIME_WAKEUP` vì khớp trực tiếp với `targetEndElapsedRealtime`
+     * (cùng gốc `elapsedRealtime`, không bị ảnh hưởng khi người dùng đổi giờ hệ thống).
+     * `*AndAllowWhileIdle` để alarm vẫn nổ khi thiết bị đang trong Doze.
+     *
+     * Ưu tiên exact alarm; nếu người dùng chưa cấp quyền (Android 12+) hoặc hệ thống từ chối
+     * thì lùi về inexact — vẫn đánh thức được máy, chỉ kém chính xác vài phút. Vòng lặp tick
+     * vẫn là đường chính khi CPU đang thức, nên đây chỉ là lưới an toàn.
+     */
+    private fun scheduleSessionEndAlarm(targetEndElapsed: Long) {
+        val manager = alarmManager() ?: return
+        val triggerAt = targetEndElapsed.coerceAtLeast(SystemClock.elapsedRealtime() + 1L)
+
+        if (AlarmScheduler.canScheduleExactAlarms(this)) {
+            val exactScheduled = runCatching {
+                manager.setExactAndAllowWhileIdle(
+                    AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    triggerAt,
+                    sessionEndPendingIntent
+                )
+            }.onFailure {
+                Log.w(TAG, "Exact session end alarm rejected; falling back to inexact", it)
+            }.isSuccess
+
+            if (exactScheduled) return
+        }
+
+        runCatching {
+            manager.setAndAllowWhileIdle(
+                AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                triggerAt,
+                sessionEndPendingIntent
+            )
+        }.onFailure {
+            Log.w(TAG, "Unable to schedule Pomodoro session end alarm", it)
+        }
+    }
+
+    private fun alarmManager(): AlarmManager? =
+        runCatching { getSystemService(Context.ALARM_SERVICE) as? AlarmManager }
+            .onFailure { Log.w(TAG, "Alarm service unavailable", it) }
+            .getOrNull()
+
     // ══════════════════════════════════════════════════════════════════════════
     // Notification
     // ══════════════════════════════════════════════════════════════════════════
 
     private fun renderNotification() {
+        // Không có phiên nào -> không có notification ongoing để hiển thị.
+        if (engine.currentSnapshot.state == PomodoroTimerState.IDLE) return
+
         val snapshot = engine.currentSnapshot
         val key = notificationKey(snapshot)
         if (key == lastRenderedKey) return
@@ -369,6 +595,14 @@ class PomodoroService : Service() {
         resumePendingIntent = servicePendingIntent(ACTION_RESUME, REQUEST_RESUME, flags)
         skipPendingIntent = servicePendingIntent(ACTION_SKIP, REQUEST_SKIP, flags)
         stopPendingIntent = servicePendingIntent(ACTION_STOP, REQUEST_STOP, flags)
+
+        // Alarm đánh thức gửi thẳng vào service bằng chính PendingIntent này, nên phải khớp
+        // đúng action + request code ở cả lúc đặt và lúc huỷ alarm.
+        sessionEndPendingIntent = servicePendingIntent(
+            ACTION_SESSION_END,
+            Constants.POMODORO_SESSION_END_REQUEST_CODE,
+            flags
+        )
     }
 
     private fun servicePendingIntent(action: String, requestCode: Int, flags: Int): PendingIntent =
@@ -387,6 +621,12 @@ class PomodoroService : Service() {
         const val ACTION_RESUME = "com.team.taskmanagementapp.action.POMODORO_RESUME"
         const val ACTION_SKIP = "com.team.taskmanagementapp.action.POMODORO_SKIP"
         const val ACTION_STOP = "com.team.taskmanagementapp.action.POMODORO_STOP"
+
+        /**
+         * Chỉ dùng nội bộ: [android.app.AlarmManager] gửi action này để đánh thức service
+         * đúng mốc phiên kết thúc khi thiết bị đang Doze/ngủ sâu.
+         */
+        const val ACTION_SESSION_END = "com.team.taskmanagementapp.action.POMODORO_SESSION_END"
 
         private const val TICK_INTERVAL_MS = 1_000L
         private const val PROGRESS_MAX = 100

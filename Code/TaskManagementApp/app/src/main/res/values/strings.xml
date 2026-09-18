@@ -355,6 +355,12 @@
     <string name="pomodoro_action_start_next">Phiên tiếp theo</string>
     <string name="pomodoro_action_skip">Bỏ qua</string>
     <string name="pomodoro_action_stop">Dừng</string>
+
+    <!-- Pomodoro: cảnh báo hết phiên (Sound / Vibration / Completion Notification) -->
+    <string name="pomodoro_alert_channel_name">Cảnh báo hết phiên</string>
+    <string name="pomodoro_alert_channel_desc">Âm thanh và rung khi kết thúc phiên tập trung hoặc phiên nghỉ</string>
+    <string name="pomodoro_completion_title">Hết giờ: %1$s</string>
+    <string name="pomodoro_completion_body">Tiếp theo: %1$s • %2$d phút</string>
 </resources>
 
 
