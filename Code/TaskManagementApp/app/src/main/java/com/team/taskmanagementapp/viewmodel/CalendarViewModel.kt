@@ -88,7 +88,7 @@ class CalendarViewModel(
             repository.getAllTasks()
                 .catch { e ->
                     _isLoading.value = false
-                    _errorMessage.value = "Không thể tải lịch: ${e.localizedMessage}"
+                    _errorMessage.value = "Unable to load calendar: ${e.localizedMessage}"
                 }
                 .collect { allTasks ->
                     _isLoading.value = false

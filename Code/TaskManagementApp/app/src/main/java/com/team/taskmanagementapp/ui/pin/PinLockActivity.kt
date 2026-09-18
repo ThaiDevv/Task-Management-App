@@ -342,7 +342,7 @@ class PinLockActivity : AppCompatActivity() {
         if (pinRepo.isLockedOut()) {
             startLockoutCountdown()
         } else {
-            showError(getString(R.string.pin_error_wrong_vi, remainingAttempts))
+            showError(getString(R.string.pin_error_wrong, remainingAttempts))
         }
         shakeAndClear()
     }
@@ -452,7 +452,7 @@ class PinLockActivity : AppCompatActivity() {
         lockoutTimer = object : CountDownTimer(remaining, 1000L) {
             override fun onTick(millisUntilFinished: Long) {
                 val seconds = (millisUntilFinished / 1000).toInt() + 1
-                showError(getString(R.string.pin_error_locked_vi, seconds))
+                showError(getString(R.string.pin_error_locked, seconds))
             }
 
             override fun onFinish() {
