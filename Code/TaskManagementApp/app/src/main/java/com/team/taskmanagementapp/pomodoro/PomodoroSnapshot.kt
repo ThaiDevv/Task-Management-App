@@ -119,15 +119,30 @@ data class PomodoroSnapshot(
                 .coerceIn(0f, 1f)
         }
 
-    /** Chuỗi "MM:SS" (làm tròn lên) — dùng cho đồng hồ số và notification. */
-    val formattedRemaining: String
-        get() {
-            val totalSeconds = (remainingMillis + 999L) / 1000L
-            return String.format(
-                Locale.US,
-                "%02d:%02d",
-                totalSeconds / 60L,
-                totalSeconds % 60L
-            )
+    /**
+     * Thời lượng hiển thị trên đồng hồ chính.
+     *
+     * Khi chưa chạy phiên nào (IDLE) thì xem trước độ dài phiên FOCUS theo cấu hình
+     * (Pomodoro Settings) — nhờ đó người dùng thấy ngay thay đổi cài đặt trước khi Start.
+     * Các trạng thái khác dùng thời gian còn lại thật.
+     */
+    val displayMillis: Long
+        get() = if (state == PomodoroTimerState.IDLE) {
+            config.durationMillisFor(SessionType.FOCUS)
+        } else {
+            remainingMillis
         }
+
+    /** Chuỗi "MM:SS" (làm tròn lên) của thời gian còn lại — dùng cho notification. */
+    val formattedRemaining: String
+        get() = formatMillis(remainingMillis)
+
+    /** Chuỗi "MM:SS" của [displayMillis] — dùng cho đồng hồ trên màn hình Pomodoro. */
+    val formattedDisplay: String
+        get() = formatMillis(displayMillis)
+
+    private fun formatMillis(millis: Long): String {
+        val totalSeconds = (millis + 999L) / 1000L
+        return String.format(Locale.US, "%02d:%02d", totalSeconds / 60L, totalSeconds % 60L)
+    }
 }

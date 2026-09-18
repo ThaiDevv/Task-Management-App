@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import com.team.taskmanagementapp.MainActivity
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.model.enums.SessionType
+import com.team.taskmanagementapp.data.repository.PomodoroSettingsRepository
 import com.team.taskmanagementapp.util.AlarmScheduler
 import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.NotificationHelper
@@ -97,6 +98,11 @@ class PomodoroService : Service() {
     private val engine: PomodoroTimerEngine
         get() = PomodoroTimerController.engine
 
+    /** Cấu hình Pomodoro người dùng đã lưu trong Settings (Task 11). */
+    private val settingsRepository: PomodoroSettingsRepository by lazy {
+        PomodoroSettingsRepository.from(this)
+    }
+
     /** Bảo đảm mỗi phiên chỉ phát cảnh báo hết giờ đúng một lần. */
     private val completionTracker = PomodoroCompletionTracker()
 
@@ -134,6 +140,11 @@ class PomodoroService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // Settings có thể đã thay đổi kể từ lần chạy trước -> nạp lại trước khi xử lý lệnh.
+        // updateConfig() chỉ tác động tới phiên BẮT ĐẦU SAU ĐÓ: phiên đang chạy giữ nguyên
+        // `targetEndElapsedRealtime` nên thời gian đếm ngược không bị lệch giữa phiên.
+        engine.updateConfig(settingsRepository.load())
+
         if (intent?.action == ACTION_SESSION_END) {
             // AlarmManager đánh thức đúng lúc phiên kết thúc (kể cả khi máy đang Doze).
             // Không promoteToForeground: service vốn đã ở foreground vì phiên đang chạy.

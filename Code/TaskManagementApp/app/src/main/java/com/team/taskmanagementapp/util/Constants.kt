@@ -78,6 +78,14 @@ object Constants {
     const val KEY_SORT_ORDER = "key_sort_order"
     const val KEY_SORT_TYPE = "key_sort_type"
 
+    // Pomodoro Settings (Task 11) — lưu cùng PREFS_NAME với các cài đặt khác của app.
+    // Giá trị mặc định nằm ở PomodoroConfig để chỉ có MỘT nguồn sự thật cho 25/5/15.
+    const val KEY_POMODORO_FOCUS_MINUTES = "key_pomodoro_focus_minutes"
+    const val KEY_POMODORO_SHORT_BREAK_MINUTES = "key_pomodoro_short_break_minutes"
+    const val KEY_POMODORO_LONG_BREAK_MINUTES = "key_pomodoro_long_break_minutes"
+    const val KEY_POMODORO_AUTO_START_BREAKS = "key_pomodoro_auto_start_breaks"
+    const val KEY_POMODORO_AUTO_START_FOCUS = "key_pomodoro_auto_start_focus"
+
     // Sort Preferences Defaults
     const val DEFAULT_SORT_TYPE = "DUE_DATE"
     const val DEFAULT_SORT_ORDER = "ASC"

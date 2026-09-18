@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.team.taskmanagementapp.data.local.entity.Task
+import com.team.taskmanagementapp.data.repository.PomodoroSettingsRepository
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.pomodoro.PomodoroService
 import com.team.taskmanagementapp.pomodoro.PomodoroSnapshot
@@ -30,6 +31,7 @@ import kotlinx.coroutines.launch
  */
 class PomodoroViewModel(
     private val taskRepository: TaskRepository,
+    private val settingsRepository: PomodoroSettingsRepository,
     private val appContext: Context
 ) : ViewModel() {
 
@@ -73,6 +75,18 @@ class PomodoroViewModel(
 
     val currentSelectedTaskId: Long?
         get() = selectedTaskId.value
+
+    /**
+     * Nạp lại cấu hình Pomodoro mới nhất từ Settings vào engine.
+     *
+     * Gọi khi màn hình Pomodoro hiển thị lại: nếu người dùng vừa đổi thời lượng ở
+     * `PomodoroSettingsFragment` thì phần xem trước đồng hồ (trạng thái IDLE) cập nhật ngay.
+     * Việc này chỉ đổi cấu hình cho phiên **bắt đầu sau** — `PomodoroTimerEngine.updateConfig`
+     * không đụng tới `targetEndElapsedRealtime` của phiên đang chạy.
+     */
+    fun syncSettings() {
+        PomodoroTimerController.engine.updateConfig(settingsRepository.load())
+    }
 
     /** Ghi nhận công việc người dùng vừa chọn trong bottom sheet. */
     fun onTaskSelected(taskId: Long) {

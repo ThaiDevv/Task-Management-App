@@ -44,4 +44,10 @@
         android:name="com.team.taskmanagementapp.ui.pomodoro.PomodoroFragment"
         android:label="@string/pomodoro_title" />
 
+    <!-- Pomodoro Settings (Task 11) -->
+    <fragment
+        android:id="@+id/pomodoroSettingsFragment"
+        android:name="com.team.taskmanagementapp.ui.pomodoro.PomodoroSettingsFragment"
+        android:label="@string/pomodoro_settings_title" />
+
 </navigation>

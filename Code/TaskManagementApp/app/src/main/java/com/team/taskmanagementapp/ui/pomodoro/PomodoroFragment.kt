@@ -20,6 +20,7 @@ import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.db.AppDatabase
 import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.enums.SessionType
+import com.team.taskmanagementapp.data.repository.PomodoroSettingsRepository
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.databinding.FragmentPomodoroBinding
 import com.team.taskmanagementapp.pomodoro.PomodoroSnapshot
@@ -58,6 +59,7 @@ class PomodoroFragment : Fragment() {
         val database = AppDatabase.getInstance(requireContext().applicationContext)
         PomodoroViewModelFactory(
             TaskRepository(database.taskDao()),
+            PomodoroSettingsRepository.from(requireContext()),
             requireContext()
         )
     }
@@ -90,9 +92,19 @@ class PomodoroFragment : Fragment() {
         _binding = null
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Cấu hình có thể vừa được đổi ở Pomodoro Settings -> đồng bộ để phần xem trước
+        // thời lượng (trạng thái IDLE) hiển thị đúng ngay khi quay lại màn hình này.
+        viewModel.syncSettings()
+    }
+
     private fun setupClickListeners() {
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
+        }
+        binding.btnPomodoroSettings.setOnClickListener {
+            findNavController().navigate(R.id.pomodoroSettingsFragment)
         }
         binding.btnPrimary.setOnClickListener { handlePrimaryAction() }
         binding.btnPause.setOnClickListener { viewModel.onPauseClicked() }
@@ -160,8 +172,9 @@ class PomodoroFragment : Fragment() {
         binding.tvSessionType.setText(sessionLabelRes(snapshot.sessionType))
         binding.tvSessionType.setTextColor(sessionColor)
 
-        // 2. Countdown + circular progress (vòng tròn cạn dần theo thời gian còn lại)
-        binding.tvCountdown.text = snapshot.formattedRemaining
+        // 2. Countdown + circular progress (vòng tròn cạn dần theo thời gian còn lại).
+        // Khi IDLE, formattedDisplay xem trước độ dài phiên FOCUS theo cấu hình hiện tại.
+        binding.tvCountdown.text = snapshot.formattedDisplay
         binding.tvTimerState.setText(stateLabelRes(snapshot.state))
         binding.viewProgressRing.setRingColor(sessionColor)
         binding.viewProgressRing.setRemainingFraction(remainingFraction(snapshot))

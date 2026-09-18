@@ -384,6 +384,20 @@
     <string name="pomodoro_task_selector_empty">Chưa có công việc nào. Hãy thêm công việc trước khi bắt đầu tập trung.</string>
     <string name="pomodoro_task_count_format">%1$d công việc</string>
     <string name="pomodoro_task_select_needed">Hãy chọn công việc trước khi bắt đầu</string>
+
+    <!-- Pomodoro Settings (Task 11) -->
+    <string name="pomodoro_settings_title">Cài đặt Pomodoro</string>
+    <string name="pomodoro_settings_durations_section">Thời lượng</string>
+    <string name="pomodoro_settings_minutes_format">%1$d phút</string>
+    <string name="pomodoro_settings_focus_range">15–60 phút</string>
+    <string name="pomodoro_settings_short_break_range">3–10 phút</string>
+    <string name="pomodoro_settings_long_break_range">10–30 phút</string>
+    <string name="pomodoro_settings_auto_section">Tự động chuyển phiên</string>
+    <string name="pomodoro_settings_auto_start_breaks">Tự động bắt đầu nghỉ</string>
+    <string name="pomodoro_settings_auto_start_breaks_desc">Phiên nghỉ chạy ngay khi phiên tập trung kết thúc</string>
+    <string name="pomodoro_settings_auto_start_focus">Tự động bắt đầu tập trung</string>
+    <string name="pomodoro_settings_auto_start_focus_desc">Phiên tập trung chạy ngay khi phiên nghỉ kết thúc</string>
+    <string name="pomodoro_settings_applied_note">Thay đổi được áp dụng cho phiên bắt đầu sau. Phiên đang chạy giữ nguyên thời lượng.</string>
 </resources>
 
 
