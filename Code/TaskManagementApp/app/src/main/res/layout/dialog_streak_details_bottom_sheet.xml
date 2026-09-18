@@ -61,7 +61,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="4dp"
-                    android:src="@drawable/ic_delete"
+                    android:src="@drawable/ic_close"
                     app:tint="#737786" />
             </LinearLayout>
 
