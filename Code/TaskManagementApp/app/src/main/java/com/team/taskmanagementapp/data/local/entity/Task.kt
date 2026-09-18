@@ -34,6 +34,14 @@ data class Task (
     val recurrenceInterval: Int = 1,
     @ColumnInfo(name = "reminderMinutes")
     val reminderMinutes: Int = 0,
+    @ColumnInfo(name = "repeatEndDate")
+    val repeatEndDate: Long = 0L,
+    @ColumnInfo(name = "repeatLimitCount")
+    val repeatLimitCount: Int = 0,
+    @ColumnInfo(name = "currentOccurrence")
+    val currentOccurrence: Int = 1,
+    @ColumnInfo(name = "isPaused")
+    val isPaused: Boolean = false,
     @ColumnInfo(name = "createdAt")
     val createdAt: Long = System.currentTimeMillis(),
     @ColumnInfo(name = "updatedAt")

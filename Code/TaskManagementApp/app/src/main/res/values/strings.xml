@@ -5,36 +5,36 @@
     <string name="action_create_task">Create task</string>
 
     <!-- Shared Actions -->
-    <string name="action_save">Lưu</string>
-    <string name="action_cancel">Hủy</string>
-    <string name="action_delete">Xóa</string>
-    <string name="action_retry">Thử lại</string>
-    <string name="action_edit">Chỉnh sửa</string>
-    <string name="action_mark_complete">Đánh dấu hoàn thành</string>
-    <string name="action_mark_incomplete">Đánh dấu chưa xong</string>
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_mark_complete">Mark as completed</string>
+    <string name="action_mark_incomplete">Mark as incomplete</string>
 
     <!-- Task Statuses -->
-    <string name="task_status_todo">Cần làm</string>
-    <string name="task_status_in_progress">Đang thực hiện</string>
-    <string name="task_status_completed">Đã hoàn thành</string>
-    <string name="task_status_overdue">Quá hạn</string>
+    <string name="task_status_todo">To Do</string>
+    <string name="task_status_in_progress">In Progress</string>
+    <string name="task_status_completed">Completed</string>
+    <string name="task_status_overdue">Overdue</string>
 
     <!-- Task Priorities -->
-    <string name="task_priority_low">Thấp</string>
-    <string name="task_priority_medium">Trung bình</string>
-    <string name="task_priority_high">Cao</string>
-    <string name="task_priority_urgent">Khẩn cấp</string>
+    <string name="task_priority_low">Low</string>
+    <string name="task_priority_medium">Medium</string>
+    <string name="task_priority_high">High</string>
+    <string name="task_priority_urgent">Urgent</string>
 
     <!-- Form Hints & Labels -->
-    <string name="title_hint">Tiêu đề công việc (*)</string>
-    <string name="description_hint">Mô tả công việc</string>
-    <string name="date_hint">Hạn chót (Ngày)</string>
-    <string name="time_hint">Giờ hẹn</string>
-    <string name="priority_hint">Độ ưu tiên</string>
-    <string name="recurrence_hint">Lặp lại</string>
-    <string name="category_hint">Danh mục</string>
-    <string name="save">Lưu công việc</string>
-    <string name="cancel">Hủy bỏ</string>
+    <string name="title_hint">Task title (*)</string>
+    <string name="description_hint">Task description</string>
+    <string name="date_hint">Due date</string>
+    <string name="time_hint">Scheduled time</string>
+    <string name="priority_hint">Priority</string>
+    <string name="recurrence_hint">Recurrence</string>
+    <string name="category_hint">Category</string>
+    <string name="save">Save Task</string>
+    <string name="cancel">Cancel</string>
 
     <!-- Task Form Validation -->
     <string name="validation_title_required">Title is required</string>
@@ -47,45 +47,61 @@
     <string name="validation_form_invalid">Please fix the highlighted fields before saving</string>
 
     <!-- Task Detail Screen -->
-    <string name="screen_task_detail_title">Chi tiết công việc</string>
-    <string name="task_detail_description_header">Mô tả chi tiết</string>
-    <string name="task_detail_due_date_header">HẠN CHÓT</string>
-    <string name="task_detail_scheduled_time_header">GIỜ HẸN</string>
-    <string name="task_detail_reminder_header">NHẮC NHỞ</string>
-    <string name="task_detail_recurrence_header">LẶP LẠI</string>
-    <string name="task_detail_overdue_banner">⚠️ Công việc này đã quá hạn xử lý!</string>
-    <string name="task_detail_no_description">Không có mô tả chi tiết cho công việc này.</string>
-    <string name="task_detail_delete_confirm_title">Xóa công việc này?</string>
-    <string name="task_detail_delete_confirm_msg">Hành động này sẽ xóa vĩnh viễn công việc khỏi cơ sở dữ liệu và không thể khôi phục.</string>
-    <string name="task_detail_due_date_label">📅 Ngày hết hạn</string>
-    <string name="task_detail_recurrence_label">🔄 Lặp lại</string>
-    <string name="task_detail_description_label">📝 Mô tả</string>
-    <string name="task_detail_created_at_label">Tạo lúc:</string>
-    <string name="task_detail_updated_at_label">Cập nhật lúc:</string>
-    <string name="task_detail_button_complete">Hoàn thành</string>
-    <string name="task_detail_button_uncomplete">Bỏ hoàn thành</string>
-    <string name="task_detail_button_edit">✏️ Chỉnh sửa</string>
-    <string name="task_detail_button_delete">🗑️ Xóa</string>
-    <string name="task_detail_delete_confirm_positive">Xóa</string>
-    <string name="task_detail_delete_confirm_negative">Hủy</string>
+    <string name="screen_task_detail_title">Task Details</string>
+    <string name="task_detail_description_header">Detailed Description</string>
+    <string name="task_detail_due_date_header">DUE DATE</string>
+    <string name="task_detail_scheduled_time_header">SCHEDULED TIME</string>
+    <string name="task_detail_reminder_header">REMINDER</string>
+    <string name="task_detail_recurrence_header">RECURRENCE</string>
+    <string name="task_detail_overdue_banner">⚠️ This task is overdue!</string>
+    <string name="task_detail_no_description">No detailed description for this task.</string>
+    <string name="task_detail_delete_confirm_title">Delete this task?</string>
+    <string name="task_detail_delete_confirm_msg">This action will permanently delete the task from the database and cannot be undone.</string>
+    <string name="task_detail_due_date_label">📅 Due date</string>
+    <string name="task_detail_recurrence_label">🔄 Recurrence</string>
+    <string name="task_detail_description_label">📝 Description</string>
+    <string name="task_detail_created_at_label">Created at:</string>
+    <string name="task_detail_updated_at_label">Updated at:</string>
+    <string name="task_detail_button_complete">Complete</string>
+    <string name="task_detail_button_uncomplete">Uncomplete</string>
+    <string name="task_detail_button_edit">✏️ Edit</string>
+    <string name="task_detail_button_delete">🗑️ Delete</string>
+    <string name="task_detail_delete_confirm_positive">Delete</string>
+    <string name="task_detail_delete_confirm_negative">Cancel</string>
 
     <!-- Recurring Task Deletion -->
-    <string name="task_detail_delete_recurring_title">Xóa công việc định kỳ</string>
-    <string name="task_detail_delete_recurring_msg">Bạn muốn xóa chỉ công việc này hay tất cả các công việc trong chuỗi định kỳ?</string>
-    <string name="task_detail_delete_only_this">Chỉ công việc này</string>
-    <string name="task_detail_delete_all_occurrences">Tất cả công việc</string>
+    <string name="task_detail_delete_recurring_title">Delete recurring task</string>
+    <string name="task_detail_delete_recurring_msg">Do you want to delete only this task or all tasks in the recurring series?</string>
+    <string name="task_detail_delete_only_this">Only this task</string>
+    <string name="task_detail_delete_all_occurrences">All tasks</string>
     <string name="task_deleted">Task deleted</string>
 
     <!-- Recurring Task Edition -->
-    <string name="task_detail_edit_recurring_title">Chỉnh sửa công việc định kỳ</string>
-    <string name="task_detail_edit_recurring_msg">Bạn muốn chỉnh sửa chỉ công việc này hay tất cả các công việc tương lai trong chuỗi định kỳ?</string>
-    <string name="task_detail_edit_only_this">Chỉ công việc này</string>
-    <string name="task_detail_edit_all_occurrences">Tất cả công việc tương lai</string>
-    <string name="task_detail_recurrence_none">Không lặp lại</string>
-    <string name="task_detail_recurrence_daily">Hàng ngày</string>
-    <string name="task_detail_recurrence_weekly">Hàng tuần</string>
-    <string name="task_detail_recurrence_monthly">Hàng tháng</string>
-    <string name="task_detail_recurrence_interval">Cứ %d ngày</string>
+    <string name="task_detail_edit_recurring_title">Edit recurring task</string>
+    <string name="task_detail_edit_recurring_msg">Do you want to edit only this task or all future tasks in the recurring series?</string>
+    <string name="task_detail_edit_only_this">Only this task</string>
+    <string name="task_detail_edit_all_occurrences">All future tasks</string>
+    <string name="task_detail_recurrence_none">No repeat</string>
+    <string name="task_detail_recurrence_daily">Daily</string>
+    <string name="task_detail_recurrence_weekly">Weekly</string>
+    <string name="task_detail_recurrence_monthly">Monthly</string>
+    <string name="task_detail_recurrence_yearly">Yearly</string>
+    <string name="task_detail_recurrence_interval">Every %d days</string>
+    <string name="task_repeat_end_header">END REPEAT</string>
+    <string name="task_repeat_end_never">Never</string>
+    <string name="task_repeat_end_by_date">By date</string>
+    <string name="task_repeat_end_by_count">By count</string>
+    <string name="task_repeat_end_count_hint">Enter repeat count</string>
+    <string name="task_repeat_end_date_hint">Select end date</string>
+    <string name="task_repeat_end_count_error">Repeat count must be greater than 0</string>
+    <string name="task_repeat_end_date_error">End date must be after start date</string>
+    <string name="task_repeat_paused">Paused</string>
+    <string name="task_repeat_action_pause">Pause repeat</string>
+    <string name="task_repeat_action_resume">Resume repeat</string>
+    <string name="task_repeat_status_paused_desc">This recurring task series is paused</string>
+    <string name="task_repeat_end_summary_date">Ends on date: %s</string>
+    <string name="task_repeat_end_summary_count">Ends after %1$d times (Occurrence %2$d)</string>
+    <string name="task_repeat_end_summary_never">Repeats indefinitely</string>
 
     <!-- Screen & UI States (Stitch Design) -->
     <string name="state_loading">Loading tasks...</string>
@@ -247,34 +263,34 @@
     <string name="sort_priority">Priority</string>
 
     <!-- Sort Menu Options -->
-    <string name="sort_title">Sắp xếp</string>
-    <string name="sort_by_due_date">Theo ngày hạn</string>
-    <string name="sort_by_priority">Theo độ ưu tiên</string>
-    <string name="sort_by_created_date">Theo ngày tạo</string>
-    <string name="sort_by_title">Theo tiêu đề</string>
-    <string name="sort_ascending">Tăng dần</string>
-    <string name="sort_descending">Giảm dần</string>
+    <string name="sort_title">Sort</string>
+    <string name="sort_by_due_date">By due date</string>
+    <string name="sort_by_priority">By priority</string>
+    <string name="sort_by_created_date">By creation date</string>
+    <string name="sort_by_title">By title</string>
+    <string name="sort_ascending">Ascending</string>
+    <string name="sort_descending">Descending</string>
     <!-- Notification Strings (Task 37, 38 & Task 39) -->
-    <string name="notification_action_complete">Đánh dấu hoàn thành</string>
-    <string name="notification_action_snooze">Báo lại 10 phút</string>
+    <string name="notification_action_complete">Mark as completed</string>
+    <string name="notification_action_snooze">Snooze 10 mins</string>
     <string name="exact_alarm_permission_required">Allow exact alarms to schedule task reminders</string>
     <string name="notification_schedule_fallback">Task saved. Exact alarms are unavailable, so the reminder will use a battery-optimized fallback.</string>
     <string name="notification_schedule_disabled">Task saved, but notifications are disabled. Enable them in Settings to receive reminders.</string>
     <string name="notification_schedule_failed">Task saved, but its reminder could not be scheduled.</string>
     <string name="notification_schedule_past">Task saved, but its reminder time has already passed.</string>
 
-    <string name="notif_permission_rationale_title">Cho phép thông báo nhắc việc</string>
-    <string name="notif_permission_rationale_message">TaskFlow cần quyền thông báo để nhắc nhở bạn về các task quan trọng đúng giờ. Bật ngay để không bỏ lỡ bất kỳ deadline nào!</string>
-    <string name="notif_permission_rationale_allow">Cho phép</string>
-    <string name="notif_permission_rationale_skip">Để sau</string>
-    <string name="notif_permission_settings_title">Thông báo bị từ chối</string>
-    <string name="notif_permission_settings_message">Bạn đã từ chối quyền thông báo. Hãy bật lại trong Cài đặt để nhận nhắc nhở đúng hạn từ TaskFlow.</string>
-    <string name="notif_permission_settings_open">Mở Cài đặt</string>
-    <string name="notif_permission_settings_cancel">Để sau</string>
-    <string name="notif_permission_reminder_blocked_title">Không thể đặt nhắc nhở</string>
-    <string name="notif_permission_reminder_blocked_message">Ứng dụng chưa có quyền hiển thị thông báo. Task sẽ được lưu nhưng nhắc nhở sẽ không hoạt động. Bật quyền thông báo trong Cài đặt để kích hoạt tính năng này.</string>
-    <string name="notif_permission_reminder_blocked_settings">Mở Cài đặt</string>
-    <string name="notif_permission_reminder_blocked_save">Lưu bỏ qua</string>
+    <string name="notif_permission_rationale_title">Allow task notifications</string>
+    <string name="notif_permission_rationale_message">TaskFlow needs notification permission to remind you of important tasks on time. Enable now so you don\'t miss any deadlines!</string>
+    <string name="notif_permission_rationale_allow">Allow</string>
+    <string name="notif_permission_rationale_skip">Skip for now</string>
+    <string name="notif_permission_settings_title">Notifications disabled</string>
+    <string name="notif_permission_settings_message">You have disabled notification permissions. Please re-enable them in Settings to receive reminders on time.</string>
+    <string name="notif_permission_settings_open">Open Settings</string>
+    <string name="notif_permission_settings_cancel">Skip for now</string>
+    <string name="notif_permission_reminder_blocked_title">Unable to schedule reminder</string>
+    <string name="notif_permission_reminder_blocked_message">Notification permission is not granted. Task will be saved but reminder won\'t trigger. Enable notification permissions in Settings.</string>
+    <string name="notif_permission_reminder_blocked_settings">Open Settings</string>
+    <string name="notif_permission_reminder_blocked_save">Save anyway</string>
 
     <!-- ================================================================ -->
     <!-- PIN Lock Strings (TASK-25 & TMA-47)                              -->
@@ -301,7 +317,7 @@
     <string name="pin_disable_subtitle">Enter your current PIN to disable</string>
     <string name="pin_enabled">PIN lock has been enabled</string>
     <string name="pin_disabled">PIN lock has been disabled</string>
-    <string name="settings_pin_enable_first">Vui lòng bật khóa mã PIN trước khi đổi PIN</string>
+    <string name="settings_pin_enable_first">Please enable PIN lock before changing PIN</string>
     <string name="pin_biometric">Use biometric authentication</string>
     <string name="pin_backspace">Delete last digit</string>
 
@@ -312,19 +328,19 @@
     <!-- Error / lockout messages -->
     <string name="pin_error_wrong">Wrong PIN. %1$d attempts remaining.</string>
     <string name="pin_error_locked">Too many attempts. Try again in %1$d seconds.</string>
-    <string name="pin_error_wrong_vi">Sai PIN. Còn %1$d lần thử.</string>
-    <string name="pin_error_locked_vi">Quá nhiều lần thử sai. Thử lại sau %1$d giây.</string>
-    <string name="pin_forgot_dialog_title">Quên PIN?</string>
-    <string name="pin_forgot_dialog_message">Để đặt lại PIN, bạn cần đăng nhập lại hoặc liên hệ quản trị viên.</string>
-    <string name="pin_forgot_dialog_ok">Đã hiểu</string>
+    <string name="pin_error_wrong_vi">Wrong PIN. %1$d attempts remaining.</string>
+    <string name="pin_error_locked_vi">Too many attempts. Try again in %1$d seconds.</string>
+    <string name="pin_forgot_dialog_title">Forgot PIN?</string>
+    <string name="pin_forgot_dialog_message">To reset your PIN, please log in again or contact support.</string>
+    <string name="pin_forgot_dialog_ok">Got it</string>
 
     <!-- ================================================================ -->
     <!-- Import/Export Strings                                            -->
     <!-- ================================================================ -->
     <string name="import_tasks">Import Tasks</string>
     <string name="export_tasks">Export Tasks</string>
-    <string name="import_success">✅ Import Thành Công</string>
-    <string name="import_error">❌ Import Thất Bại</string>
+    <string name="import_success">✅ Import Successful</string>
+    <string name="import_error">❌ Import Failed</string>
 
     <!-- ================================================================ -->
     <!-- Statistics Dashboard (TASK-55)                                   -->
@@ -354,14 +370,14 @@
     <string name="stats_filter_dialog_title">Select Time Period</string>
 
     <!-- Home Screen Widget (TMA-56) -->
-    <string name="widget_today_title">Việc hôm nay</string>
-    <string name="widget_all_done">Xong hết 🎉</string>
-    <string name="widget_pending_count">Còn %d việc</string>
-    <string name="widget_empty_message">Không có việc nào cho hôm nay.\nChạm + để thêm việc đầu tiên!</string>
-    <string name="widget_no_time">Cả ngày</string>
-    <string name="widget_add_task">Thêm việc mới</string>
-    <string name="widget_mark_done">Hoàn thành việc này</string>
-    <string name="widget_description">Xem và hoàn thành các việc hôm nay ngay trên màn hình chính</string>
+    <string name="widget_today_title">Today\'s Tasks</string>
+    <string name="widget_all_done">All Done 🎉</string>
+    <string name="widget_pending_count">%d tasks remaining</string>
+    <string name="widget_empty_message">No tasks for today.\nTap + to add your first task!</string>
+    <string name="widget_no_time">All day</string>
+    <string name="widget_add_task">Add new task</string>
+    <string name="widget_mark_done">Complete this task</string>
+    <string name="widget_description">View and complete today\'s tasks directly on your home screen</string>
     <string name="home_hello">Hello!</string>
     <string name="home_all_tasks">All tasks</string>
     <string name="home_no_overdue">No overdue tasks</string>

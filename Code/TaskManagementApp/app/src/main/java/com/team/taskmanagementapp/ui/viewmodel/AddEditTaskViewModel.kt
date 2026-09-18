@@ -78,6 +78,9 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
                             reminderMinutes = updatedTask.reminderMinutes,
                             dueDate = newNextDueDate,
                             dueTime = newNextDueTime,
+                            repeatEndDate = updatedTask.repeatEndDate,
+                            repeatLimitCount = updatedTask.repeatLimitCount,
+                            isPaused = updatedTask.isPaused,
                             updatedAt = now
                         )
                         repository.update(shiftedFutureTask)
@@ -148,7 +151,10 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
         recurrenceType: RecurrenceType,
         reminderMinutes: Int,
         status: TaskStatus,
-        isEdit: Boolean
+        isEdit: Boolean,
+        repeatEndDate: Long = 0L,
+        repeatLimitCount: Int = 0,
+        isPaused: Boolean = false
     ) {
         if (title.isBlank()) {
             _uiState.value = UiState.Error("Title is required")
@@ -178,6 +184,9 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
                             isRecurring = recurrenceType != RecurrenceType.NONE,
                             recurrenceType = recurrenceType,
                             reminderMinutes = reminderMinutes,
+                            repeatEndDate = repeatEndDate,
+                            repeatLimitCount = repeatLimitCount,
+                            isPaused = isPaused,
                             status = resolvedStatus,
                             updatedAt = System.currentTimeMillis()
                         ).withCompletionTracking(existingTask, System.currentTimeMillis())
@@ -199,6 +208,10 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
                         isRecurring = recurrenceType != RecurrenceType.NONE,
                         recurrenceType = recurrenceType,
                         reminderMinutes = reminderMinutes,
+                        repeatEndDate = repeatEndDate,
+                        repeatLimitCount = repeatLimitCount,
+                        currentOccurrence = 1,
+                        isPaused = isPaused,
                         status = status,
                         isCompleted = false,
                         createdAt = now,

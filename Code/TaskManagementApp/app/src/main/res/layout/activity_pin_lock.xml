@@ -147,7 +147,7 @@
         android:textSize="13sp"
         android:fontFamily="@font/poppins_medium"
         android:visibility="invisible"
-        tools:text="Sai PIN. Còn 4 lần thử."
+        tools:text="Wrong PIN. 4 attempts remaining."
         tools:visibility="visible"
         app:layout_constraintTop_toBottomOf="@id/pinIndicatorContainer"
         app:layout_constraintStart_toStartOf="parent"

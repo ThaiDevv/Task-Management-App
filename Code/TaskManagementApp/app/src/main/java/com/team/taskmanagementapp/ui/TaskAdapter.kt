@@ -82,9 +82,12 @@ class TaskAdapter(
             // --- 4.5. Recurrence Badge ---
             if (task.isRecurring && task.recurrenceType != RecurrenceType.NONE) {
                 binding.recurrenceBadge.visibility = View.VISIBLE
-                binding.recurrenceText.text = RecurrenceHelper.getRecurrenceDisplayText(
-                    task.recurrenceType, context
-                )
+                val text = RecurrenceHelper.getRecurrenceDisplayText(task.recurrenceType, context)
+                binding.recurrenceText.text = if (task.isPaused) {
+                    "$text (${context.getString(R.string.task_repeat_paused)})"
+                } else {
+                    text
+                }
             } else {
                 binding.recurrenceBadge.visibility = View.GONE
             }

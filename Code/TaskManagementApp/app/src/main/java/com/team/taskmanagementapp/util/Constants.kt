@@ -7,7 +7,7 @@ package com.team.taskmanagementapp.util
 object Constants {
     // Database Configuration
     const val DATABASE_NAME = "task_management_db"
-    const val DATABASE_VERSION = 3
+    const val DATABASE_VERSION = 4
 
     // Notification Channel
     const val NOTIFICATION_CHANNEL_ID = "task_reminder_channel"
