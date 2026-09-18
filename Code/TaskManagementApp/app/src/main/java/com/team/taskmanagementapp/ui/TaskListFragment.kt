@@ -58,6 +58,7 @@ class TaskListFragment : Fragment() {
     private lateinit var binding: FragmentTaskListBinding
     private lateinit var todayTaskAdapter: TaskAdapter
     private lateinit var upcomingTaskAdapter: UpcomingTaskAdapter
+    private lateinit var completedTaskAdapter: TaskAdapter
 
     private val viewModel: TaskViewModel by viewModels {
         val database = AppDatabase.getInstance(requireContext())
@@ -161,6 +162,15 @@ class TaskListFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = upcomingTaskAdapter
         }
+        completedTaskAdapter = TaskAdapter(
+            onTaskToggleComplete = { task -> viewModel.toggleTaskComplete(task) },
+            onTaskClick = { openTaskDetail(it) }
+        )
+        binding.completedTasksRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = completedTaskAdapter
+        }
+        binding.btnOpenFilter.contentDescription = getString(R.string.home_filter_description)
 
         // Open filter bottom sheet — no lambda passed; results arrive via FragmentResult API
         binding.btnOpenFilter.setOnClickListener {
@@ -297,17 +307,21 @@ class TaskListFragment : Fragment() {
 
     private fun displayTaskList(allTasks: List<Task>) {
         val nowEndToday = getEndOfTodayMillis()
-        val todayList = allTasks.filter { it.dueDate <= nowEndToday }
+        val todayList = allTasks.filter { !it.isCompleted && it.dueDate <= nowEndToday }
             .sortedWith(
                 compareBy<Task> { it.isCompleted }
                     .thenBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
             )
-        // Pending tasks are shown first; completed tasks stay at the bottom.
-        val upcomingList = allTasks.filter { it.dueDate > nowEndToday }
+        // Upcoming contains only work still to do. Completed work has its own section.
+        val upcomingList = allTasks.filter { !it.isCompleted && it.dueDate > nowEndToday }
             .sortedWith(
                 compareBy<Task> { it.isCompleted }
                     .thenBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
             )
+        val completedList = allTasks.filter { it.isCompleted }
+            .sortedByDescending { it.completedAt ?: it.updatedAt }
+        completedTaskAdapter.submitList(completedList)
+        binding.completedSection.visibility = if (completedList.isEmpty()) View.GONE else View.VISIBLE
 
         todayTaskAdapter.submitList(todayList) {
             todayScrollState?.let {
