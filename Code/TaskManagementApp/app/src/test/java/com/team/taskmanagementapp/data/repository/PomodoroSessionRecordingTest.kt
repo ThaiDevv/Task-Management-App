@@ -83,6 +83,8 @@ class PomodoroSessionRecordingTest {
 
         override suspend fun getLatestSession(): PomodoroSession? = sessions.lastOrNull()
 
+        override suspend fun getAllSessions(): List<PomodoroSession> = notUsed()
+
         // ── Không dùng trong test này ────────────────────────────────────────
 
         override suspend fun insertSessions(sessions: List<PomodoroSession>): List<Long> =

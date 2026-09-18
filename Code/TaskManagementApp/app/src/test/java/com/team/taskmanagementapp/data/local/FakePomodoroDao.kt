@@ -198,6 +198,10 @@ class FakePomodoroDao(vararg taskIds: Long) : PomodoroDao {
     override suspend fun getLatestSession(): PomodoroSession? =
         sessions.maxByOrNull { it.startTime }
 
+    /** Export backup cần toàn bộ phiên, giữ nguyên thứ tự theo thời gian bắt đầu. */
+    override suspend fun getAllSessions(): List<PomodoroSession> =
+        sessions.sortedBy { it.startTime }
+
     // ══════════════════════════════════════════════════════════════════════════
     // Truy vấn dùng chung
     // ══════════════════════════════════════════════════════════════════════════

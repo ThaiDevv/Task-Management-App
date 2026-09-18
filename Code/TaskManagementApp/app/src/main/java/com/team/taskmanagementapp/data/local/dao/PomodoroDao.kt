@@ -242,4 +242,13 @@ interface PomodoroDao {
     /** Phiên mới nhất đã ghi — dùng để hiển thị "hoạt động gần nhất". */
     @Query("SELECT * FROM pomodoro_sessions ORDER BY startTime DESC LIMIT 1")
     suspend fun getLatestSession(): PomodoroSession?
+
+    /**
+     * Toàn bộ phiên trong DB (cũ nhất trước) — dùng cho **backup JSON** (Task 16).
+     *
+     * Lấy cả phiên FOCUS, phiên nghỉ và phiên chưa hoàn thành để bản backup trung thực
+     * với dữ liệu gốc.
+     */
+    @Query("SELECT * FROM pomodoro_sessions ORDER BY startTime ASC")
+    suspend fun getAllSessions(): List<PomodoroSession>
 }

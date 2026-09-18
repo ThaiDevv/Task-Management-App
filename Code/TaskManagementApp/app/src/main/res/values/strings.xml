@@ -158,12 +158,12 @@
     <string name="data_management_title">Data Management</string>
     <string name="data_management_subtitle">Secure your workflow by backing up or restoring your task history.</string>
     <string name="data_export_title">Export Data</string>
-    <string name="data_export_summary">Snapshot your current workspace</string>
+    <string name="data_export_summary">Backup tasks and Pomodoro history</string>
     <string name="data_export_action">Export to JSON</string>
     <string name="data_export_total_tasks">TOTAL TASKS</string>
     <string name="data_export_completed">COMPLETED</string>
     <string name="data_restore_title">Restore Data</string>
-    <string name="data_restore_summary">Import tasks from a backup file</string>
+    <string name="data_restore_summary">Restore tasks and Pomodoro history from a backup file</string>
     <string name="data_restore_upload_hint">Click to upload or drag and drop</string>
     <string name="data_restore_upload_sub">TaskFlow Backup Files (.json) up to 25MB</string>
     <string name="data_restore_action">Choose Backup File</string>
@@ -184,6 +184,12 @@
     <string name="data_restore_success">Tasks restored successfully</string>
     <string name="data_restore_failed">Restore failed. Invalid or corrupted file.</string>
     <string name="data_restore_cancel">Cancel</string>
+
+    <!-- Task 16: nội dung backup + thông báo kết quả -->
+    <string name="data_backup_content_empty">Backup file includes all tasks and Pomodoro sessions</string>
+    <string name="data_backup_content_summary">Included in backup: %1$d tasks · %2$d Pomodoro sessions</string>
+    <string name="data_backup_result_success">✅ %1$s</string>
+    <string name="data_backup_result_error">❌ %1$s</string>
     <string name="data_task_count">%d tasks in database</string>
     <string name="data_export_error">Export failed: %s</string>
     <string name="data_import_success">Imported %d tasks successfully</string>
