@@ -67,7 +67,7 @@ class ImportViewModel(
      */
     private fun buildSuccessMessage(result: ImportResult): String {
         return buildString {
-            append("✅ Import hoàn tất:\n")
+            append("✅ Import completed:\n")
             append("• ${result.successCount} tasks imported\n")
             if (result.skipCount > 0) {
                 append("• ${result.skipCount} tasks skipped (conflicts)\n")

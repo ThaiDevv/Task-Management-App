@@ -118,7 +118,7 @@ class ImportActivity : BaseActivity() {
                 when (state) {
                     is UiState.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
-                        binding.tvStatus.text = "⏳ Đang import..."
+                        binding.tvStatus.text = "⏳ Importing..."
                         binding.containerResult.visibility = View.GONE
                     }
                     is UiState.Success -> {
@@ -189,12 +189,12 @@ class ImportActivity : BaseActivity() {
      */
     private fun showConflictDialog() {
         MaterialAlertDialogBuilder(this)
-            .setTitle("Xử lý Task Trùng")
+            .setTitle("Handle Duplicate Tasks")
             .setMessage(
-                "Nếu tìm thấy task cùng title/date, hãy chọn:\n" +
-                        "• SKIP: Bỏ qua task trùng\n" +
-                        "• REPLACE: Xóa task cũ, import mới\n" +
-                        "• REPLACE ALL: Xóa tất cả, import toàn bộ"
+                "If tasks with the same title and date are found, choose an action:\n" +
+                        "• SKIP: Ignore duplicate tasks\n" +
+                        "• REPLACE: Delete the existing task and import the new one\n" +
+                        "• REPLACE ALL: Delete all existing tasks and import everything"
             )
             .setPositiveButton("SKIP") { _, _ ->
                 selectedFileUri?.let {
@@ -220,7 +220,7 @@ class ImportActivity : BaseActivity() {
     private fun showSuccessResult(result: com.team.taskmanagementapp.data.model.ImportResult) {
         binding.containerMain.visibility = View.GONE
         binding.containerResult.visibility = View.VISIBLE
-        binding.tvResultTitle.text = "✅ Import Thành Công"
+        binding.tvResultTitle.text = "✅ Import Successful"
         binding.tvResultMessage.text = buildString {
             append("${result.successCount} tasks imported\n")
             if (result.skipCount > 0) {
@@ -239,7 +239,7 @@ class ImportActivity : BaseActivity() {
     private fun showErrorResult(errorMessage: String) {
         binding.containerMain.visibility = View.GONE
         binding.containerResult.visibility = View.VISIBLE
-        binding.tvResultTitle.text = "❌ Import Thất Bại"
+        binding.tvResultTitle.text = "❌ Import Failed"
         binding.tvResultMessage.text = errorMessage
         binding.tvResultMessage.setTextColor(getColor(android.R.color.holo_red_dark))
     }

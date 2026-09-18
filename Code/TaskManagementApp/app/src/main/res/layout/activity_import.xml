@@ -48,7 +48,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Import Tasks từ JSON"
+                android:text="Import Tasks from JSON"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:textColor="?attr/colorOnBackground"
@@ -58,7 +58,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Chọn file JSON để import danh sách công việc"
+                android:text="Choose a JSON file to import tasks"
                 android:textSize="14sp"
                 android:textColor="@color/outline"
                 android:gravity="center"
@@ -69,7 +69,7 @@
                 android:id="@+id/tv_selected_file"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Chưa chọn file"
+                android:text="No file selected"
                 android:textSize="12sp"
                 android:textColor="@color/outline"
                 android:gravity="center"
@@ -84,7 +84,7 @@
                 android:id="@+id/btn_import_file"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:text="📁 Chọn File JSON"
+                android:text="📁 Choose JSON File"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
@@ -103,7 +103,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Xử lý Task Trùng:"
+                    android:text="Duplicate task handling:"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:textColor="@color/on_background"
@@ -157,7 +157,7 @@
                 android:id="@+id/tv_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="⏳ Đang import..."
+                android:text="⏳ Importing..."
                 android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:layout_marginTop="16dp" />
@@ -186,7 +186,7 @@
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="16dp"
-                tools:text="✅ Import Thành Công" />
+                tools:text="✅ Import Successful" />
 
             <!-- Result Message -->
             <TextView
@@ -203,7 +203,7 @@
                 android:id="@+id/btn_retry"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:text="🔄 Import Lại"
+                android:text="🔄 Import Again"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 app:cornerRadius="8dp" />
