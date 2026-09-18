@@ -2,7 +2,9 @@ package com.team.taskmanagementapp.data.repository
 
 import com.team.taskmanagementapp.data.local.dao.PomodoroDao
 import com.team.taskmanagementapp.data.local.entity.PomodoroSession
+import com.team.taskmanagementapp.data.model.enums.SessionType
 import com.team.taskmanagementapp.data.model.stats.TaskFocusStats
+import com.team.taskmanagementapp.pomodoro.CompletedSessionRecord
 import com.team.taskmanagementapp.util.DateTimeUtils
 import kotlinx.coroutines.flow.Flow
 import java.util.Calendar
@@ -37,6 +39,30 @@ class PomodoroRepository(
     /** Bulk insert dùng cho restore JSON backup. */
     suspend fun insertSessions(sessions: List<PomodoroSession>): List<Long> =
         pomodoroDao.insertSessions(sessions)
+
+    // ── Phiên ĐÃ HOÀN THÀNH + cộng dồn thống kê Task ─────────────────────────
+
+    /**
+     * Lưu một phiên đã kết thúc vào `pomodoro_sessions` và cộng dồn thống kê vào Task,
+     * tất cả trong **một transaction** (xem `PomodoroDao.recordCompletedSession`).
+     *
+     * Quy tắc:
+     * - Chỉ phiên **đã chạy hết giờ** (`isCompleted = true`) mới đi qua đường này.
+     *   STOP / SKIP / RESET / PAUSE không tạo bản ghi hoàn thành.
+     * - Chỉ phiên **FOCUS** mới cộng `completedPomodoros` + `totalFocusTimeMinutes`.
+     *   Phiên SHORT_BREAK / LONG_BREAK vẫn được lưu nhưng KHÔNG đụng tới 2 cột đó.
+     * - Không cập nhật `updatedAt` của Task (xem ghi chú ở DAO).
+     *
+     * @return `false` nếu phiên không gắn Task (`taskId == null`) hoặc Task đã bị xoá —
+     *         khi đó bỏ qua bản ghi để không tạo FK record mồ côi; không ném exception.
+     */
+    suspend fun recordCompletedSession(record: CompletedSessionRecord): Boolean {
+        val taskId = record.taskId ?: return false
+        return pomodoroDao.recordCompletedSession(
+            session = record.toPomodoroSession(taskId),
+            focusMinutes = record.focusMinutesForTaskStats()
+        )
+    }
 
     suspend fun deleteSession(session: PomodoroSession) =
         pomodoroDao.deleteSession(session)
@@ -199,3 +225,35 @@ class PomodoroRepository(
         const val MILLIS_PER_DAY = 24L * 60L * 60L * 1000L
     }
 }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// Hàm thuần cho việc ghi phiên
+// (top-level + internal để test được trên JVM, không cần Room)
+// ══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Số phút cộng vào thống kê Task cho một phiên đã kết thúc.
+ *
+ * @return thời lượng phiên nếu là FOCUS; `null` với SHORT_BREAK / LONG_BREAK —
+ *         nghỉ hoàn thành KHÔNG được tính là "xong 1 pomodoro".
+ */
+internal fun CompletedSessionRecord.focusMinutesForTaskStats(): Int? =
+    if (sessionType == SessionType.FOCUS) durationMinutes else null
+
+/**
+ * Chuyển bản ghi phiên (model của tầng timer) thành entity Room.
+ *
+ * `id = 0` để Room tự sinh khoá chính. Dùng `startTimeMillis` / `endTimeMillis`
+ * do engine chốt sẵn (không gọi `System.currentTimeMillis()` ở đây) để bản ghi
+ * phản ánh đúng thời điểm phiên thực sự kết thúc.
+ */
+internal fun CompletedSessionRecord.toPomodoroSession(taskId: Long): PomodoroSession =
+    PomodoroSession(
+        id = 0L,
+        taskId = taskId,
+        startTime = startTimeMillis,
+        endTime = endTimeMillis,
+        durationInMinutes = durationMinutes,
+        sessionType = sessionType,
+        isCompleted = isCompleted
+    )

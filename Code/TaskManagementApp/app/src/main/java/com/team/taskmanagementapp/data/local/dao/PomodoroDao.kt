@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.team.taskmanagementapp.data.local.entity.PomodoroSession
 import com.team.taskmanagementapp.data.model.stats.TaskFocusStats
 import kotlinx.coroutines.flow.Flow
@@ -32,6 +33,52 @@ interface PomodoroDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSession(session: PomodoroSession): Long
+
+    /**
+     * Ghi một phiên đã hoàn thành và (chỉ với phiên FOCUS) cộng dồn thống kê vào Task,
+     * tất cả trong **một transaction** nên không thể rơi vào trạng thái nửa vời.
+     *
+     * @param focusMinutes số phút cần cộng vào `tasks.completedPomodoros` +
+     *        `tasks.totalFocusTimeMinutes`; truyền `null` cho phiên nghỉ (không đụng thống kê Task).
+     * @return `false` nếu Task không còn tồn tại — khi đó KHÔNG ghi phiên, tránh vi phạm
+     *         khoá ngoại `pomodoro_sessions.taskId -> tasks.id`.
+     */
+    @Transaction
+    suspend fun recordCompletedSession(
+        session: PomodoroSession,
+        focusMinutes: Int?
+    ): Boolean {
+        if (findTaskId(session.taskId) == null) return false
+
+        insertSession(session)
+
+        if (focusMinutes != null) {
+            addCompletedFocusSessionStats(session.taskId, focusMinutes)
+        }
+        return true
+    }
+
+    /** Có tồn tại Task với id này không (dùng để tránh vi phạm khoá ngoại). */
+    @Query("SELECT id FROM tasks WHERE id = :taskId")
+    suspend fun findTaskId(taskId: Long): Int?
+
+    /**
+     * Cộng dồn thống kê Pomodoro cho một Task bằng **một câu UPDATE duy nhất**
+     * (`completedPomodoros + 1`, `totalFocusTimeMinutes + :focusMinutes`).
+     *
+     * Cố ý KHÔNG cập nhật `updatedAt`: đây là số liệu cộng dồn, không phải người dùng sửa Task.
+     * `StatsViewModel` dùng `updatedAt` làm mốc thời gian cho task đã hoàn thành, nên nếu
+     * cập nhật nó thì một phiên Pomodoro sẽ vô tình đẩy Task sang kỳ thống kê khác.
+     */
+    @Query(
+        """
+        UPDATE tasks
+        SET completedPomodoros = completedPomodoros + 1,
+            totalFocusTimeMinutes = totalFocusTimeMinutes + :focusMinutes
+        WHERE id = :taskId
+        """
+    )
+    suspend fun addCompletedFocusSessionStats(taskId: Long, focusMinutes: Int): Int
 
     /** Bulk insert dùng cho restore JSON backup (giữ nguyên ID). */
     @Insert(onConflict = OnConflictStrategy.REPLACE)

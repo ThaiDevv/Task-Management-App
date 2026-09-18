@@ -15,7 +15,10 @@ import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import com.team.taskmanagementapp.MainActivity
 import com.team.taskmanagementapp.R
+import com.team.taskmanagementapp.TaskApplication
+import com.team.taskmanagementapp.data.local.db.AppDatabase
 import com.team.taskmanagementapp.data.model.enums.SessionType
+import com.team.taskmanagementapp.data.repository.PomodoroRepository
 import com.team.taskmanagementapp.data.repository.PomodoroSettingsRepository
 import com.team.taskmanagementapp.util.AlarmScheduler
 import com.team.taskmanagementapp.util.Constants
@@ -105,6 +108,11 @@ class PomodoroService : Service() {
 
     /** Bảo đảm mỗi phiên chỉ phát cảnh báo hết giờ đúng một lần. */
     private val completionTracker = PomodoroCompletionTracker()
+
+    /** Ghi phiên đã hoàn thành + cộng dồn thống kê Task vào Room (Task 14). */
+    private val pomodoroRepository: PomodoroRepository by lazy {
+        PomodoroRepository(AppDatabase.getInstance(this).pomodoroDao())
+    }
 
     private var serviceScope: CoroutineScope? = null
     private var tickerJob: Job? = null
@@ -306,12 +314,37 @@ class PomodoroService : Service() {
     private fun alertIfSessionJustFinished() {
         val record = completionTracker.consumeCompletedSession(engine.currentSnapshot) ?: return
 
+        // Lưu phiên TRƯỚC khi báo cho người dùng: tracker đã bảo đảm mỗi phiên
+        // (theo `completionId`) chỉ đi qua đây đúng một lần, nên không thể sinh
+        // bản ghi trùng hoặc cộng dồn thống kê 2 lần dù tick đến từ ticker,
+        // alarm Doze hay lệnh trên notification.
+        persistCompletedSession(record)
+
         showCompletionNotification(record)
 
         if (!canPostNotifications()) {
             // Không đăng được notification => channel cảnh báo không thể kêu/rung,
             // nên phát trực tiếp. Chỉ một trong hai đường được chạy nên không kêu 2 lần.
             PomodoroAlertPlayer.play(this)
+        }
+    }
+
+    /**
+     * Lưu phiên vừa chạy hết giờ vào `pomodoro_sessions` và cộng dồn thống kê Task.
+     *
+     * Chạy trên [TaskApplication.applicationScope] thay vì `serviceScope`:
+     * người dùng có thể bấm Stop ngay sau khi phiên kết thúc, service bị huỷ và
+     * transaction đang dở sẽ bị cancel → mất phiên. Scope của Application sống cùng
+     * process nên bản ghi luôn hoàn tất.
+     *
+     * Lỗi ghi (ví dụ Task đã bị xoá → DAO trả `false`) chỉ được ghi log, không được
+     * làm chết service hay ném exception ra ngoài.
+     */
+    private fun persistCompletedSession(record: CompletedSessionRecord) {
+        val scope = (application as? TaskApplication)?.applicationScope ?: return
+        scope.launch {
+            runCatching { pomodoroRepository.recordCompletedSession(record) }
+                .onFailure { Log.w(TAG, "Unable to persist completed Pomodoro session", it) }
         }
     }
 
