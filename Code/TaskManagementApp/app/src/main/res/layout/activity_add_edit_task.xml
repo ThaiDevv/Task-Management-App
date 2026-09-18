@@ -497,13 +497,129 @@
                         android:textColor="@color/outline"
                         android:textSize="11sp" />
 
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:overScrollMode="never"
+                        android:scrollbars="none">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/repeatNone"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="6dp"
+                                android:background="@drawable/bg_pill_selector"
+                                android:fontFamily="@font/poppins_bold"
+                                android:gravity="center"
+                                android:minWidth="64dp"
+                                android:padding="10dp"
+                                android:text="None"
+                                android:textColor="@color/white"
+                                android:textSize="13sp" />
+
+                            <TextView
+                                android:id="@+id/repeatDaily"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="6dp"
+                                android:background="@drawable/bg_pill_selector"
+                                android:fontFamily="@font/poppins_medium"
+                                android:gravity="center"
+                                android:minWidth="64dp"
+                                android:padding="10dp"
+                                android:text="Daily"
+                                android:textColor="@color/on_surface_variant"
+                                android:textSize="13sp" />
+
+                            <TextView
+                                android:id="@+id/repeatWeekly"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="6dp"
+                                android:background="@drawable/bg_pill_selector"
+                                android:fontFamily="@font/poppins_medium"
+                                android:gravity="center"
+                                android:minWidth="64dp"
+                                android:padding="10dp"
+                                android:text="Weekly"
+                                android:textColor="@color/on_surface_variant"
+                                android:textSize="13sp" />
+
+                            <TextView
+                                android:id="@+id/repeatMonthly"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="6dp"
+                                android:background="@drawable/bg_pill_selector"
+                                android:fontFamily="@font/poppins_medium"
+                                android:gravity="center"
+                                android:minWidth="64dp"
+                                android:padding="10dp"
+                                android:text="Monthly"
+                                android:textColor="@color/on_surface_variant"
+                                android:textSize="13sp" />
+
+                            <TextView
+                                android:id="@+id/repeatYearly"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_pill_selector"
+                                android:fontFamily="@font/poppins_medium"
+                                android:gravity="center"
+                                android:minWidth="64dp"
+                                android:padding="10dp"
+                                android:text="Yearly"
+                                android:textColor="@color/on_surface_variant"
+                                android:textSize="13sp" />
+                        </LinearLayout>
+                    </HorizontalScrollView>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 6. Repeat End Condition Bento Card (Visible only when recurring) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/repeatEndCardContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/surface_container_lowest"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="2dp"
+                app:strokeColor="@color/surface_container"
+                app:strokeWidth="1dp"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:letterSpacing="0.05"
+                        android:text="@string/task_repeat_end_header"
+                        android:textColor="@color/outline"
+                        android:textSize="11sp" />
+
+                    <!-- Stop Mode Options -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="14dp"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/repeatNone"
+                            android:id="@+id/repeatEndNever"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="6dp"
@@ -512,12 +628,12 @@
                             android:fontFamily="@font/poppins_bold"
                             android:gravity="center"
                             android:padding="10dp"
-                            android:text="None"
+                            android:text="@string/task_repeat_end_never"
                             android:textColor="@color/white"
-                            android:textSize="13sp" />
+                            android:textSize="12sp" />
 
                         <TextView
-                            android:id="@+id/repeatDaily"
+                            android:id="@+id/repeatEndByDate"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="6dp"
@@ -526,26 +642,12 @@
                             android:fontFamily="@font/poppins_medium"
                             android:gravity="center"
                             android:padding="10dp"
-                            android:text="Daily"
+                            android:text="@string/task_repeat_end_by_date"
                             android:textColor="@color/on_surface_variant"
-                            android:textSize="13sp" />
+                            android:textSize="12sp" />
 
                         <TextView
-                            android:id="@+id/repeatWeekly"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="6dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_pill_selector"
-                            android:fontFamily="@font/poppins_medium"
-                            android:gravity="center"
-                            android:padding="10dp"
-                            android:text="Weekly"
-                            android:textColor="@color/on_surface_variant"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:id="@+id/repeatMonthly"
+                            android:id="@+id/repeatEndByCount"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -553,10 +655,90 @@
                             android:fontFamily="@font/poppins_medium"
                             android:gravity="center"
                             android:padding="10dp"
-                            android:text="Monthly"
+                            android:text="@string/task_repeat_end_by_count"
                             android:textColor="@color/on_surface_variant"
-                            android:textSize="13sp" />
+                            android:textSize="12sp" />
                     </LinearLayout>
+
+                    <!-- End Date Container (Visible when repeatEndByDate is selected) -->
+                    <LinearLayout
+                        android:id="@+id/repeatEndDateContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:background="@drawable/bg_field_pill"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="14dp"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_calendar"
+                            app:tint="@color/primary" />
+
+                        <TextView
+                            android:id="@+id/repeatEndDateText"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_medium"
+                            android:hint="@string/task_repeat_end_date_hint"
+                            android:textColor="@color/on_surface"
+                            android:textSize="14sp" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/outline" />
+                    </LinearLayout>
+
+                    <!-- Count Input Container (Visible when repeatEndByCount is selected) -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/repeatCountInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:visibility="gone"
+                        app:boxBackgroundMode="none"
+                        app:errorEnabled="true">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/repeatCountEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_field_pill"
+                            android:fontFamily="@font/poppins_medium"
+                            android:hint="@string/task_repeat_end_count_hint"
+                            android:inputType="number"
+                            android:padding="14dp"
+                            android:textColor="@color/on_surface"
+                            android:textColorHint="@color/outline_variant"
+                            android:textSize="14sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Calculation summary text -->
+                    <TextView
+                        android:id="@+id/repeatEndSummaryText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_regular"
+                        android:textColor="@color/primary"
+                        android:textSize="13sp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/repeatEndErrorText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:textColor="@color/error"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>

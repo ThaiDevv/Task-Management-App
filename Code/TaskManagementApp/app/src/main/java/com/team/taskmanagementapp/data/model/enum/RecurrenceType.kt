@@ -4,5 +4,6 @@ enum class RecurrenceType {
     NONE,
     DAILY,
     WEEKLY,
-    MONTHLY
+    MONTHLY,
+    YEARLY
 }

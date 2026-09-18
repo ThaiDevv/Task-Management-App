@@ -12,6 +12,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.team.taskmanagementapp.data.local.db.AppDatabase
 import com.team.taskmanagementapp.data.model.ConflictAction
 import com.team.taskmanagementapp.data.repository.BackupRepository
+import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.databinding.ActivityImportBinding
 import com.team.taskmanagementapp.ui.base.BaseActivity
 import com.team.taskmanagementapp.ui.base.UiState
@@ -118,7 +119,7 @@ class ImportActivity : BaseActivity() {
                 when (state) {
                     is UiState.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
-                        binding.tvStatus.text = "⏳ Đang import..."
+                        binding.tvStatus.text = "⏳ Importing..."
                         binding.containerResult.visibility = View.GONE
                     }
                     is UiState.Success -> {
@@ -189,12 +190,12 @@ class ImportActivity : BaseActivity() {
      */
     private fun showConflictDialog() {
         MaterialAlertDialogBuilder(this)
-            .setTitle("Xử lý Task Trùng")
+            .setTitle("Handle Duplicate Tasks")
             .setMessage(
-                "Nếu tìm thấy task cùng title/date, hãy chọn:\n" +
-                        "• SKIP: Bỏ qua task trùng\n" +
-                        "• REPLACE: Xóa task cũ, import mới\n" +
-                        "• REPLACE ALL: Xóa tất cả, import toàn bộ"
+                "If tasks with matching title/date are found, choose:\n" +
+                        "• SKIP: Ignore duplicate tasks\n" +
+                        "• REPLACE: Delete old task, import new one\n" +
+                        "• REPLACE ALL: Delete all existing, import entire file"
             )
             .setPositiveButton("SKIP") { _, _ ->
                 selectedFileUri?.let {
@@ -220,7 +221,7 @@ class ImportActivity : BaseActivity() {
     private fun showSuccessResult(result: com.team.taskmanagementapp.data.model.ImportResult) {
         binding.containerMain.visibility = View.GONE
         binding.containerResult.visibility = View.VISIBLE
-        binding.tvResultTitle.text = "✅ Import Thành Công"
+        binding.tvResultTitle.text = getString(R.string.import_success)
         binding.tvResultMessage.text = buildString {
             append("${result.successCount} tasks imported\n")
             if (result.skipCount > 0) {
@@ -239,7 +240,7 @@ class ImportActivity : BaseActivity() {
     private fun showErrorResult(errorMessage: String) {
         binding.containerMain.visibility = View.GONE
         binding.containerResult.visibility = View.VISIBLE
-        binding.tvResultTitle.text = "❌ Import Thất Bại"
+        binding.tvResultTitle.text = getString(R.string.import_error)
         binding.tvResultMessage.text = errorMessage
         binding.tvResultMessage.setTextColor(getColor(android.R.color.holo_red_dark))
     }

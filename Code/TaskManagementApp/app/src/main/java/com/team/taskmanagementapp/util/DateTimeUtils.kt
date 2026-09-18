@@ -119,10 +119,10 @@ object DateTimeUtils {
     }
 
     /**
-     * Format timestamp to friendly relative time string (e.g. "Hôm nay", "Ngày mai", "Hôm qua").
+     * Format timestamp to friendly relative time string (e.g. "Today", "Tomorrow", "Yesterday").
      */
     fun getRelativeTimeString(timestamp: Long?): String {
-        if (timestamp == null || timestamp == 0L) return "Không có hạn"
+        if (timestamp == null || timestamp == 0L) return "No deadline"
 
         val targetCal = Calendar.getInstance().apply { timeInMillis = timestamp }
         val todayCal = Calendar.getInstance()
@@ -139,9 +139,9 @@ object DateTimeUtils {
         val timeStr = formatTimestamp(timestamp, FORMAT_TIME_ONLY)
 
         return when {
-            isSameDay -> "Hôm nay, $timeStr"
-            isTomorrow -> "Ngày mai, $timeStr"
-            isYesterday -> "Hôm qua, $timeStr"
+            isSameDay -> "Today, $timeStr"
+            isTomorrow -> "Tomorrow, $timeStr"
+            isYesterday -> "Yesterday, $timeStr"
             else -> formatTimestamp(timestamp, FORMAT_DATE_TIME)
         }
     }

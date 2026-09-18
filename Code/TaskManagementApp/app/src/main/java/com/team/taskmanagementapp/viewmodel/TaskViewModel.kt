@@ -70,7 +70,7 @@ class TaskViewModel(
             _uiState.value = UiState.Loading
             repository.getFilteredTasks(_filterCriteria.value)
                 .catch { e ->
-                    _uiState.value = UiState.Error("Không thể tải danh sách công việc: ${e.localizedMessage}")
+                    _uiState.value = UiState.Error("Unable to load tasks: ${e.localizedMessage}")
                 }
                 .collect { tasks ->
                     if (tasks.isEmpty()) {
@@ -93,10 +93,10 @@ class TaskViewModel(
                 )
                 _userMessage.emit(
                     scheduleWarning(scheduleResult, savedTask.reminderMinutes)
-                        ?: "Đã thêm công việc \"${task.title}\""
+                        ?: "Added task \"${task.title}\""
                 )
             } catch (e: Exception) {
-                _uiState.value = UiState.Error("Lỗi khi thêm công việc: ${e.localizedMessage}")
+                _uiState.value = UiState.Error("Error adding task: ${e.localizedMessage}")
             }
         }
     }
@@ -108,10 +108,10 @@ class TaskViewModel(
                 val scheduleResult = AlarmScheduler.rescheduleAlarm(applicationContext, task)
                 _userMessage.emit(
                     scheduleWarning(scheduleResult, task.reminderMinutes)
-                        ?: "Đã cập nhật công việc \"${task.title}\""
+                        ?: "Updated task \"${task.title}\""
                 )
             } catch (e: Exception) {
-                _uiState.value = UiState.Error("Lỗi khi cập nhật công việc: ${e.localizedMessage}")
+                _uiState.value = UiState.Error("Error updating task: ${e.localizedMessage}")
             }
         }
     }
@@ -133,9 +133,9 @@ class TaskViewModel(
                 AlarmScheduler.cancelAlarm(applicationContext, task.id)
                 NotificationHelper.cancelNotification(applicationContext, task.id)
                 _deleteSuccess.emit(true)
-                _userMessage.emit("Đã xóa công việc \"${task.title}\"")
+                _userMessage.emit("Deleted task \"${task.title}\"")
             } catch (e: Exception) {
-                _userMessage.emit("Lỗi khi xóa công việc: ${e.localizedMessage}")
+                _userMessage.emit("Error deleting task: ${e.localizedMessage}")
             }
         }
     }
@@ -181,37 +181,45 @@ class TaskViewModel(
                     } else task.dueTime
 
                     if (!wasCompleted) {
-                        // Khi đánh dấu hoàn thành: Chỉ tạo instance tiếp theo nếu chưa có task tương lai cùng title tồn tại
-                        val existingFutureTasks = repository.getFutureRecurringTasks(
-                            task.title,
-                            task.recurrenceType,
-                            nextDueDate
-                        )
-                        val anyRecurringFutureTasks = if (existingFutureTasks.isNotEmpty()) {
-                            existingFutureTasks
-                        } else {
-                            repository.getFutureRecurringTasks(task.title, RecurrenceType.DAILY, nextDueDate) +
-                            repository.getFutureRecurringTasks(task.title, RecurrenceType.WEEKLY, nextDueDate) +
-                            repository.getFutureRecurringTasks(task.title, RecurrenceType.MONTHLY, nextDueDate)
-                        }
+                        val isEnded = RecurrenceHelper.isRecurrenceEnded(task, nextDueDate)
+                        if (!isEnded && !task.isPaused) {
+                            // Khi đánh dấu hoàn thành: Chỉ tạo instance tiếp theo nếu chưa có task tương lai cùng title tồn tại
+                            val existingFutureTasks = repository.getFutureRecurringTasks(
+                                task.title,
+                                task.recurrenceType,
+                                nextDueDate
+                            )
+                            val anyRecurringFutureTasks = if (existingFutureTasks.isNotEmpty()) {
+                                existingFutureTasks
+                            } else {
+                                repository.getFutureRecurringTasks(task.title, RecurrenceType.DAILY, nextDueDate) +
+                                repository.getFutureRecurringTasks(task.title, RecurrenceType.WEEKLY, nextDueDate) +
+                                repository.getFutureRecurringTasks(task.title, RecurrenceType.MONTHLY, nextDueDate) +
+                                repository.getFutureRecurringTasks(task.title, RecurrenceType.YEARLY, nextDueDate)
+                            }
 
-                        if (anyRecurringFutureTasks.isEmpty()) {
-                            val nextInstance = task.copy(
-                                id = 0,
-                                isCompleted = false,
-                                status = TaskStatus.TODO,
-                                isRecurring = true,
-                                recurrenceType = task.recurrenceType,
-                                dueDate = nextDueDate,
-                                dueTime = nextDueTime,
-                                createdAt = now,
-                                updatedAt = now
-                            )
-                            val insertedId = repository.insert(nextInstance)
-                            reminderScheduleResult = AlarmScheduler.scheduleAlarm(
-                                applicationContext,
-                                nextInstance.copy(id = insertedId.toInt())
-                            )
+                            if (anyRecurringFutureTasks.isEmpty()) {
+                                val nextInstance = task.copy(
+                                    id = 0,
+                                    isCompleted = false,
+                                    status = TaskStatus.TODO,
+                                    isRecurring = true,
+                                    recurrenceType = task.recurrenceType,
+                                    dueDate = nextDueDate,
+                                    dueTime = nextDueTime,
+                                    repeatEndDate = task.repeatEndDate,
+                                    repeatLimitCount = task.repeatLimitCount,
+                                    currentOccurrence = task.currentOccurrence + 1,
+                                    isPaused = task.isPaused,
+                                    createdAt = now,
+                                    updatedAt = now
+                                )
+                                val insertedId = repository.insert(nextInstance)
+                                reminderScheduleResult = AlarmScheduler.scheduleAlarm(
+                                    applicationContext,
+                                    nextInstance.copy(id = insertedId.toInt())
+                                )
+                            }
                         }
                     } else {
                         // Khi hủy hoàn thành: Hủy alarm và xóa các task tương lai chưa hoàn thành đã tự sinh ra (bất kể kiểu lặp lại)
@@ -219,7 +227,8 @@ class TaskViewModel(
                             repository.getFutureRecurringTasks(task.title, task.recurrenceType, nextDueDate) +
                             repository.getFutureRecurringTasks(task.title, RecurrenceType.DAILY, nextDueDate) +
                             repository.getFutureRecurringTasks(task.title, RecurrenceType.WEEKLY, nextDueDate) +
-                            repository.getFutureRecurringTasks(task.title, RecurrenceType.MONTHLY, nextDueDate)
+                            repository.getFutureRecurringTasks(task.title, RecurrenceType.MONTHLY, nextDueDate) +
+                            repository.getFutureRecurringTasks(task.title, RecurrenceType.YEARLY, nextDueDate)
                         ).distinctBy { it.id }
 
                         futureTasks.forEach { futureTask ->
@@ -235,9 +244,9 @@ class TaskViewModel(
                 }
 
                 val msg = if (!wasCompleted) {
-                    "Đã hoàn thành \"${task.title}\""
+                    "Completed \"${task.title}\""
                 } else {
-                    "Đã đánh dấu chưa xong \"${task.title}\""
+                    "Marked \"${task.title}\" as incomplete"
                 }
                 _userMessage.emit(
                     reminderScheduleResult?.let {
@@ -245,7 +254,7 @@ class TaskViewModel(
                     } ?: msg
                 )
             } catch (e: Exception) {
-                _userMessage.emit("Lỗi khi cập nhật trạng thái: ${e.localizedMessage}")
+                _userMessage.emit("Error updating status: ${e.localizedMessage}")
             }
         }
     }
@@ -260,7 +269,7 @@ class TaskViewModel(
             _uiState.value = UiState.Loading
             repository.search(query)
                 .catch { e ->
-                    _uiState.value = UiState.Error("Lỗi tìm kiếm: ${e.localizedMessage}")
+                    _uiState.value = UiState.Error("Search error: ${e.localizedMessage}")
                 }
                 .collect { tasks ->
                     if (tasks.isEmpty()) {
@@ -296,6 +305,28 @@ class TaskViewModel(
         viewModelScope.launch {
             repository.observeTaskById(taskId).collect { task ->
                 _selectedTask.value = task
+            }
+        }
+    }
+
+    fun toggleTaskPause(task: Task) {
+        viewModelScope.launch {
+            try {
+                val newPausedState = !task.isPaused
+                val updatedTask = task.copy(
+                    isPaused = newPausedState,
+                    updatedAt = System.currentTimeMillis()
+                )
+                repository.update(updatedTask)
+                if (_selectedTask.value?.id == task.id) {
+                    _selectedTask.value = updatedTask
+                }
+                _userMessage.emit(
+                    if (newPausedState) "Paused recurring task"
+                    else "Resumed recurring task"
+                )
+            } catch (e: Exception) {
+                _userMessage.emit("Error: ${e.localizedMessage}")
             }
         }
     }
