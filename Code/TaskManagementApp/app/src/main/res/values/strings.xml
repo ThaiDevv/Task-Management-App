@@ -336,6 +336,26 @@
     <string name="widget_add_task">Thêm việc mới</string>
     <string name="widget_mark_done">Hoàn thành việc này</string>
     <string name="widget_description">Xem và hoàn thành các việc hôm nay ngay trên màn hình chính</string>
+
+    <!-- Streak Rewards -->
+    <string name="streak_title">Daily Streak</string>
+    <string name="streak_days_format">%d Days Streak! 🔥</string>
+    <string name="streak_one_day">1 Day Streak! 🔥</string>
+    <string name="streak_zero_days">0 Day Streak 🔥</string>
+    <string name="streak_subtitle_active">Keep up the momentum! Finish today\'s tasks.</string>
+    <string name="streak_subtitle_completed">Awesome! Today\'s streak maintained! 🎉</string>
+    <string name="streak_subtitle_zero">Complete all tasks today to start your streak!</string>
+    <string name="streak_best_format">Best: %d days</string>
+    <string name="streak_details_title">Streak Rewards &amp; Badges</string>
+    <string name="streak_rules_header">How Streaks Work</string>
+    <string name="streak_rules_body">Finish 100% of your daily scheduled tasks to earn and maintain your streak. Missing any task or having no task on a scheduled day will reset your streak.</string>
+    <string name="streak_milestones_header">Milestone Rewards</string>
+    <string name="streak_milestone_3">🌱 Starter - 3 Days</string>
+    <string name="streak_milestone_7">🔥 Fire Master - 7 Days</string>
+    <string name="streak_milestone_14">⚡ Super Achiever - 14 Days</string>
+    <string name="streak_milestone_30">🏆 Task Champion - 30 Days</string>
+    <string name="streak_milestone_100">👑 Productivity Legend - 100 Days</string>
 </resources>
+
 
 
