@@ -311,7 +311,110 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- ===== STREAK REWARDS CARD (Bento Style) ===== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:paddingBottom="24dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardStreakReward"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardBackgroundColor="#FFF8F1"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#FFD8A8"
+                    app:strokeWidth="1.5dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="18dp">
+
+                        <!-- Header Row: Fire Icon, Streak Count & Best Badge -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_marginEnd="10dp"
+                                android:src="@drawable/ic_fire" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/tvStreakTitle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/poppins_bold"
+                                    android:text="0 Day Streak 🔥"
+                                    android:textColor="#9C4221"
+                                    android:textSize="17sp" />
+
+                                <TextView
+                                    android:id="@+id/tvStreakSubtitle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/poppins_medium"
+                                    android:text="@string/streak_subtitle_zero"
+                                    android:textColor="#C05621"
+                                    android:textSize="11sp" />
+                            </LinearLayout>
+
+                            <!-- Best Streak Badge -->
+                            <TextView
+                                android:id="@+id/tvStreakBestBadge"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_streak_badge"
+                                android:fontFamily="@font/poppins_bold"
+                                android:paddingStart="10dp"
+                                android:paddingEnd="10dp"
+                                android:paddingTop="4dp"
+                                android:paddingBottom="4dp"
+                                android:text="Best: 0 days"
+                                android:textColor="#D97706"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <!-- Divider line -->
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="14dp"
+                            android:layout_marginBottom="12dp"
+                            android:background="#FFE0B2" />
+
+                        <!-- 7 Days Week Streak Indicator -->
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/streakWeekRecyclerView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false"
+                            tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:orientation="horizontal"
+                            tools:listitem="@layout/item_streak_day" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
             <!-- ===== 3. TODAY'S TASKS SECTION ===== -->
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
