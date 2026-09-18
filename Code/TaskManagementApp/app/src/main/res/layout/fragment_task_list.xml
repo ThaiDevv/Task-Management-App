@@ -45,7 +45,7 @@
                     android:layout_marginTop="2dp"
                     android:fontFamily="@font/poppins_bold"
                     android:letterSpacing="-0.01"
-                    android:text="Hello, Alex!"
+                    android:text="@string/home_hello"
                     android:textColor="#1B1B1B"
                     android:textSize="28sp" />
             </LinearLayout>
@@ -111,19 +111,12 @@
                                 android:gravity="center_vertical"
                                 android:orientation="horizontal">
 
-                                <ImageView
-                                    android:layout_width="14dp"
-                                    android:layout_height="14dp"
-                                    android:layout_marginEnd="2dp"
-                                    android:src="@drawable/ic_chevron_right"
-                                    app:tint="#105CDB" />
-
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/poppins_semibold"
-                                    android:text="Active tasks"
-                                    android:textColor="#105CDB"
+                                    android:text="@string/home_all_tasks"
+                                    android:textColor="#737786"
                                     android:textSize="11sp" />
                             </LinearLayout>
                         </LinearLayout>
@@ -291,19 +284,13 @@
                                 android:gravity="center_vertical"
                                 android:orientation="horizontal">
 
-                                <ImageView
-                                    android:layout_width="14dp"
-                                    android:layout_height="14dp"
-                                    android:layout_marginEnd="2dp"
-                                    android:src="@drawable/ic_chevron_right"
-                                    app:tint="#F43F5E" />
-
                                 <TextView
+                                    android:id="@+id/overdueSubtitle"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/poppins_semibold"
-                                    android:text="Action needed"
-                                    android:textColor="#F43F5E"
+                                    android:text="@string/home_no_overdue"
+                                    android:textColor="#737786"
                                     android:textSize="11sp" />
                             </LinearLayout>
                         </LinearLayout>

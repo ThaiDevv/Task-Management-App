@@ -208,7 +208,7 @@ class TaskListFragment : Fragment() {
             hour < 18 -> "Good Afternoon"
             else -> "Good Evening"
         }
-        binding.greetingText.text = "$greeting, Alex!"
+        binding.greetingText.text = "$greeting!"
     }
 
 
@@ -380,6 +380,11 @@ class TaskListFragment : Fragment() {
         binding.completedValue.text = completed.toString()
         binding.pendingValue.text = pending.toString()
         binding.overdueValue.text = overdue.toString()
+        val overdueColor = if (overdue > 0) Color.parseColor("#F43F5E")
+            else ContextCompat.getColor(requireContext(), R.color.on_surface_variant)
+        binding.overdueValue.setTextColor(overdueColor)
+        binding.overdueSubtitle.setTextColor(overdueColor)
+        binding.overdueSubtitle.setText(if (overdue > 0) R.string.home_action_needed else R.string.home_no_overdue)
 
         // Dynamic progress bar weight calculation
         val completedRatio = if (total > 0) (completed.toFloat() / total.toFloat() * 100).toInt() else 0
