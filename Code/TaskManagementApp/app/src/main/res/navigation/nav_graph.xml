@@ -38,4 +38,10 @@
         android:name="com.team.taskmanagementapp.ui.CreateTaskFragment"
         android:label="Create New Task" />
 
+    <!-- Pomodoro Timer Screen (Task 9) — màn hình phụ, không phải tab dưới thanh điều hướng -->
+    <fragment
+        android:id="@+id/pomodoroFragment"
+        android:name="com.team.taskmanagementapp.ui.pomodoro.PomodoroFragment"
+        android:label="@string/pomodoro_title" />
+
 </navigation>

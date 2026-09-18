@@ -1,0 +1,23 @@
+package com.team.taskmanagementapp.ui.viewmodel
+
+import android.content.Context
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+
+/**
+ * Factory cho [PomodoroViewModel] — theo đúng pattern của `TaskViewModelFactory` /
+ * `StatsViewModelFactory` trong project.
+ */
+class PomodoroViewModelFactory(
+    private val context: Context
+) : ViewModelProvider.Factory {
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(PomodoroViewModel::class.java)) {
+            // Chỉ giữ application context để không leak Activity/Fragment vào ViewModel.
+            return PomodoroViewModel(context.applicationContext) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+    }
+}

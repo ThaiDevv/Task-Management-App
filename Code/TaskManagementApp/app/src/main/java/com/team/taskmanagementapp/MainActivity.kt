@@ -17,6 +17,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.team.taskmanagementapp.databinding.ActivityMainBinding
 import com.team.taskmanagementapp.ui.activity.AddEditTaskActivity
 import com.team.taskmanagementapp.ui.base.BaseActivity
+import com.team.taskmanagementapp.util.Constants
 
 /**
  * Main Activity serving as the primary entry point and container for the app's navigation tabs.
@@ -74,6 +75,27 @@ class MainActivity : BaseActivity() {
         binding.fabCreateTask.setOnClickListener {
             startActivity(Intent(this, AddEditTaskActivity::class.java))
         }
+
+        openPomodoroScreenIfRequested(intent)
+    }
+
+    /**
+     * Mở Pomodoro Timer Screen khi người dùng chạm notification đang chạy
+     * (`EXTRA_OPEN_POMODORO_TIMER` do `PomodoroService` gắn vào content intent).
+     */
+    private fun openPomodoroScreenIfRequested(intent: Intent?) {
+        if (intent?.getBooleanExtra(Constants.EXTRA_OPEN_POMODORO_TIMER, false) != true) return
+        // Tránh đẩy trùng destination khi người dùng chạm notification lúc màn hình đang mở.
+        if (navController.currentDestination?.id == R.id.pomodoroFragment) return
+        navController.navigate(R.id.pomodoroFragment)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        // Notification dùng FLAG_ACTIVITY_SINGLE_TOP: khi MainActivity đã mở sẵn thì phải
+        // xử lý intent mới ở đây, nếu không chạm notification sẽ không mở được màn hình.
+        setIntent(intent)
+        openPomodoroScreenIfRequested(intent)
     }
 
     private fun requestNotificationPermissionIfNeeded() {
