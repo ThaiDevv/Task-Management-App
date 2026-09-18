@@ -18,6 +18,21 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /**
+ * TaskId mà UI phải hiển thị.
+ *
+ * **Phiên đang có là nguồn sự thật**: khi timer đã gắn với một công việc
+ * (RUNNING/PAUSED/COMPLETED) thì công việc đó luôn được hiển thị, kể cả khi lựa chọn chờ
+ * trong ViewModel khác hoặc đã bị xoá. Khi timer IDLE (chưa chạy hoặc vừa Stop) thì dùng
+ * lựa chọn người dùng đã chọn cho phiên sắp tới.
+ *
+ * Tách thành hàm thuần để kiểm tra được trên JVM.
+ */
+internal fun resolveDisplayedTaskId(
+    snapshot: PomodoroSnapshot,
+    pendingTaskId: Long?
+): Long? = snapshot.taskId ?: pendingTaskId
+
+/**
  * ViewModel cho Pomodoro Timer Screen (Task 9 + Task 10).
  *
  * ViewModel này **không** giữ timer, không đếm ngược, không sao chép logic của
@@ -46,11 +61,16 @@ class PomodoroViewModel(
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     /**
-     * Công việc đang được chọn, hoặc `null` nếu chưa chọn / công việc đã bị xoá.
-     * UI chỉ cần observe flow này, không phải tự tra cứu.
+     * Công việc đang được hiển thị (đang tập trung), hoặc `null` nếu chưa chọn / công việc
+     * đã bị xoá. UI chỉ cần observe flow này, không phải tự tra cứu.
      */
-    val selectedTask: StateFlow<Task?> = combine(tasks, selectedTaskId) { list, id ->
-        id?.let { selectedId -> list.firstOrNull { it.id.toLong() == selectedId } }
+    val selectedTask: StateFlow<Task?> = combine(
+        PomodoroTimerController.state,
+        selectedTaskId
+    ) { snapshot, pendingTaskId ->
+        resolveDisplayedTaskId(snapshot, pendingTaskId)
+    }.combine(tasks) { displayedId, list ->
+        displayedId?.let { id -> list.firstOrNull { it.id.toLong() == id } }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     init {
@@ -99,6 +119,12 @@ class PomodoroViewModel(
      */
     fun canSelectTask(snapshot: PomodoroSnapshot): Boolean =
         snapshot.state == PomodoroTimerState.IDLE
+
+    /**
+     * Như [canSelectTask] nhưng đọc state hiện tại của timer, dùng cho các sự kiện UI
+     * (ví dụ: người dùng chạm vào thẻ công việc).
+     */
+    fun canSelectTask(): Boolean = canSelectTask(PomodoroTimerController.snapshot)
 
     /**
      * Nút hành động chính: IDLE → "Bắt đầu", PAUSED → "Tiếp tục", COMPLETED → "Phiên tiếp theo".

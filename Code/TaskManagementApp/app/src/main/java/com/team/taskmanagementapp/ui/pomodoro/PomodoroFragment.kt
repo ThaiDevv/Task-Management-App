@@ -113,7 +113,8 @@ class PomodoroFragment : Fragment() {
 
         binding.cardTask.setOnClickListener {
             // Công việc gắn với phiên đang chạy nên chỉ đổi được khi timer đang IDLE.
-            if (viewModel.canSelectTask(viewModel.uiState.value)) {
+            // Quy tắc nằm ở ViewModel — Fragment không tự đọc state của timer.
+            if (viewModel.canSelectTask()) {
                 openTaskSelector()
             }
         }
