@@ -7,7 +7,12 @@ package com.team.taskmanagementapp.util
 object Constants {
     // Database Configuration
     const val DATABASE_NAME = "task_management_db"
-    const val DATABASE_VERSION = 2
+
+    /**
+     * Version 3: thêm bảng `pomodoro_sessions` + 3 cột theo dõi Pomodoro trên `tasks`.
+     * Xem `AppDatabase.MIGRATION_2_3`.
+     */
+    const val DATABASE_VERSION = 3
 
     // Notification Channel
     const val NOTIFICATION_CHANNEL_ID = "task_reminder_channel"
