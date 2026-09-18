@@ -360,22 +360,22 @@ class TaskDetailActivity : AppCompatActivity() {
     )
 
     private val motivationQuotes = listOf(
-        MotivationQuote("“Hành trình vạn dặm bắt đầu bằng một bước chân.”", "— Lão Tử", R.drawable.img_quote_bg_1),
-        MotivationQuote("“Không phải tôi thông minh, tôi chỉ ở lại với vấn đề lâu hơn.”", "— Albert Einstein", R.drawable.img_quote_bg_2),
-        MotivationQuote("“Thành công không phải cuối cùng, thất bại không phải tận cùng. Sức dũng cảm bước tiếp mới là tất cả.”", "— Winston Churchill", R.drawable.img_quote_bg_3),
-        MotivationQuote("“Đừng sợ đi chậm, chỉ sợ đứng yên.”", "— Tục ngữ", R.drawable.img_quote_bg_4),
-        MotivationQuote("“Sự kiên trì là chìa khóa mở mọi cánh cửa của thành công.”", "— Thomas Edison", R.drawable.img_quote_bg_1),
-        MotivationQuote("“Những khó khăn lớn nhất luôn tôi luyện nên những con người mạnh mẽ nhất.”", "— Triết lý cuộc sống", R.drawable.img_quote_bg_2),
-        MotivationQuote("“Bạn chỉ thật sự thất bại khi bạn quyết định từ bỏ.”", "— Napoleon Hill", R.drawable.img_quote_bg_3),
-        MotivationQuote("“Mỗi ngày cố gắng thêm 1%, sau một năm bạn sẽ vượt trội gấp 37 lần.”", "— Atomic Habits", R.drawable.img_quote_bg_4),
-        MotivationQuote("“Giọt nước chảy mãi cũng làm mòn đá cứng.”", "— Thành ngữ", R.drawable.img_quote_bg_1),
-        MotivationQuote("“Mặt trời luôn mọc sau đêm tối. Hãy kiên trì bước tiếp!”", "— Cảm hứng mỗi ngày", R.drawable.img_quote_bg_2),
-        MotivationQuote("“Kỷ luật là cầu nối giữa mục tiêu và thành tựu.”", "— Jim Rohn", R.drawable.img_quote_bg_3),
-        MotivationQuote("“Nỗ lực âm thầm của hôm nay sẽ là ánh hào quang rực rỡ của ngày mai.”", "— Động lực sống", R.drawable.img_quote_bg_4),
-        MotivationQuote("“Người kiên trì là người hoàn thành những gì người khác bắt đầu.”", "— Triết lý thành công", R.drawable.img_quote_bg_1),
-        MotivationQuote("“Ước mơ không tự đến, nó đòi hỏi mồ hôi và sự kiên trì mỗi ngày.”", "— Quản lý công việc", R.drawable.img_quote_bg_2),
-        MotivationQuote("“Lửa thử vàng, gian gian thử sức, khó khăn thử thách lòng kiên trì.”", "— Ca dao Việt Nam", R.drawable.img_quote_bg_3),
-        MotivationQuote("“Chiến thắng bản thân là chiến thắng hiển hách nhất.”", "— Đạo Phật", R.drawable.img_quote_bg_4)
+        MotivationQuote("“A journey of a thousand miles begins with a single step.”", "— Lao Tzu", R.drawable.img_quote_bg_1),
+        MotivationQuote("“It’s not that I’m so smart, it’s just that I stay with problems longer.”", "— Albert Einstein", R.drawable.img_quote_bg_2),
+        MotivationQuote("“Success is not final, failure is not fatal: it is the courage to continue that counts.”", "— Winston Churchill", R.drawable.img_quote_bg_3),
+        MotivationQuote("“Do not fear going forward slowly, fear only to stand still.”", "— Chinese Proverb", R.drawable.img_quote_bg_4),
+        MotivationQuote("“Perseverance is the key to opening every door of success.”", "— Thomas Edison", R.drawable.img_quote_bg_1),
+        MotivationQuote("“The greatest difficulties are where the greatest strengths are forged.”", "— Philosophy", R.drawable.img_quote_bg_2),
+        MotivationQuote("“You only truly fail when you decide to quit.”", "— Napoleon Hill", R.drawable.img_quote_bg_3),
+        MotivationQuote("“Small habits don’t add up, they compound. Get 1% better every day.”", "— Atomic Habits", R.drawable.img_quote_bg_4),
+        MotivationQuote("“Dripping water hollows out stone, not through force but through persistence.”", "— Ovid", R.drawable.img_quote_bg_1),
+        MotivationQuote("“The sun always rises after the darkest night. Keep going!”", "— Daily Inspiration", R.drawable.img_quote_bg_2),
+        MotivationQuote("“Discipline is the bridge between goals and accomplishment.”", "— Jim Rohn", R.drawable.img_quote_bg_3),
+        MotivationQuote("“Quiet efforts today become brilliant triumphs tomorrow.”", "— Motivation", R.drawable.img_quote_bg_4),
+        MotivationQuote("“A finisher is someone who completes what others only start.”", "— Success Insight", R.drawable.img_quote_bg_1),
+        MotivationQuote("“Dreams do not work unless you do with daily dedication.”", "— Productivity Wisdom", R.drawable.img_quote_bg_2),
+        MotivationQuote("“Gold is tested by fire, courage by adversity.”", "— Proverb", R.drawable.img_quote_bg_3),
+        MotivationQuote("“To conquer oneself is the greatest victory.”", "— Wisdom", R.drawable.img_quote_bg_4)
     )
 
     private fun setupMotivationQuoteRotator() {

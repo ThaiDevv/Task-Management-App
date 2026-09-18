@@ -322,7 +322,7 @@ class AddEditTaskActivity : AppCompatActivity() {
                     val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
                     val dateStr = format.format(java.util.Date(calcEndDate))
                     binding.repeatEndSummaryText.visibility = View.VISIBLE
-                    binding.repeatEndSummaryText.text = "Sẽ dừng sau $selectedRepeatCount lần (ngày $dateStr)"
+                    binding.repeatEndSummaryText.text = "Will end after $selectedRepeatCount times ($dateStr)"
                 } else {
                     binding.repeatEndSummaryText.visibility = View.GONE
                 }
