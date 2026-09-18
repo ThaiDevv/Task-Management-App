@@ -19,6 +19,21 @@ object Constants {
     const val NOTIFICATION_CHANNEL_NAME = "Task Reminder Notifications"
     const val NOTIFICATION_CHANNEL_DESC = "Notifications for upcoming and due tasks"
 
+    // Pomodoro Timer (Foreground Service)
+    const val POMODORO_CHANNEL_ID = "pomodoro_timer_channel"
+    const val POMODORO_CHANNEL_NAME = "Đồng hồ Pomodoro"
+    const val POMODORO_CHANNEL_DESC = "Đồng hồ tập trung đang chạy nền"
+
+    /** Id của notification ongoing do PomodoroService sở hữu (khác id task reminder). */
+    const val POMODORO_NOTIFICATION_ID = 2001
+
+    /** Giá trị "không gắn task nào" cho [EXTRA_POMODORO_TASK_ID]. */
+    const val NO_TASK_ID = -1L
+    const val EXTRA_POMODORO_TASK_ID = "extra_pomodoro_task_id"
+
+    /** Mở màn hình Pomodoro khi người dùng chạm notification (màn hình sẽ làm ở task UI sau). */
+    const val EXTRA_OPEN_POMODORO_TIMER = "extra_open_pomodoro_timer"
+
     // Preferences & Security Storage Keys
     const val PREFS_NAME = "task_app_prefs"
     const val ENCRYPTED_PREFS_NAME = "task_app_secure_prefs"

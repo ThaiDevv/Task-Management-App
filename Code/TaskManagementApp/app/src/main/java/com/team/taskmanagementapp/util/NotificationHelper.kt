@@ -94,6 +94,37 @@ object NotificationHelper {
         }
     }
 
+    /**
+     * Channel riêng cho notification ongoing của Pomodoro Timer.
+     *
+     * Dùng IMPORTANCE_LOW và không có sound/vibration vì đây là notification "đang chạy nền"
+     * được cập nhật mỗi giây — nó tuyệt đối không được kêu/rung. Âm thanh & rung khi
+     * hết phiên là trách nhiệm của channel cảnh báo riêng (task Sound & Vibration sau này).
+     *
+     * An toàn khi gọi nhiều lần: channel đã tồn tại sẽ không bị tạo lại (tôn trọng lựa chọn
+     * của người dùng trong Settings).
+     */
+    fun createPomodoroChannel(context: Context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (notificationManager.getNotificationChannel(Constants.POMODORO_CHANNEL_ID) != null) return
+
+        val channel = NotificationChannel(
+            Constants.POMODORO_CHANNEL_ID,
+            Constants.POMODORO_CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_LOW
+        ).apply {
+            description = Constants.POMODORO_CHANNEL_DESC
+            setShowBadge(false)
+            enableVibration(false)
+            setSound(null, null)
+        }
+
+        notificationManager.createNotificationChannel(channel)
+    }
+
     fun showTaskReminder(context: Context, task: Task) {
         if (!areNotificationsEnabled(context)) {
             Log.w(TAG, "Reminder notification not shown because notifications are disabled")

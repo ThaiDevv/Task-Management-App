@@ -769,4 +769,61 @@ class PomodoroTimerEngineTest {
         assertEquals(FOCUS_25, engine.remainingMillisNow())
         assertEquals(FOCUS_25, engine.currentSnapshot.remainingMillis)
     }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // 8. Thông tin chu kỳ expose cho Service/UI (currentCycle, totalCycles)
+    // ══════════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun testCycleInfoIsExposedForServiceAndUi() {
+        val clock = TestClock()
+        val engine = engine(clock)
+
+        // IDLE: chưa có chu kỳ nào
+        assertEquals(4, engine.currentSnapshot.totalCycles)
+        assertEquals(0, engine.currentSnapshot.currentCycle)
+
+        // Bắt đầu phiên FOCUS đầu tiên -> "Chu kỳ 1/4"
+        engine.start()
+        assertEquals(4, engine.currentSnapshot.totalCycles)
+        assertEquals(1, engine.currentSnapshot.currentCycle)
+
+        // Hết FOCUS #1 -> 1 phiên đã xong trong chu kỳ
+        clock.advance(FOCUS_25)
+        engine.tick()
+        assertEquals(1, engine.currentSnapshot.currentCycle)
+
+        // Đang nghỉ ngắn vẫn giữ chu kỳ 1/4
+        engine.start()
+        assertEquals(SessionType.SHORT_BREAK, engine.currentSnapshot.sessionType)
+        assertEquals(1, engine.currentSnapshot.currentCycle)
+
+        // Sang FOCUS #2 -> "Chu kỳ 2/4"
+        clock.advance(SHORT_BREAK_5)
+        engine.tick()
+        engine.start()
+        assertEquals(SessionType.FOCUS, engine.currentSnapshot.sessionType)
+        assertEquals(2, engine.currentSnapshot.currentCycle)
+
+        // Tạm dừng không làm mất thông tin chu kỳ
+        engine.pause()
+        assertEquals(PomodoroTimerState.PAUSED, engine.currentSnapshot.state)
+        assertEquals(2, engine.currentSnapshot.currentCycle)
+
+        // Stop -> về 0
+        engine.stop()
+        assertEquals(0, engine.currentSnapshot.currentCycle)
+    }
+
+    @Test
+    fun testCycleInfoRespectsCustomCycleCount() {
+        val engine = engine(TestClock(), PomodoroConfig(cyclesBeforeLongBreak = 6))
+
+        assertEquals(6, engine.currentSnapshot.totalCycles)
+        assertEquals(0, engine.currentSnapshot.currentCycle)
+
+        engine.start()
+        assertEquals(1, engine.currentSnapshot.currentCycle)
+        assertEquals(6, engine.currentSnapshot.totalCycles)
+    }
 }

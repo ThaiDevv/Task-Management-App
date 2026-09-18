@@ -74,6 +74,29 @@ data class PomodoroSnapshot(
         get() = lastCompletedSession
             ?.let { it.isCompleted && it.sessionType == SessionType.FOCUS } == true
 
+    /** Tổng số phiên tập trung của một chu kỳ (số chấm của Cycle Dots). */
+    val totalCycles: Int
+        get() = config.cyclesBeforeLongBreak.coerceAtLeast(1)
+
+    /**
+     * Chỉ số (1-based) của chu kỳ hiện tại, dùng cho nhãn "Chu kỳ 2/4" và Cycle Dots.
+     *
+     * - Đang chạy/đang tạm dừng một phiên FOCUS: chu kỳ hiện tại là phiên đang chạy
+     *   (`focusSessionsInCurrentSet + 1`).
+     * - Đang nghỉ hoặc phiên vừa kết thúc / IDLE: số phiên FOCUS đã hoàn thành trong chu kỳ.
+     */
+    val currentCycle: Int
+        get() {
+            val completedInSet = focusSessionsInCurrentSet.coerceIn(0, totalCycles)
+            val isFocusRunning = sessionType == SessionType.FOCUS &&
+                (state == PomodoroTimerState.RUNNING || state == PomodoroTimerState.PAUSED)
+            return if (isFocusRunning) {
+                (completedInSet + 1).coerceIn(1, totalCycles)
+            } else {
+                completedInSet
+            }
+        }
+
     /**
      * Thời gian còn lại tại mốc [nowElapsedRealtime].
      *

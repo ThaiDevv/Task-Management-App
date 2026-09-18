@@ -336,6 +336,25 @@
     <string name="widget_add_task">Thêm việc mới</string>
     <string name="widget_mark_done">Hoàn thành việc này</string>
     <string name="widget_description">Xem và hoàn thành các việc hôm nay ngay trên màn hình chính</string>
+
+    <!-- Pomodoro Timer (Foreground Service) -->
+    <string name="pomodoro_channel_name">Đồng hồ Pomodoro</string>
+    <string name="pomodoro_channel_desc">Đồng hồ tập trung đang chạy nền, kể cả khi tắt màn hình</string>
+    <string name="pomodoro_session_focus">Tập trung</string>
+    <string name="pomodoro_session_short_break">Nghỉ ngắn</string>
+    <string name="pomodoro_session_long_break">Nghỉ dài</string>
+    <string name="pomodoro_status_running">Đang chạy</string>
+    <string name="pomodoro_status_paused">Tạm dừng</string>
+    <string name="pomodoro_status_completed">Hoàn thành</string>
+    <string name="pomodoro_notification_title">%1$s • Chu kỳ %2$d/%3$d</string>
+    <string name="pomodoro_notification_time_status">%1$s • %2$s</string>
+    <string name="pomodoro_notification_next_session">Xong phiên này. Tiếp theo: %1$s</string>
+    <string name="pomodoro_notification_idle">Đã dừng</string>
+    <string name="pomodoro_action_pause">Tạm dừng</string>
+    <string name="pomodoro_action_resume">Tiếp tục</string>
+    <string name="pomodoro_action_start_next">Phiên tiếp theo</string>
+    <string name="pomodoro_action_skip">Bỏ qua</string>
+    <string name="pomodoro_action_stop">Dừng</string>
 </resources>
 
 
