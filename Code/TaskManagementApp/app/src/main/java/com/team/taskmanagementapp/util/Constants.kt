@@ -62,6 +62,11 @@ object Constants {
 
     /** Giá trị "không gắn task nào" cho [EXTRA_POMODORO_TASK_ID]. */
     const val NO_TASK_ID = -1L
+    /**
+     * TaskId dùng cho luồng Pomodoro — dùng chung cho 2 intent:
+     * - `PomodoroService.start(...)` (task gắn với phiên tập trung)
+     * - `MainActivity` khi mở Pomodoro từ Task Detail (Task 13)
+     */
     const val EXTRA_POMODORO_TASK_ID = "extra_pomodoro_task_id"
 
     /** Mở màn hình Pomodoro khi người dùng chạm notification (màn hình sẽ làm ở task UI sau). */

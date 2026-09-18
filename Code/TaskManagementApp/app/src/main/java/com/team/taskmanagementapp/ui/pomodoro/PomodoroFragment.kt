@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.snackbar.Snackbar
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.db.AppDatabase
 import com.team.taskmanagementapp.data.local.entity.Task
@@ -25,6 +26,7 @@ import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.databinding.FragmentPomodoroBinding
 import com.team.taskmanagementapp.pomodoro.PomodoroSnapshot
 import com.team.taskmanagementapp.pomodoro.PomodoroTimerState
+import com.team.taskmanagementapp.ui.viewmodel.PomodoroNotice
 import com.team.taskmanagementapp.ui.viewmodel.PomodoroViewModel
 import com.team.taskmanagementapp.ui.viewmodel.PomodoroViewModelFactory
 import com.team.taskmanagementapp.util.Constants
@@ -68,6 +70,13 @@ class PomodoroFragment : Fragment() {
     private val cycleDots = mutableListOf<View>()
     private var builtCycleCount = -1
 
+    /**
+     * TaskId truyền từ Task Detail chỉ được áp dụng MỘT lần cho mỗi Fragment.
+     * Fragment giữ nguyên instance qua configuration change, nên cờ này tránh việc rotate
+     * màn hình lại kích hoạt lại argument (gây thông báo thừa khi đang có phiên chạy).
+     */
+    private var taskArgumentApplied = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -82,6 +91,7 @@ class PomodoroFragment : Fragment() {
 
         setupClickListeners()
         setupTaskSelectorResult()
+        applyTaskIdArgumentIfPresent()
         observeState()
     }
 
@@ -130,6 +140,22 @@ class PomodoroFragment : Fragment() {
         }
     }
 
+    /**
+     * Nhận công việc được chọn từ Task Detail (Task 13).
+     *
+     * Fragment chỉ chuyển tiếp taskId — việc kiểm tra "đang có phiên chạy hay không",
+     * "công việc có tồn tại hay không" đều do ViewModel quyết định.
+     */
+    private fun applyTaskIdArgumentIfPresent() {
+        if (taskArgumentApplied) return
+        taskArgumentApplied = true
+
+        val taskId = arguments?.getLong(ARG_TASK_ID, Constants.NO_TASK_ID) ?: Constants.NO_TASK_ID
+        if (taskId >= 0L) {
+            viewModel.onTaskIdProvidedFromDetail(taskId)
+        }
+    }
+
     private fun openTaskSelector() {
         PomodoroTaskSelectorBottomSheet
             .newInstance(viewModel.currentSelectedTaskId)
@@ -157,10 +183,11 @@ class PomodoroFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 // Khi quay lại từ background, StateFlow phát ngay giá trị mới nhất nên UI
                 // hiển thị đúng trạng thái hiện tại mà không cần đồng hồ riêng.
-                combine(viewModel.uiState, viewModel.selectedTask) { snapshot, task ->
-                    snapshot to task
-                }.collect { (snapshot, task) ->
+                combine(viewModel.uiState, viewModel.selectedTask, viewModel.notice) { snapshot, task, notice ->
+                    Triple(snapshot, task, notice)
+                }.collect { (snapshot, task, notice) ->
                     render(snapshot, task)
+                    notice?.let { showNotice(it) }
                 }
             }
         }
@@ -197,6 +224,19 @@ class PomodoroFragment : Fragment() {
 
         // 5. Trạng thái & enable/disable các nút
         renderControls(snapshot)
+    }
+
+    /**
+     * Hiển thị thông báo một lần lấy từ ViewModel rồi xác nhận đã hiển thị
+     * để Flow không phát lại (tránh Snackbar lặp khi rotate).
+     */
+    private fun showNotice(notice: PomodoroNotice) {
+        val messageRes = when (notice) {
+            PomodoroNotice.TASK_NOT_FOUND -> R.string.pomodoro_task_not_found
+            PomodoroNotice.SESSION_ALREADY_ACTIVE -> R.string.pomodoro_session_already_active
+        }
+        Snackbar.make(binding.root, getString(messageRes), Snackbar.LENGTH_LONG).show()
+        viewModel.onNoticeShown()
     }
 
     /**
@@ -339,9 +379,15 @@ class PomodoroFragment : Fragment() {
         resources.displayMetrics
     ).toInt()
 
-    private companion object {
-        const val DOT_SIZE_DP = 10
-        const val DOT_MARGIN_DP = 8
-        const val DISABLED_ALPHA = 0.45f
+    companion object {
+        /**
+         * Tên nav argument nhận taskId từ Task Detail (Task 13).
+         * Phải khớp với `<argument android:name="arg_pomodoro_task_id">` trong nav_graph.
+         */
+        const val ARG_TASK_ID = "arg_pomodoro_task_id"
+
+        private const val DOT_SIZE_DP = 10
+        private const val DOT_MARGIN_DP = 8
+        private const val DISABLED_ALPHA = 0.45f
     }
 }

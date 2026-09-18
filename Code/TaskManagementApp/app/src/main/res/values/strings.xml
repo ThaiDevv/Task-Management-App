@@ -398,6 +398,11 @@
     <string name="pomodoro_settings_auto_start_focus">Tự động bắt đầu tập trung</string>
     <string name="pomodoro_settings_auto_start_focus_desc">Phiên tập trung chạy ngay khi phiên nghỉ kết thúc</string>
     <string name="pomodoro_settings_applied_note">Thay đổi được áp dụng cho phiên bắt đầu sau. Phiên đang chạy giữ nguyên thời lượng.</string>
+
+    <!-- Pomodoro từ Task Detail (Task 13) -->
+    <string name="pomodoro_start_from_detail">Bắt đầu Pomodoro</string>
+    <string name="pomodoro_task_not_found">Không tìm thấy công việc này. Hãy chọn công việc khác.</string>
+    <string name="pomodoro_session_already_active">Đang có phiên Pomodoro cho công việc khác. Hãy dừng phiên hiện tại rồi thử lại.</string>
 </resources>
 
 

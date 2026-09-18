@@ -13,6 +13,7 @@ import com.team.taskmanagementapp.pomodoro.PomodoroTimerState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -31,6 +32,47 @@ internal fun resolveDisplayedTaskId(
     snapshot: PomodoroSnapshot,
     pendingTaskId: Long?
 ): Long? = snapshot.taskId ?: pendingTaskId
+
+/** Kết quả quyết định khi có taskId được truyền vào từ Task Detail (Task 13). */
+internal enum class TaskIdArgumentDecision {
+    /** TaskId trùng với công việc đang hiển thị — không cần làm gì (ví dụ rotate màn hình). */
+    ALREADY_SELECTED,
+
+    /** Đang có phiên Pomodoro (RUNNING/PAUSED/COMPLETED) — giữ nguyên, KHÔNG đổi công việc. */
+    SESSION_ACTIVE,
+
+    /** Timer đang IDLE — cần tra cứu công việc trong DB rồi chọn. */
+    LOOKUP_TASK
+}
+
+/**
+ * Quyết định xử lý taskId truyền từ Task Detail.
+ *
+ * Tách thành hàm thuần để kiểm tra được trên JVM — đây là quy tắc bảo vệ phiên đang chạy:
+ * khi đã có phiên cho một công việc khác, taskId mới **không** được ghi đè.
+ */
+internal fun decideTaskIdArgument(
+    snapshot: PomodoroSnapshot,
+    pendingTaskId: Long?,
+    requestedTaskId: Long
+): TaskIdArgumentDecision = when {
+    resolveDisplayedTaskId(snapshot, pendingTaskId) == requestedTaskId ->
+        TaskIdArgumentDecision.ALREADY_SELECTED
+
+    snapshot.state != PomodoroTimerState.IDLE ->
+        TaskIdArgumentDecision.SESSION_ACTIVE
+
+    else -> TaskIdArgumentDecision.LOOKUP_TASK
+}
+
+/** Thông báo một lần cho UI khi thao tác từ Task Detail không thể áp dụng. */
+enum class PomodoroNotice {
+    /** taskId truyền vào không còn tồn tại trong DB (đã bị xoá). */
+    TASK_NOT_FOUND,
+
+    /** Đang có phiên Pomodoro của công việc khác nên không đổi được. */
+    SESSION_ALREADY_ACTIVE
+}
 
 /**
  * ViewModel cho Pomodoro Timer Screen (Task 9 + Task 10).
@@ -95,6 +137,47 @@ class PomodoroViewModel(
 
     val currentSelectedTaskId: Long?
         get() = selectedTaskId.value
+
+    private val _notice = MutableStateFlow<PomodoroNotice?>(null)
+
+    /**
+     * Thông báo cần hiển thị cho người dùng (đã ở dạng state nên không mất khi rotate),
+     * UI hiển thị xong phải gọi [onNoticeShown] để không hiện lại.
+     */
+    val notice: StateFlow<PomodoroNotice?> = _notice.asStateFlow()
+
+    fun onNoticeShown() {
+        _notice.value = null
+    }
+
+    /**
+     * Áp dụng taskId được truyền từ Task Detail (Task 13).
+     *
+     * - Nếu trùng công việc đang hiển thị: không làm gì (tránh báo lỗi khi rotate màn hình).
+     * - Nếu đang có phiên Pomodoro: giữ nguyên phiên, chỉ thông báo — **không** đổi taskId.
+     * - Nếu IDLE nhưng công việc không còn tồn tại: thông báo và giữ nguyên luồng chọn tay.
+     */
+    fun onTaskIdProvidedFromDetail(taskId: Long) {
+        viewModelScope.launch {
+            val snapshot = PomodoroTimerController.snapshot
+
+            when (decideTaskIdArgument(snapshot, selectedTaskId.value, taskId)) {
+                TaskIdArgumentDecision.ALREADY_SELECTED -> Unit
+
+                TaskIdArgumentDecision.SESSION_ACTIVE ->
+                    _notice.value = PomodoroNotice.SESSION_ALREADY_ACTIVE
+
+                TaskIdArgumentDecision.LOOKUP_TASK -> {
+                    val task = taskRepository.getTaskById(taskId)
+                    if (task == null) {
+                        _notice.value = PomodoroNotice.TASK_NOT_FOUND
+                    } else {
+                        selectedTaskId.value = taskId
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Nạp lại cấu hình Pomodoro mới nhất từ Settings vào engine.

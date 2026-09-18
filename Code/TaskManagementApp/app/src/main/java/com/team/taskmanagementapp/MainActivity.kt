@@ -11,12 +11,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.team.taskmanagementapp.databinding.ActivityMainBinding
 import com.team.taskmanagementapp.ui.activity.AddEditTaskActivity
 import com.team.taskmanagementapp.ui.base.BaseActivity
+import com.team.taskmanagementapp.ui.pomodoro.PomodoroFragment
 import com.team.taskmanagementapp.util.Constants
 
 /**
@@ -80,14 +82,24 @@ class MainActivity : BaseActivity() {
     }
 
     /**
-     * Mở Pomodoro Timer Screen khi người dùng chạm notification đang chạy
-     * (`EXTRA_OPEN_POMODORO_TIMER` do `PomodoroService` gắn vào content intent).
+     * Mở Pomodoro Timer Screen khi:
+     * - người dùng chạm notification đang chạy (`EXTRA_OPEN_POMODORO_TIMER` do `PomodoroService` gắn), hoặc
+     * - người dùng bấm "Bắt đầu Pomodoro" ở Task Detail (Task 13, kèm `EXTRA_POMODORO_TASK_ID`).
+     *
+     * TaskId được truyền vào destination qua nav argument `PomodoroFragment.ARG_TASK_ID`;
+     * ViewModel của màn hình Pomodoro sẽ quyết định có áp dụng hay không.
      */
     private fun openPomodoroScreenIfRequested(intent: Intent?) {
         if (intent?.getBooleanExtra(Constants.EXTRA_OPEN_POMODORO_TIMER, false) != true) return
+
         // Tránh đẩy trùng destination khi người dùng chạm notification lúc màn hình đang mở.
         if (navController.currentDestination?.id == R.id.pomodoroFragment) return
-        navController.navigate(R.id.pomodoroFragment)
+
+        val taskId = intent.getLongExtra(Constants.EXTRA_POMODORO_TASK_ID, Constants.NO_TASK_ID)
+        navController.navigate(
+            R.id.pomodoroFragment,
+            bundleOf(PomodoroFragment.ARG_TASK_ID to taskId)
+        )
     }
 
     override fun onNewIntent(intent: Intent) {
