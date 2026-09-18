@@ -38,4 +38,22 @@ data class Task (
     val createdAt: Long = System.currentTimeMillis(),
     @ColumnInfo(name = "updatedAt")
     val updatedAt: Long = System.currentTimeMillis(),
+    // Null for unfinished tasks and legacy backups with no known completion date.
+    @ColumnInfo(name = "completedAt")
+    val completedAt: Long? = null,
 )
+
+/** Keep the completion event independent of later content edits. */
+fun Task.withCompletionTracking(previous: Task?, now: Long): Task {
+    val done = isCompleted || status == TaskStatus.COMPLETED
+    val wasDone = previous?.let { it.isCompleted || it.status == TaskStatus.COMPLETED } == true
+    return copy(
+        isCompleted = done,
+        status = if (done) TaskStatus.COMPLETED else status,
+        completedAt = when {
+            !done -> null
+            wasDone -> previous?.completedAt // Unknown legacy dates remain unknown.
+            else -> now
+        }
+    )
+}

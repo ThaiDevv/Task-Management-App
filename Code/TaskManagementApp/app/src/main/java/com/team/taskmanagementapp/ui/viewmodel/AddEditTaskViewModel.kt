@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.team.taskmanagementapp.data.local.entity.Task
+import com.team.taskmanagementapp.data.local.entity.withCompletionTracking
 import com.team.taskmanagementapp.data.model.enums.Priority
 import com.team.taskmanagementapp.data.model.enums.RecurrenceType
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
@@ -29,7 +30,8 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
         context: android.content.Context
     ): Task {
         val now = System.currentTimeMillis()
-        val updatedTask = editedTask.copy(updatedAt = maxOf(now, editedTask.updatedAt + 1L))
+        val updatedTask = editedTask.withCompletionTracking(existingTask, now)
+            .copy(updatedAt = maxOf(now, editedTask.updatedAt + 1L))
         repository.update(updatedTask)
 
         val wasRecurring = existingTask.isRecurring || existingTask.recurrenceType != RecurrenceType.NONE
@@ -93,7 +95,8 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
 
     suspend fun updateTask(task: Task): Task {
         val now = System.currentTimeMillis()
-        val updatedTask = task.copy(updatedAt = maxOf(now, task.updatedAt + 1L))
+        val updatedTask = task.withCompletionTracking(repository.getTaskById(task.id.toLong()), now)
+            .copy(updatedAt = maxOf(now, task.updatedAt + 1L))
         repository.update(updatedTask)
         return updatedTask
     }
@@ -105,7 +108,8 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
         editedTask: Task
     ): Task {
         val now = System.currentTimeMillis()
-        val updatedTask = editedTask.copy(updatedAt = maxOf(now, editedTask.updatedAt + 1L))
+        val updatedTask = editedTask.withCompletionTracking(repository.getTaskById(editedTask.id.toLong()), now)
+            .copy(updatedAt = maxOf(now, editedTask.updatedAt + 1L))
         repository.updateFutureRecurringTasks(
             originalTitle = originalTitle,
             originalRecurrence = originalRecurrence,
@@ -176,7 +180,7 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
                             reminderMinutes = reminderMinutes,
                             status = resolvedStatus,
                             updatedAt = System.currentTimeMillis()
-                        )
+                        ).withCompletionTracking(existingTask, System.currentTimeMillis())
                         repository.update(updatedTask)
                         updatedTask
                     } else {
@@ -200,8 +204,9 @@ class AddEditTaskViewModel(private val repository: TaskRepository) : ViewModel()
                         createdAt = now,
                         updatedAt = now
                     )
-                    val insertedId = repository.insert(task)
-                    task.copy(id = insertedId.toInt())
+                    val trackedTask = task.withCompletionTracking(null, now)
+                    val insertedId = repository.insert(trackedTask)
+                    trackedTask.copy(id = insertedId.toInt())
                 }
                 _uiState.value = UiState.Success(savedTask)
             } catch (e: Exception) {

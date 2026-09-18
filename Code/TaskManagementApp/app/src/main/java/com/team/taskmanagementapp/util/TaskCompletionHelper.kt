@@ -44,6 +44,7 @@ object TaskCompletionHelper {
 
         val updatedTask = task.copy(
             isCompleted = targetCompleted,
+            completedAt = if (targetCompleted) now else null,
             status = if (targetCompleted) TaskStatus.COMPLETED else TaskStatus.TODO,
             updatedAt = now
         )
@@ -99,6 +100,7 @@ object TaskCompletionHelper {
                 val nextInstance = originalTask.copy(
                     id = 0,
                     isCompleted = false,
+                    completedAt = null,
                     status = TaskStatus.TODO,
                     isRecurring = true,
                     recurrenceType = originalTask.recurrenceType,
