@@ -36,12 +36,24 @@ import kotlinx.coroutines.launch
  *    xuống background hoặc màn hình tắt.
  * 2. `tick()` engine mỗi giây, canh đúng mốc giây của [SystemClock.elapsedRealtime].
  * 3. Vẽ notification ongoing (session type + countdown realtime + trạng thái) kèm
- *    action Pause / Resume / Skip / Stop.
+ *    action Pause / Resume / Skip / Stop. Notification dùng id âm
+ *    ([com.team.taskmanagementapp.util.Constants.POMODORO_NOTIFICATION_ID]) để không bao
+ *    giờ đụng id notification của task reminder (task.id luôn dương).
  *
  * ## Không drift
  * Nguồn thời gian duy nhất là `targetEndElapsedRealtime` do engine chốt khi bắt đầu phiên.
  * `tick()` chỉ **đọc lại** mốc đó; dù tick bị trễ (CPU sleep, Doze, app bị đẩy ra nền)
  * thì thời gian hiển thị vẫn đúng. Không có biến `seconds--` nào ở đây.
+ *
+ * ## Hạn chế đã biết (chưa xử lý — để dành task sau)
+ * FGS **không** tự giữ wakelock, và `delay()` trên main looper dựa trên `uptimeMillis`
+ * (không tính thời gian CPU suspend). Khi màn hình tắt lâu và thiết bị vào Doze:
+ * - Giá trị đếm ngược vẫn ĐÚNG (vì tính từ `elapsedRealtime`), nhưng notification chỉ
+ *   được làm mới ở lần wake kế tiếp.
+ * - Việc phát hiện "hết phiên" có thể **trễ**, nên `FOCUS → SHORT_BREAK` và `endTimeMillis`
+ *   ghi vào DB (task integration sau) có thể lệch.
+ * Cách xử lý đúng: đặt `AlarmManager.setExactAndAllowWhileIdle()` tại mốc kết thúc phiên
+ * để đánh thức CPU đúng lúc (sẽ làm cùng task Sound/Vibration).
  *
  * ## Chống recreate
  * Timer không phụ thuộc Activity/Fragment. UI observe [PomodoroTimerController.state];

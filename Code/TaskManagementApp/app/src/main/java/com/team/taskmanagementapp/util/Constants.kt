@@ -24,8 +24,19 @@ object Constants {
     const val POMODORO_CHANNEL_NAME = "Đồng hồ Pomodoro"
     const val POMODORO_CHANNEL_DESC = "Đồng hồ tập trung đang chạy nền"
 
-    /** Id của notification ongoing do PomodoroService sở hữu (khác id task reminder). */
-    const val POMODORO_NOTIFICATION_ID = 2001
+    /**
+     * Id của notification ongoing do PomodoroService sở hữu.
+     *
+     * ⚠️ Dùng dải SỐ ÂM để không bao giờ trùng với notification nhắc việc:
+     * `NotificationHelper.showTaskReminder()` dùng chính `task.id` (Room auto-increment,
+     * luôn dương) làm notification id. Nếu trùng id thì hai notification sẽ đè lên nhau,
+     * và `stopForeground(STOP_FOREGROUND_REMOVE)` của service sẽ xoá luôn reminder của task.
+     *
+     * Quy ước dải id notification của app:
+     * - `task.id` (> 0)             → notification nhắc việc / widget action
+     * - `-1000` … `-1999`           → notification ongoing của tính năng hệ thống (Pomodoro…)
+     */
+    const val POMODORO_NOTIFICATION_ID = -1001
 
     /** Giá trị "không gắn task nào" cho [EXTRA_POMODORO_TASK_ID]. */
     const val NO_TASK_ID = -1L

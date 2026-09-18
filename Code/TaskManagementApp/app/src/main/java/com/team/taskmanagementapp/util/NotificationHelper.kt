@@ -209,6 +209,8 @@ object NotificationHelper {
         }
 
         runCatching {
+            // Id = task.id (luôn dương). Các notification ongoing của tính năng hệ thống
+            // (ví dụ Pomodoro) phải dùng dải số âm — xem Constants.POMODORO_NOTIFICATION_ID.
             NotificationManagerCompat.from(context).notify(task.id, notification)
         }.onFailure {
             Log.w(TAG, "Unable to post reminder notification", it)
