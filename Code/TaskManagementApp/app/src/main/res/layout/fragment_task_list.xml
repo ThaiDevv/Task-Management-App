@@ -523,7 +523,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/poppins_bold"
-                        android:text="Productivity Insight"
+                        android:text="@string/home_productivity_tip"
                         android:textColor="#FFFFFF"
                         android:textSize="18sp" />
 
@@ -551,7 +551,7 @@
                     android:alpha="0.9"
                     android:fontFamily="@font/poppins_medium"
                     android:lineSpacingMultiplier="1.4"
-                    android:text="You are most productive between 9 AM and 11 AM. Try scheduling deep work during this window."
+                    android:text="@string/home_productivity_tip_body"
                     android:textColor="#FFFFFF"
                     android:textSize="14sp" />
             </LinearLayout>

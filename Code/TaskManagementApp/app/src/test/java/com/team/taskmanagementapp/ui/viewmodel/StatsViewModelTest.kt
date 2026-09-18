@@ -33,7 +33,8 @@ class StatsViewModelTest {
         recurrenceInterval = 0,
         reminderMinutes = 0,
         createdAt = System.currentTimeMillis(),
-        updatedAt = updatedAt
+        updatedAt = updatedAt,
+        completedAt = if (isCompleted) updatedAt else null
     )
 
     @Test
@@ -45,7 +46,7 @@ class StatsViewModelTest {
         assertEquals(0, state.completionRate)
         assertEquals("No tasks", state.completionRateLabel)
         assertEquals(0, state.completedCount)
-        assertEquals("0h", state.deepWorkHours)
+        assertEquals(0, state.pendingCount)
         assertEquals(0, state.priorityStats.totalCount)
     }
 
@@ -86,7 +87,7 @@ class StatsViewModelTest {
     }
 
     @Test
-    fun `calculateStats estimates 18h deep work for 42 completed tasks matching design`() {
+    fun `calculateStats reports actual unfinished count instead of estimated focus hours`() {
         val viewModel = StatsViewModel(FakeTaskRepository(), kotlinx.coroutines.Dispatchers.Unconfined)
 
         // 42 completed tasks
@@ -95,8 +96,8 @@ class StatsViewModelTest {
         val state = viewModel.calculateStats(tasks, StatsTimeFilter.ALL_TIME)
 
         assertEquals(42, state.completedCount)
-        assertEquals("18h", state.deepWorkHours)
-        assertEquals("Focused time", state.deepWorkSubtitle)
+        assertEquals(0, state.pendingCount)
+        assertEquals(1, viewModel.calculateStats(tasks + createTask(43, "Pending", false), StatsTimeFilter.ALL_TIME).pendingCount)
     }
 
     @Test
@@ -152,5 +153,41 @@ class StatsViewModelTest {
 
         val stateAllTime = viewModel.calculateStats(emptyList(), StatsTimeFilter.ALL_TIME)
         assertEquals("All time", stateAllTime.completedSubtitle)
+    }
+
+    @Test
+    fun `editing completed task does not move its completion into this week`() {
+        val viewModel = StatsViewModel(FakeTaskRepository(), kotlinx.coroutines.Dispatchers.Unconfined)
+        val oldDate = java.util.Calendar.getInstance().apply { add(java.util.Calendar.DAY_OF_YEAR, -30) }.timeInMillis
+        val task = createTask(1, "Edited", true).copy(completedAt = oldDate)
+        val state = viewModel.calculateStats(listOf(task), StatsTimeFilter.THIS_WEEK)
+        assertEquals(0, state.completedCount)
+        assertEquals(0, state.weeklyProductivity.days.sumOf { it.completedCount })
+    }
+
+    @Test
+    fun `unknown legacy completion date is counted all time but not invented for charts`() {
+        val viewModel = StatsViewModel(FakeTaskRepository(), kotlinx.coroutines.Dispatchers.Unconfined)
+        val task = createTask(1, "Legacy", true).copy(completedAt = null)
+        val state = viewModel.calculateStats(listOf(task), StatsTimeFilter.ALL_TIME)
+        assertEquals(1, state.completedCount)
+        assertTrue(state.hasUnknownCompletionDates)
+        assertEquals(0, state.weeklyProductivity.days.sumOf { it.completedCount })
+    }
+
+    @Test
+    fun `urgent priority is included in the complete breakdown`() {
+        val viewModel = StatsViewModel(FakeTaskRepository(), kotlinx.coroutines.Dispatchers.Unconfined)
+        val state = viewModel.calculateStats(listOf(createTask(1, "Urgent", false, Priority.URGENT)), StatsTimeFilter.ALL_TIME)
+        assertEquals(1, state.priorityStats.urgentCount)
+        assertEquals(1f, state.priorityStats.urgentPercent, 0.001f)
+    }
+
+    @Test
+    fun `all time weekday chart includes completions outside the current week`() {
+        val viewModel = StatsViewModel(FakeTaskRepository(), kotlinx.coroutines.Dispatchers.Unconfined)
+        val oldDate = java.util.Calendar.getInstance().apply { add(java.util.Calendar.DAY_OF_YEAR, -30) }.timeInMillis
+        val state = viewModel.calculateStats(listOf(createTask(1, "Old", true, updatedAt = oldDate)), StatsTimeFilter.ALL_TIME)
+        assertEquals(1, state.weeklyProductivity.days.sumOf { it.completedCount })
     }
 }
