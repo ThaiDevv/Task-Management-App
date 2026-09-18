@@ -162,7 +162,7 @@ class UpcomingTaskAdapter(
                     Pair(cal.get(Calendar.YEAR), cal.get(Calendar.DAY_OF_YEAR))
                 }
                 .entries
-        }.take(3)
+        }
 
         for ((_, dayTasks) in grouped) {
             val sortedDayTasks = dayTasks.sortedBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
