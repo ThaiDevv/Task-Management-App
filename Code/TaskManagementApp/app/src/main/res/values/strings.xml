@@ -196,6 +196,12 @@
     <string name="filter_title">Filter &amp; Sort</string>
     <string name="filter_reset">Reset</string>
     <string name="filter_apply">Apply Filters</string>
+    <string name="filter_subtitle">Find exactly the tasks you need</string>
+    <string name="filter_clear_all">Clear all</string>
+    <string name="filter_section_completion">COMPLETION</string>
+    <string name="filter_not_done">Not done</string>
+    <string name="filter_done">Done</string>
+    <string name="filter_select_multiple">Select multiple</string>
     <string name="filter_all">All</string>
     <string name="filter_section_status">STATUS</string>
     <string name="filter_status_todo">Todo</string>
@@ -212,7 +218,27 @@
     <string name="filter_due_date_this_week">This Week</string>
     <string name="filter_due_date_this_month">This Month</string>
     <string name="filter_due_date_overdue">Overdue</string>
+    <string name="filter_due_date_next_7_days">Next 7 days</string>
+    <string name="filter_due_date_no_date">No due date</string>
+    <string name="filter_due_date_custom">Custom range</string>
     <string name="filter_active_indicator">🔵 Filters active</string>
+    <string name="filter_sort_hint">Sort tasks</string>
+    <string name="filter_sort_due_soonest">Due date: earliest first</string>
+    <string name="filter_sort_due_latest">Due date: latest first</string>
+    <string name="filter_sort_priority">Priority: highest first</string>
+    <string name="filter_sort_created">Recently created</string>
+    <string name="filter_sort_updated">Recently updated</string>
+    <string name="filter_sort_title">Title: A–Z</string>
+    <string name="filter_no_active">No filters selected</string>
+    <string name="filter_show_tasks">Show tasks</string>
+    <plurals name="filter_active_count">
+        <item quantity="one">%d filter active</item>
+        <item quantity="other">%d filters active</item>
+    </plurals>
+    <plurals name="filter_show_task_count">
+        <item quantity="one">Show %d task</item>
+        <item quantity="other">Show %d tasks</item>
+    </plurals>
 
     <!-- Sort By section labels -->
     <string name="filter_section_sort_by">SORT BY</string>
