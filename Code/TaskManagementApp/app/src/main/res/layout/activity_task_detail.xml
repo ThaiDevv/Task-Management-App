@@ -589,7 +589,7 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_bold"
                                 android:letterSpacing="0.08"
-                                android:text="MOTIVATION · KIÊN TRÌ"
+                                android:text="MOTIVATION · PERSEVERANCE"
                                 android:textColor="@color/white"
                                 android:textSize="11sp" />
                         </LinearLayout>
