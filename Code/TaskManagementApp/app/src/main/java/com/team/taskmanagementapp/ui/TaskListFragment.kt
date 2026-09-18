@@ -1,5 +1,6 @@
 package com.team.taskmanagementapp.ui
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -7,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -27,6 +29,7 @@ import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.DueDateRange
 import com.team.taskmanagementapp.data.model.FilterCriteria
 import com.team.taskmanagementapp.data.model.SortOption
+import com.team.taskmanagementapp.data.model.CompletionFilter
 import com.team.taskmanagementapp.data.model.enums.Priority
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
@@ -39,6 +42,8 @@ import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.DateTimeUtils
 import com.team.taskmanagementapp.viewmodel.TaskViewModel
 import com.team.taskmanagementapp.viewmodel.TaskViewModelFactory
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -78,10 +83,17 @@ class TaskListFragment : Fragment() {
         ) { _, bundle ->
             when (bundle.getString(FilterBottomSheet.RESULT_ACTION)) {
                 FilterBottomSheet.ACTION_APPLY -> {
-                    val status = bundle.getString(FilterBottomSheet.RESULT_STATUS)
-                        ?.let { runCatching { TaskStatus.valueOf(it) }.getOrNull() }
-                    val priority = bundle.getString(FilterBottomSheet.RESULT_PRIORITY)
-                        ?.let { runCatching { Priority.valueOf(it) }.getOrNull() }
+                    val completion = bundle.getString(FilterBottomSheet.RESULT_COMPLETION)
+                        ?.let { runCatching { CompletionFilter.valueOf(it) }.getOrNull() }
+                        ?: CompletionFilter.ALL
+                    val statuses = bundle.getStringArrayList(FilterBottomSheet.RESULT_STATUSES)
+                        .orEmpty()
+                        .mapNotNull { runCatching { TaskStatus.valueOf(it) }.getOrNull() }
+                        .toSet()
+                    val priorities = bundle.getStringArrayList(FilterBottomSheet.RESULT_PRIORITIES)
+                        .orEmpty()
+                        .mapNotNull { runCatching { Priority.valueOf(it) }.getOrNull() }
+                        .toSet()
                     val dueDateRange = bundle.getString(FilterBottomSheet.RESULT_DATE_RANGE)
                         ?.let { runCatching { DueDateRange.valueOf(it) }.getOrNull() }
                         ?: DueDateRange.ALL
@@ -90,9 +102,14 @@ class TaskListFragment : Fragment() {
                         ?: SortOption.DUE_DATE_ASC
                     viewModel.applyFilter(
                         FilterCriteria(
-                            status = status,
-                            priority = priority,
+                            completion = completion,
+                            statuses = statuses,
+                            priorities = priorities,
                             dueDateRange = dueDateRange,
+                            customStartDate = bundle.getLong(FilterBottomSheet.RESULT_CUSTOM_START, 0L)
+                                .takeIf { it > 0L },
+                            customEndDate = bundle.getLong(FilterBottomSheet.RESULT_CUSTOM_END, 0L)
+                                .takeIf { it > 0L },
                             sortOption = sortOption
                         )
                     )
@@ -281,10 +298,16 @@ class TaskListFragment : Fragment() {
     private fun displayTaskList(allTasks: List<Task>) {
         val nowEndToday = getEndOfTodayMillis()
         val todayList = allTasks.filter { it.dueDate <= nowEndToday }
-            .sortedBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
-        // Sort upcoming by combined due timestamp ascending so earliest appears at top
+            .sortedWith(
+                compareBy<Task> { it.isCompleted }
+                    .thenBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
+            )
+        // Pending tasks are shown first; completed tasks stay at the bottom.
         val upcomingList = allTasks.filter { it.dueDate > nowEndToday }
-            .sortedBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
+            .sortedWith(
+                compareBy<Task> { it.isCompleted }
+                    .thenBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
+            )
 
         todayTaskAdapter.submitList(todayList) {
             todayScrollState?.let {
@@ -327,8 +350,9 @@ class TaskListFragment : Fragment() {
 
     /** Shows/hides the active filter badge and tints the filter icon accordingly. */
     private fun updateFilterIndicator(criteria: FilterCriteria) {
-        val isActive = criteria.status != null
-                || criteria.priority != null
+        val isActive = criteria.completion != CompletionFilter.ALL
+                || criteria.statuses.isNotEmpty()
+                || criteria.priorities.isNotEmpty()
                 || criteria.dueDateRange != DueDateRange.ALL
                 || criteria.sortOption != SortOption.DUE_DATE_ASC
 
@@ -397,10 +421,16 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
     private var _binding: FragmentFilterBottomSheetBinding? = null
     private val binding get() = _binding!!
 
-    private var selectedStatus: TaskStatus? = null
-    private var selectedPriority: Priority? = null
+    private var selectedCompletion: CompletionFilter = CompletionFilter.ALL
+    private val selectedStatuses = linkedSetOf<TaskStatus>()
+    private val selectedPriorities = linkedSetOf<Priority>()
     private var selectedDueDateRange: DueDateRange = DueDateRange.ALL
+    private var selectedCustomStartDate: Long? = null
+    private var selectedCustomEndDate: Long? = null
     private var selectedSortOption: SortOption = SortOption.DUE_DATE_ASC
+    private var isSynchronizing = false
+    private var previewJob: Job? = null
+    private lateinit var repository: TaskRepository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -414,6 +444,8 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        repository = TaskRepository(AppDatabase.getInstance(requireContext()).taskDao())
+
         // Priority: savedInstanceState (mid-session edits) > arguments (initial criteria)
         if (savedInstanceState != null) {
             restoreFromSavedState(savedInstanceState)
@@ -421,37 +453,41 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
             restoreFromArgs()
         }
 
-        // Sync all UI controls to reflect the restored selection state
-        syncStatusUi()
-        syncPriorityUi()
-        syncDateRangeUi()
-        syncSortUi()
-
-        wireStatusRows()
+        wireCompletionControl()
+        wireStatusChips()
         wirePriorityChips()
-        wireDateRangeRows()
-        wireSortRows()
+        wireDateRangeChips()
+        wireSortDropdown()
+        syncAllUi()
+        updatePreview()
 
         binding.btnApplyFilter.setOnClickListener {
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(
-                    RESULT_ACTION     to ACTION_APPLY,
-                    RESULT_STATUS     to selectedStatus?.name,
-                    RESULT_PRIORITY   to selectedPriority?.name,
+                    RESULT_ACTION to ACTION_APPLY,
+                    RESULT_COMPLETION to selectedCompletion.name,
+                    RESULT_STATUSES to ArrayList(selectedStatuses.map { it.name }),
+                    RESULT_PRIORITIES to ArrayList(selectedPriorities.map { it.name }),
                     RESULT_DATE_RANGE to selectedDueDateRange.name,
-                    RESULT_SORT       to selectedSortOption.name
+                    RESULT_CUSTOM_START to (selectedCustomStartDate ?: 0L),
+                    RESULT_CUSTOM_END to (selectedCustomEndDate ?: 0L),
+                    RESULT_SORT to selectedSortOption.name
                 )
             )
             dismiss()
         }
 
         binding.btnReset.setOnClickListener {
-            setFragmentResult(
-                REQUEST_KEY,
-                bundleOf(RESULT_ACTION to ACTION_CLEAR)
-            )
-            dismiss()
+            selectedCompletion = CompletionFilter.ALL
+            selectedStatuses.clear()
+            selectedPriorities.clear()
+            selectedDueDateRange = DueDateRange.ALL
+            selectedCustomStartDate = null
+            selectedCustomEndDate = null
+            selectedSortOption = SortOption.DUE_DATE_ASC
+            syncAllUi()
+            updatePreview()
         }
     }
 
@@ -466,154 +502,255 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        // Persist mid-session edits across configuration changes
-        outState.putString(STATE_STATUS,     selectedStatus?.name)
-        outState.putString(STATE_PRIORITY,   selectedPriority?.name)
+        outState.putString(STATE_COMPLETION, selectedCompletion.name)
+        outState.putStringArrayList(STATE_STATUSES, ArrayList(selectedStatuses.map { it.name }))
+        outState.putStringArrayList(STATE_PRIORITIES, ArrayList(selectedPriorities.map { it.name }))
         outState.putString(STATE_DATE_RANGE, selectedDueDateRange.name)
-        outState.putString(STATE_SORT,       selectedSortOption.name)
+        outState.putLong(STATE_CUSTOM_START, selectedCustomStartDate ?: 0L)
+        outState.putLong(STATE_CUSTOM_END, selectedCustomEndDate ?: 0L)
+        outState.putString(STATE_SORT, selectedSortOption.name)
     }
 
     // ── Restore helpers ───────────────────────────────────────────────────
 
     /** Restores mid-session selection state saved in [onSaveInstanceState]. */
     private fun restoreFromSavedState(state: Bundle) {
-        selectedStatus = state.getString(STATE_STATUS)
-            ?.let { runCatching { TaskStatus.valueOf(it) }.getOrNull() }
-        selectedPriority = state.getString(STATE_PRIORITY)
-            ?.let { runCatching { Priority.valueOf(it) }.getOrNull() }
+        selectedCompletion = state.getString(STATE_COMPLETION)
+            ?.let { runCatching { CompletionFilter.valueOf(it) }.getOrNull() }
+            ?: CompletionFilter.ALL
+        selectedStatuses.clear()
+        selectedStatuses += state.getStringArrayList(STATE_STATUSES).orEmpty()
+            .mapNotNull { runCatching { TaskStatus.valueOf(it) }.getOrNull() }
+        selectedPriorities.clear()
+        selectedPriorities += state.getStringArrayList(STATE_PRIORITIES).orEmpty()
+            .mapNotNull { runCatching { Priority.valueOf(it) }.getOrNull() }
         selectedDueDateRange = state.getString(STATE_DATE_RANGE)
             ?.let { runCatching { DueDateRange.valueOf(it) }.getOrNull() } ?: DueDateRange.ALL
+        selectedCustomStartDate = state.getLong(STATE_CUSTOM_START, 0L).takeIf { it > 0L }
+        selectedCustomEndDate = state.getLong(STATE_CUSTOM_END, 0L).takeIf { it > 0L }
         selectedSortOption = state.getString(STATE_SORT)
             ?.let { runCatching { SortOption.valueOf(it) }.getOrNull() } ?: SortOption.DUE_DATE_ASC
     }
 
     /** Initialises selection state from the initial filter criteria passed via [arguments]. */
     private fun restoreFromArgs() {
-        selectedStatus = arguments?.getString(ARG_STATUS)
-            ?.let { runCatching { TaskStatus.valueOf(it) }.getOrNull() }
-        selectedPriority = arguments?.getString(ARG_PRIORITY)
-            ?.let { runCatching { Priority.valueOf(it) }.getOrNull() }
+        selectedCompletion = arguments?.getString(ARG_COMPLETION)
+            ?.let { runCatching { CompletionFilter.valueOf(it) }.getOrNull() }
+            ?: CompletionFilter.ALL
+        selectedStatuses.clear()
+        selectedStatuses += arguments?.getStringArrayList(ARG_STATUSES).orEmpty()
+            .mapNotNull { runCatching { TaskStatus.valueOf(it) }.getOrNull() }
+        selectedPriorities.clear()
+        selectedPriorities += arguments?.getStringArrayList(ARG_PRIORITIES).orEmpty()
+            .mapNotNull { runCatching { Priority.valueOf(it) }.getOrNull() }
         selectedDueDateRange = arguments?.getString(ARG_DATE_RANGE)
             ?.let { runCatching { DueDateRange.valueOf(it) }.getOrNull() } ?: DueDateRange.ALL
+        selectedCustomStartDate = arguments?.getLong(ARG_CUSTOM_START, 0L)?.takeIf { it > 0L }
+        selectedCustomEndDate = arguments?.getLong(ARG_CUSTOM_END, 0L)?.takeIf { it > 0L }
         selectedSortOption = arguments?.getString(ARG_SORT)
             ?.let { runCatching { SortOption.valueOf(it) }.getOrNull() } ?: SortOption.DUE_DATE_ASC
     }
 
-    // ── STATUS ────────────────────────────────────────────────────────
-
-    private fun wireStatusRows() {
-        binding.statusTodo.setOnClickListener {
-            selectedStatus = if (selectedStatus == TaskStatus.TODO) null else TaskStatus.TODO
-            syncStatusUi()
-        }
-        binding.statusInProgress.setOnClickListener {
-            selectedStatus = if (selectedStatus == TaskStatus.IN_PROGRESS) null else TaskStatus.IN_PROGRESS
-            syncStatusUi()
-        }
-        binding.statusCompleted.setOnClickListener {
-            selectedStatus = if (selectedStatus == TaskStatus.COMPLETED) null else TaskStatus.COMPLETED
-            syncStatusUi()
-        }
-        binding.statusOverdue.setOnClickListener {
-            selectedStatus = if (selectedStatus == TaskStatus.OVERDUE) null else TaskStatus.OVERDUE
-            syncStatusUi()
+    private fun wireCompletionControl() {
+        binding.completionToggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked || isSynchronizing) return@addOnButtonCheckedListener
+            selectedCompletion = when (checkedId) {
+                R.id.completionNotDone -> CompletionFilter.NOT_DONE
+                R.id.completionDone -> CompletionFilter.DONE
+                else -> CompletionFilter.ALL
+            }
+            updatePreview()
         }
     }
 
-    private fun syncStatusUi() {
-        binding.cbStatusTodo.isChecked       = selectedStatus == TaskStatus.TODO
-        binding.cbStatusInProgress.isChecked = selectedStatus == TaskStatus.IN_PROGRESS
-        binding.cbStatusCompleted.isChecked  = selectedStatus == TaskStatus.COMPLETED
-        binding.cbStatusOverdue.isChecked    = selectedStatus == TaskStatus.OVERDUE
+    private fun wireStatusChips() {
+        mapOf(
+            binding.chipStatusTodo to TaskStatus.TODO,
+            binding.chipStatusInProgress to TaskStatus.IN_PROGRESS,
+            binding.chipStatusOverdue to TaskStatus.OVERDUE
+        ).forEach { (chip, status) ->
+            chip.setOnCheckedChangeListener { _, checked ->
+                if (isSynchronizing) return@setOnCheckedChangeListener
+                if (checked) selectedStatuses += status else selectedStatuses -= status
+                updatePreview()
+            }
+        }
     }
-
-    // ── PRIORITY ──────────────────────────────────────────────────────
 
     private fun wirePriorityChips() {
-        binding.chipPriorityUrgent.setOnClickListener {
-            selectedPriority = if (selectedPriority == Priority.URGENT) null else Priority.URGENT
-            syncPriorityUi()
-        }
-        binding.chipPriorityHigh.setOnClickListener {
-            selectedPriority = if (selectedPriority == Priority.HIGH) null else Priority.HIGH
-            syncPriorityUi()
-        }
-        binding.chipPriorityMedium.setOnClickListener {
-            selectedPriority = if (selectedPriority == Priority.MEDIUM) null else Priority.MEDIUM
-            syncPriorityUi()
-        }
-        binding.chipPriorityLow.setOnClickListener {
-            selectedPriority = if (selectedPriority == Priority.LOW) null else Priority.LOW
-            syncPriorityUi()
+        mapOf(
+            binding.chipPriorityUrgent to Priority.URGENT,
+            binding.chipPriorityHigh to Priority.HIGH,
+            binding.chipPriorityMedium to Priority.MEDIUM,
+            binding.chipPriorityLow to Priority.LOW
+        ).forEach { (chip, priority) ->
+            chip.setOnCheckedChangeListener { _, checked ->
+                if (isSynchronizing) return@setOnCheckedChangeListener
+                if (checked) selectedPriorities += priority else selectedPriorities -= priority
+                updatePreview()
+            }
         }
     }
 
-    private fun syncPriorityUi() {
-        setChipSelected(binding.chipPriorityUrgent, selectedPriority == Priority.URGENT)
-        setChipSelected(binding.chipPriorityHigh,   selectedPriority == Priority.HIGH)
-        setChipSelected(binding.chipPriorityMedium, selectedPriority == Priority.MEDIUM)
-        setChipSelected(binding.chipPriorityLow,    selectedPriority == Priority.LOW)
+    private fun wireDateRangeChips() {
+        binding.dueDateChipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
+            if (isSynchronizing || checkedIds.isEmpty()) return@setOnCheckedStateChangeListener
+            selectedDueDateRange = when (checkedIds.first()) {
+                R.id.chipDueOverdue -> DueDateRange.OVERDUE
+                R.id.chipDueToday -> DueDateRange.TODAY
+                R.id.chipDueNextSevenDays -> DueDateRange.NEXT_7_DAYS
+                R.id.chipDueThisMonth -> DueDateRange.THIS_MONTH
+                R.id.chipDueNoDate -> DueDateRange.NO_DUE_DATE
+                R.id.chipDueCustom -> DueDateRange.CUSTOM
+                else -> DueDateRange.ALL
+            }
+            if (selectedDueDateRange == DueDateRange.CUSTOM) {
+                showCustomDateRangePicker()
+            } else {
+                selectedCustomStartDate = null
+                selectedCustomEndDate = null
+                syncCustomRangeLabel()
+                updatePreview()
+            }
+        }
     }
 
-    // ── DUE DATE RANGE ────────────────────────────────────────────────
+    private fun wireSortDropdown() {
+        val labels = sortOptions.map { getString(it.second) }
+        binding.sortDropdown.setAdapter(
+            ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, labels)
+        )
+        binding.sortDropdown.setOnItemClickListener { _, _, position, _ ->
+            selectedSortOption = sortOptions[position].first
+            updatePreview()
+        }
+    }
 
-    private fun wireDateRangeRows() {
-        binding.dateRangeAll.setOnClickListener {
+    private fun syncAllUi() {
+        isSynchronizing = true
+        binding.completionToggleGroup.check(
+            when (selectedCompletion) {
+                CompletionFilter.NOT_DONE -> R.id.completionNotDone
+                CompletionFilter.DONE -> R.id.completionDone
+                CompletionFilter.ALL -> R.id.completionAll
+            }
+        )
+        binding.chipStatusTodo.isChecked = TaskStatus.TODO in selectedStatuses
+        binding.chipStatusInProgress.isChecked = TaskStatus.IN_PROGRESS in selectedStatuses
+        binding.chipStatusOverdue.isChecked = TaskStatus.OVERDUE in selectedStatuses
+        binding.chipPriorityUrgent.isChecked = Priority.URGENT in selectedPriorities
+        binding.chipPriorityHigh.isChecked = Priority.HIGH in selectedPriorities
+        binding.chipPriorityMedium.isChecked = Priority.MEDIUM in selectedPriorities
+        binding.chipPriorityLow.isChecked = Priority.LOW in selectedPriorities
+        binding.dueDateChipGroup.check(
+            when (selectedDueDateRange) {
+                DueDateRange.OVERDUE -> R.id.chipDueOverdue
+                DueDateRange.TODAY -> R.id.chipDueToday
+                DueDateRange.NEXT_7_DAYS -> R.id.chipDueNextSevenDays
+                DueDateRange.THIS_MONTH -> R.id.chipDueThisMonth
+                DueDateRange.NO_DUE_DATE -> R.id.chipDueNoDate
+                DueDateRange.CUSTOM -> R.id.chipDueCustom
+                DueDateRange.ALL -> R.id.chipDueAll
+            }
+        )
+        binding.sortDropdown.setText(
+            getString(sortOptions.first { it.first == selectedSortOption }.second),
+            false
+        )
+        isSynchronizing = false
+        syncCustomRangeLabel()
+    }
+
+    private fun showCustomDateRangePicker() {
+        val initialStart = Calendar.getInstance().apply {
+            selectedCustomStartDate?.let { timeInMillis = it }
+        }
+        val startDialog = DatePickerDialog(
+            requireContext(),
+            { _, year, month, day ->
+                val start = Calendar.getInstance().apply {
+                    set(year, month, day, 0, 0, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }
+                val initialEnd = Calendar.getInstance().apply {
+                    timeInMillis = selectedCustomEndDate ?: start.timeInMillis
+                }
+                val endDialog = DatePickerDialog(
+                    requireContext(),
+                    { _, endYear, endMonth, endDay ->
+                        val end = Calendar.getInstance().apply {
+                            set(endYear, endMonth, endDay, 23, 59, 59)
+                            set(Calendar.MILLISECOND, 999)
+                        }
+                        selectedCustomStartDate = start.timeInMillis
+                        selectedCustomEndDate = end.timeInMillis.coerceAtLeast(start.timeInMillis)
+                        syncCustomRangeLabel()
+                        updatePreview()
+                    },
+                    initialEnd.get(Calendar.YEAR),
+                    initialEnd.get(Calendar.MONTH),
+                    initialEnd.get(Calendar.DAY_OF_MONTH)
+                )
+                endDialog.datePicker.minDate = start.timeInMillis
+                endDialog.setTitle("Select end date")
+                endDialog.show()
+            },
+            initialStart.get(Calendar.YEAR),
+            initialStart.get(Calendar.MONTH),
+            initialStart.get(Calendar.DAY_OF_MONTH)
+        )
+        startDialog.setTitle("Select start date")
+        startDialog.setOnCancelListener {
             selectedDueDateRange = DueDateRange.ALL
-            syncDateRangeUi()
+            syncAllUi()
+            updatePreview()
         }
-        binding.dateRangeToday.setOnClickListener {
-            selectedDueDateRange = DueDateRange.TODAY
-            syncDateRangeUi()
-        }
-        binding.dateRangeThisWeek.setOnClickListener {
-            selectedDueDateRange = DueDateRange.THIS_WEEK
-            syncDateRangeUi()
-        }
-        binding.dateRangeThisMonth.setOnClickListener {
-            selectedDueDateRange = DueDateRange.THIS_MONTH
-            syncDateRangeUi()
+        startDialog.show()
+    }
+
+    private fun syncCustomRangeLabel() {
+        val start = selectedCustomStartDate
+        val end = selectedCustomEndDate
+        binding.tvCustomDateRange.visibility =
+            if (selectedDueDateRange == DueDateRange.CUSTOM && start != null && end != null) View.VISIBLE
+            else View.GONE
+        if (start != null && end != null) {
+            val formatter = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
+            binding.tvCustomDateRange.text = "${formatter.format(start)} – ${formatter.format(end)}"
         }
     }
 
-    private fun syncDateRangeUi() {
-        binding.rbDateRangeAll.isChecked       = selectedDueDateRange == DueDateRange.ALL
-        binding.rbDateRangeToday.isChecked     = selectedDueDateRange == DueDateRange.TODAY
-        binding.rbDateRangeThisWeek.isChecked  = selectedDueDateRange == DueDateRange.THIS_WEEK
-        binding.rbDateRangeThisMonth.isChecked = selectedDueDateRange == DueDateRange.THIS_MONTH
-    }
+    private fun buildCriteria() = FilterCriteria(
+        completion = selectedCompletion,
+        statuses = selectedStatuses.toSet(),
+        priorities = selectedPriorities.toSet(),
+        dueDateRange = selectedDueDateRange,
+        customStartDate = selectedCustomStartDate,
+        customEndDate = selectedCustomEndDate,
+        sortOption = selectedSortOption
+    )
 
-    // ── SORT BY ───────────────────────────────────────────────────────
-
-    private fun wireSortRows() {
-        binding.sortDueDateAsc.setOnClickListener {
-            selectedSortOption = SortOption.DUE_DATE_ASC
-            syncSortUi()
+    private fun updatePreview() {
+        val criteria = buildCriteria()
+        val activeCount = listOf(
+            criteria.completion != CompletionFilter.ALL,
+            criteria.statuses.isNotEmpty(),
+            criteria.priorities.isNotEmpty(),
+            criteria.dueDateRange != DueDateRange.ALL,
+            criteria.sortOption != SortOption.DUE_DATE_ASC
+        ).count { it }
+        binding.tvFilterSummary.text = if (activeCount == 0) {
+            getString(R.string.filter_no_active)
+        } else {
+            resources.getQuantityString(R.plurals.filter_active_count, activeCount, activeCount)
         }
-        binding.sortDueDateDesc.setOnClickListener {
-            selectedSortOption = SortOption.DUE_DATE_DESC
-            syncSortUi()
+
+        previewJob?.cancel()
+        previewJob = viewLifecycleOwner.lifecycleScope.launch {
+            val count = repository.getFilteredTasks(criteria).first().size
+            binding.btnApplyFilter.text =
+                resources.getQuantityString(R.plurals.filter_show_task_count, count, count)
         }
-        binding.sortPriority.setOnClickListener {
-            selectedSortOption = SortOption.PRIORITY_DESC
-            syncSortUi()
-        }
-    }
-
-    private fun syncSortUi() {
-        binding.rbSortDueDateAsc.isChecked  = selectedSortOption == SortOption.DUE_DATE_ASC
-        binding.rbSortDueDateDesc.isChecked = selectedSortOption == SortOption.DUE_DATE_DESC
-        binding.rbSortPriority.isChecked    = selectedSortOption == SortOption.PRIORITY_DESC
-    }
-
-    // ── Chip visual helper ────────────────────────────────────────────
-
-    private fun setChipSelected(chip: android.widget.TextView, selected: Boolean) {
-        chip.isSelected = selected
-        chip.setTextColor(if (selected) Color.WHITE else Color.parseColor("#1B1B1B"))
-        chip.background = ContextCompat.getDrawable(
-            requireContext(), R.drawable.bg_filter_chip_selector
-        )?.also { it.state = chip.drawableState }
     }
 
     override fun onDestroyView() {
@@ -632,23 +769,41 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
         const val ACTION_CLEAR = "action_clear"
 
         // Result bundle keys
-        const val RESULT_ACTION     = "result_action"
-        const val RESULT_STATUS     = "result_status"
-        const val RESULT_PRIORITY   = "result_priority"
+        const val RESULT_ACTION = "result_action"
+        const val RESULT_COMPLETION = "result_completion"
+        const val RESULT_STATUSES = "result_statuses"
+        const val RESULT_PRIORITIES = "result_priorities"
         const val RESULT_DATE_RANGE = "result_date_range"
-        const val RESULT_SORT       = "result_sort"
+        const val RESULT_CUSTOM_START = "result_custom_start"
+        const val RESULT_CUSTOM_END = "result_custom_end"
+        const val RESULT_SORT = "result_sort"
 
         // Arguments keys (initial criteria passed when creating the sheet)
-        private const val ARG_STATUS     = "arg_status"
-        private const val ARG_PRIORITY   = "arg_priority"
+        private const val ARG_COMPLETION = "arg_completion"
+        private const val ARG_STATUSES = "arg_statuses"
+        private const val ARG_PRIORITIES = "arg_priorities"
         private const val ARG_DATE_RANGE = "arg_date_range"
-        private const val ARG_SORT       = "arg_sort"
+        private const val ARG_CUSTOM_START = "arg_custom_start"
+        private const val ARG_CUSTOM_END = "arg_custom_end"
+        private const val ARG_SORT = "arg_sort"
 
         // onSaveInstanceState keys (mid-session edits)
-        private const val STATE_STATUS     = "state_status"
-        private const val STATE_PRIORITY   = "state_priority"
+        private const val STATE_COMPLETION = "state_completion"
+        private const val STATE_STATUSES = "state_statuses"
+        private const val STATE_PRIORITIES = "state_priorities"
         private const val STATE_DATE_RANGE = "state_date_range"
-        private const val STATE_SORT       = "state_sort"
+        private const val STATE_CUSTOM_START = "state_custom_start"
+        private const val STATE_CUSTOM_END = "state_custom_end"
+        private const val STATE_SORT = "state_sort"
+
+        private val sortOptions = listOf(
+            SortOption.DUE_DATE_ASC to R.string.filter_sort_due_soonest,
+            SortOption.DUE_DATE_DESC to R.string.filter_sort_due_latest,
+            SortOption.PRIORITY_DESC to R.string.filter_sort_priority,
+            SortOption.CREATED_DESC to R.string.filter_sort_created,
+            SortOption.UPDATED_DESC to R.string.filter_sort_updated,
+            SortOption.TITLE_ASC to R.string.filter_sort_title
+        )
 
         /**
          * Creates a new [FilterBottomSheet] pre-populated with the current filter criteria.
@@ -657,9 +812,12 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
         fun newInstance(currentCriteria: FilterCriteria): FilterBottomSheet {
             return FilterBottomSheet().apply {
                 arguments = Bundle().apply {
-                    currentCriteria.status?.let { putString(ARG_STATUS, it.name) }
-                    currentCriteria.priority?.let { putString(ARG_PRIORITY, it.name) }
+                    putString(ARG_COMPLETION, currentCriteria.completion.name)
+                    putStringArrayList(ARG_STATUSES, ArrayList(currentCriteria.statuses.map { it.name }))
+                    putStringArrayList(ARG_PRIORITIES, ArrayList(currentCriteria.priorities.map { it.name }))
                     putString(ARG_DATE_RANGE, currentCriteria.dueDateRange.name)
+                    putLong(ARG_CUSTOM_START, currentCriteria.customStartDate ?: 0L)
+                    putLong(ARG_CUSTOM_END, currentCriteria.customEndDate ?: 0L)
                     putString(ARG_SORT, currentCriteria.sortOption.name)
                 }
             }

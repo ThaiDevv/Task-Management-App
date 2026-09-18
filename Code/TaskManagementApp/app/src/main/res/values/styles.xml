@@ -62,6 +62,21 @@
         <item name="android:textSize">@dimen/text_label_small</item>
     </style>
 
+    <style name="FilterSectionLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/poppins_bold</item>
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:textColor">@color/outline</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <style name="FilterChoiceChip" parent="Widget.Material3.Chip.Filter">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/poppins_medium</item>
+    </style>
+
     <!--
         Widget.TaskFlow.PinKeypad.Button — Nút số tròn trong keypad PIN.
         72dp × 72dp, nền xám nhạt (bg_keypad_button), số màu primary, font Poppins Bold.

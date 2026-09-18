@@ -293,12 +293,12 @@ class TaskViewModel(
 
 
     fun filterByStatus(status: TaskStatus) {
-        applyFilter(_filterCriteria.value.copy(status = status))
+        applyFilter(_filterCriteria.value.copy(statuses = setOf(status)))
     }
 
 
     fun filterByPriority(priority: Priority) {
-        applyFilter(_filterCriteria.value.copy(priority = priority))
+        applyFilter(_filterCriteria.value.copy(priorities = setOf(priority)))
     }
 
     fun getTaskById(taskId: Long) {
