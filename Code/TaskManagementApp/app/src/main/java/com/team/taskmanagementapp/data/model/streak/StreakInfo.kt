@@ -42,7 +42,7 @@ data class StreakInfo(
      * để danh hiệu khớp với badge đã mở.
      */
     fun getBadgeTitle(streak: Int): String {
-        return when {
+        val badge = when {
             streak >= 365 -> "👑 Master Streak"
             streak >= 200 -> "🏆 Legend Streak"
             streak >= 100 -> "💎 Champion Streak"
@@ -50,8 +50,9 @@ data class StreakInfo(
             streak >= 30  -> "🔥 Streaker Streak"
             streak >= 7   -> "🌟 Sparkstarter Streak"
             streak >= 3   -> "🌱 Starter Streak"
-            else -> "None Badge"
+            else -> "🔒 None Badge"
         }
+        return "Streak: $badge"
     }
 
     /**
@@ -60,7 +61,7 @@ data class StreakInfo(
      * chỉ trả về đúng 1 danh hiệu tại mốc cao nhất đã đạt được.
      */
     fun getTaskBadgeTitle(completedTasks: Int): String {
-        return when {
+        val badge = when {
             completedTasks >= 2000 -> "👑 Task Master"
             completedTasks >= 1000 -> "🏆 Task Champion"
             completedTasks >= 500  -> "💎 Task Expert"
@@ -68,7 +69,8 @@ data class StreakInfo(
             completedTasks >= 100  -> "⚡ Task Achiever"
             completedTasks >= 50   -> "📝 Task Doer"
             completedTasks >= 10   -> "🌱 Task Novice"
-            else -> "None Badge"
+            else -> "🔒 None Badge"
         }
+        return "Task Completed: $badge"
     }
 }

@@ -406,6 +406,7 @@
 
     <!-- Task Completion Milestones (tên resource phải khớp số task hiển thị) -->
     <string name="task_milestones_header">Task Completion Rewards</string>
+    <string name="task_progress_header">Task Progress</string>
     <string name="task_milestones_progress">Completed: %1$d tasks</string>
     <string name="task_milestone_10">🌱 Task Novice - 10 Tasks</string>
     <string name="task_milestone_50">📝 Task Doer - 50 Tasks</string>

@@ -115,8 +115,8 @@
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/poppins_bold"
                         android:textColor="#105CDB"
-                        android:textSize="20sp"
-                        tools:text="👑 Master Streak" />
+                        android:textSize="18sp"
+                        tools:text="Streak: 👑 Master Streak" />
 
                     <TextView
                         android:id="@+id/tvCurrentTaskRank"
@@ -125,8 +125,8 @@
                         android:layout_marginTop="2dp"
                         android:fontFamily="@font/poppins_bold"
                         android:textColor="#105CDB"
-                        android:textSize="20sp"
-                        tools:text="🌱 Task Novice" />
+                        android:textSize="18sp"
+                        tools:text="Task Completed: 🌱 Task Novice" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -356,25 +356,14 @@
                             android:textColor="#737786"
                             android:textSize="12sp" />
                     </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
 
-            <!-- Active Streak Card -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="0dp"
-                app:strokeColor="#4DC3C6D7"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    <!-- Active Streak (gộp trong card Streak Milestone Rewards) -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="#4DC3C6D7" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -382,16 +371,16 @@
                         android:fontFamily="@font/poppins_bold"
                         android:text="@string/streak_active_header"
                         android:textColor="#1B1B1B"
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/tvActiveStreakDays"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="2dp"
                         android:fontFamily="@font/poppins_bold"
                         android:textColor="#F97316"
-                        android:textSize="22sp"
+                        android:textSize="16sp"
                         tools:text="🔥 5 Days Streak!" />
 
                     <TextView
@@ -401,7 +390,7 @@
                         android:layout_marginTop="2dp"
                         android:fontFamily="@font/poppins_medium"
                         android:textColor="#737786"
-                        android:textSize="13sp"
+                        android:textSize="12sp"
                         tools:text="Best: 12 days" />
 
                     <TextView
@@ -411,7 +400,7 @@
                         android:layout_marginTop="2dp"
                         android:fontFamily="@font/poppins_medium"
                         android:textColor="#737786"
-                        android:textSize="13sp"
+                        android:textSize="12sp"
                         tools:text="Today: 2 / 3 tasks" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -436,21 +425,11 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
                         android:fontFamily="@font/poppins_bold"
                         android:text="@string/task_milestones_header"
                         android:textColor="#1B1B1B"
                         android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/tvTaskProgress"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:layout_marginBottom="16dp"
-                        android:fontFamily="@font/poppins_medium"
-                        android:textColor="#737786"
-                        android:textSize="12sp"
-                        tools:text="Completed: 12 tasks" />
 
                     <!-- Badge 1: 10 Tasks -->
                     <LinearLayout
@@ -653,6 +632,32 @@
                             android:textColor="#737786"
                             android:textSize="12sp" />
                     </LinearLayout>
+
+                    <!-- Task Progress (dưới cùng, đồng bộ với block Active Streak) -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="#4DC3C6D7" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="@string/task_progress_header"
+                        android:textColor="#1B1B1B"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tvTaskProgress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:textColor="#10B981"
+                        android:textSize="16sp"
+                        tools:text="Completed: 4 tasks" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
