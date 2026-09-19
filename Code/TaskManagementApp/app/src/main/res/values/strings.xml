@@ -101,6 +101,8 @@
     <string name="nav_task_list">Task List</string>
     <string name="nav_calendar">Calendar</string>
     <string name="nav_stats">Stats</string>
+    <string name="nav_streak">Streak</string>
+    <string name="nav_rewards">Rewards</string>
     <string name="nav_settings">Settings</string>
 
     <!-- Home Dashboard Strings -->
