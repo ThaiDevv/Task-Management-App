@@ -38,6 +38,20 @@ class PinManager private constructor(context: Context) {
     }
 
     /**
+     * Checks if biometric unlock is enabled.
+     */
+    fun isBiometricEnabled(): Boolean {
+        return pinRepo.isBiometricEnabled()
+    }
+
+    /**
+     * Enables or disables biometric unlock.
+     */
+    fun setBiometricEnabled(enabled: Boolean) {
+        pinRepo.setBiometricEnabled(enabled)
+    }
+
+    /**
      * Removes the stored PIN (disables PIN lock).
      */
     fun removePin() {
