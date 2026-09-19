@@ -50,7 +50,25 @@ data class StreakInfo(
             streak >= 30  -> "🔥 Streaker Streak"
             streak >= 7   -> "🌟 Sparkstarter Streak"
             streak >= 3   -> "🌱 Starter Streak"
-            else -> "⚡ No Active Streak"
+            else -> "None Badge"
+        }
+    }
+
+    /**
+     * Danh hiệu cao nhất theo TỔNG số task đã hoàn thành.
+     * Cùng cơ chế "badge cao hơn thay thế badge cũ" như [getBadgeTitle]:
+     * chỉ trả về đúng 1 danh hiệu tại mốc cao nhất đã đạt được.
+     */
+    fun getTaskBadgeTitle(completedTasks: Int): String {
+        return when {
+            completedTasks >= 2000 -> "👑 Task Master"
+            completedTasks >= 1000 -> "🏆 Task Champion"
+            completedTasks >= 500  -> "💎 Task Expert"
+            completedTasks >= 250  -> "🎯 Task Executor"
+            completedTasks >= 100  -> "⚡ Task Achiever"
+            completedTasks >= 50   -> "📝 Task Doer"
+            completedTasks >= 10   -> "🌱 Task Novice"
+            else -> "None Badge"
         }
     }
 }

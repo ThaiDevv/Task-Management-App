@@ -111,7 +111,9 @@ class RewardsFragment : Fragment() {
             streakInfo.todayTotalTasks
         )
 
-        binding.tvCurrentRank.text = resolveCurrentTitle(streakInfo, streak, completedTasks)
+        // CURRENT TITLE: 2 dòng độc lập — streak cao nhất (dòng 1) + task hoàn thành cao nhất (dòng 2)
+        binding.tvCurrentRank.text = streakInfo.getBadgeTitle(streak)
+        binding.tvCurrentTaskRank.text = streakInfo.getTaskBadgeTitle(completedTasks)
     }
 
     /**
@@ -122,31 +124,6 @@ class RewardsFragment : Fragment() {
         statusView.text = getString(if (unlocked) R.string.badge_unlocked else R.string.badge_locked)
         statusView.setTextColor(Color.parseColor(if (unlocked) COLOR_UNLOCKED else COLOR_LOCKED))
         return unlocked
-    }
-
-    /**
-     * Danh hiệu ở thẻ CURRENT TITLE = mốc cao nhất đạt được giữa streak và số task hoàn thành.
-     * So sánh theo thứ hạng (tier) để hai thang đo khác nhau vẫn so sánh được; hòa thì ưu tiên streak.
-     */
-    private fun resolveCurrentTitle(streakInfo: StreakInfo, streak: Int, completedTasks: Int): String {
-        val streakTier = STREAK_MILESTONES.indexOfLast { streak >= it }
-        val taskTier = TASK_MILESTONES.indexOfLast { completedTasks >= it }
-
-        return if (taskTier > streakTier) {
-            getString(taskTitleRes(TASK_MILESTONES[taskTier]))
-        } else {
-            streakInfo.getBadgeTitle(streak)
-        }
-    }
-
-    private fun taskTitleRes(milestone: Int): Int = when (milestone) {
-        TASK_MILESTONES[0] -> R.string.task_title_novice
-        TASK_MILESTONES[1] -> R.string.task_title_doer
-        TASK_MILESTONES[2] -> R.string.task_title_achiever
-        TASK_MILESTONES[3] -> R.string.task_title_executor
-        TASK_MILESTONES[4] -> R.string.task_title_expert
-        TASK_MILESTONES[5] -> R.string.task_title_champion
-        else -> R.string.task_title_master
     }
 
     override fun onDestroyView() {

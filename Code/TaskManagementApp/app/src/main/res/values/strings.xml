@@ -419,15 +419,6 @@
     <string name="badge_unlocked">Unlocked ✅</string>
     <string name="badge_locked">Locked 🔒</string>
     <string name="rewards_badges_unlocked_format">%1$d / %2$d</string>
-
-    <!-- Task Completion Badge Titles (dùng cho thẻ CURRENT TITLE) -->
-    <string name="task_title_novice">🌱 Task Novice</string>
-    <string name="task_title_doer">📝 Task Doer</string>
-    <string name="task_title_achiever">⚡ Task Achiever</string>
-    <string name="task_title_executor">🎯 Task Executor</string>
-    <string name="task_title_expert">💎 Task Expert</string>
-    <string name="task_title_champion">🏆 Task Champion</string>
-    <string name="task_title_master">👑 Task Master</string>
 </resources>
 
 

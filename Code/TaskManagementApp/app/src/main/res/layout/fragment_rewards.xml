@@ -114,9 +114,19 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/poppins_bold"
-                        android:text="Beginner"
                         android:textColor="#105CDB"
-                        android:textSize="20sp" />
+                        android:textSize="20sp"
+                        tools:text="👑 Master Streak" />
+
+                    <TextView
+                        android:id="@+id/tvCurrentTaskRank"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:textColor="#105CDB"
+                        android:textSize="20sp"
+                        tools:text="🌱 Task Novice" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
