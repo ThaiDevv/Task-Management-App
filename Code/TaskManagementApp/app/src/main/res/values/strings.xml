@@ -321,6 +321,29 @@
     <string name="pin_biometric">Use biometric authentication</string>
     <string name="pin_backspace">Delete last digit</string>
 
+    <!-- Biometric Authentication -->
+    <string name="settings_biometric_unlock">Biometric Unlock</string>
+    <string name="settings_biometric_summary">Unlock with fingerprint or face recognition</string>
+    <string name="settings_biometric_no_hardware">Biometric hardware is not available on this device</string>
+    <string name="settings_biometric_not_enrolled">No biometric data enrolled. Tap to open Settings</string>
+    <string name="biometric_prompt_title">Biometric Authentication</string>
+    <string name="biometric_prompt_subtitle">Confirm your identity to unlock TaskFlow</string>
+    <string name="biometric_prompt_negative">Use PIN</string>
+    <string name="biometric_enabled">Biometric unlock enabled</string>
+    <string name="biometric_disabled">Biometric unlock disabled</string>
+    <string name="biometric_confirm_prompt_title">Enable Biometric Unlock</string>
+    <string name="biometric_confirm_prompt_subtitle">Touch sensor to confirm your biometric identity</string>
+
+    <!-- App Shortcuts -->
+    <string name="shortcut_new_task_short">New Task</string>
+    <string name="shortcut_new_task_long">Create a new task</string>
+    <string name="shortcut_today_short">Today</string>
+    <string name="shortcut_today_long">View today\'s tasks</string>
+    <string name="shortcut_calendar_short">Calendar</string>
+    <string name="shortcut_calendar_long">Open calendar schedule</string>
+    <string name="shortcut_stats_short">Statistics</string>
+    <string name="shortcut_stats_long">View productivity statistics</string>
+
     <!-- Keypad digits -->
     <string name="pin_key_0">0</string>
     <string name="pin_key_1">1</string>
