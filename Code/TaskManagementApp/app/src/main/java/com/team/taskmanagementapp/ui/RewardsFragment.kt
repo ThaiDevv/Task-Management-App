@@ -96,6 +96,21 @@ class RewardsFragment : Fragment() {
             STREAK_MILESTONES.size + TASK_MILESTONES.size
         )
         binding.tvTaskProgress.text = getString(R.string.task_milestones_progress, completedTasks)
+
+        // Active streak (theo streak hiện tại, không lấy max như badge)
+        binding.tvActiveStreakDays.text = when (streakInfo.currentStreak) {
+            0 -> getString(R.string.streak_zero_days)
+            1 -> getString(R.string.streak_one_day)
+            else -> getString(R.string.streak_days_format, streakInfo.currentStreak)
+        }
+        binding.tvActiveStreakBest.text =
+            getString(R.string.streak_best_format, streakInfo.bestStreak)
+        binding.tvActiveStreakToday.text = getString(
+            R.string.streak_today_progress,
+            streakInfo.todayCompletedTasks,
+            streakInfo.todayTotalTasks
+        )
+
         binding.tvCurrentRank.text = resolveCurrentTitle(streakInfo, streak, completedTasks)
     }
 
