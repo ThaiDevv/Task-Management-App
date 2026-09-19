@@ -35,15 +35,21 @@ data class StreakInfo(
     /**
      * Get user badge title based on current streak count.
      */
-    fun getBadgeTitle(): String {
+    fun getBadgeTitle(): String = getBadgeTitle(currentStreak)
+
+    /**
+     * Thêm hiện badge dùng cho màn Rewards khi xét theo max(currentStreak, bestStreak)
+     * để danh hiệu khớp với badge đã mở.
+     */
+    fun getBadgeTitle(streak: Int): String {
         return when {
-            currentStreak >= 365 -> "👑 Master Streak"
-            currentStreak >= 200 -> "🏆 Legend Streak"
-            currentStreak >= 100 -> "💎 Champion Streak"
-            currentStreak >= 50  -> "⚡ Achiever Streak"
-            currentStreak >= 30  -> "🔥 Streaker Streak"
-            currentStreak >= 7   -> "🌟 Sparkstarter Streak"
-            currentStreak >= 3   -> "🌱 Starter Streak"
+            streak >= 365 -> "👑 Master Streak"
+            streak >= 200 -> "🏆 Legend Streak"
+            streak >= 100 -> "💎 Champion Streak"
+            streak >= 50  -> "⚡ Achiever Streak"
+            streak >= 30  -> "🔥 Streaker Streak"
+            streak >= 7   -> "🌟 Sparkstarter Streak"
+            streak >= 3   -> "🌱 Starter Streak"
             else -> "⚡ No Active Streak"
         }
     }
