@@ -17,6 +17,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.team.taskmanagementapp.databinding.ActivityMainBinding
 import com.team.taskmanagementapp.ui.activity.AddEditTaskActivity
 import com.team.taskmanagementapp.ui.base.BaseActivity
+import com.team.taskmanagementapp.util.Constants
 
 /**
  * Main Activity serving as the primary entry point and container for the app's navigation tabs.
@@ -73,6 +74,38 @@ class MainActivity : BaseActivity() {
         // FAB to Create Task
         binding.fabCreateTask.setOnClickListener {
             startActivity(Intent(this, AddEditTaskActivity::class.java))
+        }
+
+        handleShortcutIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleShortcutIntent(intent)
+    }
+
+    private fun handleShortcutIntent(intent: Intent?) {
+        val action = intent?.action ?: return
+        when (action) {
+            Constants.ACTION_SHORTCUT_NEW_TASK -> {
+                startActivity(Intent(this, AddEditTaskActivity::class.java))
+            }
+            Constants.ACTION_SHORTCUT_TODAY -> {
+                if (navController.currentDestination?.id != R.id.taskListFragment) {
+                    navController.navigate(R.id.taskListFragment)
+                }
+            }
+            Constants.ACTION_SHORTCUT_CALENDAR -> {
+                if (navController.currentDestination?.id != R.id.calendarFragment) {
+                    navController.navigate(R.id.calendarFragment)
+                }
+            }
+            Constants.ACTION_SHORTCUT_STATS -> {
+                if (navController.currentDestination?.id != R.id.statsFragment) {
+                    navController.navigate(R.id.statsFragment)
+                }
+            }
         }
     }
 
