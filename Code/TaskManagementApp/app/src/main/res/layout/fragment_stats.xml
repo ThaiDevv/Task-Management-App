@@ -496,6 +496,221 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
+                <!-- ═══════════════════════════════════════════════════════════════════ -->
+                <!-- Bento Card 4: Pomodoro Focus (Full width) — Task 15                 -->
+                <!-- ═══════════════════════════════════════════════════════════════════ -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardPomodoroFocus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="#F0F0F0"
+                    app:cardBackgroundColor="@color/surface_container_lowest">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/tvPomodoroTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/stats_pomodoro_title"
+                            android:textColor="@color/on_surface"
+                            android:textSize="20sp"
+                            android:fontFamily="@font/poppins_semibold" />
+
+                        <TextView
+                            android:id="@+id/tvPomodoroSubtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/stats_pomodoro_subtitle"
+                            android:textColor="@color/on_surface_variant"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/poppins_regular" />
+
+                        <!-- Today / This week totals -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/stats_today_label"
+                                    android:textColor="@color/on_surface_variant"
+                                    android:textSize="11sp"
+                                    android:letterSpacing="0.08"
+                                    android:fontFamily="@font/poppins_semibold" />
+
+                                <TextView
+                                    android:id="@+id/tvPomodoroToday"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:text="@string/stats_zero_duration"
+                                    android:textColor="@color/on_surface"
+                                    android:textSize="24sp"
+                                    android:fontFamily="@font/poppins_bold" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/stats_week_label"
+                                    android:textColor="@color/on_surface_variant"
+                                    android:textSize="11sp"
+                                    android:letterSpacing="0.08"
+                                    android:fontFamily="@font/poppins_semibold" />
+
+                                <TextView
+                                    android:id="@+id/tvPomodoroWeek"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:text="@string/stats_zero_duration"
+                                    android:textColor="@color/on_surface"
+                                    android:textSize="24sp"
+                                    android:fontFamily="@font/poppins_bold" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvPomodoroCompleted"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="@string/stats_pomodoro_no_sessions"
+                            android:textColor="@color/on_surface_variant"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/poppins_medium" />
+
+                        <!-- Top tasks by focus time -->
+                        <LinearLayout
+                            android:id="@+id/layoutTopTasks"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/stats_top_focus_tasks"
+                                android:textColor="@color/on_surface_variant"
+                                android:textSize="11sp"
+                                android:letterSpacing="0.08"
+                                android:fontFamily="@font/poppins_semibold" />
+
+                            <RelativeLayout
+                                android:id="@+id/rowTopTask1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp">
+
+                                <TextView
+                                    android:id="@+id/tvTopTask1Name"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_toStartOf="@id/tvTopTask1Minutes"
+                                    android:maxLines="1"
+                                    android:ellipsize="end"
+                                    android:textColor="@color/on_surface"
+                                    android:textSize="14sp"
+                                    android:fontFamily="@font/poppins_medium" />
+
+                                <TextView
+                                    android:id="@+id/tvTopTask1Minutes"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:textColor="@color/on_surface_variant"
+                                    android:textSize="14sp"
+                                    android:fontFamily="@font/poppins_regular" />
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:id="@+id/rowTopTask2"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp">
+
+                                <TextView
+                                    android:id="@+id/tvTopTask2Name"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_toStartOf="@id/tvTopTask2Minutes"
+                                    android:maxLines="1"
+                                    android:ellipsize="end"
+                                    android:textColor="@color/on_surface"
+                                    android:textSize="14sp"
+                                    android:fontFamily="@font/poppins_medium" />
+
+                                <TextView
+                                    android:id="@+id/tvTopTask2Minutes"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:textColor="@color/on_surface_variant"
+                                    android:textSize="14sp"
+                                    android:fontFamily="@font/poppins_regular" />
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:id="@+id/rowTopTask3"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp">
+
+                                <TextView
+                                    android:id="@+id/tvTopTask3Name"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_toStartOf="@id/tvTopTask3Minutes"
+                                    android:maxLines="1"
+                                    android:ellipsize="end"
+                                    android:textColor="@color/on_surface"
+                                    android:textSize="14sp"
+                                    android:fontFamily="@font/poppins_medium" />
+
+                                <TextView
+                                    android:id="@+id/tvTopTask3Minutes"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:textColor="@color/on_surface_variant"
+                                    android:textSize="14sp"
+                                    android:fontFamily="@font/poppins_regular" />
+                            </RelativeLayout>
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
                 <TextView
                     android:id="@+id/tvUnknownCompletionDates"
                     android:layout_width="match_parent"

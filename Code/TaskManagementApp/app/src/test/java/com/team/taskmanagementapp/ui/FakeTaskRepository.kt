@@ -13,11 +13,14 @@ import kotlinx.coroutines.flow.emptyFlow
  * Minimal stub DAO chỉ dùng trong unit test.
  * Không cần Room/DB; các hàm trả về giá trị no-op.
  */
-private class FakeTaskDao : TaskDao {
+private class FakeTaskDao(tasks: List<Task> = emptyList()) : TaskDao {
+
+    private val tasksFlow = kotlinx.coroutines.flow.MutableStateFlow(tasks)
+
     override suspend fun insertTask(task: Task): Long = 0L
     override suspend fun updateTask(task: Task) = Unit
     override suspend fun deleteTask(task: Task) = Unit
-    override fun getAllTasks(): Flow<List<Task>> = emptyFlow()
+    override fun getAllTasks(): Flow<List<Task>> = tasksFlow
     override suspend fun getActiveTasksSync(): List<Task> = emptyList()
     override suspend fun getTasksForDateRangeSync(startMillis: Long, endMillis: Long): List<Task> = emptyList()
     override suspend fun getTaskById(taskId: Long): Task? = null
@@ -76,6 +79,7 @@ private class FakeTaskDao : TaskDao {
 
 /**
  * Factory function – tạo TaskRepository dùng FakeTaskDao.
- * Dùng trong OverdueRevertTest để khởi tạo AddEditTaskViewModel.
+ * Dùng trong OverdueRevertTest để khởi tạo AddEditTaskViewModel,
+ * và trong StatsViewModelTest để giả lập danh sách task.
  */
-fun FakeTaskRepository(): TaskRepository = TaskRepository(FakeTaskDao())
+fun FakeTaskRepository(tasks: List<Task> = emptyList()): TaskRepository = TaskRepository(FakeTaskDao(tasks))

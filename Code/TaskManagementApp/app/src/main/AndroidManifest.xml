@@ -7,6 +7,22 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <!--
+      Pomodoro Timer Foreground Service.
+      - FOREGROUND_SERVICE: bắt buộc từ API 28.
+      - FOREGROUND_SERVICE_SPECIAL_USE: bắt buộc từ API 34, mỗi foregroundServiceType
+        cần permission riêng. Không dùng "shortService" vì loại đó bị hệ thống giới hạn
+        khoảng 3 phút -> không đủ cho phiên tập trung 25 phút.
+    -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+
+    <!--
+      VIBRATE: cần cho việc rung khi phiên Pomodoro kết thúc — cả cho channel cảnh báo
+      (vibrationPattern) lẫn đường dự phòng PomodoroAlertPlayer khi không đăng được notification.
+    -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:name=".TaskApplication"
         android:allowBackup="true"
@@ -100,6 +116,22 @@
             android:name=".widget.TaskWidgetService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <!--
+          Pomodoro Timer (foreground).
+          - started service (không bind) -> exported=false, không cần intent-filter.
+          - foregroundServiceType="specialUse" (API 34+): đồng hồ tập trung do người dùng
+            khởi tạo, phải chạy liên tục khi màn hình tắt / app ở background.
+          - <property> khai báo lý do sử dụng cho Play Console (bắt buộc với specialUse).
+        -->
+        <service
+            android:name=".pomodoro.PomodoroService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="pomodoro_focus_timer" />
+        </service>
 
     </application>
 

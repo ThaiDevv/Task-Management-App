@@ -124,7 +124,7 @@ class BackupRepositoryTest {
             tasks = listOf(exportTask)
         )
 
-        assertEquals(1, exportData.version)
+        assertEquals(2, exportData.version)
         assertEquals(1, exportData.taskCount)
         assertEquals("Task 1", exportData.tasks[0].title)
     }
@@ -159,7 +159,7 @@ class BackupRepositoryTest {
         val jsonString = gson.toJson(exportData)
 
         // Verify JSON string contains required top-level keys
-        assertTrue(jsonString.contains("\"version\": 1"))
+        assertTrue(jsonString.contains("\"version\": 2"))
         assertTrue(jsonString.contains("\"exportDate\": \"2026-09-14T00:00:00Z\""))
         assertTrue(jsonString.contains("\"taskCount\": 1"))
         assertTrue(jsonString.contains("\"tasks\": ["))
@@ -173,7 +173,7 @@ class BackupRepositoryTest {
 
         // Verify JSON round-trip deserialization
         val deserialized = gson.fromJson(jsonString, ExportData::class.java)
-        assertEquals(1, deserialized.version)
+        assertEquals(BackupRepository.EXPORT_VERSION, deserialized.version)
         assertEquals(1, deserialized.taskCount)
         assertEquals(1, deserialized.tasks.size)
 

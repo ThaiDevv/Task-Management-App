@@ -9,35 +9,42 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import com.team.taskmanagementapp.data.local.db.AppDatabase
-import com.team.taskmanagementapp.data.local.entity.Task
-import com.team.taskmanagementapp.data.model.enums.Priority
-import com.team.taskmanagementapp.data.model.enums.RecurrenceType
-import com.team.taskmanagementapp.data.model.enums.TaskStatus
-import com.team.taskmanagementapp.data.repository.BackupRepository
+import com.team.taskmanagementapp.R
+import com.team.taskmanagementapp.data.repository.BackupHistoryItem
+import com.team.taskmanagementapp.data.repository.BackupUiState
 import com.team.taskmanagementapp.databinding.FragmentDataManagementBinding
-import kotlinx.coroutines.Dispatchers
+import com.team.taskmanagementapp.ui.viewmodel.BackupViewModel
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.json.JSONArray
-import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 /**
- * TASK-26 / TASK-50 / TASK-54 — Backup & Restore screen.
+ * TASK-26 / TASK-50 / TASK-54 / Task 16 — Backup & Restore screen.
  *
- * Export path  : exportLauncher → SAF CreateDocument → writes JSON via BackupRepository
- * Restore path : importLauncher → SAF OpenDocument  → reads JSON via ContentResolver
+ * Export path  : exportLauncher → SAF CreateDocument → BackupViewModel.exportBackup(uri)
+ * Restore path : importLauncher → SAF OpenDocument  → BackupViewModel.restoreBackup(uri)
+ *
+ * Task 16: file backup chứa **Task (+ counters Pomodoro)** và **PomodoroSession** (giữ nguyên ID).
+ * Fragment **chỉ** nói chuyện với [BackupViewModel] — không có truy vấn Room nào ở đây
+ * (UI → ViewModel → Repository → Room).
  */
 class DataManagementFragment : Fragment() {
 
     private var _binding: FragmentDataManagementBinding? = null
     private val binding get() = requireNotNull(_binding)
+
+    private val viewModel: BackupViewModel by viewModels()
+
+    /** URI của file backup vừa tạo — dùng để ghi lịch sử sau khi export thành công. */
+    private var pendingExportUri: Uri? = null
 
     // ─── SAF: Export — CreateDocument ──────────────────────────────────────────
     private val exportLauncher: ActivityResultLauncher<String> =
@@ -45,7 +52,7 @@ class DataManagementFragment : Fragment() {
             uri?.let { doExport(it) }
         }
 
-    // ─── SAF: Import — OpenDocument ────────────────────────────────────────────
+    // ─── SAF: Restore — OpenDocument ──────────────────────────────────────────
     private val importLauncher: ActivityResultLauncher<Array<String>> =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
             if (uri != null) {
@@ -78,10 +85,10 @@ class DataManagementFragment : Fragment() {
 
         // ─── Status-card action buttons (download / verify — future tasks) ──────
         binding.btnDownloadLast.setOnClickListener {
-            showSnack(getString(com.team.taskmanagementapp.R.string.data_feature_pending))
+            showSnack(getString(R.string.data_feature_pending))
         }
         binding.btnVerifyIntegrity.setOnClickListener {
-            showSnack(getString(com.team.taskmanagementapp.R.string.data_feature_pending))
+            showSnack(getString(R.string.data_feature_pending))
         }
 
         // ─── Clear selected file ─────────────────────────────────────────────
@@ -89,71 +96,87 @@ class DataManagementFragment : Fragment() {
             binding.layoutFilePreview.visibility = View.GONE
         }
 
-        // ─── Load export stats ───────────────────────────────────────────────────
-        loadExportStats()
-
-        // ─── Populate Recent Backups ─────────────────────────────────────────────
-        loadBackupStatus()
-
-        // ─── Export button ───────────────────────────────────────────────────────
+        // ─── Backup button (Task 16) ────────────────────────────────────────────
         binding.exportDataButton.setOnClickListener { launchExport() }
 
-        // ─── Restore button & drop-zone: launch ImportActivity for JSON import ───
-        val openImportActivity = View.OnClickListener {
-            val intent = android.content.Intent(requireContext(), com.team.taskmanagementapp.ui.activity.ImportActivity::class.java)
-            startActivity(intent)
-        }
-        binding.restoreDataButton.setOnClickListener(openImportActivity)
-        binding.dropZone.setOnClickListener(openImportActivity)
+        // ─── Restore button & drop-zone: chọn file backup qua SAF (Task 16) ────
+        val pickBackupFile = View.OnClickListener { launchRestore() }
+        binding.restoreDataButton.setOnClickListener(pickBackupFile)
+        binding.dropZone.setOnClickListener(pickBackupFile)
 
         // ─── View All History ─────────────────────────────────────────────────
         binding.btnViewAllHistory.setOnClickListener {
-            showSnack(getString(com.team.taskmanagementapp.R.string.data_feature_pending))
+            showSnack(getString(R.string.data_feature_pending))
         }
+
+        observeViewModel()
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
-    //  STATS
+    //  OBSERVE VIEWMODEL
     // ═══════════════════════════════════════════════════════════════════════════
 
-    private fun loadExportStats() {
+    private fun observeViewModel() {
+        // 1. Số liệu thống kê (task / completed / Pomodoro session)
         viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                val dao = AppDatabase.getInstance(requireContext()).taskDao()
-                val total = withContext(Dispatchers.IO) { dao.getAllTasksSync().size }
-                val completed = withContext(Dispatchers.IO) { dao.getCompletedTasksCount() }
-                _binding?.let { b ->
-                    b.tvTotalTasksCount.text = total.toString()
-                    b.tvCompletedCount.text = completed.toString()
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "loadExportStats error", e)
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                combine(
+                    viewModel.taskCount,
+                    viewModel.completedTaskCount,
+                    viewModel.pomodoroSessionCount
+                ) { total, completed, sessions -> Triple(total, completed, sessions) }
+                    .collect { (total, completed, sessions) ->
+                        renderStats(total, completed, sessions)
+                    }
+            }
+        }
+
+        // 2. Lịch sử backup + thời điểm backup gần nhất
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                combine(
+                    viewModel.recentBackups,
+                    viewModel.lastBackupTime
+                ) { backups, lastBackup -> backups to lastBackup }
+                    .collect { (backups, lastBackup) -> renderBackupStatus(backups, lastBackup) }
+            }
+        }
+
+        // 3. Kết quả backup/restore → thông báo cho người dùng
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state -> renderResult(state) }
             }
         }
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
-    //  BACKUP STATUS & RECENT HISTORY
+    //  RENDER
     // ═══════════════════════════════════════════════════════════════════════════
 
-    private fun loadBackupStatus() {
-        if (_binding == null || !isAdded) return
-        val dao = AppDatabase.getInstance(requireContext()).taskDao()
-        val repo = BackupRepository(requireContext(), dao)
-        val recentBackups = repo.getRecentBackups()
+    private fun renderStats(totalTasks: Int, completedTasks: Int, sessions: Int) {
+        _binding?.let { b ->
+            b.tvTotalTasksCount.text = totalTasks.toString()
+            b.tvCompletedCount.text = completedTasks.toString()
+            b.tvBackupContentSummary.text = getString(
+                com.team.taskmanagementapp.R.string.data_backup_content_summary,
+                totalTasks,
+                sessions
+            )
+        }
+    }
 
+    private fun renderBackupStatus(recentBackups: List<BackupHistoryItem>, lastBackup: String?) {
         _binding?.let { b ->
             if (recentBackups.isEmpty()) {
                 b.tvBackupStatusTitle.text = getString(com.team.taskmanagementapp.R.string.data_no_backup_yet)
-                b.tvBackupStatusSub.text = getString(com.team.taskmanagementapp.R.string.data_no_backup_subtitle)
+                b.tvBackupStatusSub.text = lastBackup
+                    ?: getString(com.team.taskmanagementapp.R.string.data_no_backup_subtitle)
                 b.ivStatusBadge.setImageResource(com.team.taskmanagementapp.R.drawable.ic_settings_backup)
                 b.layoutStatusActions.visibility = View.GONE
 
                 b.tvNoRecentBackups.visibility = View.VISIBLE
-                b.recentItem1.root.visibility = View.GONE
-                b.recentItem2.root.visibility = View.GONE
-                b.recentItem3.root.visibility = View.GONE
-                b.recentItem4.root.visibility = View.GONE
+                hideAllRecentItems()
                 b.dividerHistory.visibility = View.GONE
                 b.btnViewAllHistory.visibility = View.GONE
             } else {
@@ -186,8 +209,43 @@ class DataManagementFragment : Fragment() {
         }
     }
 
+    private fun hideAllRecentItems() {
+        _binding?.let { b ->
+            b.recentItem1.root.visibility = View.GONE
+            b.recentItem2.root.visibility = View.GONE
+            b.recentItem3.root.visibility = View.GONE
+            b.recentItem4.root.visibility = View.GONE
+        }
+    }
+
+    /**
+     * Hiển thị kết quả backup/restore: đang xử lý → progress bar; xong → Snackbar thông báo.
+     */
+    private fun renderResult(state: BackupUiState) {
+        val b = _binding ?: return
+        when (state) {
+            is BackupUiState.Idle -> b.progressBar.visibility = View.GONE
+            is BackupUiState.Loading -> b.progressBar.visibility = View.VISIBLE
+            is BackupUiState.Success -> {
+                b.progressBar.visibility = View.GONE
+                pendingExportUri?.let { uri ->
+                    pendingExportUri = null
+                    recordBackupHistory(uri)
+                }
+                showSnack(getString(com.team.taskmanagementapp.R.string.data_backup_result_success, state.message))
+                viewModel.resetState()
+            }
+            is BackupUiState.Error -> {
+                b.progressBar.visibility = View.GONE
+                pendingExportUri = null
+                showSnack(getString(com.team.taskmanagementapp.R.string.data_backup_result_error, state.message))
+                viewModel.resetState()
+            }
+        }
+    }
+
     // ═══════════════════════════════════════════════════════════════════════════
-    //  SAF — EXPORT (TMA-50)
+    //  SAF — BACKUP (Task 16)
     // ═══════════════════════════════════════════════════════════════════════════
 
     private fun launchExport() {
@@ -197,137 +255,38 @@ class DataManagementFragment : Fragment() {
 
     private fun doExport(uri: Uri) {
         showSnack(getString(com.team.taskmanagementapp.R.string.data_export_started))
-        viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                val dao = AppDatabase.getInstance(requireContext()).taskDao()
-                val repo = BackupRepository(requireContext(), dao)
-                val count = withContext(Dispatchers.IO) {
-                    repo.exportToJson(uri)
-                }
-                val fileName = getFileName(uri)
-                val dateFormat = SimpleDateFormat("MMM dd, yyyy • HH:mm", Locale.getDefault())
-                val now = System.currentTimeMillis()
-                val sizeBytes = try {
-                    requireContext().contentResolver.openFileDescriptor(uri, "r")?.use { it.statSize } ?: 0L
-                } catch (e: Exception) {
-                    0L
-                }
-                val sizeKb = if (sizeBytes > 0) (sizeBytes / 1024).coerceAtLeast(1) else 1
-                repo.addRecentBackup(fileName, dateFormat.format(Date(now)), "$sizeKb KB", now)
+        pendingExportUri = uri
+        viewModel.exportBackup(uri)
+    }
 
-                loadBackupStatus()
-                loadExportStats()
-                showSnack(getString(com.team.taskmanagementapp.R.string.data_export_success, count))
+    /** Ghi tên file + dung lượng vào lịch sử backup sau khi file đã được tạo. */
+    private fun recordBackupHistory(uri: Uri) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val fileName = getFileName(uri)
+            val sizeBytes = try {
+                requireContext().contentResolver.openFileDescriptor(uri, "r")?.use { it.statSize } ?: 0L
             } catch (e: Exception) {
-                Log.e(TAG, "Export failed", e)
-                showSnack(getString(com.team.taskmanagementapp.R.string.data_export_failed))
+                Log.w(TAG, "recordBackupHistory: ${e.message}")
+                0L
             }
+            val sizeKb = if (sizeBytes > 0) (sizeBytes / 1024).coerceAtLeast(1) else 1
+            val dateFormat = SimpleDateFormat("MMM dd, yyyy • HH:mm", Locale.getDefault())
+            val now = System.currentTimeMillis()
+            viewModel.addRecentBackup(fileName, dateFormat.format(Date(now)), "$sizeKb KB", now)
         }
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
-    //  SAF — RESTORE / IMPORT
+    //  SAF — RESTORE (Task 16)
     // ═══════════════════════════════════════════════════════════════════════════
 
-    private fun launchImport() {
+    private fun launchRestore() {
         importLauncher.launch(arrayOf("application/json"))
     }
 
     private fun doRestore(uri: Uri) {
         showSnack(getString(com.team.taskmanagementapp.R.string.data_restore_started))
-        viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                val jsonString = withContext(Dispatchers.IO) {
-                    requireContext().contentResolver.openInputStream(uri)?.use { input ->
-                        input.bufferedReader(Charsets.UTF_8).readText()
-                    } ?: throw IllegalStateException("Cannot open file")
-                }
-                val tasks = jsonToTasks(jsonString)
-                withContext(Dispatchers.IO) {
-                    val dao = AppDatabase.getInstance(requireContext()).taskDao()
-                    dao.deleteAllTasks()
-                    dao.insertAllTasks(tasks)
-                }
-                // Refresh stats after restore
-                loadExportStats()
-                showSnack(getString(com.team.taskmanagementapp.R.string.data_restore_success))
-            } catch (e: Exception) {
-                Log.e(TAG, "Restore failed", e)
-                _binding?.layoutFilePreview?.visibility = View.GONE
-                showSnack(getString(com.team.taskmanagementapp.R.string.data_restore_failed))
-            }
-        }
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    //  JSON SERIALISATION
-    // ═══════════════════════════════════════════════════════════════════════════
-
-    private fun tasksToJson(tasks: List<Task>): String {
-        val array = JSONArray()
-        for (task in tasks) {
-            val obj = JSONObject().apply {
-                put("id", task.id)
-                put("title", task.title)
-                put("description", task.description)
-                put("dueDate", task.dueDate)
-                put("dueTime", task.dueTime)
-                put("priority", task.priority.name)
-                put("status", task.status.name)
-                put("isCompleted", task.isCompleted)
-                put("isComplete", task.isCompleted)
-                put("isRecurring", task.isRecurring)
-                put("recurrenceType", task.recurrenceType.name)
-                put("recurrenceInterval", task.recurrenceInterval)
-                put("reminderMinutes", task.reminderMinutes)
-                put("createdAt", task.createdAt)
-                put("updatedAt", task.updatedAt)
-                put("completedAt", task.completedAt ?: JSONObject.NULL)
-            }
-            array.put(obj)
-        }
-        val root = JSONObject()
-        root.put("version", BACKUP_VERSION)
-        root.put("exportedAt", System.currentTimeMillis())
-        root.put("exportedBy", "TaskManagementApp")
-        root.put("taskCount", tasks.size)
-        root.put("tasks", array)
-        return root.toString(2)
-    }
-
-    private fun jsonToTasks(json: String): List<Task> {
-        val root = JSONObject(json)
-        val array = root.getJSONArray("tasks")
-        val tasks = mutableListOf<Task>()
-        for (i in 0 until array.length()) {
-            val obj = array.getJSONObject(i)
-            val task = Task(
-                id = obj.optInt("id", 0),
-                title = obj.optString("title", ""),
-                description = obj.optString("description", ""),
-                dueDate = obj.optLong("dueDate", 0L),
-                dueTime = obj.optLong("dueTime", 0L),
-                priority = runCatching {
-                    Priority.valueOf(obj.optString("priority", Priority.MEDIUM.name))
-                }.getOrDefault(Priority.MEDIUM),
-                status = runCatching {
-                    TaskStatus.valueOf(obj.optString("status", TaskStatus.TODO.name))
-                }.getOrDefault(TaskStatus.TODO),
-                isCompleted = obj.optBoolean("isComplete", false),
-                isRecurring = obj.optBoolean("isRecurring", false),
-                recurrenceType = runCatching {
-                    RecurrenceType.valueOf(obj.optString("recurrenceType", RecurrenceType.NONE.name))
-                }.getOrDefault(RecurrenceType.NONE),
-                recurrenceInterval = obj.optInt("recurrenceInterval", 1),
-                reminderMinutes = obj.optInt("reminderMinutes", 0),
-                createdAt = obj.optLong("createdAt", System.currentTimeMillis()),
-                updatedAt = obj.optLong("updatedAt", System.currentTimeMillis()),
-                completedAt = if (obj.optBoolean("isComplete", false))
-                    obj.optLong("completedAt", 0L).takeIf { it > 0L } else null,
-            )
-            tasks.add(task)
-        }
-        return tasks
+        viewModel.restoreBackup(uri)
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
@@ -371,8 +330,7 @@ class DataManagementFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        loadExportStats()
-        loadBackupStatus()
+        viewModel.refreshStats()
     }
 
     override fun onDestroyView() {
@@ -382,6 +340,5 @@ class DataManagementFragment : Fragment() {
 
     companion object {
         private const val TAG = "DataManagementFragment"
-        private const val BACKUP_VERSION = "1.0"
     }
 }
