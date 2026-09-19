@@ -33,6 +33,8 @@ class MainActivity : BaseActivity() {
         R.id.taskListFragment,
         R.id.calendarFragment,
         R.id.statsFragment,
+        R.id.streakFragment,
+        R.id.rewardsFragment,
         R.id.settingsFragment
     )
 
@@ -89,20 +91,26 @@ class MainActivity : BaseActivity() {
     }
 
     private fun setupCustomBottomNav() {
-        // Register tab views
+        // Register tab views (order matches layout: Home, Calendar, Stats, Streak, Rewards, Settings)
         tabContainers.add(binding.tabHome)
         tabContainers.add(binding.tabCalendar)
         tabContainers.add(binding.tabStats)
+        tabContainers.add(binding.tabStreak)
+        tabContainers.add(binding.tabRewards)
         tabContainers.add(binding.tabSettings)
 
         tabIcons.add(binding.iconHome)
         tabIcons.add(binding.iconCalendar)
         tabIcons.add(binding.iconStats)
+        tabIcons.add(binding.iconStreak)
+        tabIcons.add(binding.iconRewards)
         tabIcons.add(binding.iconSettings)
 
         tabLabels.add(binding.labelHome)
         tabLabels.add(binding.labelCalendar)
         tabLabels.add(binding.labelStats)
+        tabLabels.add(binding.labelStreak)
+        tabLabels.add(binding.labelRewards)
         tabLabels.add(binding.labelSettings)
 
         // Set click listeners

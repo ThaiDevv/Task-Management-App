@@ -17,6 +17,8 @@ import com.team.taskmanagementapp.util.NotificationHelper
 import com.team.taskmanagementapp.util.RecurrenceHelper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
+import com.team.taskmanagementapp.data.model.streak.StreakInfo
+import com.team.taskmanagementapp.util.StreakCalculator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -43,6 +45,12 @@ class TaskViewModel(
     private val _uiState = MutableStateFlow<UiState<List<Task>>>(UiState.Loading)
     val uiState: StateFlow<UiState<List<Task>>> = _uiState.asStateFlow()
 
+    private val _streakInfo = MutableStateFlow(StreakInfo())
+    val streakInfo: StateFlow<StreakInfo> = _streakInfo.asStateFlow()
+
+    private val _totalCompletedTasks = MutableStateFlow<Int>(0)
+    val totalCompletedTasks: StateFlow<Int> = _totalCompletedTasks.asStateFlow()
+
     private var taskListJob: Job? = null
 
 
@@ -61,7 +69,15 @@ class TaskViewModel(
             // Bước 2: Bắt đầu collect sau khi UPDATE đã xong.
             loadAllTasks()
         }
+
+        viewModelScope.launch {
+            repository.getAllTasks().collect { allTasks ->
+                _streakInfo.value = StreakCalculator.calculateStreak(allTasks, applicationContext)
+                _totalCompletedTasks.value = allTasks.count { it.isCompleted }
+            }
+        }
     }
+
 
 
     fun loadAllTasks() {
