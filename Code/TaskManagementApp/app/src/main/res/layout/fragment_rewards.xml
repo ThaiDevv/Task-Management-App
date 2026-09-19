@@ -83,7 +83,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:fontFamily="@font/poppins_bold"
-                            android:text="0 / 5"
+                            android:text="0 / 14"
                             android:textColor="#10B981"
                             android:textSize="24sp" />
                     </LinearLayout>
@@ -352,6 +352,246 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_semibold"
                             android:text="Locked 🔒"
+                            android:textColor="#737786"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Task Completion Rewards Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#4DC3C6D7"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="@string/task_milestones_header"
+                        android:textColor="#1B1B1B"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvTaskProgress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="16dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:textColor="#737786"
+                        android:textSize="12sp"
+                        tools:text="Completed: 12 tasks" />
+
+                    <!-- Badge 1: 10 Tasks -->
+                    <LinearLayout
+                        android:id="@+id/layoutTaskBadge10"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_pill_outlined"
+                        android:gravity="center_vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="@string/task_milestone_10"
+                            android:textColor="#1B1B1B"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvTaskStatus10"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="@string/badge_locked"
+                            android:textColor="#737786"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Badge 2: 50 Tasks -->
+                    <LinearLayout
+                        android:id="@+id/layoutTaskBadge50"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_pill_outlined"
+                        android:gravity="center_vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="@string/task_milestone_50"
+                            android:textColor="#1B1B1B"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvTaskStatus50"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="@string/badge_locked"
+                            android:textColor="#737786"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Badge 3: 100 Tasks -->
+                    <LinearLayout
+                        android:id="@+id/layoutTaskBadge100"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_pill_outlined"
+                        android:gravity="center_vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="@string/task_milestone_100"
+                            android:textColor="#1B1B1B"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvTaskStatus100"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="@string/badge_locked"
+                            android:textColor="#737786"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Badge 4: 250 Tasks -->
+                    <LinearLayout
+                        android:id="@+id/layoutTaskBadge250"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_pill_outlined"
+                        android:gravity="center_vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="@string/task_milestone_250"
+                            android:textColor="#1B1B1B"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvTaskStatus250"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="@string/badge_locked"
+                            android:textColor="#737786"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Badge 5: 500 Tasks -->
+                    <LinearLayout
+                        android:id="@+id/layoutTaskBadge500"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_pill_outlined"
+                        android:gravity="center_vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="@string/task_milestone_500"
+                            android:textColor="#1B1B1B"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvTaskStatus500"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="@string/badge_locked"
+                            android:textColor="#737786"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Badge 6: 1000 Tasks -->
+                    <LinearLayout
+                        android:id="@+id/layoutTaskBadge1000"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_pill_outlined"
+                        android:gravity="center_vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="@string/task_milestone_1000"
+                            android:textColor="#1B1B1B"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvTaskStatus1000"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="@string/badge_locked"
+                            android:textColor="#737786"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Badge 7: 2000 Tasks -->
+                    <LinearLayout
+                        android:id="@+id/layoutTaskBadge2000"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_pill_outlined"
+                        android:gravity="center_vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="@string/task_milestone_2000"
+                            android:textColor="#1B1B1B"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvTaskStatus2000"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="@string/badge_locked"
                             android:textColor="#737786"
                             android:textSize="12sp" />
                     </LinearLayout>

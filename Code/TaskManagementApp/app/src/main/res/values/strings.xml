@@ -359,6 +359,31 @@
     <string name="streak_milestone_100">💎 Champion - 100 Days</string>
     <string name="streak_milestone_200">🏆 Legend - 200 Days</string>
     <string name="streak_milestone_365">👑 Master - 365 Days</string>
+
+    <!-- Task Completion Milestones (tên resource phải khớp số task hiển thị) -->
+    <string name="task_milestones_header">Task Completion Rewards</string>
+    <string name="task_milestones_progress">Completed: %1$d tasks</string>
+    <string name="task_milestone_10">🌱 Task Novice - 10 Tasks</string>
+    <string name="task_milestone_50">📝 Task Doer - 50 Tasks</string>
+    <string name="task_milestone_100">⚡ Task Achiever - 100 Tasks</string>
+    <string name="task_milestone_250">🎯 Task Executor - 250 Tasks</string>
+    <string name="task_milestone_500">💎 Task Expert - 500 Tasks</string>
+    <string name="task_milestone_1000">🏆 Task Champion - 1000 Tasks</string>
+    <string name="task_milestone_2000">👑 Task Master - 2000 Tasks</string>
+
+    <!-- Reward Badge Status & Summary -->
+    <string name="badge_unlocked">Unlocked ✅</string>
+    <string name="badge_locked">Locked 🔒</string>
+    <string name="rewards_badges_unlocked_format">%1$d / %2$d</string>
+
+    <!-- Task Completion Badge Titles (dùng cho thẻ CURRENT TITLE) -->
+    <string name="task_title_novice">🌱 Task Novice</string>
+    <string name="task_title_doer">📝 Task Doer</string>
+    <string name="task_title_achiever">⚡ Task Achiever</string>
+    <string name="task_title_executor">🎯 Task Executor</string>
+    <string name="task_title_expert">💎 Task Expert</string>
+    <string name="task_title_champion">🏆 Task Champion</string>
+    <string name="task_title_master">👑 Task Master</string>
 </resources>
 
 
