@@ -84,40 +84,49 @@ object TaskCompletionHelper {
         } else originalTask.dueTime
 
         if (targetCompleted) {
-            val existingFutureTasks = dao.getFutureRecurringTasksSync(
-                originalTask.title, originalTask.recurrenceType, nextDueDate
-            )
-            val anyRecurringFutureTasks = if (existingFutureTasks.isNotEmpty()) {
-                existingFutureTasks
-            } else {
-                dao.getFutureRecurringTasksSync(originalTask.title, RecurrenceType.DAILY, nextDueDate) +
-                    dao.getFutureRecurringTasksSync(originalTask.title, RecurrenceType.WEEKLY, nextDueDate) +
-                    dao.getFutureRecurringTasksSync(originalTask.title, RecurrenceType.MONTHLY, nextDueDate)
-            }
+            val isEnded = RecurrenceHelper.isRecurrenceEnded(originalTask, nextDueDate)
+            if (!isEnded && !originalTask.isPaused) {
+                val existingFutureTasks = dao.getFutureRecurringTasksSync(
+                    originalTask.title, originalTask.recurrenceType, nextDueDate
+                )
+                val anyRecurringFutureTasks = if (existingFutureTasks.isNotEmpty()) {
+                    existingFutureTasks
+                } else {
+                    dao.getFutureRecurringTasksSync(originalTask.title, RecurrenceType.DAILY, nextDueDate) +
+                        dao.getFutureRecurringTasksSync(originalTask.title, RecurrenceType.WEEKLY, nextDueDate) +
+                        dao.getFutureRecurringTasksSync(originalTask.title, RecurrenceType.MONTHLY, nextDueDate) +
+                        dao.getFutureRecurringTasksSync(originalTask.title, RecurrenceType.YEARLY, nextDueDate)
+                }
 
-            if (anyRecurringFutureTasks.isEmpty()) {
-                val nextInstance = originalTask.copy(
-                    id = 0,
-                    isCompleted = false,
-                    status = TaskStatus.TODO,
-                    isRecurring = true,
-                    recurrenceType = originalTask.recurrenceType,
-                    dueDate = nextDueDate,
-                    dueTime = nextDueTime,
-                    createdAt = now,
-                    updatedAt = now
-                )
-                val insertedId = dao.insertTask(nextInstance)
-                AlarmScheduler.scheduleAlarm(
-                    appContext, nextInstance.copy(id = insertedId.toInt())
-                )
+                if (anyRecurringFutureTasks.isEmpty()) {
+                    val nextInstance = originalTask.copy(
+                        id = 0,
+                        isCompleted = false,
+                        status = TaskStatus.TODO,
+                        isRecurring = true,
+                        recurrenceType = originalTask.recurrenceType,
+                        dueDate = nextDueDate,
+                        dueTime = nextDueTime,
+                        repeatEndDate = originalTask.repeatEndDate,
+                        repeatLimitCount = originalTask.repeatLimitCount,
+                        currentOccurrence = originalTask.currentOccurrence + 1,
+                        isPaused = originalTask.isPaused,
+                        createdAt = now,
+                        updatedAt = now
+                    )
+                    val insertedId = dao.insertTask(nextInstance)
+                    AlarmScheduler.scheduleAlarm(
+                        appContext, nextInstance.copy(id = insertedId.toInt())
+                    )
+                }
             }
         } else {
             val futureTasks = (
                 dao.getFutureRecurringTasksSync(originalTask.title, originalTask.recurrenceType, nextDueDate) +
                     dao.getFutureRecurringTasksSync(originalTask.title, RecurrenceType.DAILY, nextDueDate) +
                     dao.getFutureRecurringTasksSync(originalTask.title, RecurrenceType.WEEKLY, nextDueDate) +
-                    dao.getFutureRecurringTasksSync(originalTask.title, RecurrenceType.MONTHLY, nextDueDate)
+                    dao.getFutureRecurringTasksSync(originalTask.title, RecurrenceType.MONTHLY, nextDueDate) +
+                    dao.getFutureRecurringTasksSync(originalTask.title, RecurrenceType.YEARLY, nextDueDate)
                 ).distinctBy { it.id }
 
             futureTasks.forEach { futureTask ->
