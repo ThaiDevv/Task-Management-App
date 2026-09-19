@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Circular Background -->
+    <path
+        android:fillColor="@color/primary"
+        android:pathData="M24,24m-22,0a22,22 0,1 1,44 0a22,22 0,1 1,-44 0" />
+    <!-- Plus Icon -->
+    <path
+        android:fillColor="@color/on_primary"
+        android:pathData="M31,25.5h-5.5V31h-3v-5.5H17v-3h5.5V17h3v5.5H31v3z" />
+</vector>
