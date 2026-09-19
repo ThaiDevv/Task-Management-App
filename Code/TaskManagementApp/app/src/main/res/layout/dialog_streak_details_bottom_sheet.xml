@@ -311,21 +311,51 @@
                         android:textSize="13sp" />
 
                     <TextView
-                        android:id="@+id/tvMilestone14"
+                        android:id="@+id/tvMilestone30"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:fontFamily="@font/poppins_medium"
-                        android:text="@string/streak_milestone_14"
+                        android:text="@string/streak_milestone_30"
                         android:textColor="#1B1B1B"
                         android:textSize="13sp" />
 
                     <TextView
-                        android:id="@+id/tvMilestone30"
+                        android:id="@+id/tvMilestone50"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="@string/streak_milestone_50"
+                        android:textColor="#1B1B1B"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvMilestone100"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="@string/streak_milestone_100"
+                        android:textColor="#1B1B1B"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvMilestone200"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="@string/streak_milestone_200"
+                        android:textColor="#1B1B1B"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvMilestone365"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppins_medium"
-                        android:text="@string/streak_milestone_30"
+                        android:text="@string/streak_milestone_365"
                         android:textColor="#1B1B1B"
                         android:textSize="13sp" />
                 </LinearLayout>

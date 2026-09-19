@@ -48,13 +48,25 @@ class StreakDetailsBottomSheet : BottomSheetDialogFragment() {
             binding.tvMilestone7.text = "✅ " + binding.tvMilestone7.text
             binding.tvMilestone7.setTextColor(Color.parseColor("#10B981"))
         }
-        if (currentStreak >= 14) {
-            binding.tvMilestone14.text = "✅ " + binding.tvMilestone14.text
-            binding.tvMilestone14.setTextColor(Color.parseColor("#10B981"))
-        }
         if (currentStreak >= 30) {
             binding.tvMilestone30.text = "✅ " + binding.tvMilestone30.text
             binding.tvMilestone30.setTextColor(Color.parseColor("#10B981"))
+        }
+        if (currentStreak >= 50) {
+            binding.tvMilestone50.text = "✅ " + binding.tvMilestone50.text
+            binding.tvMilestone50.setTextColor(Color.parseColor("#10B981"))
+        }
+        if (currentStreak >= 100) {
+            binding.tvMilestone100.text = "✅ " + binding.tvMilestone100.text
+            binding.tvMilestone100.setTextColor(Color.parseColor("#10B981"))
+        }
+        if (currentStreak >= 200) {
+            binding.tvMilestone200.text = "✅ " + binding.tvMilestone200.text
+            binding.tvMilestone200.setTextColor(Color.parseColor("#10B981"))
+        }
+        if (currentStreak >= 365) {
+            binding.tvMilestone365.text = "✅ " + binding.tvMilestone365.text
+            binding.tvMilestone365.setTextColor(Color.parseColor("#10B981"))
         }
 
         binding.btnCloseStreak.setOnClickListener {

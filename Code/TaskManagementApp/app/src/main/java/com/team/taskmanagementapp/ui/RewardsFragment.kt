@@ -75,15 +75,6 @@ class RewardsFragment : Fragment() {
             binding.tvStatus7.setTextColor(Color.parseColor("#737786"))
         }
 
-        if (streak >= 14) {
-            unlockedCount++
-            binding.tvStatus14.text = "Unlocked ✅"
-            binding.tvStatus14.setTextColor(Color.parseColor("#10B981"))
-        } else {
-            binding.tvStatus14.text = "Locked 🔒"
-            binding.tvStatus14.setTextColor(Color.parseColor("#737786"))
-        }
-
         if (streak >= 30) {
             unlockedCount++
             binding.tvStatus30.text = "Unlocked ✅"
@@ -91,6 +82,15 @@ class RewardsFragment : Fragment() {
         } else {
             binding.tvStatus30.text = "Locked 🔒"
             binding.tvStatus30.setTextColor(Color.parseColor("#737786"))
+        }
+
+        if (streak >= 50) {
+            unlockedCount++
+            binding.tvStatus50.text = "Unlocked ✅"
+            binding.tvStatus50.setTextColor(Color.parseColor("#10B981"))
+        } else {
+            binding.tvStatus50.text = "Locked 🔒"
+            binding.tvStatus50.setTextColor(Color.parseColor("#737786"))
         }
 
         if (streak >= 100) {
@@ -102,7 +102,25 @@ class RewardsFragment : Fragment() {
             binding.tvStatus100.setTextColor(Color.parseColor("#737786"))
         }
 
-        binding.tvUnlockedCount.text = "$unlockedCount / 5"
+        if (streak >= 200) {
+            unlockedCount++
+            binding.tvStatus200.text = "Unlocked ✅"
+            binding.tvStatus200.setTextColor(Color.parseColor("#10B981"))
+        } else {
+            binding.tvStatus200.text = "Locked 🔒"
+            binding.tvStatus200.setTextColor(Color.parseColor("#737786"))
+        }
+
+        if (streak >= 365) {
+            unlockedCount++
+            binding.tvStatus365.text = "Unlocked ✅"
+            binding.tvStatus365.setTextColor(Color.parseColor("#10B981"))
+        } else {
+            binding.tvStatus365.text = "Locked 🔒"
+            binding.tvStatus365.setTextColor(Color.parseColor("#737786"))
+        }
+
+        binding.tvUnlockedCount.text = "$unlockedCount / 7"
         binding.tvCurrentRank.text = streakInfo.getBadgeTitle()
     }
 

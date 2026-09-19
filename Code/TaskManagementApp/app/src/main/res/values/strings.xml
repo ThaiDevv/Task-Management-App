@@ -353,10 +353,12 @@
     <string name="streak_rules_body">Finish 100% of your daily scheduled tasks to earn and maintain your streak. Missing any task or having no task on a scheduled day will reset your streak.</string>
     <string name="streak_milestones_header">Milestone Rewards</string>
     <string name="streak_milestone_3">🌱 Starter - 3 Days</string>
-    <string name="streak_milestone_7">🔥 Fire Master - 7 Days</string>
-    <string name="streak_milestone_14">⚡ Super Achiever - 14 Days</string>
-    <string name="streak_milestone_30">🏆 Task Champion - 30 Days</string>
-    <string name="streak_milestone_100">👑 Productivity Legend - 100 Days</string>
+    <string name="streak_milestone_7">🌟 Sparkstarter - 7 Days</string>
+    <string name="streak_milestone_30">🔥 Streaker - 30 Days</string>
+    <string name="streak_milestone_50">⚡ Achiever - 50 Days</string>
+    <string name="streak_milestone_100">💎 Champion - 100 Days</string>
+    <string name="streak_milestone_200">🏆 Legend - 200 Days</string>
+    <string name="streak_milestone_365">👑 Master - 365 Days</string>
 </resources>
 
 

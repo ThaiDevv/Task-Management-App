@@ -37,11 +37,13 @@ data class StreakInfo(
      */
     fun getBadgeTitle(): String {
         return when {
-            currentStreak >= 30 -> "👑 Legend Streak"
-            currentStreak >= 14 -> "🏆 Master Streak"
-            currentStreak >= 7  -> "⚡ Super Streak"
-            currentStreak >= 3  -> "🔥 Fire Streak"
-            currentStreak > 0   -> "🌱 Starter Streak"
+            currentStreak >= 365 -> "👑 Master Streak"
+            currentStreak >= 200 -> "🏆 Legend Streak"
+            currentStreak >= 100 -> "💎 Champion Streak"
+            currentStreak >= 50  -> "⚡ Achiever Streak"
+            currentStreak >= 30  -> "🔥 Streaker Streak"
+            currentStreak >= 7   -> "🌟 Sparkstarter Streak"
+            currentStreak >= 3   -> "🌱 Starter Streak"
             else -> "⚡ No Active Streak"
         }
     }

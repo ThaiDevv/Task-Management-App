@@ -45,13 +45,14 @@
             <!-- Summary Cards: Unlocked Badges & Current Rank -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="90dp"
                 android:layout_marginBottom="20dp"
+                android:baselineAligned="false"
                 android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginEnd="8dp"
                     android:layout_weight="1"
                     app:cardBackgroundColor="#FFFFFF"
@@ -62,7 +63,8 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
                         android:orientation="vertical"
                         android:padding="16dp">
 
@@ -89,7 +91,7 @@
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     app:cardBackgroundColor="#FFFFFF"
@@ -100,7 +102,8 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
                         android:orientation="vertical"
                         android:padding="16dp">
 
@@ -121,7 +124,7 @@
                             android:fontFamily="@font/poppins_bold"
                             android:text="Beginner"
                             android:textColor="#105CDB"
-                            android:textSize="16sp" />
+                            android:textSize="20sp" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
@@ -209,36 +212,7 @@
                             android:textSize="12sp" />
                     </LinearLayout>
 
-                    <!-- Badge 3: 14 Days -->
-                    <LinearLayout
-                        android:id="@+id/layoutBadge14"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="12dp"
-                        android:background="@drawable/bg_pill_outlined"
-                        android:padding="12dp">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:fontFamily="@font/poppins_bold"
-                            android:text="@string/streak_milestone_14"
-                            android:textColor="#1B1B1B"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/tvStatus14"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/poppins_semibold"
-                            android:text="Locked 🔒"
-                            android:textColor="#737786"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <!-- Badge 4: 30 Days -->
+                    <!-- Badge 3: 30 Days -->
                     <LinearLayout
                         android:id="@+id/layoutBadge30"
                         android:layout_width="match_parent"
@@ -267,12 +241,42 @@
                             android:textSize="12sp" />
                     </LinearLayout>
 
+                    <!-- Badge 4: 50 Days -->
+                    <LinearLayout
+                        android:id="@+id/layoutBadge50"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_pill_outlined"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="@string/streak_milestone_50"
+                            android:textColor="#1B1B1B"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvStatus50"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Locked 🔒"
+                            android:textColor="#737786"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
                     <!-- Badge 5: 100 Days -->
                     <LinearLayout
                         android:id="@+id/layoutBadge100"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp"
                         android:background="@drawable/bg_pill_outlined"
                         android:padding="12dp">
 
@@ -287,6 +291,63 @@
 
                         <TextView
                             android:id="@+id/tvStatus100"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Locked 🔒"
+                            android:textColor="#737786"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Badge 6: 200 Days -->
+                    <LinearLayout
+                        android:id="@+id/layoutBadge200"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_pill_outlined"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="@string/streak_milestone_200"
+                            android:textColor="#1B1B1B"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvStatus200"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Locked 🔒"
+                            android:textColor="#737786"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Badge 7: 365 Days -->
+                    <LinearLayout
+                        android:id="@+id/layoutBadge365"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/bg_pill_outlined"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="@string/streak_milestone_365"
+                            android:textColor="#1B1B1B"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvStatus365"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_semibold"

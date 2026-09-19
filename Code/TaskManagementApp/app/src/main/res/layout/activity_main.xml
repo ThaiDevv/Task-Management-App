@@ -97,32 +97,6 @@
 
         </LinearLayout>
 
-        <!-- FAB Container (Floating Center Circle) -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_create_task"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="-20dp"
-                android:contentDescription="@string/action_create_task"
-                android:src="@drawable/ic_add"
-                app:backgroundTint="@color/primary"
-                app:elevation="12dp"
-                app:fabCustomSize="56dp"
-                app:fabSize="normal"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
-                app:tint="@color/white" />
-
-        </LinearLayout>
-
         <!-- Stats Tab -->
         <LinearLayout
             android:id="@+id/tab_stats"
@@ -152,6 +126,33 @@
                 android:text="@string/nav_stats"
                 android:textColor="@color/bottom_nav_text_selector"
                 android:textSize="@dimen/text_label_small" />
+
+        </LinearLayout>
+
+
+        <!-- FAB Container (Floating Center Circle) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_create_task"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-20dp"
+                android:contentDescription="@string/action_create_task"
+                android:src="@drawable/ic_add"
+                app:backgroundTint="@color/primary"
+                app:elevation="12dp"
+                app:fabCustomSize="56dp"
+                app:fabSize="normal"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+                app:tint="@color/white" />
 
         </LinearLayout>
 
