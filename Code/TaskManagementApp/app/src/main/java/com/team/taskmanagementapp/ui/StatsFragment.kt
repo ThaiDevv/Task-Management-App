@@ -72,6 +72,9 @@ class StatsFragment : Fragment() {
     private fun renderStats(state: StatisticsUiState) {
         // 1. Weekly Productivity Chart
         binding.chartWeeklyProductivity.setData(state.weeklyProductivity)
+        binding.tvWeeklyProductivityTitle.setText(R.string.stats_completion_by_weekday)
+        binding.tvWeeklyProductivitySubtitle.text = getString(R.string.stats_chart_period, state.completedSubtitle)
+        binding.tvUnknownCompletionDates.visibility = if (state.hasUnknownCompletionDates) View.VISIBLE else View.GONE
 
         // 2. Completion Rate
         binding.viewCompletionRate.setProgress(state.completionRate)
@@ -81,14 +84,17 @@ class StatsFragment : Fragment() {
         binding.tvCompletedCount.text = state.completedCount.toString()
         binding.tvCompletedSubtitle.text = state.completedSubtitle
 
-        // 4. Deep Work Card
-        binding.tvDeepWorkHours.text = state.deepWorkHours
-        binding.tvDeepWorkSubtitle.text = state.deepWorkSubtitle
+        // 4. Actual unfinished count in the same selected period.
+        binding.tvPendingCount.text = state.pendingCount.toString()
+        binding.tvPendingSubtitle.text = state.completedSubtitle
 
         // 5. Tasks by Priority
         val priorityStats = state.priorityStats
-        binding.tvHighPriorityCount.text = getString(
-            R.string.stats_tasks_count_format,
+        binding.tvUrgentPriorityCount.text = resources.getQuantityString(R.plurals.stats_task_count, priorityStats.urgentCount, priorityStats.urgentCount)
+        binding.progressUrgentPriority.progress = Math.round(priorityStats.urgentPercent * 100).coerceIn(0, 100)
+        binding.tvHighPriorityCount.text = resources.getQuantityString(
+            R.plurals.stats_task_count,
+            priorityStats.highCount,
             priorityStats.highCount
         )
         binding.progressHighPriority.setProgress(
@@ -96,8 +102,9 @@ class StatsFragment : Fragment() {
             true
         )
 
-        binding.tvMediumPriorityCount.text = getString(
-            R.string.stats_tasks_count_format,
+        binding.tvMediumPriorityCount.text = resources.getQuantityString(
+            R.plurals.stats_task_count,
+            priorityStats.mediumCount,
             priorityStats.mediumCount
         )
         binding.progressMediumPriority.setProgress(
@@ -105,8 +112,9 @@ class StatsFragment : Fragment() {
             true
         )
 
-        binding.tvLowPriorityCount.text = getString(
-            R.string.stats_tasks_count_format,
+        binding.tvLowPriorityCount.text = resources.getQuantityString(
+            R.plurals.stats_task_count,
+            priorityStats.lowCount,
             priorityStats.lowCount
         )
         binding.progressLowPriority.setProgress(

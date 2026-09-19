@@ -58,6 +58,7 @@ class TaskListFragment : Fragment() {
     private lateinit var binding: FragmentTaskListBinding
     private lateinit var todayTaskAdapter: TaskAdapter
     private lateinit var upcomingTaskAdapter: UpcomingTaskAdapter
+    private lateinit var completedTaskAdapter: TaskAdapter
 
     private val viewModel: TaskViewModel by viewModels {
         val database = AppDatabase.getInstance(requireContext())
@@ -168,6 +169,15 @@ class TaskListFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = upcomingTaskAdapter
         }
+        completedTaskAdapter = TaskAdapter(
+            onTaskToggleComplete = { task -> viewModel.toggleTaskComplete(task) },
+            onTaskClick = { openTaskDetail(it) }
+        )
+        binding.completedTasksRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = completedTaskAdapter
+        }
+        binding.btnOpenFilter.contentDescription = getString(R.string.home_filter_description)
 
         // Open filter bottom sheet — no lambda passed; results arrive via FragmentResult API
         binding.btnOpenFilter.setOnClickListener {
@@ -215,7 +225,7 @@ class TaskListFragment : Fragment() {
             hour < 18 -> "Good Afternoon"
             else -> "Good Evening"
         }
-        binding.greetingText.text = "$greeting, Alex!"
+        binding.greetingText.text = "$greeting!"
     }
 
 
@@ -236,7 +246,11 @@ class TaskListFragment : Fragment() {
                                 showScreenState(ScreenState.CONTENT)
                             }
                             is UiState.Empty -> {
-                                showScreenState(ScreenState.EMPTY)
+                                // Keep the filter reachable when its result is empty.
+                                displayTaskList(emptyList())
+                                updateMetrics(emptyList())
+                                showScreenState(if (viewModel.filterCriteria.value != FilterCriteria())
+                                    ScreenState.CONTENT else ScreenState.EMPTY)
                             }
                             is UiState.Error -> {
                                 binding.viewErrorState.tvErrorMessage.text = uiState.message
@@ -304,17 +318,21 @@ class TaskListFragment : Fragment() {
 
     private fun displayTaskList(allTasks: List<Task>) {
         val nowEndToday = getEndOfTodayMillis()
-        val todayList = allTasks.filter { it.dueDate <= nowEndToday }
+        val todayList = allTasks.filter { !it.isCompleted && it.dueDate <= nowEndToday }
             .sortedWith(
                 compareBy<Task> { it.isCompleted }
                     .thenBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
             )
-        // Pending tasks are shown first; completed tasks stay at the bottom.
-        val upcomingList = allTasks.filter { it.dueDate > nowEndToday }
+        // Upcoming contains only work still to do. Completed work has its own section.
+        val upcomingList = allTasks.filter { !it.isCompleted && it.dueDate > nowEndToday }
             .sortedWith(
                 compareBy<Task> { it.isCompleted }
                     .thenBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
             )
+        val completedList = allTasks.filter { it.isCompleted }
+            .sortedByDescending { it.completedAt ?: it.updatedAt }
+        completedTaskAdapter.submitList(completedList)
+        binding.completedSection.visibility = if (completedList.isEmpty()) View.GONE else View.VISIBLE
 
         todayTaskAdapter.submitList(todayList) {
             todayScrollState?.let {
@@ -387,6 +405,11 @@ class TaskListFragment : Fragment() {
         binding.completedValue.text = completed.toString()
         binding.pendingValue.text = pending.toString()
         binding.overdueValue.text = overdue.toString()
+        val overdueColor = if (overdue > 0) Color.parseColor("#F43F5E")
+            else ContextCompat.getColor(requireContext(), R.color.on_surface_variant)
+        binding.overdueValue.setTextColor(overdueColor)
+        binding.overdueSubtitle.setTextColor(overdueColor)
+        binding.overdueSubtitle.setText(if (overdue > 0) R.string.home_action_needed else R.string.home_no_overdue)
 
         // Dynamic progress bar weight calculation
         val completedRatio = if (total > 0) (completed.toFloat() / total.toFloat() * 100).toInt() else 0
@@ -566,6 +589,7 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
                 R.id.completionDone -> CompletionFilter.DONE
                 else -> CompletionFilter.ALL
             }
+            syncCompletionConstraints()
             updatePreview()
         }
     }
@@ -634,6 +658,7 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun syncAllUi() {
+        normalizeCompletionFilters()
         isSynchronizing = true
         binding.completionToggleGroup.check(
             when (selectedCompletion) {
@@ -665,7 +690,29 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
             false
         )
         isSynchronizing = false
+        syncCompletionConstraints()
         syncCustomRangeLabel()
+    }
+
+    private fun normalizeCompletionFilters() {
+        if (selectedCompletion == CompletionFilter.DONE) {
+            selectedStatuses.clear()
+            if (selectedDueDateRange == DueDateRange.OVERDUE) selectedDueDateRange = DueDateRange.ALL
+        }
+    }
+
+    private fun syncCompletionConstraints() {
+        normalizeCompletionFilters()
+        val done = selectedCompletion == CompletionFilter.DONE
+        isSynchronizing = true
+        listOf(binding.chipStatusTodo, binding.chipStatusInProgress, binding.chipStatusOverdue).forEach {
+            it.isEnabled = !done
+            if (done) it.isChecked = false
+        }
+        binding.chipDueOverdue.isEnabled = !done
+        if (done && binding.chipDueOverdue.isChecked) binding.dueDateChipGroup.check(R.id.chipDueAll)
+        binding.completionConstraintHint.visibility = if (done) View.VISIBLE else View.GONE
+        isSynchronizing = false
     }
 
     private fun showCustomDateRangePicker() {

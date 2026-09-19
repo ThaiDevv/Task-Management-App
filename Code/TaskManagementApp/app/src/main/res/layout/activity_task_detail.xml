@@ -41,28 +41,6 @@
             android:textColor="@color/primary"
             android:textSize="20sp" />
 
-        <!-- Notification Icon -->
-        <ImageView
-            android:id="@+id/ivNotification"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="16dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Notifications"
-            android:src="@drawable/ic_bell"
-            app:tint="@color/primary" />
-
-        <!-- User Avatar Circle "JD" -->
-        <TextView
-            android:id="@+id/tvUserAvatar"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="@drawable/bg_day_circle_active"
-            android:fontFamily="@font/poppins_bold"
-            android:gravity="center"
-            android:text="JD"
-            android:textColor="@color/primary"
-            android:textSize="11sp" />
     </LinearLayout>
 
     <!-- ===== Scrollable Main Content ===== -->
@@ -113,7 +91,7 @@
                             android:layout_width="14dp"
                             android:layout_height="14dp"
                             android:layout_marginEnd="4dp"
-                            android:src="@drawable/ic_chevron_right"
+                            android:src="@drawable/ic_priority_flag"
                             app:tint="@color/tertiary" />
 
                         <TextView

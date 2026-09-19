@@ -52,7 +52,7 @@
                         android:layout_marginTop="2dp"
                         android:fontFamily="@font/poppins_bold"
                         android:letterSpacing="-0.01"
-                        android:text="Hello, Alex!"
+                        android:text="@string/home_hello"
                         android:textColor="#1B1B1B"
                         android:textSize="28sp" />
 
@@ -131,19 +131,12 @@
                                 android:gravity="center_vertical"
                                 android:orientation="horizontal">
 
-                                <ImageView
-                                    android:layout_width="14dp"
-                                    android:layout_height="14dp"
-                                    android:layout_marginEnd="2dp"
-                                    android:src="@drawable/ic_chevron_right"
-                                    app:tint="#105CDB" />
-
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/poppins_semibold"
-                                    android:text="Active tasks"
-                                    android:textColor="#105CDB"
+                                    android:text="@string/home_all_tasks"
+                                    android:textColor="#737786"
                                     android:textSize="11sp" />
                             </LinearLayout>
                         </LinearLayout>
@@ -311,19 +304,13 @@
                                 android:gravity="center_vertical"
                                 android:orientation="horizontal">
 
-                                <ImageView
-                                    android:layout_width="14dp"
-                                    android:layout_height="14dp"
-                                    android:layout_marginEnd="2dp"
-                                    android:src="@drawable/ic_chevron_right"
-                                    app:tint="#F43F5E" />
-
                                 <TextView
+                                    android:id="@+id/overdueSubtitle"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/poppins_semibold"
-                                    android:text="Action needed"
-                                    android:textColor="#F43F5E"
+                                    android:text="@string/home_no_overdue"
+                                    android:textColor="#737786"
                                     android:textSize="11sp" />
                             </LinearLayout>
                         </LinearLayout>
@@ -371,7 +358,7 @@
                             android:id="@+id/ivFilterIcon"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:src="@drawable/ic_nav_settings"
+                            android:src="@drawable/ic_filter_list"
                             app:tint="#105CDB" />
                     </LinearLayout>
                 </LinearLayout>
@@ -499,7 +486,34 @@
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
-            <!-- ===== 5. PRODUCTIVITY INSIGHT BANNER ===== -->
+            <!-- Completed tasks are separate from future work and always below active lists. -->
+            <LinearLayout
+                android:id="@+id/completedSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:paddingBottom="24dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="@string/home_completed"
+                    android:textColor="#1B1B1B"
+                    android:textSize="20sp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/completedTasksRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false" />
+            </LinearLayout>
+
+            <!-- General advice, not a personalized analytics claim. -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -529,7 +543,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/poppins_bold"
-                        android:text="Productivity Insight"
+                        android:text="@string/home_productivity_tip"
                         android:textColor="#FFFFFF"
                         android:textSize="18sp" />
 
@@ -557,7 +571,7 @@
                     android:alpha="0.9"
                     android:fontFamily="@font/poppins_medium"
                     android:lineSpacingMultiplier="1.4"
-                    android:text="You are most productive between 9 AM and 11 AM. Try scheduling deep work during this window."
+                    android:text="@string/home_productivity_tip_body"
                     android:textColor="#FFFFFF"
                     android:textSize="14sp" />
             </LinearLayout>

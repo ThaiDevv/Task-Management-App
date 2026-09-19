@@ -13,11 +13,12 @@ object Constants {
      * `currentOccurrence`, `isPaused` trên `tasks` (xem `AppDatabase.MIGRATION_2_3`).
      *
      * Version 4: tính năng Pomodoro Timer — bảng `pomodoro_sessions` + 3 cột theo dõi
-     * Pomodoro trên `tasks` (xem `AppDatabase.MIGRATION_3_4`).
+     * Pomodoro trên `tasks`, kèm cột `completedAt` ghi nhận thời điểm hoàn thành
+     * (xem `AppDatabase.MIGRATION_3_4`).
      *
-     * ⚠️ Cả hai nhánh đều từng dùng số 3 cho hai schema khác nhau; sau khi merge, 3 là
-     * schema lặp-lịch của `main` còn Pomodoro được nâng lên 4. `MIGRATION_3_4` được viết
-     * theo kiểu "thêm cột nếu chưa có" nên vẫn chạy đúng với cả hai biến thể của v3.
+     * ⚠️ Cả hai nhánh đều từng dùng số 3 (và cả số 4) cho các schema khác nhau; sau khi
+     * merge, 4 là schema gộp cuối cùng. `MIGRATION_3_4` được viết theo kiểu "thêm cột nếu
+     * chưa có" nên vẫn chạy đúng với mọi biến thể v3/v4 của hai nhánh.
      */
     const val DATABASE_VERSION = 4
 

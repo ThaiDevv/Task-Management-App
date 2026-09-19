@@ -29,7 +29,7 @@ import java.util.Locale
 
 /**
  * ViewModel for Statistics Dashboard.
- * Computes weekly productivity, completion rate, deep work focus time,
+ * Computes completion counts by weekday, completion rate,
  * and priority breakdown reactively from TaskRepository.
  *
  * Task 15: "deep work" và các số liệu Pomodoro nay lấy từ dữ liệu thật trong
@@ -121,7 +121,7 @@ class StatsViewModel(
         } else {
             allTasks.filter { task ->
                 val referenceTime = if (task.isCompleted || task.status == TaskStatus.COMPLETED) {
-                    if (task.updatedAt > 0) task.updatedAt else task.dueDate
+                    task.completedAt ?: return@filter false
                 } else {
                     task.dueDate
                 }
@@ -147,7 +147,7 @@ class StatsViewModel(
             else -> "Needs attention"
         }
 
-        // 3. Stats Cards: Completed & Deep Work Hours
+        // 3. Số liệu đếm thật của kỳ đang chọn (không suy diễn từ giờ tập trung).
         val completedSubtitle = when (filter) {
             StatsTimeFilter.THIS_WEEK -> "This week"
             StatsTimeFilter.LAST_WEEK -> "Last week"
@@ -168,6 +168,7 @@ class StatsViewModel(
         val highCount = tasksInPeriod.count { it.priority == Priority.HIGH }
         val mediumCount = tasksInPeriod.count { it.priority == Priority.MEDIUM }
         val lowCount = tasksInPeriod.count { it.priority == Priority.LOW }
+        val urgentCount = tasksInPeriod.count { it.priority == Priority.URGENT }
 
         val highPercent = if (totalTasks > 0) highCount.toFloat() / totalTasks else 0f
         val mediumPercent = if (totalTasks > 0) mediumCount.toFloat() / totalTasks else 0f
@@ -180,7 +181,9 @@ class StatsViewModel(
             totalCount = totalTasks,
             highPercent = highPercent,
             mediumPercent = mediumPercent,
-            lowPercent = lowPercent
+            lowPercent = lowPercent,
+            urgentCount = urgentCount,
+            urgentPercent = if (totalTasks > 0) urgentCount.toFloat() / totalTasks else 0f
         )
 
         return StatisticsUiState(
@@ -192,6 +195,10 @@ class StatsViewModel(
             completedSubtitle = completedSubtitle,
             deepWorkHours = deepWorkLabel,
             deepWorkSubtitle = deepWorkSubtitle,
+            pendingCount = totalTasks - completedTasks,
+            hasUnknownCompletionDates = allTasks.any {
+                (it.isCompleted || it.status == TaskStatus.COMPLETED) && it.completedAt == null
+            },
             priorityStats = priorityStats,
             pomodoro = pomodoro,
             isLoading = false
@@ -199,7 +206,8 @@ class StatsViewModel(
     }
 
     /**
-     * Compute completed tasks for Monday through Sunday.
+     * Aggregate recorded completions by weekday within the selected period.
+     * Monthly/all-time filters aggregate all their dates rather than showing this week only.
      */
     private fun computeWeeklyProductivity(
         allTasks: List<Task>,
@@ -221,18 +229,20 @@ class StatsViewModel(
 
         val dayNames = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
         val days = mutableListOf<DayProductivity>()
+        val (periodStart, periodEnd) = getPeriodRange(filter)
+        val weekdayCounts = allTasks.filter {
+            (it.isCompleted || it.status == TaskStatus.COMPLETED) &&
+                it.completedAt != null && it.completedAt in periodStart..periodEnd
+        }.groupingBy {
+            Calendar.getInstance().apply { timeInMillis = requireNotNull(it.completedAt) }
+                .get(Calendar.DAY_OF_WEEK)
+        }.eachCount()
 
         for (dayName in dayNames) {
             val dayStart = calendar.timeInMillis
             calendar.add(Calendar.DAY_OF_MONTH, 1)
-            val dayEnd = calendar.timeInMillis - 1
-
-            val count = allTasks.count { task ->
-                val isDone = task.isCompleted || task.status == TaskStatus.COMPLETED
-                if (!isDone) return@count false
-                val completedTime = if (task.updatedAt > 0) task.updatedAt else task.dueDate
-                completedTime in dayStart..dayEnd
-            }
+            val weekday = Calendar.getInstance().apply { timeInMillis = dayStart }.get(Calendar.DAY_OF_WEEK)
+            val count = weekdayCounts[weekday] ?: 0
 
             days.add(DayProductivity(dayName = dayName, dateMillis = dayStart, completedCount = count))
         }

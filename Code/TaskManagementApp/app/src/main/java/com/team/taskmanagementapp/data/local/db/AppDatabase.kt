@@ -62,8 +62,9 @@ abstract class AppDatabase : RoomDatabase() {
          * 4. `isPaused`: tạm dừng chuỗi lặp.
          *
          * Tất cả đều có DEFAULT nên dữ liệu Task hiện có được giữ nguyên.
+         * Để `internal` cho test migration (androidTest) truy cập được.
          */
-        private val MIGRATION_2_3 = object : Migration(2, 3) {
+        internal val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.addColumnIfMissing("tasks", "repeatEndDate", "INTEGER NOT NULL DEFAULT 0")
                 db.addColumnIfMissing("tasks", "repeatLimitCount", "INTEGER NOT NULL DEFAULT 0")
@@ -121,6 +122,10 @@ abstract class AppDatabase : RoomDatabase() {
                 db.addColumnIfMissing("tasks", "estimatedPomodoros", "INTEGER NOT NULL DEFAULT 0")
                 db.addColumnIfMissing("tasks", "completedPomodoros", "INTEGER NOT NULL DEFAULT 0")
                 db.addColumnIfMissing("tasks", "totalFocusTimeMinutes", "INTEGER NOT NULL DEFAULT 0")
+
+                // 4b. Cột `completedAt` (từ `main`): mốc hoàn thành thật của task.
+                //     Nullable và không DEFAULT ⇒ task cũ giữ nguyên "chưa rõ ngày hoàn thành".
+                db.addColumnIfMissing("tasks", "completedAt", "INTEGER")
 
                 // 5. Cột lặp-lịch: cần cho DB đang ở "v3 của nhánh Pomodoro" (không có các cột này).
                 //    Nếu DB đến từ v3 của main thì các cột đã tồn tại nên bước này không làm gì.

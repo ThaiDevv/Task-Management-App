@@ -37,7 +37,9 @@ data class PriorityStats(
     val totalCount: Int,
     val highPercent: Float,
     val mediumPercent: Float,
-    val lowPercent: Float
+    val lowPercent: Float,
+    val urgentCount: Int = 0,
+    val urgentPercent: Float = 0f
 )
 
 /**
@@ -58,6 +60,8 @@ data class StatisticsUiState(
      */
     val deepWorkHours: String = "0m",
     val deepWorkSubtitle: String = "Focused time",
+    val pendingCount: Int = 0,
+    val hasUnknownCompletionDates: Boolean = false,
     val priorityStats: PriorityStats = PriorityStats(0, 0, 0, 0, 0f, 0f, 0f),
     /** Số liệu Pomodoro thật (hôm nay / tuần này / theo task) — Task 15. */
     val pomodoro: PomodoroFocusStats = PomodoroFocusStats(),

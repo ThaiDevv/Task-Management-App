@@ -47,7 +47,8 @@ class StatsViewModelTest {
         recurrenceInterval = 0,
         reminderMinutes = 0,
         createdAt = System.currentTimeMillis(),
-        updatedAt = updatedAt
+        updatedAt = updatedAt,
+        completedAt = if (isCompleted) updatedAt else null
     )
 
     @Test
@@ -59,6 +60,7 @@ class StatsViewModelTest {
         assertEquals(0, state.completionRate)
         assertEquals("No tasks", state.completionRateLabel)
         assertEquals(0, state.completedCount)
+        assertEquals(0, state.pendingCount)
         assertEquals("0m", state.deepWorkHours)
         assertEquals("No focus sessions yet", state.deepWorkSubtitle)
         assertEquals(0, state.priorityStats.totalCount)
@@ -128,6 +130,19 @@ class StatsViewModelTest {
     }
 
     @Test
+    fun `calculateStats reports actual unfinished count instead of estimated focus hours`() {
+        val viewModel = createViewModel()
+
+        // 42 task đã hoàn thành ⇒ 42 completed, 0 pending (và 1 pending khi thêm task mới)
+        val tasks = (1..42).map { i -> createTask(i, "Completed Task $i", true) }
+        val state = viewModel.calculateStats(tasks, StatsTimeFilter.ALL_TIME)
+
+        assertEquals(42, state.completedCount)
+        assertEquals(0, state.pendingCount)
+        assertEquals(1, viewModel.calculateStats(tasks + createTask(43, "Pending", false), StatsTimeFilter.ALL_TIME).pendingCount)
+    }
+
+    @Test
     fun `calculateStats computes correct priority distribution and percentages`() {
         val viewModel = createViewModel()
 
@@ -180,5 +195,41 @@ class StatsViewModelTest {
 
         val stateAllTime = viewModel.calculateStats(emptyList(), StatsTimeFilter.ALL_TIME)
         assertEquals("All time", stateAllTime.completedSubtitle)
+    }
+
+    @Test
+    fun `editing completed task does not move its completion into this week`() {
+        val viewModel = createViewModel()
+        val oldDate = java.util.Calendar.getInstance().apply { add(java.util.Calendar.DAY_OF_YEAR, -30) }.timeInMillis
+        val task = createTask(1, "Edited", true).copy(completedAt = oldDate)
+        val state = viewModel.calculateStats(listOf(task), StatsTimeFilter.THIS_WEEK)
+        assertEquals(0, state.completedCount)
+        assertEquals(0, state.weeklyProductivity.days.sumOf { it.completedCount })
+    }
+
+    @Test
+    fun `unknown legacy completion date is counted all time but not invented for charts`() {
+        val viewModel = createViewModel()
+        val task = createTask(1, "Legacy", true).copy(completedAt = null)
+        val state = viewModel.calculateStats(listOf(task), StatsTimeFilter.ALL_TIME)
+        assertEquals(1, state.completedCount)
+        assertTrue(state.hasUnknownCompletionDates)
+        assertEquals(0, state.weeklyProductivity.days.sumOf { it.completedCount })
+    }
+
+    @Test
+    fun `urgent priority is included in the complete breakdown`() {
+        val viewModel = createViewModel()
+        val state = viewModel.calculateStats(listOf(createTask(1, "Urgent", false, Priority.URGENT)), StatsTimeFilter.ALL_TIME)
+        assertEquals(1, state.priorityStats.urgentCount)
+        assertEquals(1f, state.priorityStats.urgentPercent, 0.001f)
+    }
+
+    @Test
+    fun `all time weekday chart includes completions outside the current week`() {
+        val viewModel = createViewModel()
+        val oldDate = java.util.Calendar.getInstance().apply { add(java.util.Calendar.DAY_OF_YEAR, -30) }.timeInMillis
+        val state = viewModel.calculateStats(listOf(createTask(1, "Old", true, updatedAt = oldDate)), StatsTimeFilter.ALL_TIME)
+        assertEquals(1, state.weeklyProductivity.days.sumOf { it.completedCount })
     }
 }

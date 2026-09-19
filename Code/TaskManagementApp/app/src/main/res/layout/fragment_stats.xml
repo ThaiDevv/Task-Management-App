@@ -85,7 +85,7 @@
                             android:id="@+id/tvWeeklyProductivityTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/stats_weekly_productivity"
+                            android:text="@string/stats_completion_by_weekday"
                             android:textColor="@color/on_surface"
                             android:textSize="20sp"
                             android:fontFamily="@font/poppins_semibold" />
@@ -95,7 +95,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="@string/stats_tasks_completed_7_days"
+                            android:text="@string/stats_this_week"
                             android:textColor="@color/on_surface_variant"
                             android:textSize="14sp"
                             android:fontFamily="@font/poppins_regular" />
@@ -261,7 +261,7 @@
                                     android:layout_marginTop="-12dp"
                                     android:layout_marginEnd="-12dp"
                                     android:alpha="0.2"
-                                    android:src="@drawable/ic_watermark_timer"
+                                    android:src="@drawable/ic_priority_flag"
                                     android:contentDescription="@null" />
 
                                 <LinearLayout
@@ -273,26 +273,26 @@
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="@string/stats_deep_work_label"
+                                        android:text="@string/stats_pending_label"
                                         android:textColor="#DAE2FF"
                                         android:textSize="11sp"
                                         android:letterSpacing="0.08"
                                         android:fontFamily="@font/poppins_semibold" />
 
                                     <TextView
-                                        android:id="@+id/tvDeepWorkHours"
+                                        android:id="@+id/tvPendingCount"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="0h"
+                                        android:text="0"
                                         android:textColor="#FFFFFF"
                                         android:textSize="32sp"
                                         android:fontFamily="@font/poppins_bold" />
 
                                     <TextView
-                                        android:id="@+id/tvDeepWorkSubtitle"
+                                        android:id="@+id/tvPendingSubtitle"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="@string/stats_focused_time"
+                                        android:text="@string/stats_this_week"
                                         android:textColor="#DAE2FF"
                                         android:textSize="13sp"
                                         android:fontFamily="@font/poppins_regular" />
@@ -330,6 +330,42 @@
                             android:textColor="@color/on_surface"
                             android:textSize="20sp"
                             android:fontFamily="@font/poppins_semibold" />
+
+                        <!-- Include every priority available when creating a task. -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginTop="16dp">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="6dp"
+                                android:orientation="horizontal">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="@string/stats_urgent_priority"
+                                    android:textColor="@color/on_surface"
+                                    android:textSize="14sp"
+                                    android:fontFamily="@font/poppins_medium" />
+                                <TextView
+                                    android:id="@+id/tvUrgentPriorityCount"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0 tasks"
+                                    android:textColor="@color/on_surface_variant"
+                                    android:textSize="14sp" />
+                            </LinearLayout>
+                            <ProgressBar
+                                android:id="@+id/progressUrgentPriority"
+                                style="?android:attr/progressBarStyleHorizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="8dp"
+                                android:max="100"
+                                android:progressDrawable="@drawable/progress_priority_high" />
+                        </LinearLayout>
 
                         <!-- High Priority Row -->
                         <LinearLayout
@@ -675,6 +711,15 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
+                <TextView
+                    android:id="@+id/tvUnknownCompletionDates"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/stats_unknown_completion_dates"
+                    android:textSize="12sp"
+                    android:textColor="@color/on_surface_variant"
+                    android:visibility="gone" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 

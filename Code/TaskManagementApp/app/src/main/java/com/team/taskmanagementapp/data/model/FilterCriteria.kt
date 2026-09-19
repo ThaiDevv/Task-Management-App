@@ -11,7 +11,13 @@ data class FilterCriteria(
     val customStartDate: Long? = null,
     val customEndDate: Long? = null,
     val sortOption: SortOption = SortOption.DUE_DATE_ASC
-)
+) {
+    /** Done and unfinished-only conditions cannot be meaningfully combined. */
+    fun normalized(): FilterCriteria = if (completion == CompletionFilter.DONE) copy(
+        statuses = emptySet(),
+        dueDateRange = if (dueDateRange == DueDateRange.OVERDUE) DueDateRange.ALL else dueDateRange
+    ) else this
+}
 
 enum class CompletionFilter {
     ALL,

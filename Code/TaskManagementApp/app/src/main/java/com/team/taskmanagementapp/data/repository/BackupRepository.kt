@@ -722,6 +722,8 @@ data class ExportTask(
     val reminderMinutes: Int,
     val createdAt: Long,
     val updatedAt: Long,
+    // Null for unfinished tasks and legacy backups with no known completion date.
+    val completedAt: Long? = null,
     // ── Pomodoro counters (Task 16) ──
     val estimatedPomodoros: Int = 0,
     val completedPomodoros: Int = 0,
@@ -768,6 +770,7 @@ fun Task.toExportTask() = ExportTask(
     reminderMinutes = reminderMinutes,
     createdAt = createdAt,
     updatedAt = updatedAt,
+    completedAt = completedAt,
     estimatedPomodoros = estimatedPomodoros,
     completedPomodoros = completedPomodoros,
     totalFocusTimeMinutes = totalFocusTimeMinutes
@@ -794,6 +797,7 @@ fun ExportTask.toEntity(preserveId: Boolean = false) = Task(
     reminderMinutes = reminderMinutes,
     createdAt = createdAt,
     updatedAt = updatedAt,
+    completedAt = if (isCompleted) completedAt else null,
     estimatedPomodoros = estimatedPomodoros,
     completedPomodoros = completedPomodoros,
     totalFocusTimeMinutes = totalFocusTimeMinutes
