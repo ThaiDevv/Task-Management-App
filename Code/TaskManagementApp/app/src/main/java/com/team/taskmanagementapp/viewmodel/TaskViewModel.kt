@@ -165,6 +165,7 @@ class TaskViewModel(
 
                 val updatedTask = task.copy(
                     isCompleted = !wasCompleted,
+                    completedAt = if (!wasCompleted) now else null,
                     status = if (!wasCompleted) TaskStatus.COMPLETED else TaskStatus.TODO,
                     updatedAt = now
                 )
@@ -218,6 +219,7 @@ class TaskViewModel(
                                 val nextInstance = task.copy(
                                     id = 0,
                                     isCompleted = false,
+                                    completedAt = null,
                                     status = TaskStatus.TODO,
                                     isRecurring = true,
                                     recurrenceType = task.recurrenceType,

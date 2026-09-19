@@ -29,17 +29,6 @@
             android:fontFamily="@font/poppins_semibold"
             android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/userAvatar"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_account"
-            android:background="@drawable/bg_avatar"
-            android:contentDescription="User Avatar"
-            android:scaleType="centerCrop"
-            android:clipToOutline="true" />
-
     </LinearLayout>
 
     <!-- Content -->

@@ -381,7 +381,27 @@
     <string name="widget_mark_done">Complete this task</string>
     <string name="widget_description">View and complete today\'s tasks directly on your home screen</string>
 
-    <!-- Streak Rewards -->
+    
+    <string name="home_hello">Hello!</string>
+    <string name="home_all_tasks">All tasks</string>
+    <string name="home_no_overdue">No overdue tasks</string>
+    <string name="home_action_needed">Action needed</string>
+    <string name="home_completed">Completed</string>
+    <string name="home_productivity_tip">Productivity tip</string>
+    <string name="home_productivity_tip_body">Choose a time when you feel focused and reserve it for your most important task.</string>
+    <string name="home_filter_description">Filter and sort tasks</string>
+    <string name="filter_done_hint">Status and overdue filters apply only to unfinished tasks.</string>
+    <string name="stats_pending_label">NOT COMPLETED</string>
+    <plurals name="stats_task_count">
+        <item quantity="one">%d task</item>
+        <item quantity="other">%d tasks</item>
+    </plurals>
+    <string name="stats_urgent_priority">Urgent Priority</string>
+    <string name="stats_completion_by_weekday">Completions by weekday</string>
+    <string name="stats_chart_period">%1$s · recorded completion dates</string>
+    <string name="stats_unknown_completion_dates">Some older tasks have no recorded completion date. They appear in All time totals, but not in dated completion charts.</string>
+  
+  <!-- Streak Rewards -->
     <string name="streak_title">Daily Streak</string>
     <string name="streak_days_format">%d Days Streak! 🔥</string>
     <string name="streak_one_day">1 Day Streak! 🔥</string>
