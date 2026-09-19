@@ -517,7 +517,8 @@ data class ExportTask(
     val recurrenceInterval: Int,
     val reminderMinutes: Int,
     val createdAt: Long,
-    val updatedAt: Long
+    val updatedAt: Long,
+    val completedAt: Long? = null
 )
 
 /**
@@ -537,7 +538,8 @@ fun Task.toExportTask() = ExportTask(
     recurrenceInterval = recurrenceInterval,
     reminderMinutes = reminderMinutes,
     createdAt = createdAt,
-    updatedAt = updatedAt
+    updatedAt = updatedAt,
+    completedAt = completedAt
 )
 
 /**
@@ -557,7 +559,8 @@ fun ExportTask.toEntity() = Task(
     recurrenceInterval = recurrenceInterval,
     reminderMinutes = reminderMinutes,
     createdAt = createdAt,
-    updatedAt = updatedAt
+    updatedAt = updatedAt,
+    completedAt = if (isCompleted) completedAt else null
 )
 
 /**

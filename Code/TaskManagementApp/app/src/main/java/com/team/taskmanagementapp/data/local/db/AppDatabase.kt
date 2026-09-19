@@ -33,8 +33,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     Constants.DATABASE_NAME
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
-                    .fallbackToDestructiveMigration()
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                     .build()
 
                 INSTANCE = instance
@@ -64,6 +63,37 @@ abstract class AppDatabase : RoomDatabase() {
                 db.execSQL(
                     "ALTER TABLE tasks ADD COLUMN isPaused INTEGER NOT NULL DEFAULT 0"
                 )
+            }
+        }
+
+        internal val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                val existingColumns = mutableSetOf<String>()
+                db.query("PRAGMA table_info(tasks)").use { cursor ->
+                    val nameIndex = cursor.getColumnIndex("name")
+                    while (cursor.moveToNext()) {
+                        existingColumns += cursor.getString(nameIndex)
+                    }
+                }
+
+                // Main version 3 already has the recurrence columns. Older PR builds used
+                // version 3 for completedAt, so fill whichever columns are still missing.
+                if ("repeatEndDate" !in existingColumns) {
+                    db.execSQL("ALTER TABLE tasks ADD COLUMN repeatEndDate INTEGER NOT NULL DEFAULT 0")
+                }
+                if ("repeatLimitCount" !in existingColumns) {
+                    db.execSQL("ALTER TABLE tasks ADD COLUMN repeatLimitCount INTEGER NOT NULL DEFAULT 0")
+                }
+                if ("currentOccurrence" !in existingColumns) {
+                    db.execSQL("ALTER TABLE tasks ADD COLUMN currentOccurrence INTEGER NOT NULL DEFAULT 1")
+                }
+                if ("isPaused" !in existingColumns) {
+                    db.execSQL("ALTER TABLE tasks ADD COLUMN isPaused INTEGER NOT NULL DEFAULT 0")
+                }
+                if ("completedAt" !in existingColumns) {
+                    // Preserve existing task data; legacy completion dates remain unknown.
+                    db.execSQL("ALTER TABLE tasks ADD COLUMN completedAt INTEGER")
+                }
             }
         }
     }

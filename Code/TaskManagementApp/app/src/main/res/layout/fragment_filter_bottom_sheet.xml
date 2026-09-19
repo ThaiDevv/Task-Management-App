@@ -117,6 +117,16 @@
                     android:textAllCaps="false" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
+            <TextView
+                android:id="@+id/completionConstraintHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/filter_done_hint"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
