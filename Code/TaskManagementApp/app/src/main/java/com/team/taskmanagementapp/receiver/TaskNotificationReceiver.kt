@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.team.taskmanagementapp.data.local.db.AppDatabase
-import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.util.AlarmScheduler
 import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.NotificationHelper
@@ -34,13 +33,7 @@ class TaskNotificationReceiver : BroadcastReceiver() {
                 val taskDao = AppDatabase.getInstance(context).taskDao()
                 val task = taskDao.getTaskById(taskId.toLong()) ?: return@launch
 
-                taskDao.updateTask(
-                    task.copy(
-                        status = TaskStatus.COMPLETED,
-                        isCompleted = true,
-                        updatedAt = System.currentTimeMillis()
-                    )
-                )
+                com.team.taskmanagementapp.util.TaskCompletionHelper.setCompleted(context, task, true)
                 NotificationHelper.cancelNotification(context, taskId)
             } finally {
                 pendingResult.finish()

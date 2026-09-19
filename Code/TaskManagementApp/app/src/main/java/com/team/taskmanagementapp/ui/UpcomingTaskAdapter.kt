@@ -153,16 +153,14 @@ class UpcomingTaskAdapter(
 
         val tomorrowCal = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 1) }
 
-        // Keep unfinished date groups first, then append completed groups at the bottom.
-        val grouped = listOf(false, true).flatMap { completed ->
-            tasks.filter { it.isCompleted == completed }
+        // One header per date; completed work belongs to the dashboard's Completed section.
+        val grouped = tasks.filter { !it.isCompleted }
                 .sortedBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
                 .groupBy { task ->
                     val cal = Calendar.getInstance().apply { timeInMillis = task.dueDate }
                     Pair(cal.get(Calendar.YEAR), cal.get(Calendar.DAY_OF_YEAR))
                 }
                 .entries
-        }
 
         for ((_, dayTasks) in grouped) {
             val sortedDayTasks = dayTasks.sortedBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }

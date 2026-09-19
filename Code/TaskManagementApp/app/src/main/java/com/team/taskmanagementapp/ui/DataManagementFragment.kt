@@ -282,6 +282,7 @@ class DataManagementFragment : Fragment() {
                 put("reminderMinutes", task.reminderMinutes)
                 put("createdAt", task.createdAt)
                 put("updatedAt", task.updatedAt)
+                put("completedAt", task.completedAt ?: JSONObject.NULL)
             }
             array.put(obj)
         }
@@ -321,6 +322,8 @@ class DataManagementFragment : Fragment() {
                 reminderMinutes = obj.optInt("reminderMinutes", 0),
                 createdAt = obj.optLong("createdAt", System.currentTimeMillis()),
                 updatedAt = obj.optLong("updatedAt", System.currentTimeMillis()),
+                completedAt = if (obj.optBoolean("isComplete", false))
+                    obj.optLong("completedAt", 0L).takeIf { it > 0L } else null,
             )
             tasks.add(task)
         }
