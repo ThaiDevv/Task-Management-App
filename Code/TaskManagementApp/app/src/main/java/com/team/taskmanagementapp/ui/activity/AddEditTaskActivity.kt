@@ -26,6 +26,7 @@ import com.team.taskmanagementapp.data.model.enums.RecurrenceType
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.databinding.ActivityAddEditTaskBinding
+import com.team.taskmanagementapp.ui.base.BaseActivity
 import com.team.taskmanagementapp.ui.base.UiState
 import com.team.taskmanagementapp.ui.viewmodel.AddEditTaskViewModel
 import com.team.taskmanagementapp.ui.viewmodel.AddEditTaskViewModelFactory
@@ -43,7 +44,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AddEditTaskActivity : AppCompatActivity() {
+class AddEditTaskActivity : BaseActivity() {
 
     private lateinit var binding: ActivityAddEditTaskBinding
     private val viewModel: AddEditTaskViewModel by viewModels {
