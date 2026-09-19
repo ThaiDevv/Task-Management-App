@@ -76,13 +76,25 @@ class PinRepositoryImpl private constructor(context: Context) : PinRepository {
             .remove(Constants.KEY_PIN_HASH)
             .remove(Constants.KEY_PIN_SALT)
             .putBoolean(Constants.KEY_PIN_ENABLED, false)
+            .putBoolean(Constants.KEY_BIOMETRIC_ENABLED, false)
             .apply()
         resetFailedAttempts()
     }
 
     override fun setPinEnabled(enabled: Boolean) {
+        val editor = prefs.edit().putBoolean(Constants.KEY_PIN_ENABLED, enabled)
+        if (!enabled) {
+            editor.putBoolean(Constants.KEY_BIOMETRIC_ENABLED, false)
+        }
+        editor.apply()
+    }
+
+    override fun isBiometricEnabled(): Boolean =
+        prefs.getBoolean(Constants.KEY_BIOMETRIC_ENABLED, false)
+
+    override fun setBiometricEnabled(enabled: Boolean) {
         prefs.edit()
-            .putBoolean(Constants.KEY_PIN_ENABLED, enabled)
+            .putBoolean(Constants.KEY_BIOMETRIC_ENABLED, enabled)
             .apply()
     }
 
