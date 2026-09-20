@@ -117,6 +117,8 @@
     <string name="nav_task_list">Task List</string>
     <string name="nav_calendar">Calendar</string>
     <string name="nav_stats">Stats</string>
+    <string name="nav_streak">Streak</string>
+    <string name="nav_rewards">Rewards</string>
     <string name="nav_settings">Settings</string>
 
     <!-- Home Dashboard Strings -->
@@ -468,6 +470,7 @@
     <string name="pomodoro_start_from_detail">Bắt đầu Pomodoro</string>
     <string name="pomodoro_task_not_found">Không tìm thấy công việc này. Hãy chọn công việc khác.</string>
     <string name="pomodoro_session_already_active">Đang có phiên Pomodoro cho công việc khác. Hãy dừng phiên hiện tại rồi thử lại.</string>
+
     <string name="home_hello">Hello!</string>
     <string name="home_all_tasks">All tasks</string>
     <string name="home_no_overdue">No overdue tasks</string>
@@ -486,6 +489,47 @@
     <string name="stats_completion_by_weekday">Completions by weekday</string>
     <string name="stats_chart_period">%1$s · recorded completion dates</string>
     <string name="stats_unknown_completion_dates">Some older tasks have no recorded completion date. They appear in All time totals, but not in dated completion charts.</string>
+  
+  <!-- Streak Rewards -->
+    <string name="streak_title">Daily Streak</string>
+    <string name="streak_days_format">%d Days Streak! 🔥</string>
+    <string name="streak_one_day">1 Day Streak! 🔥</string>
+    <string name="streak_zero_days">0 Day Streak 🔥</string>
+    <string name="streak_subtitle_active">Keep up the momentum! Finish today\'s tasks.</string>
+    <string name="streak_subtitle_completed">Awesome! Today\'s streak maintained! 🎉</string>
+    <string name="streak_subtitle_zero">Complete all tasks today to start your streak!</string>
+    <string name="streak_best_format">Best: %d days</string>
+    <string name="streak_details_title">Streak Rewards &amp; Badges</string>
+    <string name="streak_rules_header">How Streaks Work</string>
+    <string name="streak_rules_body">Finish 100% of your daily scheduled tasks to earn and maintain your streak. Missing any task or having no task on a scheduled day will reset your streak.</string>
+    <string name="streak_active_header">Active Streak</string>
+    <string name="streak_today_progress">Today: %1$d / %2$d tasks</string>
+    <string name="streak_milestones_header">Streak Milestone Rewards</string>
+    <string name="streak_milestone_3">🌱 Starter - 3 Days</string>
+    <string name="streak_milestone_7">🌟 Sparkstarter - 7 Days</string>
+    <string name="streak_milestone_30">🔥 Streaker - 30 Days</string>
+    <string name="streak_milestone_50">⚡ Achiever - 50 Days</string>
+    <string name="streak_milestone_100">💎 Champion - 100 Days</string>
+    <string name="streak_milestone_200">🏆 Legend - 200 Days</string>
+    <string name="streak_milestone_365">👑 Master - 365 Days</string>
+
+    <!-- Task Completion Milestones (tên resource phải khớp số task hiển thị) -->
+    <string name="task_milestones_header">Task Completion Rewards</string>
+    <string name="task_progress_header">Task Progress</string>
+    <string name="task_milestones_progress">Completed: %1$d tasks</string>
+    <string name="task_milestone_10">🌱 Task Novice - 10 Tasks</string>
+    <string name="task_milestone_50">📝 Task Doer - 50 Tasks</string>
+    <string name="task_milestone_100">⚡ Task Achiever - 100 Tasks</string>
+    <string name="task_milestone_250">🎯 Task Executor - 250 Tasks</string>
+    <string name="task_milestone_500">💎 Task Expert - 500 Tasks</string>
+    <string name="task_milestone_1000">🏆 Task Champion - 1000 Tasks</string>
+    <string name="task_milestone_2000">👑 Task Master - 2000 Tasks</string>
+
+    <!-- Reward Badge Status & Summary -->
+    <string name="badge_unlocked">Unlocked ✅</string>
+    <string name="badge_locked">Locked 🔒</string>
+    <string name="rewards_badges_unlocked_format">%1$d / %2$d</string>
 </resources>
+
 
 
