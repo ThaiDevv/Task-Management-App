@@ -58,6 +58,7 @@ class TaskListFragment : Fragment() {
     private lateinit var binding: FragmentTaskListBinding
     private lateinit var todayTaskAdapter: TaskAdapter
     private lateinit var upcomingTaskAdapter: UpcomingTaskAdapter
+    private lateinit var streakWeekAdapter: StreakWeekAdapter
     private lateinit var completedTaskAdapter: TaskAdapter
 
     private val viewModel: TaskViewModel by viewModels {
@@ -172,6 +173,20 @@ class TaskListFragment : Fragment() {
         }
         binding.btnOpenFilter.contentDescription = getString(R.string.home_filter_description)
 
+        // Streak Week Adapter
+        streakWeekAdapter = StreakWeekAdapter()
+        binding.streakWeekRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            adapter = streakWeekAdapter
+        }
+
+        // Streak Card Click -> Open details bottom sheet
+        binding.cardStreakReward.setOnClickListener {
+            val currentStreak = viewModel.streakInfo.value
+            StreakDetailsBottomSheet.newInstance(currentStreak)
+                .show(childFragmentManager, StreakDetailsBottomSheet.TAG)
+        }
+
         // Open filter bottom sheet — no lambda passed; results arrive via FragmentResult API
         binding.btnOpenFilter.setOnClickListener {
             val currentCriteria = viewModel.filterCriteria.value
@@ -252,6 +267,12 @@ class TaskListFragment : Fragment() {
                         }
                     }
                 }
+                // Observe streak state
+                launch {
+                    viewModel.streakInfo.collect { streakInfo ->
+                        updateStreakUI(streakInfo)
+                    }
+                }
                 // Observe filter state
                 launch {
                     viewModel.filterCriteria.collect { criteria ->
@@ -267,6 +288,24 @@ class TaskListFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun updateStreakUI(streakInfo: com.team.taskmanagementapp.data.model.streak.StreakInfo) {
+        binding.tvStreakTitle.text = when (streakInfo.currentStreak) {
+            0 -> getString(R.string.streak_zero_days)
+            1 -> getString(R.string.streak_one_day)
+            else -> getString(R.string.streak_days_format, streakInfo.currentStreak)
+        }
+
+        binding.tvStreakSubtitle.text = when {
+            streakInfo.isTodayCompleted -> getString(R.string.streak_subtitle_completed)
+            streakInfo.currentStreak > 0 -> getString(R.string.streak_subtitle_active)
+            else -> getString(R.string.streak_subtitle_zero)
+        }
+
+        binding.tvStreakBestBadge.text = getString(R.string.streak_best_format, streakInfo.bestStreak)
+
+        streakWeekAdapter.submitList(streakInfo.weekDays)
     }
 
     /**

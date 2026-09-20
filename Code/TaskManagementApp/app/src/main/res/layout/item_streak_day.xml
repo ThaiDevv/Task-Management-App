@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingStart="4dp"
+    android:paddingEnd="4dp">
+
+    <!-- Day Label (e.g. M, T, W, T, F, S, S) -->
+    <TextView
+        android:id="@+id/tvDayLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="#737786"
+        android:textSize="10sp"
+        tools:text="M" />
+
+    <!-- Day Status Circle -->
+    <FrameLayout
+        android:id="@+id/dayCircleContainer"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="@drawable/bg_streak_day_inactive">
+
+        <TextView
+            android:id="@+id/tvDayNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/poppins_bold"
+            android:textColor="#737786"
+            android:textSize="11sp"
+            tools:text="18" />
+
+        <ImageView
+            android:id="@+id/ivDayStatusIcon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            tools:src="@drawable/ic_fire" />
+    </FrameLayout>
+</LinearLayout>
