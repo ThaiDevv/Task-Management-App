@@ -22,7 +22,8 @@ import com.team.taskmanagementapp.util.RecurrenceHelper
 
 class TaskAdapter(
     private val onTaskToggleComplete: ((Task) -> Unit)? = null,
-    private val onTaskClick: ((Task) -> Unit)? = null
+    private val onTaskClick: ((Task) -> Unit)? = null,
+    private val onTaskDelete: ((Task) -> Unit)? = null
 ) : ListAdapter<Task, TaskAdapter.TaskViewHolder>(TaskDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
@@ -170,8 +171,50 @@ class TaskAdapter(
                 onTaskToggleComplete?.invoke(task)
             }
 
-            binding.btnMoreOptions.setOnClickListener {
-                onTaskClick?.invoke(task)
+            binding.btnMoreOptions.setOnClickListener { view ->
+                val popup = androidx.appcompat.widget.PopupMenu(view.context, view)
+                popup.inflate(R.menu.menu_task_item)
+
+                val completeItem = popup.menu.findItem(R.id.action_complete_task)
+                if (task.isCompleted) {
+                    completeItem.title = view.context.getString(R.string.task_detail_button_uncomplete)
+                } else {
+                    completeItem.title = view.context.getString(R.string.task_detail_button_complete)
+                }
+
+                // Enable icons display in PopupMenu if supported
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                    popup.setForceShowIcon(true)
+                } else {
+                    try {
+                        val fields = popup.javaClass.declaredFields
+                        for (field in fields) {
+                            if ("mPopup" == field.name) {
+                                field.isAccessible = true
+                                val menuPopupHelper = field.get(popup)
+                                val classPopupHelper = Class.forName(menuPopupHelper.javaClass.name)
+                                val setForceIcons = classPopupHelper.getMethod("setForceShowIcon", Boolean::class.javaPrimitiveType)
+                                setForceIcons.invoke(menuPopupHelper, true)
+                                break
+                            }
+                        }
+                    } catch (_: Exception) { }
+                }
+
+                popup.setOnMenuItemClickListener { menuItem ->
+                    when (menuItem.itemId) {
+                        R.id.action_complete_task -> {
+                            onTaskToggleComplete?.invoke(task)
+                            true
+                        }
+                        R.id.action_delete_task -> {
+                            onTaskDelete?.invoke(task)
+                            true
+                        }
+                        else -> false
+                    }
+                }
+                popup.show()
             }
 
             binding.root.setOnClickListener {
