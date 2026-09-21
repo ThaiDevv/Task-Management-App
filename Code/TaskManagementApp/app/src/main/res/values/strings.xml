@@ -118,7 +118,7 @@
     <string name="nav_calendar">Calendar</string>
     <string name="nav_stats">Stats</string>
     <string name="nav_streak">Streak</string>
-    <string name="nav_rewards">Rewards</string>
+    <string name="nav_rewards">Achievements</string>
     <string name="nav_settings">Settings</string>
 
     <!-- Home Dashboard Strings -->
@@ -401,7 +401,7 @@
     <string name="stats_chart_period">%1$s · recorded completion dates</string>
     <string name="stats_unknown_completion_dates">Some older tasks have no recorded completion date. They appear in All time totals, but not in dated completion charts.</string>
   
-  <!-- Streak Rewards -->
+  <!-- Streak Achievements & Protection -->
     <string name="streak_title">Daily Streak</string>
     <string name="streak_days_format">%d Days Streak! 🔥</string>
     <string name="streak_one_day">1 Day Streak! 🔥</string>
@@ -410,12 +410,12 @@
     <string name="streak_subtitle_completed">Awesome! Today\'s streak maintained! 🎉</string>
     <string name="streak_subtitle_zero">Complete all tasks today to start your streak!</string>
     <string name="streak_best_format">Best: %d days</string>
-    <string name="streak_details_title">Streak Rewards &amp; Badges</string>
+    <string name="streak_details_title">Streak Achievements &amp; Badges</string>
     <string name="streak_rules_header">How Streaks Work</string>
     <string name="streak_rules_body">Finish 100% of your daily scheduled tasks to earn and maintain your streak. Missing any task or having no task on a scheduled day will reset your streak.</string>
     <string name="streak_active_header">Active Streak</string>
     <string name="streak_today_progress">Today: %1$d / %2$d tasks</string>
-    <string name="streak_milestones_header">Streak Milestone Rewards</string>
+    <string name="streak_milestones_header">Streak Milestone Achievements</string>
     <string name="streak_milestone_3">🌱 Starter - 3 Days</string>
     <string name="streak_milestone_7">🌟 Sparkstarter - 7 Days</string>
     <string name="streak_milestone_30">🔥 Streaker - 30 Days</string>
@@ -425,7 +425,7 @@
     <string name="streak_milestone_365">👑 Master - 365 Days</string>
 
     <!-- Task Completion Milestones (tên resource phải khớp số task hiển thị) -->
-    <string name="task_milestones_header">Task Completion Rewards</string>
+    <string name="task_milestones_header">Task Completion Achievements</string>
     <string name="task_progress_header">Task Progress</string>
     <string name="task_milestones_progress">Completed: %1$d tasks</string>
     <string name="task_milestone_10">🌱 Task Novice - 10 Tasks</string>
@@ -440,6 +440,16 @@
     <string name="badge_unlocked">Unlocked ✅</string>
     <string name="badge_locked">Locked 🔒</string>
     <string name="rewards_badges_unlocked_format">%1$d / %2$d</string>
+
+    <!-- Streak Protection Reminder (TMA-STREAK-NOTIF) -->
+    <string name="streak_reminder_card_title">Streak Protection</string>
+    <string name="streak_reminder_card_subtitle">Get reminded if you have an active streak but haven\'t finished any tasks today.</string>
+    <string name="streak_reminder_time_label">Reminder Time</string>
+    <string name="streak_reminder_set_feedback">Streak reminder scheduled for %s</string>
+    <string name="streak_reminder_disabled_feedback">Streak reminder disabled</string>
+    <string name="streak_reminder_notif_title">🔥 Don\'t lose your %d-day streak!</string>
+    <string name="streak_reminder_notif_body">You haven\'t completed any tasks today. Finish your tasks before midnight to maintain your streak!</string>
+    <string name="streak_reminder_change_time">Edit Time</string>
 </resources>
 
 
