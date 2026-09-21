@@ -450,6 +450,23 @@
     <string name="streak_reminder_notif_title">🔥 Don\'t lose your %d-day streak!</string>
     <string name="streak_reminder_notif_body">You haven\'t completed any tasks today. Finish your tasks before midnight to maintain your streak!</string>
     <string name="streak_reminder_change_time">Edit Time</string>
+
+    <!-- Special Badges -->
+    <string name="special_badges_header">Special Badges</string>
+    <string name="badge_comeback_kid">🔄 Comeback Kid</string>
+    <string name="badge_comeback_kid_desc">Recover from a broken streak and reach 7 consecutive days again</string>
+    <string name="badge_hard_worker">💪 Hard Worker</string>
+    <string name="badge_hard_worker_desc">Complete 10 Hard Tasks</string>
+    <string name="badge_early_bird">🌅 Early Bird</string>
+    <string name="badge_early_bird_desc">Complete 50 tasks before 09:00 AM</string>
+    <string name="badge_night_owl">🌙 Night Owl</string>
+    <string name="badge_night_owl_desc">Complete 50 tasks after 09:00 PM</string>
+    <string name="badge_month_conqueror">📅 Month Conqueror</string>
+    <string name="badge_month_conqueror_desc">Complete at least 1 task on every day of a full calendar month</string>
+    <string name="badge_unstoppable">🚀 Unstoppable</string>
+    <string name="badge_unstoppable_desc">Complete 100 tasks within 7 consecutive days</string>
+    <string name="badge_ultimate_master">👑 Ultimate Master</string>
+    <string name="badge_ultimate_master_desc">Reach both 365-day Streak Master and 2,000-task Task Master</string>
 </resources>
 
 
