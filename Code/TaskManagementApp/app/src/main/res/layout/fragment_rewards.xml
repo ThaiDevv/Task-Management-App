@@ -616,11 +616,12 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:layout_marginBottom="24dp"
-                app:cardBackgroundColor="@android:color/white"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:strokeColor="#1A000000"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#4DC3C6D7"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -644,9 +645,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:background="@drawable/bg_pill_outlined"
+                        android:background="@drawable/bg_badge_card_outlined"
                         android:gravity="center_vertical"
-                        android:padding="12dp">
+                        android:paddingStart="16dp"
+                        android:paddingTop="12dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="12dp">
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -659,23 +663,24 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_bold"
                                 android:text="@string/badge_comeback_kid"
-                                android:textColor="#1B1B1B"
+                                android:textColor="#1E293B"
                                 android:textSize="14sp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
                                 android:fontFamily="@font/poppins_regular"
                                 android:text="@string/badge_comeback_kid_desc"
-                                android:textColor="#737786"
-                                android:textSize="11sp" />
+                                android:textColor="#64748B"
+                                android:textSize="12sp" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/tvStatusComebackKid"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
+                            android:layout_marginStart="12dp"
                             android:fontFamily="@font/poppins_semibold"
                             android:text="@string/badge_locked"
                             android:textColor="#737786"
@@ -688,9 +693,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:background="@drawable/bg_pill_outlined"
+                        android:background="@drawable/bg_badge_card_outlined"
                         android:gravity="center_vertical"
-                        android:padding="12dp">
+                        android:paddingStart="16dp"
+                        android:paddingTop="12dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="12dp">
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -703,23 +711,24 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_bold"
                                 android:text="@string/badge_hard_worker"
-                                android:textColor="#1B1B1B"
+                                android:textColor="#1E293B"
                                 android:textSize="14sp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
                                 android:fontFamily="@font/poppins_regular"
                                 android:text="@string/badge_hard_worker_desc"
-                                android:textColor="#737786"
-                                android:textSize="11sp" />
+                                android:textColor="#64748B"
+                                android:textSize="12sp" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/tvStatusHardWorker"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
+                            android:layout_marginStart="12dp"
                             android:fontFamily="@font/poppins_semibold"
                             android:text="@string/badge_locked"
                             android:textColor="#737786"
@@ -732,9 +741,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:background="@drawable/bg_pill_outlined"
+                        android:background="@drawable/bg_badge_card_outlined"
                         android:gravity="center_vertical"
-                        android:padding="12dp">
+                        android:paddingStart="16dp"
+                        android:paddingTop="12dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="12dp">
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -747,23 +759,24 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_bold"
                                 android:text="@string/badge_early_bird"
-                                android:textColor="#1B1B1B"
+                                android:textColor="#1E293B"
                                 android:textSize="14sp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
                                 android:fontFamily="@font/poppins_regular"
                                 android:text="@string/badge_early_bird_desc"
-                                android:textColor="#737786"
-                                android:textSize="11sp" />
+                                android:textColor="#64748B"
+                                android:textSize="12sp" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/tvStatusEarlyBird"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
+                            android:layout_marginStart="12dp"
                             android:fontFamily="@font/poppins_semibold"
                             android:text="@string/badge_locked"
                             android:textColor="#737786"
@@ -776,9 +789,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:background="@drawable/bg_pill_outlined"
+                        android:background="@drawable/bg_badge_card_outlined"
                         android:gravity="center_vertical"
-                        android:padding="12dp">
+                        android:paddingStart="16dp"
+                        android:paddingTop="12dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="12dp">
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -791,23 +807,24 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_bold"
                                 android:text="@string/badge_night_owl"
-                                android:textColor="#1B1B1B"
+                                android:textColor="#1E293B"
                                 android:textSize="14sp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
                                 android:fontFamily="@font/poppins_regular"
                                 android:text="@string/badge_night_owl_desc"
-                                android:textColor="#737786"
-                                android:textSize="11sp" />
+                                android:textColor="#64748B"
+                                android:textSize="12sp" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/tvStatusNightOwl"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
+                            android:layout_marginStart="12dp"
                             android:fontFamily="@font/poppins_semibold"
                             android:text="@string/badge_locked"
                             android:textColor="#737786"
@@ -820,9 +837,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:background="@drawable/bg_pill_outlined"
+                        android:background="@drawable/bg_badge_card_outlined"
                         android:gravity="center_vertical"
-                        android:padding="12dp">
+                        android:paddingStart="16dp"
+                        android:paddingTop="12dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="12dp">
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -835,23 +855,24 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_bold"
                                 android:text="@string/badge_month_conqueror"
-                                android:textColor="#1B1B1B"
+                                android:textColor="#1E293B"
                                 android:textSize="14sp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
                                 android:fontFamily="@font/poppins_regular"
                                 android:text="@string/badge_month_conqueror_desc"
-                                android:textColor="#737786"
-                                android:textSize="11sp" />
+                                android:textColor="#64748B"
+                                android:textSize="12sp" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/tvStatusMonthConqueror"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
+                            android:layout_marginStart="12dp"
                             android:fontFamily="@font/poppins_semibold"
                             android:text="@string/badge_locked"
                             android:textColor="#737786"
@@ -864,9 +885,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:background="@drawable/bg_pill_outlined"
+                        android:background="@drawable/bg_badge_card_outlined"
                         android:gravity="center_vertical"
-                        android:padding="12dp">
+                        android:paddingStart="16dp"
+                        android:paddingTop="12dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="12dp">
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -879,23 +903,24 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_bold"
                                 android:text="@string/badge_unstoppable"
-                                android:textColor="#1B1B1B"
+                                android:textColor="#1E293B"
                                 android:textSize="14sp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
                                 android:fontFamily="@font/poppins_regular"
                                 android:text="@string/badge_unstoppable_desc"
-                                android:textColor="#737786"
-                                android:textSize="11sp" />
+                                android:textColor="#64748B"
+                                android:textSize="12sp" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/tvStatusUnstoppable"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
+                            android:layout_marginStart="12dp"
                             android:fontFamily="@font/poppins_semibold"
                             android:text="@string/badge_locked"
                             android:textColor="#737786"
@@ -907,9 +932,12 @@
                         android:id="@+id/layoutBadgeUltimateMaster"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_pill_outlined"
+                        android:background="@drawable/bg_badge_card_outlined"
                         android:gravity="center_vertical"
-                        android:padding="12dp">
+                        android:paddingStart="16dp"
+                        android:paddingTop="12dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="12dp">
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -922,23 +950,24 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_bold"
                                 android:text="@string/badge_ultimate_master"
-                                android:textColor="#1B1B1B"
+                                android:textColor="#1E293B"
                                 android:textSize="14sp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
                                 android:fontFamily="@font/poppins_regular"
                                 android:text="@string/badge_ultimate_master_desc"
-                                android:textColor="#737786"
-                                android:textSize="11sp" />
+                                android:textColor="#64748B"
+                                android:textSize="12sp" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/tvStatusUltimateMaster"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
+                            android:layout_marginStart="12dp"
                             android:fontFamily="@font/poppins_semibold"
                             android:text="@string/badge_locked"
                             android:textColor="#737786"
