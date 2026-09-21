@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_bold"
                 android:letterSpacing="-0.01"
-                android:text="Achievements &amp; Badges"
+                android:text="Milestone Badges"
                 android:textColor="#1B1B1B"
                 android:textSize="28sp" />
 

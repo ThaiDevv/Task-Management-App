@@ -118,7 +118,7 @@
     <string name="nav_calendar">Calendar</string>
     <string name="nav_stats">Stats</string>
     <string name="nav_streak">Streak</string>
-    <string name="nav_rewards">Achievements</string>
+    <string name="nav_rewards">Badges</string>
     <string name="nav_settings">Settings</string>
 
     <!-- Home Dashboard Strings -->
@@ -410,12 +410,12 @@
     <string name="streak_subtitle_completed">Awesome! Today\'s streak maintained! 🎉</string>
     <string name="streak_subtitle_zero">Complete all tasks today to start your streak!</string>
     <string name="streak_best_format">Best: %d days</string>
-    <string name="streak_details_title">Streak Achievements &amp; Badges</string>
+    <string name="streak_details_title">Daily Streak Badges</string>
     <string name="streak_rules_header">How Streaks Work</string>
     <string name="streak_rules_body">Finish 100% of your daily scheduled tasks to earn and maintain your streak. Missing any task or having no task on a scheduled day will reset your streak.</string>
     <string name="streak_active_header">Active Streak</string>
     <string name="streak_today_progress">Today: %1$d / %2$d tasks</string>
-    <string name="streak_milestones_header">Streak Milestone Achievements</string>
+    <string name="streak_milestones_header">Streak Milestone Badges</string>
     <string name="streak_milestone_3">🌱 Starter - 3 Days</string>
     <string name="streak_milestone_7">🌟 Sparkstarter - 7 Days</string>
     <string name="streak_milestone_30">🔥 Streaker - 30 Days</string>
@@ -425,7 +425,7 @@
     <string name="streak_milestone_365">👑 Master - 365 Days</string>
 
     <!-- Task Completion Milestones (tên resource phải khớp số task hiển thị) -->
-    <string name="task_milestones_header">Task Completion Achievements</string>
+    <string name="task_milestones_header">Task Completion Badges</string>
     <string name="task_progress_header">Task Progress</string>
     <string name="task_milestones_progress">Completed: %1$d tasks</string>
     <string name="task_milestone_10">🌱 Task Novice - 10 Tasks</string>
