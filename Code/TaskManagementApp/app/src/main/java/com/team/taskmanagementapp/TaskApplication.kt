@@ -30,6 +30,7 @@ class TaskApplication : Application() {
         super.onCreate()
         NotificationHelper.createNotificationChannel(this)
         setupWidgetAutoRefresh()
+        com.team.taskmanagementapp.util.StreakReminderScheduler.scheduleStreakReminder(this)
     }
 
     /**
