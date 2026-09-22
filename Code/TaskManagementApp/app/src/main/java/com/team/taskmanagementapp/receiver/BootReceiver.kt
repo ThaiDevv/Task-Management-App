@@ -38,6 +38,7 @@ class BootReceiver : BroadcastReceiver() {
             try {
                 rescheduleAllAlarms(context)
                 markOverdueTasks(context)
+                com.team.taskmanagementapp.util.StreakReminderScheduler.scheduleStreakReminder(context)
             } catch (e: Exception) {
                 Log.w(TAG, "Unable to restore reminders after boot", e)
             } finally {

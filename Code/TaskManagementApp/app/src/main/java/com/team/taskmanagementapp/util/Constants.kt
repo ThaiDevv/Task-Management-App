@@ -7,12 +7,78 @@ package com.team.taskmanagementapp.util
 object Constants {
     // Database Configuration
     const val DATABASE_NAME = "task_management_db"
+
+    /**
+     * Version 3: công việc lặp lại có thêm `repeatEndDate`, `repeatLimitCount`,
+     * `currentOccurrence`, `isPaused` trên `tasks` (xem `AppDatabase.MIGRATION_2_3`).
+     *
+     * Version 4: tính năng Pomodoro Timer — bảng `pomodoro_sessions` + 3 cột theo dõi
+     * Pomodoro trên `tasks`, kèm cột `completedAt` ghi nhận thời điểm hoàn thành
+     * (xem `AppDatabase.MIGRATION_3_4`).
+     *
+     * ⚠️ Cả hai nhánh đều từng dùng số 3 (và cả số 4) cho các schema khác nhau; sau khi
+     * merge, 4 là schema gộp cuối cùng. `MIGRATION_3_4` được viết theo kiểu "thêm cột nếu
+     * chưa có" nên vẫn chạy đúng với mọi biến thể v3/v4 của hai nhánh.
+     */
     const val DATABASE_VERSION = 4
 
     // Notification Channel
     const val NOTIFICATION_CHANNEL_ID = "task_reminder_channel"
     const val NOTIFICATION_CHANNEL_NAME = "Task Reminder Notifications"
     const val NOTIFICATION_CHANNEL_DESC = "Notifications for upcoming and due tasks"
+
+    // Pomodoro Timer (Foreground Service)
+    const val POMODORO_CHANNEL_ID = "pomodoro_timer_channel"
+    const val POMODORO_CHANNEL_NAME = "Đồng hồ Pomodoro"
+    const val POMODORO_CHANNEL_DESC = "Đồng hồ tập trung đang chạy nền"
+
+    /**
+     * Channel CẢNH BÁO cho việc hết giờ. Tách riêng khỏi [POMODORO_CHANNEL_ID] để:
+     * - channel ongoing (đồng hồ) phải im lặng vì được cập nhật mỗi giây;
+     * - channel cảnh báo CÓ sound + vibration và người dùng có thể tắt riêng nó.
+     */
+    const val POMODORO_ALERT_CHANNEL_ID = "pomodoro_alert_channel"
+    const val POMODORO_ALERT_CHANNEL_NAME = "Cảnh báo hết phiên"
+    const val POMODORO_ALERT_CHANNEL_DESC =
+        "Âm thanh và rung khi kết thúc phiên tập trung hoặc phiên nghỉ"
+
+    /**
+     * Id của notification ongoing do PomodoroService sở hữu.
+     *
+     * ⚠️ Dùng dải SỐ ÂM để không bao giờ trùng với notification nhắc việc:
+     * `NotificationHelper.showTaskReminder()` dùng chính `task.id` (Room auto-increment,
+     * luôn dương) làm notification id. Nếu trùng id thì hai notification sẽ đè lên nhau,
+     * và `stopForeground(STOP_FOREGROUND_REMOVE)` của service sẽ xoá luôn reminder của task.
+     *
+     * Quy ước dải id notification của app:
+     * - `task.id` (> 0)             → notification nhắc việc / widget action
+     * - `-1000` … `-1999`           → notification ongoing của tính năng hệ thống (Pomodoro…)
+     */
+    const val POMODORO_NOTIFICATION_ID = -1001
+
+    /**
+     * Id notification CẢNH BÁO khi một phiên Pomodoro kết thúc (hết giờ).
+     *
+     * Khác [POMODORO_NOTIFICATION_ID] (notification ongoing hiển thị đồng hồ đang chạy):
+     * notification này thuộc channel CÓ sound + vibration, không ongoing và tự tắt khi chạm.
+     * Vẫn nằm trong dải số âm nên không thể trùng với notification nhắc việc.
+     */
+    const val POMODORO_COMPLETION_NOTIFICATION_ID = -1002
+
+    /** Request code của PendingIntent dùng cho alarm đánh thức lúc phiên kết thúc. */
+    const val POMODORO_SESSION_END_REQUEST_CODE = 2001
+
+    /** Giá trị "không gắn task nào" cho [EXTRA_POMODORO_TASK_ID]. */
+    const val NO_TASK_ID = -1L
+    /**
+     * TaskId dùng cho luồng Pomodoro — dùng chung cho 2 intent:
+     * - `PomodoroService.start(...)` (task gắn với phiên tập trung)
+     * - `MainActivity` khi mở Pomodoro từ Task Detail (Task 13)
+     */
+    const val EXTRA_POMODORO_TASK_ID = "extra_pomodoro_task_id"
+
+    /** Mở màn hình Pomodoro khi người dùng chạm notification (màn hình sẽ làm ở task UI sau). */
+    const val EXTRA_OPEN_POMODORO_TIMER = "extra_open_pomodoro_timer"
 
     // Preferences & Security Storage Keys
     const val PREFS_NAME = "task_app_prefs"
@@ -24,6 +90,14 @@ object Constants {
     const val KEY_AUTO_LOCK_TIMER = "key_auto_lock_timer"
     const val KEY_SORT_ORDER = "key_sort_order"
     const val KEY_SORT_TYPE = "key_sort_type"
+
+    // Pomodoro Settings (Task 11) — lưu cùng PREFS_NAME với các cài đặt khác của app.
+    // Giá trị mặc định nằm ở PomodoroConfig để chỉ có MỘT nguồn sự thật cho 25/5/15.
+    const val KEY_POMODORO_FOCUS_MINUTES = "key_pomodoro_focus_minutes"
+    const val KEY_POMODORO_SHORT_BREAK_MINUTES = "key_pomodoro_short_break_minutes"
+    const val KEY_POMODORO_LONG_BREAK_MINUTES = "key_pomodoro_long_break_minutes"
+    const val KEY_POMODORO_AUTO_START_BREAKS = "key_pomodoro_auto_start_breaks"
+    const val KEY_POMODORO_AUTO_START_FOCUS = "key_pomodoro_auto_start_focus"
 
     // Sort Preferences Defaults
     const val DEFAULT_SORT_TYPE = "DUE_DATE"
@@ -53,4 +127,14 @@ object Constants {
     const val MAX_PIN_ATTEMPTS = 5
     const val LOCKOUT_DURATION_MS = 30000L // 30 seconds
     const val AUTO_LOCK_TIMEOUT_MS = 60000L // 1 minute background re-lock
+
+    // Streak Protection Reminder
+    const val KEY_STREAK_REMINDER_ENABLED = "key_streak_reminder_enabled"
+    const val KEY_STREAK_REMINDER_HOUR = "key_streak_reminder_hour"
+    const val KEY_STREAK_REMINDER_MINUTE = "key_streak_reminder_minute"
+    const val DEFAULT_STREAK_REMINDER_HOUR = 20
+    const val DEFAULT_STREAK_REMINDER_MINUTE = 0
+    const val STREAK_REMINDER_NOTIFICATION_ID = 88888
+    const val ACTION_STREAK_REMINDER = "com.team.taskmanagementapp.action.STREAK_REMINDER"
+    const val REQUEST_CODE_STREAK_REMINDER = 3001
 }

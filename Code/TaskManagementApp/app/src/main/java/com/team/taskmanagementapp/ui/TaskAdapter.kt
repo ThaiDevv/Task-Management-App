@@ -22,7 +22,8 @@ import com.team.taskmanagementapp.util.RecurrenceHelper
 
 class TaskAdapter(
     private val onTaskToggleComplete: ((Task) -> Unit)? = null,
-    private val onTaskClick: ((Task) -> Unit)? = null
+    private val onTaskClick: ((Task) -> Unit)? = null,
+    private val onTaskDelete: ((Task) -> Unit)? = null
 ) : ListAdapter<Task, TaskAdapter.TaskViewHolder>(TaskDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
@@ -170,8 +171,75 @@ class TaskAdapter(
                 onTaskToggleComplete?.invoke(task)
             }
 
-            binding.btnMoreOptions.setOnClickListener {
-                onTaskClick?.invoke(task)
+            binding.btnMoreOptions.setOnClickListener { view ->
+                val popup = androidx.appcompat.widget.PopupMenu(view.context, view)
+                popup.inflate(R.menu.menu_task_item)
+
+                val completeItem = popup.menu.findItem(R.id.action_complete_task)
+                val deleteItem = popup.menu.findItem(R.id.action_delete_task)
+
+                val completeText = if (task.isCompleted) {
+                    view.context.getString(R.string.task_detail_button_uncomplete)
+                } else {
+                    view.context.getString(R.string.task_detail_button_complete)
+                }
+                val completeColor = Color.parseColor("#16A34A") // Green
+                val deleteColor = Color.parseColor("#EF4444")   // Red
+
+                val spanComplete = android.text.SpannableString(completeText).apply {
+                    setSpan(android.text.style.ForegroundColorSpan(completeColor), 0, length, android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                }
+                completeItem?.title = spanComplete
+                completeItem?.icon?.let {
+                    val wrapped = androidx.core.graphics.drawable.DrawableCompat.wrap(it.mutate())
+                    androidx.core.graphics.drawable.DrawableCompat.setTint(wrapped, completeColor)
+                    completeItem.icon = wrapped
+                }
+
+                val deleteText = view.context.getString(R.string.action_delete)
+                val spanDelete = android.text.SpannableString(deleteText).apply {
+                    setSpan(android.text.style.ForegroundColorSpan(deleteColor), 0, length, android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                }
+                deleteItem?.title = spanDelete
+                deleteItem?.icon?.let {
+                    val wrapped = androidx.core.graphics.drawable.DrawableCompat.wrap(it.mutate())
+                    androidx.core.graphics.drawable.DrawableCompat.setTint(wrapped, deleteColor)
+                    deleteItem.icon = wrapped
+                }
+
+                // Enable icons display in PopupMenu if supported
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                    popup.setForceShowIcon(true)
+                } else {
+                    try {
+                        val fields = popup.javaClass.declaredFields
+                        for (field in fields) {
+                            if ("mPopup" == field.name) {
+                                field.isAccessible = true
+                                val menuPopupHelper = field.get(popup)
+                                val classPopupHelper = Class.forName(menuPopupHelper.javaClass.name)
+                                val setForceIcons = classPopupHelper.getMethod("setForceShowIcon", Boolean::class.javaPrimitiveType)
+                                setForceIcons.invoke(menuPopupHelper, true)
+                                break
+                            }
+                        }
+                    } catch (_: Exception) { }
+                }
+
+                popup.setOnMenuItemClickListener { menuItem ->
+                    when (menuItem.itemId) {
+                        R.id.action_complete_task -> {
+                            onTaskToggleComplete?.invoke(task)
+                            true
+                        }
+                        R.id.action_delete_task -> {
+                            onTaskDelete?.invoke(task)
+                            true
+                        }
+                        else -> false
+                    }
+                }
+                popup.show()
             }
 
             binding.root.setOnClickListener {

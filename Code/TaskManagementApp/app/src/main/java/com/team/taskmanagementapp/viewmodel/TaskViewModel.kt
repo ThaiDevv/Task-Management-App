@@ -45,6 +45,9 @@ class TaskViewModel(
     private val _uiState = MutableStateFlow<UiState<List<Task>>>(UiState.Loading)
     val uiState: StateFlow<UiState<List<Task>>> = _uiState.asStateFlow()
 
+    private val _allTasks = MutableStateFlow<List<Task>>(emptyList())
+    val allTasks: StateFlow<List<Task>> = _allTasks.asStateFlow()
+
     private val _streakInfo = MutableStateFlow(StreakInfo())
     val streakInfo: StateFlow<StreakInfo> = _streakInfo.asStateFlow()
 
@@ -71,9 +74,10 @@ class TaskViewModel(
         }
 
         viewModelScope.launch {
-            repository.getAllTasks().collect { allTasks ->
-                _streakInfo.value = StreakCalculator.calculateStreak(allTasks, applicationContext)
-                _totalCompletedTasks.value = allTasks.count { it.isCompleted }
+            repository.getAllTasks().collect { tasks ->
+                _allTasks.value = tasks
+                _streakInfo.value = StreakCalculator.calculateStreak(tasks, applicationContext)
+                _totalCompletedTasks.value = tasks.count { it.isCompleted }
             }
         }
     }

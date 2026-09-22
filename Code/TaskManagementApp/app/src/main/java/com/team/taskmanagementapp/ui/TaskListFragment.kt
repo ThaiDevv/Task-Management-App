@@ -37,6 +37,8 @@ import com.team.taskmanagementapp.databinding.FragmentFilterBottomSheetBinding
 import com.team.taskmanagementapp.databinding.FragmentTaskListBinding
 import com.team.taskmanagementapp.ui.activity.AddEditTaskActivity
 import com.team.taskmanagementapp.ui.base.UiState
+import com.team.taskmanagementapp.data.model.enums.RecurrenceType
+import com.team.taskmanagementapp.ui.detail.DeleteTaskDialogFragment
 import com.team.taskmanagementapp.ui.detail.TaskDetailActivity
 import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.DateTimeUtils
@@ -69,6 +71,7 @@ class TaskListFragment : Fragment() {
 
     private var todayScrollState: Parcelable? = null
     private var upcomingScrollState: Parcelable? = null
+    private var pendingDeleteTask: Task? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -119,6 +122,25 @@ class TaskListFragment : Fragment() {
                 FilterBottomSheet.ACTION_CLEAR -> viewModel.clearFilter()
             }
         }
+
+        childFragmentManager.setFragmentResultListener(
+            DeleteTaskDialogFragment.REQUEST_KEY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val task = pendingDeleteTask ?: return@setFragmentResultListener
+            when (bundle.getInt(DeleteTaskDialogFragment.RESULT_DELETE_TYPE)) {
+                DeleteTaskDialogFragment.DELETE_NORMAL -> {
+                    viewModel.deleteTask(task)
+                }
+                DeleteTaskDialogFragment.DELETE_ONLY_THIS -> {
+                    viewModel.deleteTask(task, deleteAllFuture = false)
+                }
+                DeleteTaskDialogFragment.DELETE_ALL -> {
+                    viewModel.deleteTask(task, deleteAllFuture = true)
+                }
+            }
+            pendingDeleteTask = null
+        }
         setupUI()
         observeViewModel()
     }
@@ -144,10 +166,18 @@ class TaskListFragment : Fragment() {
 
     private fun setupUI() {
         updateGreeting()
+
+        // Lối vào Pomodoro Timer Screen (Task 9). Đặt ở header Home vì Task 10 (Task Selector)
+        // và nút "Bắt đầu tập trung" trong Task Detail chưa thuộc phạm vi task này.
+        binding.btnOpenPomodoro.setOnClickListener {
+            findNavController().navigate(R.id.pomodoroFragment)
+        }
+
         // Today's Tasks Adapter
         todayTaskAdapter = TaskAdapter(
             onTaskToggleComplete = { task -> viewModel.toggleTaskComplete(task) },
-            onTaskClick = { openTaskDetail(it) }
+            onTaskClick = { openTaskDetail(it) },
+            onTaskDelete = { task -> confirmDeleteTask(task) }
         )
         binding.todayTasksRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -165,7 +195,8 @@ class TaskListFragment : Fragment() {
         }
         completedTaskAdapter = TaskAdapter(
             onTaskToggleComplete = { task -> viewModel.toggleTaskComplete(task) },
-            onTaskClick = { openTaskDetail(it) }
+            onTaskClick = { openTaskDetail(it) },
+            onTaskDelete = { task -> confirmDeleteTask(task) }
         )
         binding.completedTasksRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -220,6 +251,14 @@ class TaskListFragment : Fragment() {
         val intent = Intent(requireContext(), TaskDetailActivity::class.java)
         intent.putExtra(Constants.EXTRA_TASK_ID, task.id.toLong())
         startActivity(intent)
+    }
+
+    private fun confirmDeleteTask(task: Task) {
+        if (childFragmentManager.findFragmentByTag(DeleteTaskDialogFragment.TAG) != null) return
+        pendingDeleteTask = task
+        val isRecurring = task.isRecurring && task.recurrenceType != RecurrenceType.NONE
+        DeleteTaskDialogFragment.newInstance(isRecurring)
+            .show(childFragmentManager, DeleteTaskDialogFragment.TAG)
     }
 
     private fun updateGreeting() {

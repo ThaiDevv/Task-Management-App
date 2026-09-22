@@ -20,34 +20,54 @@
             android:orientation="vertical"
             android:paddingTop="16dp">
 
-            <!-- ===== 1. GREETING HEADER ===== -->
+            <!-- ===== 1. GREETING HEADER (+ lối vào Pomodoro Timer) ===== -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:paddingStart="24dp"
-                android:paddingEnd="24dp"
+                android:paddingEnd="16dp"
                 android:paddingBottom="20dp">
 
-                <TextView
-                    android:id="@+id/dateText"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins_medium"
-                    android:text="Tue, Oct 24"
-                    android:textColor="#737786"
-                    android:textSize="14sp" />
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/greetingText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:fontFamily="@font/poppins_bold"
-                    android:letterSpacing="-0.01"
-                    android:text="@string/home_hello"
-                    android:textColor="#1B1B1B"
-                    android:textSize="28sp" />
+                    <TextView
+                        android:id="@+id/dateText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Tue, Oct 24"
+                        android:textColor="#737786"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/greetingText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:letterSpacing="-0.01"
+                        android:text="@string/home_hello"
+                        android:textColor="#1B1B1B"
+                        android:textSize="28sp" />
+
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/btnOpenPomodoro"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/pomodoro_entry_content_description"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_time"
+                    app:tint="@color/primary" />
+
             </LinearLayout>
 
             <!-- ===== 2. BENTO SUMMARY METRICS CARDS (2x2 Grid) ===== -->
