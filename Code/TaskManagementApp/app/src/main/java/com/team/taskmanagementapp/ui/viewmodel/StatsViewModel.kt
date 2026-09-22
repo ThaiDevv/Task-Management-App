@@ -7,14 +7,21 @@ import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.enums.Priority
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
 import com.team.taskmanagementapp.data.model.stats.DayProductivity
+import com.team.taskmanagementapp.data.model.stats.PomodoroFocusStats
 import com.team.taskmanagementapp.data.model.stats.PriorityStats
 import com.team.taskmanagementapp.data.model.stats.StatisticsUiState
 import com.team.taskmanagementapp.data.model.stats.StatsTimeFilter
+import com.team.taskmanagementapp.data.model.stats.TaskFocusStats
 import com.team.taskmanagementapp.data.model.stats.WeeklyProductivity
+import com.team.taskmanagementapp.data.model.stats.buildTopTaskSummaries
+import com.team.taskmanagementapp.data.model.stats.formatFocusDuration
+import com.team.taskmanagementapp.data.repository.PomodoroRepository
 import com.team.taskmanagementapp.data.repository.TaskRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -24,9 +31,13 @@ import java.util.Locale
  * ViewModel for Statistics Dashboard.
  * Computes completion counts by weekday, completion rate,
  * and priority breakdown reactively from TaskRepository.
+ *
+ * Task 15: "deep work" và các số liệu Pomodoro nay lấy từ dữ liệu thật trong
+ * `pomodoro_sessions` (qua [PomodoroRepository]) thay vì ước lượng từ số task hoàn thành.
  */
 class StatsViewModel(
     private val taskRepository: TaskRepository,
+    private val pomodoroRepository: PomodoroRepository,
     private val dispatcher: kotlinx.coroutines.CoroutineDispatcher = kotlinx.coroutines.Dispatchers.Main
 ) : ViewModel() {
 
@@ -37,16 +48,50 @@ class StatsViewModel(
     val uiState: StateFlow<StatisticsUiState> = _uiState.asStateFlow()
 
     init {
-        observeTasks()
+        observeStats()
     }
 
-    private fun observeTasks() {
+    /**
+     * Gộp dữ liệu Task và dữ liệu Pomodoro của kỳ đang chọn.
+     *
+     * Dùng `collectLatest` để khi đổi bộ lọc thời gian thì vòng combine cũ bị huỷ,
+     * tránh kết quả của kỳ cũ ghi đè kết quả của kỳ mới.
+     */
+    private fun observeStats() {
         viewModelScope.launch(dispatcher) {
-            combine(taskRepository.getAllTasks(), _timeFilter) { tasks, filter ->
-                calculateStats(tasks, filter)
-            }.collect { calculatedState ->
-                _uiState.value = calculatedState
+            _timeFilter.collectLatest { filter ->
+                combine(
+                    taskRepository.getAllTasks(),
+                    observePomodoroStats(filter)
+                ) { tasks, pomodoro ->
+                    calculateStats(tasks, filter, pomodoro.toFocusStats(tasks))
+                }.collect { calculatedState ->
+                    _uiState.value = calculatedState
+                }
             }
+        }
+    }
+
+    /**
+     * Các Flow số liệu Pomodoro của một kỳ — tái sử dụng đúng các query đã có ở DAO,
+     * không thêm logic timer hay thống kê trùng lặp.
+     */
+    private fun observePomodoroStats(filter: StatsTimeFilter): Flow<RawPomodoroStats> {
+        val (periodStart, periodEnd) = getPeriodRange(filter)
+        return combine(
+            pomodoroRepository.observeTodayFocusMinutes(),
+            pomodoroRepository.observeThisWeekFocusMinutes(),
+            pomodoroRepository.observeTotalFocusMinutesInRange(periodStart, periodEnd),
+            pomodoroRepository.observeFocusSessionCountInRange(periodStart, periodEnd),
+            pomodoroRepository.observeFocusStatsByTask(periodStart, periodEnd)
+        ) { today, week, period, sessionCount, byTask ->
+            RawPomodoroStats(
+                todayMinutes = today,
+                weekMinutes = week,
+                periodMinutes = period,
+                periodSessionCount = sessionCount,
+                byTask = byTask
+            )
         }
     }
 
@@ -59,8 +104,15 @@ class StatsViewModel(
 
     /**
      * Core calculation logic for all statistics metrics.
+     *
+     * @param pomodoro số liệu Pomodoro thật của kỳ; mặc định rỗng (không có dữ liệu) nên
+     *        hàm vẫn thuần tuý và test được mà không cần DB.
      */
-    fun calculateStats(allTasks: List<Task>, filter: StatsTimeFilter): StatisticsUiState {
+    fun calculateStats(
+        allTasks: List<Task>,
+        filter: StatsTimeFilter,
+        pomodoro: PomodoroFocusStats = PomodoroFocusStats()
+    ): StatisticsUiState {
         val (periodStart, periodEnd) = getPeriodRange(filter)
 
         // Filter tasks that belong to the selected period
@@ -95,12 +147,21 @@ class StatsViewModel(
             else -> "Needs attention"
         }
 
-        // 3. Actual task counts, not inferred hours of focused work.
+        // 3. Số liệu đếm thật của kỳ đang chọn (không suy diễn từ giờ tập trung).
         val completedSubtitle = when (filter) {
             StatsTimeFilter.THIS_WEEK -> "This week"
             StatsTimeFilter.LAST_WEEK -> "Last week"
             StatsTimeFilter.THIS_MONTH -> "This month"
             StatsTimeFilter.ALL_TIME -> "All time"
+        }
+
+        // Deep work = thời gian tập trung THẬT của kỳ (từ các phiên FOCUS đã hoàn thành).
+        // Trước Task 15 chỗ này là ước lượng giả `completedTasks * 0.43h`.
+        val deepWorkLabel = formatFocusDuration(pomodoro.periodMinutes)
+        val deepWorkSubtitle = if (pomodoro.hasPeriodFocus) {
+            "Focused time"
+        } else {
+            "No focus sessions yet"
         }
 
         // 4. Tasks by Priority
@@ -132,11 +193,14 @@ class StatsViewModel(
             completionRateLabel = completionRateLabel,
             completedCount = completedTasks,
             completedSubtitle = completedSubtitle,
+            deepWorkHours = deepWorkLabel,
+            deepWorkSubtitle = deepWorkSubtitle,
             pendingCount = totalTasks - completedTasks,
             hasUnknownCompletionDates = allTasks.any {
                 (it.isCompleted || it.status == TaskStatus.COMPLETED) && it.completedAt == null
             },
             priorityStats = priorityStats,
+            pomodoro = pomodoro,
             isLoading = false
         )
     }
@@ -241,18 +305,38 @@ class StatsViewModel(
             }
         }
     }
+
+    /**
+     * Số liệu thô của DAO cho một kỳ, trước khi ghép tên task.
+     */
+    private data class RawPomodoroStats(
+        val todayMinutes: Int,
+        val weekMinutes: Int,
+        val periodMinutes: Int,
+        val periodSessionCount: Int,
+        val byTask: List<TaskFocusStats>
+    ) {
+        fun toFocusStats(tasks: List<Task>): PomodoroFocusStats = PomodoroFocusStats(
+            todayMinutes = todayMinutes,
+            weekMinutes = weekMinutes,
+            periodMinutes = periodMinutes,
+            periodSessionCount = periodSessionCount,
+            topTasks = buildTopTaskSummaries(byTask, tasks)
+        )
+    }
 }
 
 /**
- * Factory for creating StatsViewModel instances with TaskRepository.
+ * Factory for creating StatsViewModel instances with TaskRepository + PomodoroRepository.
  */
 class StatsViewModelFactory(
-    private val repository: TaskRepository
+    private val repository: TaskRepository,
+    private val pomodoroRepository: PomodoroRepository
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(StatsViewModel::class.java)) {
-            return StatsViewModel(repository) as T
+            return StatsViewModel(repository, pomodoroRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
     }

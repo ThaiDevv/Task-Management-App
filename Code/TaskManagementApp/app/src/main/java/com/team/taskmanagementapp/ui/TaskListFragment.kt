@@ -166,6 +166,13 @@ class TaskListFragment : Fragment() {
 
     private fun setupUI() {
         updateGreeting()
+
+        // Lối vào Pomodoro Timer Screen (Task 9). Đặt ở header Home vì Task 10 (Task Selector)
+        // và nút "Bắt đầu tập trung" trong Task Detail chưa thuộc phạm vi task này.
+        binding.btnOpenPomodoro.setOnClickListener {
+            findNavController().navigate(R.id.pomodoroFragment)
+        }
+
         // Today's Tasks Adapter
         todayTaskAdapter = TaskAdapter(
             onTaskToggleComplete = { task -> viewModel.toggleTaskComplete(task) },

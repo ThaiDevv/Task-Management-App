@@ -52,8 +52,18 @@ data class StatisticsUiState(
     val completionRateLabel: String = "On track",
     val completedCount: Int = 0,
     val completedSubtitle: String = "This week",
+    /**
+     * Thời gian tập trung THẬT của kỳ đang chọn, đã định dạng (`45m`, `2h 5m`).
+     *
+     * ⚠️ Trước Task 15 giá trị này là ước lượng giả (`số task hoàn thành × 0.43h`);
+     * nay lấy trực tiếp từ các phiên FOCUS đã hoàn thành trong `pomodoro_sessions`.
+     */
+    val deepWorkHours: String = "0m",
+    val deepWorkSubtitle: String = "Focused time",
     val pendingCount: Int = 0,
     val hasUnknownCompletionDates: Boolean = false,
     val priorityStats: PriorityStats = PriorityStats(0, 0, 0, 0, 0f, 0f, 0f),
+    /** Số liệu Pomodoro thật (hôm nay / tuần này / theo task) — Task 15. */
+    val pomodoro: PomodoroFocusStats = PomodoroFocusStats(),
     val isLoading: Boolean = false
 )
