@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.devtools.ksp)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -80,6 +81,12 @@ dependencies {
 
     // Reliable fallback when exact alarms are unavailable
     implementation(libs.androidx.work.runtime)
+
+    // Firebase AI Logic will be used by the AI task assistant.
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.ai)
+    debugImplementation(libs.firebase.appcheck.debug)
+    releaseImplementation(libs.firebase.appcheck.playintegrity)
 
     // Testing
     testImplementation(libs.junit)

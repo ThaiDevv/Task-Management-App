@@ -41,28 +41,6 @@
             android:textColor="@color/primary"
             android:textSize="20sp" />
 
-        <!-- Notification Icon -->
-        <ImageView
-            android:id="@+id/ivNotification"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="16dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Notifications"
-            android:src="@drawable/ic_bell"
-            app:tint="@color/primary" />
-
-        <!-- User Avatar Circle "JD" -->
-        <TextView
-            android:id="@+id/tvUserAvatar"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="@drawable/bg_day_circle_active"
-            android:fontFamily="@font/poppins_bold"
-            android:gravity="center"
-            android:text="JD"
-            android:textColor="@color/primary"
-            android:textSize="11sp" />
     </LinearLayout>
 
     <!-- ===== Scrollable Main Content ===== -->
@@ -113,7 +91,7 @@
                             android:layout_width="14dp"
                             android:layout_height="14dp"
                             android:layout_marginEnd="4dp"
-                            android:src="@drawable/ic_chevron_right"
+                            android:src="@drawable/ic_priority_flag"
                             app:tint="@color/tertiary" />
 
                         <TextView
@@ -650,6 +628,28 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="20dp"
                 android:background="@color/surface_container" />
+
+            <!--
+              Start Pomodoro (Task 13) — cùng style với nút Edit, đặt đầu khu vực hành động
+              để không phải thiết kế lại màn hình Task Detail.
+            -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnStartPomodoro"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginBottom="12dp"
+                android:fontFamily="@font/poppins_bold"
+                android:text="@string/pomodoro_start_from_detail"
+                android:textAllCaps="false"
+                android:textColor="@color/primary"
+                android:textSize="14sp"
+                app:backgroundTint="@color/surface_container_lowest"
+                app:cornerRadius="16dp"
+                app:icon="@drawable/ic_play"
+                app:iconGravity="textStart"
+                app:iconTint="@color/primary"
+                app:strokeColor="@color/primary"
+                app:strokeWidth="2dp" />
 
             <!-- Edit + Delete Row -->
             <LinearLayout

@@ -34,8 +34,36 @@
         android:label="@string/nav_stats" />
 
     <fragment
+        android:id="@+id/streakFragment"
+        android:name="com.team.taskmanagementapp.ui.StreakFragment"
+        android:label="@string/nav_streak" />
+
+    <fragment
+        android:id="@+id/rewardsFragment"
+        android:name="com.team.taskmanagementapp.ui.RewardsFragment"
+        android:label="@string/nav_rewards" />
+
+    <fragment
         android:id="@+id/createTaskFragment"
         android:name="com.team.taskmanagementapp.ui.CreateTaskFragment"
         android:label="Create New Task" />
+
+    <!-- Pomodoro Timer Screen (Task 9) — màn hình phụ, không phải tab dưới thanh điều hướng -->
+    <fragment
+        android:id="@+id/pomodoroFragment"
+        android:name="com.team.taskmanagementapp.ui.pomodoro.PomodoroFragment"
+        android:label="@string/pomodoro_title">
+        <!-- TaskId tuy chọn truyền từ Task Detail (Task 13); -1 = không truyền -->
+        <argument
+            android:name="arg_pomodoro_task_id"
+            android:defaultValue="-1"
+            app:argType="long" />
+    </fragment>
+
+    <!-- Pomodoro Settings (Task 11) -->
+    <fragment
+        android:id="@+id/pomodoroSettingsFragment"
+        android:name="com.team.taskmanagementapp.ui.pomodoro.PomodoroSettingsFragment"
+        android:label="@string/pomodoro_settings_title" />
 
 </navigation>

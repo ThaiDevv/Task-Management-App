@@ -117,6 +117,8 @@
     <string name="nav_task_list">Task List</string>
     <string name="nav_calendar">Calendar</string>
     <string name="nav_stats">Stats</string>
+    <string name="nav_streak">Streak</string>
+    <string name="nav_rewards">Badges</string>
     <string name="nav_settings">Settings</string>
 
     <!-- Home Dashboard Strings -->
@@ -174,12 +176,12 @@
     <string name="data_management_title">Data Management</string>
     <string name="data_management_subtitle">Secure your workflow by backing up or restoring your task history.</string>
     <string name="data_export_title">Export Data</string>
-    <string name="data_export_summary">Snapshot your current workspace</string>
+    <string name="data_export_summary">Backup tasks and Pomodoro history</string>
     <string name="data_export_action">Export to JSON</string>
     <string name="data_export_total_tasks">TOTAL TASKS</string>
     <string name="data_export_completed">COMPLETED</string>
     <string name="data_restore_title">Restore Data</string>
-    <string name="data_restore_summary">Import tasks from a backup file</string>
+    <string name="data_restore_summary">Restore tasks and Pomodoro history from a backup file</string>
     <string name="data_restore_upload_hint">Click to upload or drag and drop</string>
     <string name="data_restore_upload_sub">TaskFlow Backup Files (.json) up to 25MB</string>
     <string name="data_restore_action">Choose Backup File</string>
@@ -200,6 +202,12 @@
     <string name="data_restore_success">Tasks restored successfully</string>
     <string name="data_restore_failed">Restore failed. Invalid or corrupted file.</string>
     <string name="data_restore_cancel">Cancel</string>
+
+    <!-- Task 16: nội dung backup + thông báo kết quả -->
+    <string name="data_backup_content_empty">Backup file includes all tasks and Pomodoro sessions</string>
+    <string name="data_backup_content_summary">Included in backup: %1$d tasks · %2$d Pomodoro sessions</string>
+    <string name="data_backup_result_success">✅ %1$s</string>
+    <string name="data_backup_result_error">❌ %1$s</string>
     <string name="data_task_count">%d tasks in database</string>
     <string name="data_export_error">Export failed: %s</string>
     <string name="data_import_success">Imported %d tasks successfully</string>
@@ -392,6 +400,23 @@
     <string name="stats_tasks_count_format">%d tasks</string>
     <string name="stats_filter_dialog_title">Select Time Period</string>
 
+    <!-- Statistics → Pomodoro Focus card (Task 15) -->
+    <string name="stats_pomodoro_title">Pomodoro Focus</string>
+    <string name="stats_pomodoro_subtitle">Focus time from completed sessions</string>
+    <string name="stats_today_label">TODAY</string>
+    <string name="stats_week_label">THIS WEEK</string>
+    <string name="stats_zero_duration">0m</string>
+    <string name="stats_pomodoro_no_sessions">No focus sessions yet — finish a Pomodoro to see your stats.</string>
+    <string name="stats_top_focus_tasks">TOP TASKS BY FOCUS TIME</string>
+    <plurals name="stats_pomodoro_completed">
+        <item quantity="one">%d pomodoro completed</item>
+        <item quantity="other">%d pomodoros completed</item>
+    </plurals>
+    <plurals name="stats_session_count">
+        <item quantity="one">%d session</item>
+        <item quantity="other">%d sessions</item>
+    </plurals>
+
     <!-- Home Screen Widget (TMA-56) -->
     <string name="widget_today_title">Today\'s Tasks</string>
     <string name="widget_all_done">All Done 🎉</string>
@@ -401,6 +426,190 @@
     <string name="widget_add_task">Add new task</string>
     <string name="widget_mark_done">Complete this task</string>
     <string name="widget_description">View and complete today\'s tasks directly on your home screen</string>
+
+    <!-- Pomodoro Timer (Foreground Service) -->
+    <string name="pomodoro_channel_name">Đồng hồ Pomodoro</string>
+    <string name="pomodoro_channel_desc">Đồng hồ tập trung đang chạy nền, kể cả khi tắt màn hình</string>
+    <string name="pomodoro_session_focus">Tập trung</string>
+    <string name="pomodoro_session_short_break">Nghỉ ngắn</string>
+    <string name="pomodoro_session_long_break">Nghỉ dài</string>
+    <string name="pomodoro_status_running">Đang chạy</string>
+    <string name="pomodoro_status_paused">Tạm dừng</string>
+    <string name="pomodoro_status_completed">Hoàn thành</string>
+    <string name="pomodoro_notification_title">%1$s • Chu kỳ %2$d/%3$d</string>
+    <string name="pomodoro_notification_time_status">%1$s • %2$s</string>
+    <string name="pomodoro_notification_next_session">Xong phiên này. Tiếp theo: %1$s</string>
+    <string name="pomodoro_notification_idle">Đã dừng</string>
+    <string name="pomodoro_action_pause">Tạm dừng</string>
+    <string name="pomodoro_action_resume">Tiếp tục</string>
+    <string name="pomodoro_action_start_next">Phiên tiếp theo</string>
+    <string name="pomodoro_action_skip">Bỏ qua</string>
+    <string name="pomodoro_action_stop">Dừng</string>
+
+    <!-- Pomodoro: cảnh báo hết phiên (Sound / Vibration / Completion Notification) -->
+    <string name="pomodoro_alert_channel_name">Cảnh báo hết phiên</string>
+    <string name="pomodoro_alert_channel_desc">Âm thanh và rung khi kết thúc phiên tập trung hoặc phiên nghỉ</string>
+    <string name="pomodoro_completion_title">Hết giờ: %1$s</string>
+    <string name="pomodoro_completion_body">Tiếp theo: %1$s • %2$d phút</string>
+
+    <!-- Pomodoro Timer screen (Task 9) -->
+    <string name="pomodoro_title">Pomodoro</string>
+    <string name="pomodoro_status_idle">Sẵn sàng</string>
+    <string name="pomodoro_cycle_label">Chu kỳ %1$d/%2$d</string>
+    <string name="pomodoro_completed_focus_count">Đã hoàn thành %1$d phiên tập trung</string>
+    <string name="pomodoro_action_start">Bắt đầu</string>
+    <string name="pomodoro_progress_description">Tiến độ phiên Pomodoro</string>
+    <string name="pomodoro_entry_content_description">Mở đồng hồ Pomodoro</string>
+
+    <!-- Pomodoro: Task Selector + Cycle Indicator (Task 10) -->
+    <string name="pomodoro_task_label">Công việc</string>
+    <string name="pomodoro_task_label_active">Đang tập trung</string>
+    <string name="pomodoro_task_none">Chưa chọn công việc</string>
+    <string name="pomodoro_task_none_hint">Chạm để chọn công việc cho phiên tập trung</string>
+    <string name="pomodoro_task_locked_hint">Dừng phiên hiện tại để đổi công việc</string>
+    <string name="pomodoro_task_due_format">Hạn %1$s</string>
+    <string name="pomodoro_task_no_due_date">Không có hạn</string>
+    <string name="pomodoro_task_completed">Đã xong</string>
+    <string name="pomodoro_task_selector_title">Chọn công việc</string>
+    <string name="pomodoro_task_selector_empty">Chưa có công việc nào. Hãy thêm công việc trước khi bắt đầu tập trung.</string>
+    <string name="pomodoro_task_count_format">%1$d công việc</string>
+    <string name="pomodoro_task_select_needed">Hãy chọn công việc trước khi bắt đầu</string>
+
+    <!-- Pomodoro Settings (Task 11) -->
+    <string name="pomodoro_settings_title">Cài đặt Pomodoro</string>
+    <string name="pomodoro_settings_durations_section">Thời lượng</string>
+    <string name="pomodoro_settings_minutes_format">%1$d phút</string>
+    <string name="pomodoro_settings_focus_range">15–60 phút</string>
+    <string name="pomodoro_settings_short_break_range">3–10 phút</string>
+    <string name="pomodoro_settings_long_break_range">10–30 phút</string>
+    <string name="pomodoro_settings_auto_section">Tự động chuyển phiên</string>
+    <string name="pomodoro_settings_auto_start_breaks">Tự động bắt đầu nghỉ</string>
+    <string name="pomodoro_settings_auto_start_breaks_desc">Phiên nghỉ chạy ngay khi phiên tập trung kết thúc</string>
+    <string name="pomodoro_settings_auto_start_focus">Tự động bắt đầu tập trung</string>
+    <string name="pomodoro_settings_auto_start_focus_desc">Phiên tập trung chạy ngay khi phiên nghỉ kết thúc</string>
+    <string name="pomodoro_settings_applied_note">Thay đổi được áp dụng cho phiên bắt đầu sau. Phiên đang chạy giữ nguyên thời lượng.</string>
+
+    <!-- Pomodoro từ Task Detail (Task 13) -->
+    <string name="pomodoro_start_from_detail">Bắt đầu Pomodoro</string>
+    <string name="pomodoro_task_not_found">Không tìm thấy công việc này. Hãy chọn công việc khác.</string>
+    <string name="pomodoro_session_already_active">Đang có phiên Pomodoro cho công việc khác. Hãy dừng phiên hiện tại rồi thử lại.</string>
+
+    <string name="home_hello">Hello!</string>
+    <string name="home_all_tasks">All tasks</string>
+    <string name="home_no_overdue">No overdue tasks</string>
+    <string name="home_action_needed">Action needed</string>
+    <string name="home_completed">Completed</string>
+    <string name="home_productivity_tip">Productivity tip</string>
+    <string name="home_productivity_tip_body">Choose a time when you feel focused and reserve it for your most important task.</string>
+    <string name="home_filter_description">Filter and sort tasks</string>
+    <string name="filter_done_hint">Status and overdue filters apply only to unfinished tasks.</string>
+    <string name="stats_pending_label">NOT COMPLETED</string>
+    <plurals name="stats_task_count">
+        <item quantity="one">%d task</item>
+        <item quantity="other">%d tasks</item>
+    </plurals>
+    <string name="stats_urgent_priority">Urgent Priority</string>
+    <string name="stats_completion_by_weekday">Completions by weekday</string>
+    <string name="stats_chart_period">%1$s · recorded completion dates</string>
+    <string name="stats_unknown_completion_dates">Some older tasks have no recorded completion date. They appear in All time totals, but not in dated completion charts.</string>
+  
+  <!-- Streak Achievements & Protection -->
+    <string name="streak_title">Daily Streak</string>
+    <string name="streak_days_format">%d Days Streak! 🔥</string>
+    <string name="streak_one_day">1 Day Streak! 🔥</string>
+    <string name="streak_zero_days">0 Day Streak 🔥</string>
+    <string name="streak_subtitle_active">Keep up the momentum! Finish today\'s tasks.</string>
+    <string name="streak_subtitle_completed">Awesome! Today\'s streak maintained! 🎉</string>
+    <string name="streak_subtitle_zero">Complete all tasks today to start your streak!</string>
+    <string name="streak_best_format">Best: %d days</string>
+    <string name="streak_details_title">Daily Streak Badges</string>
+    <string name="streak_rules_header">How Streaks Work</string>
+    <string name="streak_rules_body">Finish 100% of your daily scheduled tasks to earn and maintain your streak. Missing any task or having no task on a scheduled day will reset your streak.</string>
+    <string name="streak_active_header">Active Streak</string>
+    <string name="streak_today_progress">Today: %1$d / %2$d tasks</string>
+    <string name="streak_milestones_header">Streak Milestone Badges</string>
+    <string name="streak_milestone_3">🌱 Starter - 3 Days</string>
+    <string name="streak_milestone_7">🌟 Sparkstarter - 7 Days</string>
+    <string name="streak_milestone_30">🔥 Streaker - 30 Days</string>
+    <string name="streak_milestone_50">⚡ Achiever - 50 Days</string>
+    <string name="streak_milestone_100">💎 Champion - 100 Days</string>
+    <string name="streak_milestone_200">🏆 Legend - 200 Days</string>
+    <string name="streak_milestone_365">👑 Master - 365 Days</string>
+
+    <!-- Task Completion Milestones (tên resource phải khớp số task hiển thị) -->
+    <string name="task_milestones_header">Task Completion Badges</string>
+    <string name="task_progress_header">Task Progress</string>
+    <string name="task_milestones_progress">Completed: %1$d tasks</string>
+    <string name="task_milestone_10">🌱 Task Novice - 10 Tasks</string>
+    <string name="task_milestone_50">📝 Task Doer - 50 Tasks</string>
+    <string name="task_milestone_100">⚡ Task Achiever - 100 Tasks</string>
+    <string name="task_milestone_250">🎯 Task Executor - 250 Tasks</string>
+    <string name="task_milestone_500">💎 Task Expert - 500 Tasks</string>
+    <string name="task_milestone_1000">🏆 Task Champion - 1000 Tasks</string>
+    <string name="task_milestone_2000">👑 Task Master - 2000 Tasks</string>
+
+    <!-- Reward Badge Status & Summary -->
+    <string name="badge_unlocked">Unlocked ✅</string>
+    <string name="badge_locked">Locked 🔒</string>
+    <string name="rewards_badges_unlocked_format">%1$d / %2$d</string>
+    <!-- Global AI task assistant -->
+    <string name="ai_assistant_title">Trợ lý AI</string>
+    <string name="ai_assistant_greeting">Xin chào, bạn cần giúp gì không?</string>
+    <string name="ai_assistant_greeting_close">Ẩn lời chào</string>
+    <string name="ai_assistant_subtitle">Create, update and find tasks</string>
+    <string name="ai_assistant_open">Open AI assistant</string>
+    <string name="ai_assistant_welcome">Hi! I can create tasks, update Todo / In Progress / Completed, change due dates or priority, and find your tasks. What would you like to do?</string>
+    <string name="ai_assistant_prompt_hint">Ask TaskFlow AI…</string>
+    <string name="ai_assistant_send">Send</string>
+    <string name="ai_assistant_thinking">Understanding your request…</string>
+    <string name="ai_assistant_privacy">Your request and task summary are sent to Gemini. Changes happen only after you confirm.</string>
+    <string name="ai_quick_today">Today’s tasks</string>
+    <string name="ai_quick_create">Create a task</string>
+    <string name="ai_quick_progress">Update progress</string>
+    <string name="ai_confirm_create_title">Create this task?</string>
+    <string name="ai_confirm_update_title">Apply these changes?</string>
+    <string name="ai_confirm_action">Confirm</string>
+    <string name="ai_action_cancel">Cancel</string>
+    <string name="ai_task_created">Task created successfully.</string>
+    <string name="ai_task_updated">Task updated successfully.</string>
+    <string name="ai_no_matching_tasks">No matching tasks found.</string>
+    <string name="ai_help_message">Try: “Create a report task tomorrow at 9 AM”, “Mark Report as In Progress”, or “Show today’s tasks”.</string>
+    <string name="ai_unknown_message">I could not safely match that request. Include the exact task title and the change you want.</string>
+    <string name="ai_assistant_error">The assistant could not respond. Check the connection and try again.</string>
+    <string name="ai_assistant_close">Close</string>
+    <string name="ai_task_speak">Speak</string>
+    <string name="ai_task_listening_prompt">Tell TaskFlow AI what to do</string>
+    <string name="ai_task_empty_prompt">Enter a request first.</string>
+    <string name="ai_task_speech_unavailable">Voice input is not available on this device.</string>
+    <string name="ai_task_speech_empty">No speech was recognized. Please try again.</string>
+
+    <!-- Streak Protection Reminder (TMA-STREAK-NOTIF) -->
+    <string name="streak_reminder_card_title">Streak Protection</string>
+    <string name="streak_reminder_card_subtitle">Get reminded if you have an active streak but haven\'t finished any tasks today.</string>
+    <string name="streak_reminder_time_label">Reminder Time</string>
+    <string name="streak_reminder_set_feedback">Streak reminder scheduled for %s</string>
+    <string name="streak_reminder_disabled_feedback">Streak reminder disabled</string>
+    <string name="streak_reminder_notif_title">🔥 Don\'t lose your %d-day streak!</string>
+    <string name="streak_reminder_notif_body">You haven\'t completed any tasks today. Finish your tasks before midnight to maintain your streak!</string>
+    <string name="streak_reminder_change_time">Edit Time</string>
+
+    <!-- Special Badges -->
+    <string name="special_badges_header">Special Badges</string>
+    <string name="badge_comeback_kid">🔄 Comeback Kid</string>
+    <string name="badge_comeback_kid_desc">Recover from a broken streak and reach 7 consecutive days again</string>
+    <string name="badge_hard_worker">💪 Hard Worker</string>
+    <string name="badge_hard_worker_desc">Complete 10 Hard Tasks</string>
+    <string name="badge_early_bird">🌅 Early Bird</string>
+    <string name="badge_early_bird_desc">Complete 50 tasks before 09:00 AM</string>
+    <string name="badge_night_owl">🌙 Night Owl</string>
+    <string name="badge_night_owl_desc">Complete 50 tasks after 09:00 PM</string>
+    <string name="badge_month_conqueror">📅 Month Conqueror</string>
+    <string name="badge_month_conqueror_desc">Complete at least 1 task on every day of a full calendar month</string>
+    <string name="badge_unstoppable">🚀 Unstoppable</string>
+    <string name="badge_unstoppable_desc">Complete 100 tasks within 7 consecutive days</string>
+    <string name="badge_ultimate_master">👑 Ultimate Master</string>
+    <string name="badge_ultimate_master_desc">Reach both 365-day Streak Master and 2,000-task Task Master</string>
 </resources>
+
 
 

@@ -11,8 +11,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.team.taskmanagementapp.R
+import com.team.taskmanagementapp.data.model.stats.PomodoroFocusStats
 import com.team.taskmanagementapp.data.model.stats.StatisticsUiState
 import com.team.taskmanagementapp.data.model.stats.StatsTimeFilter
+import com.team.taskmanagementapp.data.model.stats.TaskFocusSummary
+import com.team.taskmanagementapp.data.model.stats.formatFocusDuration
 import com.team.taskmanagementapp.databinding.FragmentStatsBinding
 import com.team.taskmanagementapp.ui.viewmodel.StatsViewModel
 import kotlinx.coroutines.launch
@@ -29,7 +32,8 @@ class StatsFragment : Fragment() {
     private val viewModel: StatsViewModel by viewModels {
         val db = com.team.taskmanagementapp.data.local.db.AppDatabase.getInstance(requireContext().applicationContext)
         com.team.taskmanagementapp.ui.viewmodel.StatsViewModelFactory(
-            com.team.taskmanagementapp.data.repository.TaskRepository(db.taskDao())
+            com.team.taskmanagementapp.data.repository.TaskRepository(db.taskDao()),
+            com.team.taskmanagementapp.data.repository.PomodoroRepository(db.pomodoroDao())
         )
     }
 
@@ -68,6 +72,9 @@ class StatsFragment : Fragment() {
     private fun renderStats(state: StatisticsUiState) {
         // 1. Weekly Productivity Chart
         binding.chartWeeklyProductivity.setData(state.weeklyProductivity)
+        binding.tvWeeklyProductivityTitle.setText(R.string.stats_completion_by_weekday)
+        binding.tvWeeklyProductivitySubtitle.text = getString(R.string.stats_chart_period, state.completedSubtitle)
+        binding.tvUnknownCompletionDates.visibility = if (state.hasUnknownCompletionDates) View.VISIBLE else View.GONE
 
         // 2. Completion Rate
         binding.viewCompletionRate.setProgress(state.completionRate)
@@ -77,14 +84,17 @@ class StatsFragment : Fragment() {
         binding.tvCompletedCount.text = state.completedCount.toString()
         binding.tvCompletedSubtitle.text = state.completedSubtitle
 
-        // 4. Deep Work Card
-        binding.tvDeepWorkHours.text = state.deepWorkHours
-        binding.tvDeepWorkSubtitle.text = state.deepWorkSubtitle
+        // 4. Actual unfinished count in the same selected period.
+        binding.tvPendingCount.text = state.pendingCount.toString()
+        binding.tvPendingSubtitle.text = state.completedSubtitle
 
         // 5. Tasks by Priority
         val priorityStats = state.priorityStats
-        binding.tvHighPriorityCount.text = getString(
-            R.string.stats_tasks_count_format,
+        binding.tvUrgentPriorityCount.text = resources.getQuantityString(R.plurals.stats_task_count, priorityStats.urgentCount, priorityStats.urgentCount)
+        binding.progressUrgentPriority.progress = Math.round(priorityStats.urgentPercent * 100).coerceIn(0, 100)
+        binding.tvHighPriorityCount.text = resources.getQuantityString(
+            R.plurals.stats_task_count,
+            priorityStats.highCount,
             priorityStats.highCount
         )
         binding.progressHighPriority.setProgress(
@@ -92,8 +102,9 @@ class StatsFragment : Fragment() {
             true
         )
 
-        binding.tvMediumPriorityCount.text = getString(
-            R.string.stats_tasks_count_format,
+        binding.tvMediumPriorityCount.text = resources.getQuantityString(
+            R.plurals.stats_task_count,
+            priorityStats.mediumCount,
             priorityStats.mediumCount
         )
         binding.progressMediumPriority.setProgress(
@@ -101,14 +112,71 @@ class StatsFragment : Fragment() {
             true
         )
 
-        binding.tvLowPriorityCount.text = getString(
-            R.string.stats_tasks_count_format,
+        binding.tvLowPriorityCount.text = resources.getQuantityString(
+            R.plurals.stats_task_count,
+            priorityStats.lowCount,
             priorityStats.lowCount
         )
         binding.progressLowPriority.setProgress(
             Math.round(priorityStats.lowPercent * 100).coerceIn(0, 100),
             true
         )
+
+        // 6. Pomodoro Focus card (Task 15)
+        renderPomodoroStats(state)
+    }
+
+    /**
+     * Render card "Pomodoro Focus": hôm nay / tuần này, số phiên đã hoàn thành trong kỳ
+     * và top task tập trung nhiều nhất — kèm trạng thái rỗng khi chưa có dữ liệu.
+     */
+    private fun renderPomodoroStats(state: StatisticsUiState) {
+        val pomodoro: PomodoroFocusStats = state.pomodoro
+
+        binding.tvPomodoroToday.text = formatFocusDuration(pomodoro.todayMinutes)
+        binding.tvPomodoroWeek.text = formatFocusDuration(pomodoro.weekMinutes)
+
+        binding.tvPomodoroCompleted.text = if (pomodoro.hasPeriodFocus) {
+            val completed = resources.getQuantityString(
+                R.plurals.stats_pomodoro_completed,
+                pomodoro.periodSessionCount,
+                pomodoro.periodSessionCount
+            )
+            "$completed · ${state.completedSubtitle}"
+        } else {
+            getString(R.string.stats_pomodoro_no_sessions)
+        }
+
+        renderTopTasks(if (pomodoro.hasAnyFocus) pomodoro.topTasks else emptyList())
+    }
+
+    /** Tối đa 3 task tập trung nhiều nhất; hàng không có dữ liệu bị ẩn hẳn. */
+    private fun renderTopTasks(topTasks: List<TaskFocusSummary>) {
+        binding.layoutTopTasks.visibility = if (topTasks.isEmpty()) View.GONE else View.VISIBLE
+        if (topTasks.isEmpty()) return
+
+        val rows = listOf(
+            binding.rowTopTask1 to (binding.tvTopTask1Name to binding.tvTopTask1Minutes),
+            binding.rowTopTask2 to (binding.tvTopTask2Name to binding.tvTopTask2Minutes),
+            binding.rowTopTask3 to (binding.tvTopTask3Name to binding.tvTopTask3Minutes)
+        )
+
+        rows.forEachIndexed { index, (row, views) ->
+            val (nameView, metaView) = views
+            val summary = topTasks.getOrNull(index)
+            if (summary == null) {
+                row.visibility = View.GONE
+            } else {
+                row.visibility = View.VISIBLE
+                nameView.text = summary.taskTitle
+                val sessions = resources.getQuantityString(
+                    R.plurals.stats_session_count,
+                    summary.sessionCount,
+                    summary.sessionCount
+                )
+                metaView.text = "${formatFocusDuration(summary.totalMinutes)} · $sessions"
+            }
+        }
     }
 
     private fun showFilterDialog() {

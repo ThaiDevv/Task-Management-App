@@ -17,6 +17,8 @@ import com.team.taskmanagementapp.util.NotificationHelper
 import com.team.taskmanagementapp.util.RecurrenceHelper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
+import com.team.taskmanagementapp.data.model.streak.StreakInfo
+import com.team.taskmanagementapp.util.StreakCalculator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -43,6 +45,15 @@ class TaskViewModel(
     private val _uiState = MutableStateFlow<UiState<List<Task>>>(UiState.Loading)
     val uiState: StateFlow<UiState<List<Task>>> = _uiState.asStateFlow()
 
+    private val _allTasks = MutableStateFlow<List<Task>>(emptyList())
+    val allTasks: StateFlow<List<Task>> = _allTasks.asStateFlow()
+
+    private val _streakInfo = MutableStateFlow(StreakInfo())
+    val streakInfo: StateFlow<StreakInfo> = _streakInfo.asStateFlow()
+
+    private val _totalCompletedTasks = MutableStateFlow<Int>(0)
+    val totalCompletedTasks: StateFlow<Int> = _totalCompletedTasks.asStateFlow()
+
     private var taskListJob: Job? = null
 
 
@@ -61,7 +72,16 @@ class TaskViewModel(
             // Bước 2: Bắt đầu collect sau khi UPDATE đã xong.
             loadAllTasks()
         }
+
+        viewModelScope.launch {
+            repository.getAllTasks().collect { tasks ->
+                _allTasks.value = tasks
+                _streakInfo.value = StreakCalculator.calculateStreak(tasks, applicationContext)
+                _totalCompletedTasks.value = tasks.count { it.isCompleted }
+            }
+        }
     }
+
 
 
     fun loadAllTasks() {
@@ -149,6 +169,7 @@ class TaskViewModel(
 
                 val updatedTask = task.copy(
                     isCompleted = !wasCompleted,
+                    completedAt = if (!wasCompleted) now else null,
                     status = if (!wasCompleted) TaskStatus.COMPLETED else TaskStatus.TODO,
                     updatedAt = now
                 )
@@ -202,6 +223,7 @@ class TaskViewModel(
                                 val nextInstance = task.copy(
                                     id = 0,
                                     isCompleted = false,
+                                    completedAt = null,
                                     status = TaskStatus.TODO,
                                     isRecurring = true,
                                     recurrenceType = task.recurrenceType,

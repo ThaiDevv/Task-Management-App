@@ -8,6 +8,9 @@ import com.team.taskmanagementapp.security.PinRepositoryImpl
 import com.team.taskmanagementapp.util.NotificationHelper
 import com.team.taskmanagementapp.widget.WidgetMidnightScheduler
 import com.team.taskmanagementapp.widget.WidgetUpdater
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
 /**
  * Custom Application class for Task Management App.
@@ -26,10 +29,25 @@ class TaskApplication : Application() {
         PinRepositoryImpl.getInstance(this)
     }
 
+    /**
+     * Scope sống cùng process, dùng cho các thao tác ghi **bắt buộc phải xong**.
+     *
+     * Lý do tồn tại: `PomodoroService` có thể bị `stopSelf()` / bị hệ thống huỷ ngay sau khi
+     * một phiên Pomodoro hoàn thành. Nếu việc lưu phiên chạy trên scope của Service thì
+     * transaction có thể bị cancel giữa đường và mất dữ liệu. Scope này không bị huỷ khi
+     * Service chết nên bản ghi luôn được hoàn tất.
+     *
+     * Lưu ý: chỉ dùng cho các ghi ngắn, không dùng cho tác vụ dài.
+     */
+    val applicationScope: CoroutineScope =
+        CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
     override fun onCreate() {
         super.onCreate()
+        AiAppCheckInitializer.initialize(this)
         NotificationHelper.createNotificationChannel(this)
         setupWidgetAutoRefresh()
+        com.team.taskmanagementapp.util.StreakReminderScheduler.scheduleStreakReminder(this)
     }
 
     /**

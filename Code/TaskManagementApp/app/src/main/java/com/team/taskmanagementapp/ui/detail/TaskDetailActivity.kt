@@ -46,6 +46,28 @@ class TaskDetailActivity : AppCompatActivity() {
 
     private var currentTask: Task? = null
 
+    /**
+     * Task 13 — mở Pomodoro Timer Screen cho chính công việc đang xem.
+     *
+     * Tái sử dụng đúng cơ chế mà notification content intent đã dùng
+     * (`EXTRA_OPEN_POMODORO_TIMER` → `MainActivity` điều hướng tới `pomodoroFragment`),
+     * chỉ thêm `EXTRA_POMODORO_TASK_ID` để màn hình Pomodoro chọn sẵn công việc này.
+     *
+     * Cờ CLEAR_TOP + SINGLE_TOP để không tạo thêm instance `MainActivity` khi nó đã có
+     * trong stack (Task Detail được mở từ chính MainActivity).
+     */
+    private fun setupStartPomodoroButton(taskId: Long) {
+        binding.btnStartPomodoro.setOnClickListener {
+            startActivity(
+                Intent(this, com.team.taskmanagementapp.MainActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    putExtra(Constants.EXTRA_OPEN_POMODORO_TIMER, true)
+                    putExtra(Constants.EXTRA_POMODORO_TASK_ID, taskId)
+                }
+            )
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTaskDetailBinding.inflate(layoutInflater)
@@ -59,6 +81,8 @@ class TaskDetailActivity : AppCompatActivity() {
             finish()
             return
         }
+
+        setupStartPomodoroButton(taskId)
 
         // Observe task data
         viewModel.getTaskById(taskId)

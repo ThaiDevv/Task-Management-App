@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Bottom sheet chọn công việc cho phiên Pomodoro (Task 10).
+  Danh sách lấy trực tiếp từ Room qua TaskRepository — không có dữ liệu mẫu.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_filter_sheet"
+    android:orientation="vertical">
+
+    <!-- ── Drag Handle ── -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:paddingTop="14dp"
+        android:paddingBottom="6dp">
+
+        <View
+            android:layout_width="48dp"
+            android:layout_height="6dp"
+            android:background="@drawable/bg_filter_handle" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_bold"
+        android:paddingStart="24dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="4dp"
+        android:text="@string/pomodoro_task_selector_title"
+        android:textColor="@color/on_surface"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tvTaskCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_regular"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="12dp"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="13sp"
+        tools:text="12 công việc" />
+
+    <!--
+      RecyclerView nằm trong NestedScrollView để sheet cuộn được khi danh sách dài,
+      đồng thời vẫn co lại đúng khi ít công việc.
+    -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="24dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerTasks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_pomodoro_task" />
+
+            <TextView
+                android:id="@+id/tvEmptyState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_regular"
+                android:paddingTop="24dp"
+                android:paddingBottom="24dp"
+                android:text="@string/pomodoro_task_selector_empty"
+                android:textAlignment="center"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

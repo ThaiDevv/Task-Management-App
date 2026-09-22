@@ -226,6 +226,17 @@
 
                     </LinearLayout>
 
+                    <!-- Nội dung sẽ được backup: Task + Pomodoro sessions (Task 16) -->
+                    <TextView
+                        android:id="@+id/tvBackupContentSummary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:text="@string/data_backup_content_empty"
+                        android:textColor="#6B7280"
+                        android:textSize="12sp" />
+
                     <!-- Export to JSON button (full-width, solid blue) -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/exportDataButton"

@@ -3,6 +3,7 @@ package com.team.taskmanagementapp.data.local.db
 import androidx.room.TypeConverter
 import com.team.taskmanagementapp.data.model.enums.Priority
 import com.team.taskmanagementapp.data.model.enums.RecurrenceType
+import com.team.taskmanagementapp.data.model.enums.SessionType
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
 
 class Converters {
@@ -29,5 +30,13 @@ class Converters {
     @TypeConverter
     fun toTaskStatus(value: String): TaskStatus {
         return TaskStatus.valueOf(value)
+    }
+    @TypeConverter
+    fun fromSessionType(sessionType: SessionType): String {
+        return sessionType.name
+    }
+    @TypeConverter
+    fun toSessionType(value: String): SessionType {
+        return SessionType.valueOf(value)
     }
 }

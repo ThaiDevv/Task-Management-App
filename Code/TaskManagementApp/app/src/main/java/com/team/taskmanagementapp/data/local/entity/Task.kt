@@ -46,4 +46,34 @@ data class Task (
     val createdAt: Long = System.currentTimeMillis(),
     @ColumnInfo(name = "updatedAt")
     val updatedAt: Long = System.currentTimeMillis(),
+
+    // ── Pomodoro Timer tracking ──────────────────────────────────────────────
+    /** Số phiên tập trung (FOCUS) người dùng dự kiến dành cho task này. */
+    @ColumnInfo(name = "estimatedPomodoros", defaultValue = "0")
+    val estimatedPomodoros: Int = 0,
+    /** Số phiên tập trung (FOCUS) đã hoàn thành cho task này. */
+    @ColumnInfo(name = "completedPomodoros", defaultValue = "0")
+    val completedPomodoros: Int = 0,
+    /** Tổng số phút đã tập trung cho task này (tích luỹ từ các phiên FOCUS). */
+    @ColumnInfo(name = "totalFocusTimeMinutes", defaultValue = "0")
+    val totalFocusTimeMinutes: Int = 0,
+
+    // Null for unfinished tasks and legacy backups with no known completion date.
+    @ColumnInfo(name = "completedAt")
+    val completedAt: Long? = null,
 )
+
+/** Keep the completion event independent of later content edits. */
+fun Task.withCompletionTracking(previous: Task?, now: Long): Task {
+    val done = isCompleted || status == TaskStatus.COMPLETED
+    val wasDone = previous?.let { it.isCompleted || it.status == TaskStatus.COMPLETED } == true
+    return copy(
+        isCompleted = done,
+        status = if (done) TaskStatus.COMPLETED else status,
+        completedAt = when {
+            !done -> null
+            wasDone -> previous?.completedAt // Unknown legacy dates remain unknown.
+            else -> now
+        }
+    )
+}

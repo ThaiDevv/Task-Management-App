@@ -37,6 +37,8 @@ import com.team.taskmanagementapp.databinding.FragmentFilterBottomSheetBinding
 import com.team.taskmanagementapp.databinding.FragmentTaskListBinding
 import com.team.taskmanagementapp.ui.activity.AddEditTaskActivity
 import com.team.taskmanagementapp.ui.base.UiState
+import com.team.taskmanagementapp.data.model.enums.RecurrenceType
+import com.team.taskmanagementapp.ui.detail.DeleteTaskDialogFragment
 import com.team.taskmanagementapp.ui.detail.TaskDetailActivity
 import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.DateTimeUtils
@@ -58,6 +60,8 @@ class TaskListFragment : Fragment() {
     private lateinit var binding: FragmentTaskListBinding
     private lateinit var todayTaskAdapter: TaskAdapter
     private lateinit var upcomingTaskAdapter: UpcomingTaskAdapter
+    private lateinit var streakWeekAdapter: StreakWeekAdapter
+    private lateinit var completedTaskAdapter: TaskAdapter
 
     private val viewModel: TaskViewModel by viewModels {
         val database = AppDatabase.getInstance(requireContext())
@@ -67,6 +71,7 @@ class TaskListFragment : Fragment() {
 
     private var todayScrollState: Parcelable? = null
     private var upcomingScrollState: Parcelable? = null
+    private var pendingDeleteTask: Task? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -117,6 +122,25 @@ class TaskListFragment : Fragment() {
                 FilterBottomSheet.ACTION_CLEAR -> viewModel.clearFilter()
             }
         }
+
+        childFragmentManager.setFragmentResultListener(
+            DeleteTaskDialogFragment.REQUEST_KEY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val task = pendingDeleteTask ?: return@setFragmentResultListener
+            when (bundle.getInt(DeleteTaskDialogFragment.RESULT_DELETE_TYPE)) {
+                DeleteTaskDialogFragment.DELETE_NORMAL -> {
+                    viewModel.deleteTask(task)
+                }
+                DeleteTaskDialogFragment.DELETE_ONLY_THIS -> {
+                    viewModel.deleteTask(task, deleteAllFuture = false)
+                }
+                DeleteTaskDialogFragment.DELETE_ALL -> {
+                    viewModel.deleteTask(task, deleteAllFuture = true)
+                }
+            }
+            pendingDeleteTask = null
+        }
         setupUI()
         observeViewModel()
     }
@@ -142,10 +166,18 @@ class TaskListFragment : Fragment() {
 
     private fun setupUI() {
         updateGreeting()
+
+        // Lối vào Pomodoro Timer Screen (Task 9). Đặt ở header Home vì Task 10 (Task Selector)
+        // và nút "Bắt đầu tập trung" trong Task Detail chưa thuộc phạm vi task này.
+        binding.btnOpenPomodoro.setOnClickListener {
+            findNavController().navigate(R.id.pomodoroFragment)
+        }
+
         // Today's Tasks Adapter
         todayTaskAdapter = TaskAdapter(
             onTaskToggleComplete = { task -> viewModel.toggleTaskComplete(task) },
-            onTaskClick = { openTaskDetail(it) }
+            onTaskClick = { openTaskDetail(it) },
+            onTaskDelete = { task -> confirmDeleteTask(task) }
         )
         binding.todayTasksRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -160,6 +192,30 @@ class TaskListFragment : Fragment() {
         binding.upcomingTasksRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = upcomingTaskAdapter
+        }
+        completedTaskAdapter = TaskAdapter(
+            onTaskToggleComplete = { task -> viewModel.toggleTaskComplete(task) },
+            onTaskClick = { openTaskDetail(it) },
+            onTaskDelete = { task -> confirmDeleteTask(task) }
+        )
+        binding.completedTasksRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = completedTaskAdapter
+        }
+        binding.btnOpenFilter.contentDescription = getString(R.string.home_filter_description)
+
+        // Streak Week Adapter
+        streakWeekAdapter = StreakWeekAdapter()
+        binding.streakWeekRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            adapter = streakWeekAdapter
+        }
+
+        // Streak Card Click -> Open details bottom sheet
+        binding.cardStreakReward.setOnClickListener {
+            val currentStreak = viewModel.streakInfo.value
+            StreakDetailsBottomSheet.newInstance(currentStreak)
+                .show(childFragmentManager, StreakDetailsBottomSheet.TAG)
         }
 
         // Open filter bottom sheet — no lambda passed; results arrive via FragmentResult API
@@ -197,6 +253,14 @@ class TaskListFragment : Fragment() {
         startActivity(intent)
     }
 
+    private fun confirmDeleteTask(task: Task) {
+        if (childFragmentManager.findFragmentByTag(DeleteTaskDialogFragment.TAG) != null) return
+        pendingDeleteTask = task
+        val isRecurring = task.isRecurring && task.recurrenceType != RecurrenceType.NONE
+        DeleteTaskDialogFragment.newInstance(isRecurring)
+            .show(childFragmentManager, DeleteTaskDialogFragment.TAG)
+    }
+
     private fun updateGreeting() {
         val calendar = Calendar.getInstance()
         val dateFormat = SimpleDateFormat("EEE, MMM dd", Locale.getDefault())
@@ -208,7 +272,7 @@ class TaskListFragment : Fragment() {
             hour < 18 -> "Good Afternoon"
             else -> "Good Evening"
         }
-        binding.greetingText.text = "$greeting, Alex!"
+        binding.greetingText.text = "$greeting!"
     }
 
 
@@ -229,13 +293,23 @@ class TaskListFragment : Fragment() {
                                 showScreenState(ScreenState.CONTENT)
                             }
                             is UiState.Empty -> {
-                                showScreenState(ScreenState.EMPTY)
+                                // Keep the filter reachable when its result is empty.
+                                displayTaskList(emptyList())
+                                updateMetrics(emptyList())
+                                showScreenState(if (viewModel.filterCriteria.value != FilterCriteria())
+                                    ScreenState.CONTENT else ScreenState.EMPTY)
                             }
                             is UiState.Error -> {
                                 binding.viewErrorState.tvErrorMessage.text = uiState.message
                                 showScreenState(ScreenState.ERROR)
                             }
                         }
+                    }
+                }
+                // Observe streak state
+                launch {
+                    viewModel.streakInfo.collect { streakInfo ->
+                        updateStreakUI(streakInfo)
                     }
                 }
                 // Observe filter state
@@ -253,6 +327,24 @@ class TaskListFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun updateStreakUI(streakInfo: com.team.taskmanagementapp.data.model.streak.StreakInfo) {
+        binding.tvStreakTitle.text = when (streakInfo.currentStreak) {
+            0 -> getString(R.string.streak_zero_days)
+            1 -> getString(R.string.streak_one_day)
+            else -> getString(R.string.streak_days_format, streakInfo.currentStreak)
+        }
+
+        binding.tvStreakSubtitle.text = when {
+            streakInfo.isTodayCompleted -> getString(R.string.streak_subtitle_completed)
+            streakInfo.currentStreak > 0 -> getString(R.string.streak_subtitle_active)
+            else -> getString(R.string.streak_subtitle_zero)
+        }
+
+        binding.tvStreakBestBadge.text = getString(R.string.streak_best_format, streakInfo.bestStreak)
+
+        streakWeekAdapter.submitList(streakInfo.weekDays)
     }
 
     /**
@@ -297,17 +389,21 @@ class TaskListFragment : Fragment() {
 
     private fun displayTaskList(allTasks: List<Task>) {
         val nowEndToday = getEndOfTodayMillis()
-        val todayList = allTasks.filter { it.dueDate <= nowEndToday }
+        val todayList = allTasks.filter { !it.isCompleted && it.dueDate <= nowEndToday }
             .sortedWith(
                 compareBy<Task> { it.isCompleted }
                     .thenBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
             )
-        // Pending tasks are shown first; completed tasks stay at the bottom.
-        val upcomingList = allTasks.filter { it.dueDate > nowEndToday }
+        // Upcoming contains only work still to do. Completed work has its own section.
+        val upcomingList = allTasks.filter { !it.isCompleted && it.dueDate > nowEndToday }
             .sortedWith(
                 compareBy<Task> { it.isCompleted }
                     .thenBy { DateTimeUtils.getCombinedDueTimestamp(it.dueDate, it.dueTime) }
             )
+        val completedList = allTasks.filter { it.isCompleted }
+            .sortedByDescending { it.completedAt ?: it.updatedAt }
+        completedTaskAdapter.submitList(completedList)
+        binding.completedSection.visibility = if (completedList.isEmpty()) View.GONE else View.VISIBLE
 
         todayTaskAdapter.submitList(todayList) {
             todayScrollState?.let {
@@ -380,6 +476,11 @@ class TaskListFragment : Fragment() {
         binding.completedValue.text = completed.toString()
         binding.pendingValue.text = pending.toString()
         binding.overdueValue.text = overdue.toString()
+        val overdueColor = if (overdue > 0) Color.parseColor("#F43F5E")
+            else ContextCompat.getColor(requireContext(), R.color.on_surface_variant)
+        binding.overdueValue.setTextColor(overdueColor)
+        binding.overdueSubtitle.setTextColor(overdueColor)
+        binding.overdueSubtitle.setText(if (overdue > 0) R.string.home_action_needed else R.string.home_no_overdue)
 
         // Dynamic progress bar weight calculation
         val completedRatio = if (total > 0) (completed.toFloat() / total.toFloat() * 100).toInt() else 0
@@ -559,6 +660,7 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
                 R.id.completionDone -> CompletionFilter.DONE
                 else -> CompletionFilter.ALL
             }
+            syncCompletionConstraints()
             updatePreview()
         }
     }
@@ -627,6 +729,7 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun syncAllUi() {
+        normalizeCompletionFilters()
         isSynchronizing = true
         binding.completionToggleGroup.check(
             when (selectedCompletion) {
@@ -658,7 +761,29 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
             false
         )
         isSynchronizing = false
+        syncCompletionConstraints()
         syncCustomRangeLabel()
+    }
+
+    private fun normalizeCompletionFilters() {
+        if (selectedCompletion == CompletionFilter.DONE) {
+            selectedStatuses.clear()
+            if (selectedDueDateRange == DueDateRange.OVERDUE) selectedDueDateRange = DueDateRange.ALL
+        }
+    }
+
+    private fun syncCompletionConstraints() {
+        normalizeCompletionFilters()
+        val done = selectedCompletion == CompletionFilter.DONE
+        isSynchronizing = true
+        listOf(binding.chipStatusTodo, binding.chipStatusInProgress, binding.chipStatusOverdue).forEach {
+            it.isEnabled = !done
+            if (done) it.isChecked = false
+        }
+        binding.chipDueOverdue.isEnabled = !done
+        if (done && binding.chipDueOverdue.isChecked) binding.dueDateChipGroup.check(R.id.chipDueAll)
+        binding.completionConstraintHint.visibility = if (done) View.VISIBLE else View.GONE
+        isSynchronizing = false
     }
 
     private fun showCustomDateRangePicker() {

@@ -97,32 +97,6 @@
 
         </LinearLayout>
 
-        <!-- FAB Container (Floating Center Circle) -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_create_task"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="-20dp"
-                android:contentDescription="@string/action_create_task"
-                android:src="@drawable/ic_add"
-                app:backgroundTint="@color/primary"
-                app:elevation="12dp"
-                app:fabCustomSize="56dp"
-                app:fabSize="normal"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
-                app:tint="@color/white" />
-
-        </LinearLayout>
-
         <!-- Stats Tab -->
         <LinearLayout
             android:id="@+id/tab_stats"
@@ -150,6 +124,97 @@
                 android:layout_marginTop="@dimen/spacing_4"
                 android:fontFamily="@font/poppins_medium"
                 android:text="@string/nav_stats"
+                android:textColor="@color/bottom_nav_text_selector"
+                android:textSize="@dimen/text_label_small" />
+
+        </LinearLayout>
+
+
+        <!-- FAB Container (Floating Center Circle) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_create_task"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-20dp"
+                android:contentDescription="@string/action_create_task"
+                android:src="@drawable/ic_add"
+                app:backgroundTint="@color/primary"
+                app:elevation="12dp"
+                app:fabCustomSize="56dp"
+                app:fabSize="normal"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+                app:tint="@color/white" />
+
+        </LinearLayout>
+
+        <!-- Streak Tab -->
+        <LinearLayout
+            android:id="@+id/tab_streak"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/icon_streak"
+                android:layout_width="@dimen/icon_size_medium"
+                android:layout_height="@dimen/icon_size_medium"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_nav_streak"
+                app:tint="@color/bottom_nav_icon_selector" />
+
+            <TextView
+                android:id="@+id/label_streak"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_4"
+                android:fontFamily="@font/poppins_medium"
+                android:text="@string/nav_streak"
+                android:textColor="@color/bottom_nav_text_selector"
+                android:textSize="@dimen/text_label_small" />
+
+        </LinearLayout>
+
+        <!-- Rewards Tab -->
+        <LinearLayout
+            android:id="@+id/tab_rewards"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/icon_rewards"
+                android:layout_width="@dimen/icon_size_medium"
+                android:layout_height="@dimen/icon_size_medium"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_nav_rewards"
+                app:tint="@color/bottom_nav_icon_selector" />
+
+            <TextView
+                android:id="@+id/label_rewards"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_4"
+                android:fontFamily="@font/poppins_medium"
+                android:text="@string/nav_rewards"
                 android:textColor="@color/bottom_nav_text_selector"
                 android:textSize="@dimen/text_label_small" />
 
@@ -188,5 +253,59 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/aiGreetingBubble"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="82dp"
+        android:layout_marginBottom="103dp"
+        android:background="@drawable/bg_ai_greeting"
+        android:elevation="6dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="14dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="10dp"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/aiGreetingText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_medium"
+            android:maxWidth="210dp"
+            android:text="@string/ai_assistant_greeting"
+            android:textColor="@color/on_surface"
+            android:textSize="12sp" />
+
+        <ImageButton
+            android:id="@+id/aiGreetingClose"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/ai_assistant_greeting_close"
+            android:padding="5dp"
+            android:src="@drawable/ic_close"
+            app:tint="@color/outline" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/fabAiAssistant"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="18dp"
+        android:layout_marginBottom="92dp"
+        android:background="@drawable/bg_ai_avatar"
+        android:clipToOutline="true"
+        android:contentDescription="@string/ai_assistant_open"
+        android:padding="0dp"
+        android:src="@drawable/ai_avatar"
+        app:elevation="10dp"
+        android:scaleType="centerCrop" />
 
 </FrameLayout>

@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_filter_sheet"
+    android:orientation="vertical">
+
+    <!-- Drag Handle -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:paddingTop="14dp"
+        android:paddingBottom="6dp"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="48dp"
+            android:layout_height="6dp"
+            android:background="@drawable/bg_filter_handle" />
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:paddingBottom="32dp">
+
+            <!-- Header Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="4dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="@string/streak_details_title"
+                    android:textColor="#1B1B1B"
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:id="@+id/btnCloseStreak"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_close"
+                    app:tint="#737786" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Maintain your daily streak to unlock all milestone badges!"
+                android:textColor="#737786"
+                android:textSize="13sp" />
+
+            <!-- Milestone Badges List Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#4DC3C6D7"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <!-- Badge 1: 3 Days -->
+                    <LinearLayout
+                        android:id="@+id/layoutBadge3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_pill_outlined"
+                        android:padding="14dp">
+
+                        <TextView
+                            android:id="@+id/tvMilestone3"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="@string/streak_milestone_3"
+                            android:textColor="#1B1B1B"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvStatus3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Locked 🔒"
+                            android:textColor="#737786"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Badge 2: 7 Days -->
+                    <LinearLayout
+                        android:id="@+id/layoutBadge7"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_pill_outlined"
+                        android:padding="14dp">
+
+                        <TextView
+                            android:id="@+id/tvMilestone7"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="@string/streak_milestone_7"
+                            android:textColor="#1B1B1B"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvStatus7"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Locked 🔒"
+                            android:textColor="#737786"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Badge 3: 30 Days -->
+                    <LinearLayout
+                        android:id="@+id/layoutBadge30"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_pill_outlined"
+                        android:padding="14dp">
+
+                        <TextView
+                            android:id="@+id/tvMilestone30"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="@string/streak_milestone_30"
+                            android:textColor="#1B1B1B"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvStatus30"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Locked 🔒"
+                            android:textColor="#737786"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Badge 4: 50 Days -->
+                    <LinearLayout
+                        android:id="@+id/layoutBadge50"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_pill_outlined"
+                        android:padding="14dp">
+
+                        <TextView
+                            android:id="@+id/tvMilestone50"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="@string/streak_milestone_50"
+                            android:textColor="#1B1B1B"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvStatus50"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Locked 🔒"
+                            android:textColor="#737786"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Badge 5: 100 Days -->
+                    <LinearLayout
+                        android:id="@+id/layoutBadge100"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_pill_outlined"
+                        android:padding="14dp">
+
+                        <TextView
+                            android:id="@+id/tvMilestone100"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="@string/streak_milestone_100"
+                            android:textColor="#1B1B1B"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvStatus100"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Locked 🔒"
+                            android:textColor="#737786"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Badge 6: 200 Days -->
+                    <LinearLayout
+                        android:id="@+id/layoutBadge200"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_pill_outlined"
+                        android:padding="14dp">
+
+                        <TextView
+                            android:id="@+id/tvMilestone200"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="@string/streak_milestone_200"
+                            android:textColor="#1B1B1B"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvStatus200"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Locked 🔒"
+                            android:textColor="#737786"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Badge 7: 365 Days -->
+                    <LinearLayout
+                        android:id="@+id/layoutBadge365"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/bg_pill_outlined"
+                        android:padding="14dp">
+
+                        <TextView
+                            android:id="@+id/tvMilestone365"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="@string/streak_milestone_365"
+                            android:textColor="#1B1B1B"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvStatus365"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Locked 🔒"
+                            android:textColor="#737786"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Action Dismiss Button -->
+            <Button
+                android:id="@+id/btnStreakGotIt"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:backgroundTint="#105CDB"
+                android:fontFamily="@font/poppins_bold"
+                android:text="Got It"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                app:cornerRadius="16dp" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

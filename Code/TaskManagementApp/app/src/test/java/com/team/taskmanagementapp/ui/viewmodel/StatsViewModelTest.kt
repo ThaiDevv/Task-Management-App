@@ -1,16 +1,30 @@
 package com.team.taskmanagementapp.ui.viewmodel
 
+import com.team.taskmanagementapp.data.local.FakePomodoroDao
 import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.enums.Priority
 import com.team.taskmanagementapp.data.model.enums.RecurrenceType
 import com.team.taskmanagementapp.data.model.enums.TaskStatus
+import com.team.taskmanagementapp.data.model.stats.PomodoroFocusStats
 import com.team.taskmanagementapp.data.model.stats.StatsTimeFilter
+import com.team.taskmanagementapp.data.repository.PomodoroRepository
 import com.team.taskmanagementapp.ui.FakeTaskRepository
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class StatsViewModelTest {
+
+    /**
+     * Task 15: StatsViewModel nay phụ thuộc thêm PomodoroRepository; test dùng fake DAO
+     * trong bộ nhớ nên không cần Room/Android.
+     */
+    private fun createViewModel(): StatsViewModel = StatsViewModel(
+        FakeTaskRepository(),
+        PomodoroRepository(FakePomodoroDao()),
+        kotlinx.coroutines.Dispatchers.Unconfined
+    )
 
     private fun createTask(
         id: Int,
@@ -33,25 +47,34 @@ class StatsViewModelTest {
         recurrenceInterval = 0,
         reminderMinutes = 0,
         createdAt = System.currentTimeMillis(),
-        updatedAt = updatedAt
+        updatedAt = updatedAt,
+        completedAt = if (isCompleted) updatedAt else null
     )
 
     @Test
     fun `calculateStats with empty task list returns zero and no tasks label`() {
-        val viewModel = StatsViewModel(FakeTaskRepository(), kotlinx.coroutines.Dispatchers.Unconfined)
+        val viewModel = createViewModel()
 
         val state = viewModel.calculateStats(emptyList(), StatsTimeFilter.ALL_TIME)
 
         assertEquals(0, state.completionRate)
         assertEquals("No tasks", state.completionRateLabel)
         assertEquals(0, state.completedCount)
-        assertEquals("0h", state.deepWorkHours)
+        assertEquals(0, state.pendingCount)
+        assertEquals("0m", state.deepWorkHours)
+        assertEquals("No focus sessions yet", state.deepWorkSubtitle)
         assertEquals(0, state.priorityStats.totalCount)
+
+        // Không có phiên Pomodoro nào ⇒ trạng thái rỗng, không có task nào trong danh sách top
+        assertFalse(state.pomodoro.hasAnyFocus)
+        assertTrue(state.pomodoro.topTasks.isEmpty())
+        assertEquals(0, state.pomodoro.todayMinutes)
+        assertEquals(0, state.pomodoro.weekMinutes)
     }
 
     @Test
     fun `calculateStats accurately computes 75 percent completion rate matching design`() {
-        val viewModel = StatsViewModel(FakeTaskRepository(), kotlinx.coroutines.Dispatchers.Unconfined)
+        val viewModel = createViewModel()
 
         // 3 completed, 1 todo => 75%
         val tasks = listOf(
@@ -70,7 +93,7 @@ class StatsViewModelTest {
 
     @Test
     fun `calculateStats accurately computes excellent and needs attention rates`() {
-        val viewModel = StatsViewModel(FakeTaskRepository(), kotlinx.coroutines.Dispatchers.Unconfined)
+        val viewModel = createViewModel()
 
         // 9 of 10 completed => 90% (Excellent)
         val highTasks = (1..10).map { i -> createTask(i, "T$i", i <= 9) }
@@ -86,22 +109,42 @@ class StatsViewModelTest {
     }
 
     @Test
-    fun `calculateStats estimates 18h deep work for 42 completed tasks matching design`() {
-        val viewModel = StatsViewModel(FakeTaskRepository(), kotlinx.coroutines.Dispatchers.Unconfined)
+    fun `deep work card shows real pomodoro focus minutes instead of a task estimate`() {
+        val viewModel = createViewModel()
 
-        // 42 completed tasks
+        // 42 task đã hoàn thành nhưng KHÔNG có phiên Pomodoro nào ⇒ 0m (không còn ước lượng 18h)
         val tasks = (1..42).map { i -> createTask(i, "Completed Task $i", true) }
+        val noFocusState = viewModel.calculateStats(tasks, StatsTimeFilter.ALL_TIME)
+        assertEquals("0m", noFocusState.deepWorkHours)
+        assertEquals("No focus sessions yet", noFocusState.deepWorkSubtitle)
 
+        // Có 5 phiên FOCUS hoàn thành, tổng 125 phút ⇒ nhãn phản ánh đúng dữ liệu thật
+        val focusedState = viewModel.calculateStats(
+            tasks,
+            StatsTimeFilter.ALL_TIME,
+            PomodoroFocusStats(periodMinutes = 125, periodSessionCount = 5)
+        )
+        assertEquals("2h 5m", focusedState.deepWorkHours)
+        assertEquals("Focused time", focusedState.deepWorkSubtitle)
+        assertEquals(5, focusedState.pomodoro.periodSessionCount)
+    }
+
+    @Test
+    fun `calculateStats reports actual unfinished count instead of estimated focus hours`() {
+        val viewModel = createViewModel()
+
+        // 42 task đã hoàn thành ⇒ 42 completed, 0 pending (và 1 pending khi thêm task mới)
+        val tasks = (1..42).map { i -> createTask(i, "Completed Task $i", true) }
         val state = viewModel.calculateStats(tasks, StatsTimeFilter.ALL_TIME)
 
         assertEquals(42, state.completedCount)
-        assertEquals("18h", state.deepWorkHours)
-        assertEquals("Focused time", state.deepWorkSubtitle)
+        assertEquals(0, state.pendingCount)
+        assertEquals(1, viewModel.calculateStats(tasks + createTask(43, "Pending", false), StatsTimeFilter.ALL_TIME).pendingCount)
     }
 
     @Test
     fun `calculateStats computes correct priority distribution and percentages`() {
-        val viewModel = StatsViewModel(FakeTaskRepository(), kotlinx.coroutines.Dispatchers.Unconfined)
+        val viewModel = createViewModel()
 
         // 12 High, 20 Medium, 8 Low (Total 40)
         val tasks = mutableListOf<Task>()
@@ -124,7 +167,7 @@ class StatsViewModelTest {
 
     @Test
     fun `calculateStats weekly productivity generates 7 days with Mon to Sun labels`() {
-        val viewModel = StatsViewModel(FakeTaskRepository(), kotlinx.coroutines.Dispatchers.Unconfined)
+        val viewModel = createViewModel()
 
         val state = viewModel.calculateStats(emptyList(), StatsTimeFilter.THIS_WEEK)
         val weekly = state.weeklyProductivity
@@ -139,7 +182,7 @@ class StatsViewModelTest {
 
     @Test
     fun `setTimeFilter updates filter state and subtitle`() {
-        val viewModel = StatsViewModel(FakeTaskRepository(), kotlinx.coroutines.Dispatchers.Unconfined)
+        val viewModel = createViewModel()
 
         viewModel.setTimeFilter(StatsTimeFilter.THIS_MONTH)
         assertEquals(StatsTimeFilter.THIS_MONTH, viewModel.timeFilter.value)
@@ -152,5 +195,41 @@ class StatsViewModelTest {
 
         val stateAllTime = viewModel.calculateStats(emptyList(), StatsTimeFilter.ALL_TIME)
         assertEquals("All time", stateAllTime.completedSubtitle)
+    }
+
+    @Test
+    fun `editing completed task does not move its completion into this week`() {
+        val viewModel = createViewModel()
+        val oldDate = java.util.Calendar.getInstance().apply { add(java.util.Calendar.DAY_OF_YEAR, -30) }.timeInMillis
+        val task = createTask(1, "Edited", true).copy(completedAt = oldDate)
+        val state = viewModel.calculateStats(listOf(task), StatsTimeFilter.THIS_WEEK)
+        assertEquals(0, state.completedCount)
+        assertEquals(0, state.weeklyProductivity.days.sumOf { it.completedCount })
+    }
+
+    @Test
+    fun `unknown legacy completion date is counted all time but not invented for charts`() {
+        val viewModel = createViewModel()
+        val task = createTask(1, "Legacy", true).copy(completedAt = null)
+        val state = viewModel.calculateStats(listOf(task), StatsTimeFilter.ALL_TIME)
+        assertEquals(1, state.completedCount)
+        assertTrue(state.hasUnknownCompletionDates)
+        assertEquals(0, state.weeklyProductivity.days.sumOf { it.completedCount })
+    }
+
+    @Test
+    fun `urgent priority is included in the complete breakdown`() {
+        val viewModel = createViewModel()
+        val state = viewModel.calculateStats(listOf(createTask(1, "Urgent", false, Priority.URGENT)), StatsTimeFilter.ALL_TIME)
+        assertEquals(1, state.priorityStats.urgentCount)
+        assertEquals(1f, state.priorityStats.urgentPercent, 0.001f)
+    }
+
+    @Test
+    fun `all time weekday chart includes completions outside the current week`() {
+        val viewModel = createViewModel()
+        val oldDate = java.util.Calendar.getInstance().apply { add(java.util.Calendar.DAY_OF_YEAR, -30) }.timeInMillis
+        val state = viewModel.calculateStats(listOf(createTask(1, "Old", true, updatedAt = oldDate)), StatsTimeFilter.ALL_TIME)
+        assertEquals(1, state.weeklyProductivity.days.sumOf { it.completedCount })
     }
 }
