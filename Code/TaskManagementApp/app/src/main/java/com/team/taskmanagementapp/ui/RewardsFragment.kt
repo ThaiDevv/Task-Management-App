@@ -13,9 +13,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.data.local.db.AppDatabase
+import com.team.taskmanagementapp.data.local.entity.Task
 import com.team.taskmanagementapp.data.model.streak.StreakInfo
 import com.team.taskmanagementapp.data.repository.TaskRepository
 import com.team.taskmanagementapp.databinding.FragmentRewardsBinding
+import com.team.taskmanagementapp.util.SpecialBadgeCalculator
 import com.team.taskmanagementapp.viewmodel.TaskViewModel
 import com.team.taskmanagementapp.viewmodel.TaskViewModelFactory
 import kotlinx.coroutines.flow.combine
@@ -51,16 +53,18 @@ class RewardsFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 combine(
                     viewModel.streakInfo,
-                    viewModel.totalCompletedTasks
-                ) { streakInfo, completedTasks -> streakInfo to completedTasks }
-                    .collect { (streakInfo, completedTasks) ->
-                        updateRewardsUI(streakInfo, completedTasks)
-                    }
+                    viewModel.totalCompletedTasks,
+                    viewModel.allTasks
+                ) { streakInfo, completedTasks, allTasks ->
+                    Triple(streakInfo, completedTasks, allTasks)
+                }.collect { (streakInfo, completedTasks, allTasks) ->
+                    updateRewardsUI(streakInfo, completedTasks, allTasks)
+                }
             }
         }
     }
 
-    private fun updateRewardsUI(streakInfo: StreakInfo, completedTasks: Int) {
+    private fun updateRewardsUI(streakInfo: StreakInfo, completedTasks: Int, allTasks: List<Task>) {
         val streak = maxOf(streakInfo.currentStreak, streakInfo.bestStreak)
 
         val streakStatusViews = listOf(
@@ -90,10 +94,28 @@ class RewardsFragment : Fragment() {
             if (applyBadgeStatus(statusView, completedTasks >= TASK_MILESTONES[index])) unlockedCount++
         }
 
+        // 7 Special Badges
+        val specialBadges = SpecialBadgeCalculator.calculateSpecialBadges(allTasks, streakInfo)
+        val specialBadgeEntries = listOf(
+            binding.tvStatusComebackKid to specialBadges.isComebackKidUnlocked,
+            binding.tvStatusHardWorker to specialBadges.isHardWorkerUnlocked,
+            binding.tvStatusEarlyBird to specialBadges.isEarlyBirdUnlocked,
+            binding.tvStatusNightOwl to specialBadges.isNightOwlUnlocked,
+            binding.tvStatusMonthConqueror to specialBadges.isMonthConquerorUnlocked,
+            binding.tvStatusUnstoppable to specialBadges.isUnstoppableUnlocked,
+            binding.tvStatusUltimateMaster to specialBadges.isUltimateMasterUnlocked
+        )
+
+        specialBadgeEntries.forEach { (statusView, isUnlocked) ->
+            if (applyBadgeStatus(statusView, isUnlocked)) unlockedCount++
+        }
+
+        val totalBadgesCount = STREAK_MILESTONES.size + TASK_MILESTONES.size + specialBadgeEntries.size
+
         binding.tvUnlockedCount.text = getString(
             R.string.rewards_badges_unlocked_format,
             unlockedCount,
-            STREAK_MILESTONES.size + TASK_MILESTONES.size
+            totalBadgesCount
         )
         binding.tvTaskProgress.text = getString(R.string.task_milestones_progress, completedTasks)
 
@@ -110,10 +132,6 @@ class RewardsFragment : Fragment() {
             streakInfo.todayCompletedTasks,
             streakInfo.todayTotalTasks
         )
-
-        // CURRENT TITLE: 2 dòng độc lập — streak cao nhất (dòng 1) + task hoàn thành cao nhất (dòng 2)
-        binding.tvCurrentRank.text = streakInfo.getBadgeTitle(streak)
-        binding.tvCurrentTaskRank.text = streakInfo.getTaskBadgeTitle(completedTasks)
     }
 
     /**

@@ -62,6 +62,56 @@ class StreakFragment : Fragment() {
         binding.btnViewStreakDetails.setOnClickListener {
             openStreakDetails()
         }
+
+        setupStreakReminderUI()
+    }
+
+    private fun setupStreakReminderUI() {
+        val context = requireContext()
+        val isEnabled = com.team.taskmanagementapp.util.StreakReminderScheduler.isStreakReminderEnabled(context)
+        binding.switchStreakReminder.isChecked = isEnabled
+        binding.tvStreakReminderTime.text = com.team.taskmanagementapp.util.StreakReminderScheduler.getFormattedReminderTime(context)
+        binding.layoutStreakReminderTime.alpha = if (isEnabled) 1.0f else 0.5f
+        binding.layoutStreakReminderTime.isEnabled = isEnabled
+
+        binding.switchStreakReminder.setOnCheckedChangeListener { _, isChecked ->
+            com.team.taskmanagementapp.util.StreakReminderScheduler.setStreakReminderEnabled(requireContext(), isChecked)
+            binding.layoutStreakReminderTime.alpha = if (isChecked) 1.0f else 0.5f
+            binding.layoutStreakReminderTime.isEnabled = isChecked
+
+            val msg = if (isChecked) {
+                getString(R.string.streak_reminder_set_feedback, com.team.taskmanagementapp.util.StreakReminderScheduler.getFormattedReminderTime(requireContext()))
+            } else {
+                getString(R.string.streak_reminder_disabled_feedback)
+            }
+            com.google.android.material.snackbar.Snackbar.make(binding.root, msg, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
+        }
+
+        binding.layoutStreakReminderTime.setOnClickListener {
+            showTimePicker()
+        }
+    }
+
+    private fun showTimePicker() {
+        val currentHour = com.team.taskmanagementapp.util.StreakReminderScheduler.getStreakReminderHour(requireContext())
+        val currentMinute = com.team.taskmanagementapp.util.StreakReminderScheduler.getStreakReminderMinute(requireContext())
+
+        val picker = com.google.android.material.timepicker.MaterialTimePicker.Builder()
+            .setTimeFormat(com.google.android.material.timepicker.TimeFormat.CLOCK_12H)
+            .setHour(currentHour)
+            .setMinute(currentMinute)
+            .setTitleText(R.string.streak_reminder_change_time)
+            .build()
+
+        picker.addOnPositiveButtonClickListener {
+            com.team.taskmanagementapp.util.StreakReminderScheduler.saveStreakReminderTime(requireContext(), picker.hour, picker.minute)
+            val formattedTime = com.team.taskmanagementapp.util.StreakReminderScheduler.getFormattedReminderTime(requireContext())
+            binding.tvStreakReminderTime.text = formattedTime
+            val msg = getString(R.string.streak_reminder_set_feedback, formattedTime)
+            com.google.android.material.snackbar.Snackbar.make(binding.root, msg, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
+        }
+
+        picker.show(childFragmentManager, "StreakTimePicker")
     }
 
     private fun openStreakDetails() {

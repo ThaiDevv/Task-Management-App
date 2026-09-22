@@ -202,5 +202,41 @@ object NotificationHelper {
     private const val REQUEST_OPEN_DETAIL = 0
     private const val REQUEST_MARK_COMPLETE = 1
     private const val REQUEST_SNOOZE = 2
+    fun showStreakReminder(context: Context, streakCount: Int) {
+        if (!areNotificationsEnabled(context)) {
+            Log.w(TAG, "Streak reminder not shown because notifications are disabled")
+            return
+        }
+
+        createNotificationChannel(context)
+
+        val pendingIntentFlags = PendingIntent.FLAG_IMMUTABLE
+        val openIntent = Intent(context, com.team.taskmanagementapp.MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        val contentPendingIntent = PendingIntent.getActivity(
+            context,
+            Constants.REQUEST_CODE_STREAK_REMINDER,
+            openIntent,
+            pendingIntentFlags
+        )
+
+        val title = context.getString(R.string.streak_reminder_notif_title, streakCount)
+        val body = context.getString(R.string.streak_reminder_notif_body)
+
+        val notification = NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_notification_task)
+            .setContentTitle(title)
+            .setContentText(body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+            .setContentIntent(contentPendingIntent)
+            .build()
+
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(Constants.STREAK_REMINDER_NOTIFICATION_ID, notification)
+    }
+
     private const val TAG = "NotificationHelper"
 }

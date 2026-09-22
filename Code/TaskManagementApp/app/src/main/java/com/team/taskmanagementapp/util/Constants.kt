@@ -53,4 +53,14 @@ object Constants {
     const val MAX_PIN_ATTEMPTS = 5
     const val LOCKOUT_DURATION_MS = 30000L // 30 seconds
     const val AUTO_LOCK_TIMEOUT_MS = 60000L // 1 minute background re-lock
+
+    // Streak Protection Reminder
+    const val KEY_STREAK_REMINDER_ENABLED = "key_streak_reminder_enabled"
+    const val KEY_STREAK_REMINDER_HOUR = "key_streak_reminder_hour"
+    const val KEY_STREAK_REMINDER_MINUTE = "key_streak_reminder_minute"
+    const val DEFAULT_STREAK_REMINDER_HOUR = 20
+    const val DEFAULT_STREAK_REMINDER_MINUTE = 0
+    const val STREAK_REMINDER_NOTIFICATION_ID = 88888
+    const val ACTION_STREAK_REMINDER = "com.team.taskmanagementapp.action.STREAK_REMINDER"
+    const val REQUEST_CODE_STREAK_REMINDER = 3001
 }
