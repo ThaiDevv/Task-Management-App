@@ -5,6 +5,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -15,6 +17,7 @@ import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.team.taskmanagementapp.databinding.ActivityMainBinding
+import com.team.taskmanagementapp.ui.AiAssistantBottomSheet
 import com.team.taskmanagementapp.ui.activity.AddEditTaskActivity
 import com.team.taskmanagementapp.ui.base.BaseActivity
 
@@ -28,6 +31,9 @@ class MainActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
+    private var aiGreetingDismissed = false
+    private val aiGreetingHandler = Handler(Looper.getMainLooper())
+    private var aiGreetingCycle: Runnable? = null
 
     private val tabIds = intArrayOf(
         R.id.taskListFragment,
@@ -62,6 +68,8 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        aiGreetingDismissed = getPreferences(MODE_PRIVATE)
+            .getBoolean(PREF_AI_GREETING_DISMISSED, false)
 
         requestNotificationPermissionIfNeeded()
 
@@ -75,6 +83,22 @@ class MainActivity : BaseActivity() {
         // FAB to Create Task
         binding.fabCreateTask.setOnClickListener {
             startActivity(Intent(this, AddEditTaskActivity::class.java))
+        }
+        binding.fabAiAssistant.setOnClickListener {
+            if (supportFragmentManager.findFragmentByTag(AiAssistantBottomSheet.TAG) == null) {
+                AiAssistantBottomSheet().show(supportFragmentManager, AiAssistantBottomSheet.TAG)
+            }
+        }
+        binding.aiGreetingBubble.setOnClickListener {
+            binding.fabAiAssistant.performClick()
+        }
+        binding.aiGreetingClose.setOnClickListener {
+            aiGreetingDismissed = true
+            stopAiGreetingCycle()
+            getPreferences(MODE_PRIVATE).edit()
+                .putBoolean(PREF_AI_GREETING_DISMISSED, true)
+                .apply()
+            binding.aiGreetingBubble.isVisible = false
         }
     }
 
@@ -135,6 +159,13 @@ class MainActivity : BaseActivity() {
 
     private fun updateNavigationChrome(isPrimaryDestination: Boolean) {
         binding.bottomBarContainer.isVisible = isPrimaryDestination
+        binding.fabAiAssistant.isVisible = isPrimaryDestination
+        if (isPrimaryDestination && !aiGreetingDismissed) {
+            startAiGreetingCycle()
+        } else {
+            stopAiGreetingCycle()
+            binding.aiGreetingBubble.isVisible = false
+        }
         val layoutParams = binding.navHostFragment.layoutParams as FrameLayout.LayoutParams
         layoutParams.bottomMargin = if (isPrimaryDestination) {
             resources.getDimensionPixelSize(R.dimen.bottom_navigation_height)
@@ -151,5 +182,36 @@ class MainActivity : BaseActivity() {
             tabLabels[index].isSelected = isSelected
             view.isSelected = isSelected
         }
+    }
+
+    private fun startAiGreetingCycle() {
+        if (aiGreetingCycle != null) return
+        binding.aiGreetingBubble.isVisible = true
+        val cycle = object : Runnable {
+            private var isVisiblePhase = true
+
+            override fun run() {
+                if (aiGreetingDismissed || isFinishing || isDestroyed) return
+                isVisiblePhase = !isVisiblePhase
+                binding.aiGreetingBubble.isVisible = isVisiblePhase
+                aiGreetingHandler.postDelayed(this, if (isVisiblePhase) 5_000L else 15_000L)
+            }
+        }
+        aiGreetingCycle = cycle
+        aiGreetingHandler.postDelayed(cycle, 5_000L)
+    }
+
+    private fun stopAiGreetingCycle() {
+        aiGreetingCycle?.let(aiGreetingHandler::removeCallbacks)
+        aiGreetingCycle = null
+    }
+
+    override fun onDestroy() {
+        stopAiGreetingCycle()
+        super.onDestroy()
+    }
+
+    private companion object {
+        const val PREF_AI_GREETING_DISMISSED = "ai_greeting_dismissed"
     }
 }
