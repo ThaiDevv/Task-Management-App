@@ -440,6 +440,36 @@
     <string name="badge_unlocked">Unlocked ✅</string>
     <string name="badge_locked">Locked 🔒</string>
     <string name="rewards_badges_unlocked_format">%1$d / %2$d</string>
+    <!-- Global AI task assistant -->
+    <string name="ai_assistant_title">Trợ lý AI</string>
+    <string name="ai_assistant_greeting">Xin chào, bạn cần giúp gì không?</string>
+    <string name="ai_assistant_greeting_close">Ẩn lời chào</string>
+    <string name="ai_assistant_subtitle">Create, update and find tasks</string>
+    <string name="ai_assistant_open">Open AI assistant</string>
+    <string name="ai_assistant_welcome">Hi! I can create tasks, update Todo / In Progress / Completed, change due dates or priority, and find your tasks. What would you like to do?</string>
+    <string name="ai_assistant_prompt_hint">Ask TaskFlow AI…</string>
+    <string name="ai_assistant_send">Send</string>
+    <string name="ai_assistant_thinking">Understanding your request…</string>
+    <string name="ai_assistant_privacy">Your request and task summary are sent to Gemini. Changes happen only after you confirm.</string>
+    <string name="ai_quick_today">Today’s tasks</string>
+    <string name="ai_quick_create">Create a task</string>
+    <string name="ai_quick_progress">Update progress</string>
+    <string name="ai_confirm_create_title">Create this task?</string>
+    <string name="ai_confirm_update_title">Apply these changes?</string>
+    <string name="ai_confirm_action">Confirm</string>
+    <string name="ai_action_cancel">Cancel</string>
+    <string name="ai_task_created">Task created successfully.</string>
+    <string name="ai_task_updated">Task updated successfully.</string>
+    <string name="ai_no_matching_tasks">No matching tasks found.</string>
+    <string name="ai_help_message">Try: “Create a report task tomorrow at 9 AM”, “Mark Report as In Progress”, or “Show today’s tasks”.</string>
+    <string name="ai_unknown_message">I could not safely match that request. Include the exact task title and the change you want.</string>
+    <string name="ai_assistant_error">The assistant could not respond. Check the connection and try again.</string>
+    <string name="ai_assistant_close">Close</string>
+    <string name="ai_task_speak">Speak</string>
+    <string name="ai_task_listening_prompt">Tell TaskFlow AI what to do</string>
+    <string name="ai_task_empty_prompt">Enter a request first.</string>
+    <string name="ai_task_speech_unavailable">Voice input is not available on this device.</string>
+    <string name="ai_task_speech_empty">No speech was recognized. Please try again.</string>
 </resources>
 
 
