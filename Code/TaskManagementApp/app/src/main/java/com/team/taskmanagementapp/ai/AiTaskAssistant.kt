@@ -99,8 +99,11 @@ class AiTaskAssistant(
         val response = model.generateContent(buildPrompt(request, tasks, now))
         val responseText = response.text
             ?: throw IllegalStateException("Gemini returned an empty response.")
-        return normalize(parseJson(responseText), now)
+        return parseResponse(responseText, now)
     }
+
+    internal fun parseResponse(responseText: String, now: LocalDateTime): AiAssistantCommand =
+        normalize(parseJson(responseText), now)
 
     private fun buildPrompt(
         request: String,
