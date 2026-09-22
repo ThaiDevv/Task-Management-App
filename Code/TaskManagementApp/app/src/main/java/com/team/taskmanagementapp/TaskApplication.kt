@@ -44,6 +44,7 @@ class TaskApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        AiAppCheckInitializer.initialize(this)
         NotificationHelper.createNotificationChannel(this)
         setupWidgetAutoRefresh()
         com.team.taskmanagementapp.util.StreakReminderScheduler.scheduleStreakReminder(this)

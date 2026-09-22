@@ -70,6 +70,20 @@ git clone https://github.com/ThaiDevv/Task-Management-App.git
 # Chọn Emulator (API 26+) hoặc Thiết bị thật và bấm "Run"
 ```
 
+### Thiết lập trợ lý AI
+
+Trợ lý AI sử dụng Firebase AI Logic. Trước khi Sync/Run, mỗi thành viên cần đăng ký
+Android app với package `com.team.taskmanagementapp` trong cùng Firebase project,
+tải `google-services.json` từ Firebase Console và đặt tại
+`Code/TaskManagementApp/app/google-services.json`. Tệp này được `.gitignore` loại
+khỏi Git; không đưa token App Check debug hoặc thông tin cấu hình riêng lên commit.
+
+Trong Firebase Console, bật Gemini Developer API cho Firebase AI Logic và đăng ký
+App Check cho Android app. Bản debug dùng App Check debug provider: lấy token riêng
+của máy từ Logcat, sau đó đăng ký token đó trong Firebase Console. Bản release dùng
+Play Integrity và cần cấu hình chứng thực phù hợp trước khi phát hành. Các thao tác
+tạo hoặc sửa task do AI đề xuất chỉ được lưu sau khi người dùng xác nhận.
+
 ---
 
 ## Video Demo Sản Phẩm
