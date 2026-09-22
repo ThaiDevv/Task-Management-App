@@ -28,6 +28,7 @@ class TaskApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        AiAppCheckInitializer.initialize(this)
         NotificationHelper.createNotificationChannel(this)
         setupWidgetAutoRefresh()
     }
