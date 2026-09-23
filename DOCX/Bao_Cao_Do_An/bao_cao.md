@@ -117,185 +117,185 @@ Chúng em xin chân thành cảm ơn!
 
 # DANH MỤC BẢNG BIỂU
 
-*Bảng 1: Mục tiêu cụ thể của đề tài*
+* [Bảng 1: Mục tiêu cụ thể của đề tài](#bang-1)
 
-*Bảng 2: Phương pháp nghiên cứu và cách áp dụng cụ thể*
+* [Bảng 2: Phương pháp nghiên cứu và cách áp dụng cụ thể](#bang-2)
 
-*Bảng 1.1: Các thành phần thông tin của một công việc*
+* [Bảng 1.1: Các thành phần thông tin của một công việc](#bang-11)
 
-*Bảng 1.2: So sánh các ứng dụng quản lý công việc tương tự*
+* [Bảng 1.2: So sánh các ứng dụng quản lý công việc tương tự](#bang-12)
 
-*Bảng 1.3: Mục tiêu của hệ thống và tiêu chí đánh giá*
+* [Bảng 1.3: Mục tiêu của hệ thống và tiêu chí đánh giá](#bang-13)
 
-*Bảng 2.1: Danh sách yêu cầu chức năng của hệ thống*
+* [Bảng 2.1: Danh sách yêu cầu chức năng của hệ thống](#bang-21)
 
-*Bảng 2.2: Danh sách yêu cầu phi chức năng của hệ thống*
+* [Bảng 2.2: Danh sách yêu cầu phi chức năng của hệ thống](#bang-22)
 
-*Bảng 2.3: Các tác nhân của hệ thống*
+* [Bảng 2.3: Các tác nhân của hệ thống](#bang-23)
 
-*Bảng 2.4: Bảng phân tích tác nhân và Use Case*
+* [Bảng 2.4: Bảng phân tích tác nhân và Use Case](#bang-24)
 
-*Bảng 2.5: Các Repository và trách nhiệm chính*
+* [Bảng 2.5: Các Repository và trách nhiệm chính](#bang-25)
 
-*Bảng 2.6: Cấu trúc bảng tasks trong cơ sở dữ liệu Room*
+* [Bảng 2.6: Cấu trúc bảng tasks trong cơ sở dữ liệu Room](#bang-26)
 
-*Bảng 2.7: Cấu trúc bảng pomodoro_sessions trong cơ sở dữ liệu Room*
+* [Bảng 2.7: Cấu trúc bảng pomodoro_sessions trong cơ sở dữ liệu Room](#bang-27)
 
-*Bảng 2.8: Danh sách các DAO và phạm vi truy vấn*
+* [Bảng 2.8: Danh sách các DAO và phạm vi truy vấn](#bang-28)
 
-*Bảng 2.9: Bảng đối chiếu version cơ sở dữ liệu và migration*
+* [Bảng 2.9: Bảng đối chiếu version cơ sở dữ liệu và migration](#bang-29)
 
-*Bảng 2.10: Các bước kiểm tra tính hợp lệ của tệp sao lưu*
+* [Bảng 2.10: Các bước kiểm tra tính hợp lệ của tệp sao lưu](#bang-210)
 
-*Bảng 3.1: Môi trường phát triển của dự án*
+* [Bảng 3.1: Môi trường phát triển của dự án](#bang-31)
 
-*Bảng 3.2: Danh sách thư viện và phiên bản sử dụng trong dự án*
+* [Bảng 3.2: Danh sách thư viện và phiên bản sử dụng trong dự án](#bang-32)
 
-*Bảng 3.3: Mục đích sử dụng của các API trong dự án*
+* [Bảng 3.3: Mục đích sử dụng của các API trong dự án](#bang-33)
 
-*Bảng 3.4: Các màn hình chính của ứng dụng*
+* [Bảng 3.4: Các màn hình chính của ứng dụng](#bang-34)
 
-*Bảng 3.5: Chức năng, xử lý của các thành phần mã nguồn quản lý công việc*
+* [Bảng 3.5: Chức năng, xử lý của các thành phần mã nguồn quản lý công việc](#bang-35)
 
-*Bảng 3.6: Vai trò của các thành phần trong mã nguồn phân hệ lọc và sắp xếp*
+* [Bảng 3.6: Vai trò của các thành phần trong mã nguồn phân hệ lọc và sắp xếp](#bang-36)
 
-*Bảng 3.7: Kiến trúc và trách nhiệm các thành phần phân hệ nhắc nhở*
+* [Bảng 3.7: Kiến trúc và trách nhiệm các thành phần phân hệ nhắc nhở](#bang-37)
 
-*Bảng 3.8: Quy tắc lặp lại task mới khi hoàn thành*
+* [Bảng 3.8: Quy tắc lặp lại task mới khi hoàn thành](#bang-38)
 
-*Bảng 3.9: Thiết kế bảo mật PIN Lock và sinh trắc học vân tay*
+* [Bảng 3.9: Thiết kế bảo mật PIN Lock và sinh trắc học vân tay](#bang-39)
 
-*Bảng 3.10: Quy trình khôi phục dữ liệu an toàn*
+* [Bảng 3.10: Quy trình khôi phục dữ liệu an toàn](#bang-310)
 
-*Bảng 3.11: Trách nhiệm của các thành phần mã nguồn sao lưu và khôi phục*
+* [Bảng 3.11: Trách nhiệm của các thành phần mã nguồn sao lưu và khôi phục](#bang-311)
 
-*Bảng 3.12: Trách nhiệm của các thành phần mã nguồn Home Screen Widget*
+* [Bảng 3.12: Trách nhiệm của các thành phần mã nguồn Home Screen Widget](#bang-312)
 
-*Bảng 3.13: Trách nhiệm của các thành phần mã nguồn thống kê Bento Grid*
+* [Bảng 3.13: Trách nhiệm của các thành phần mã nguồn thống kê Bento Grid](#bang-313)
 
-*Bảng 3.14: Trách nhiệm của các thành phần mã nguồn Pomodoro Timer*
+* [Bảng 3.14: Trách nhiệm của các thành phần mã nguồn Pomodoro Timer](#bang-314)
 
-*Bảng 3.15: Thống kê thời gian tập trung Pomodoro*
+* [Bảng 3.15: Thống kê thời gian tập trung Pomodoro](#bang-315)
 
-*Bảng 3.16: Vai trò của các thành phần trong phân hệ Streak & Milestone Badges*
+* [Bảng 3.16: Vai trò của các thành phần trong phân hệ Streak & Milestone Badges](#bang-316)
 
-*Bảng 3.17: Các thành phần chính trong phân hệ Trợ lý ảo AI*
+* [Bảng 3.17: Các thành phần chính trong phân hệ Trợ lý ảo AI](#bang-317)
 
-*Bảng 3.18: Bảng đối chiếu 11 yêu cầu bàn giao của đề bài*
+* [Bảng 3.18: Bảng đối chiếu 11 yêu cầu bàn giao của đề bài](#bang-318)
 
-*Bảng 3.19: Bảng đối chiếu các tính năng nâng cao*
+* [Bảng 3.19: Bảng đối chiếu các tính năng nâng cao](#bang-319)
 
-*Bảng 4.1: Môi trường kiểm thử hệ thống*
+* [Bảng 4.1: Môi trường kiểm thử hệ thống](#bang-41)
 
-*Bảng 4.2: Phương pháp kiểm thử tự động trên JVM và cách tách phụ thuộc Android*
+* [Bảng 4.2: Phương pháp kiểm thử tự động trên JVM và cách tách phụ thuộc Android](#bang-42)
 
-*Bảng 4.3: Ma trận kiểm thử chức năng quản lý công việc (TC01–TC06)*
+* [Bảng 4.3: Ma trận kiểm thử chức năng quản lý công việc (TC01–TC06)](#bang-43)
 
-*Bảng 4.4: Ma trận kiểm thử thông báo và khôi phục nhắc nhở (TC07–TC10)*
+* [Bảng 4.4: Ma trận kiểm thử thông báo và khôi phục nhắc nhở (TC07–TC10)](#bang-44)
 
-*Bảng 4.5: Ma trận kiểm thử bảo mật PIN và sinh trắc học (TC11–TC13)*
+* [Bảng 4.5: Ma trận kiểm thử bảo mật PIN và sinh trắc học (TC11–TC13)](#bang-45)
 
-*Bảng 4.6: Ma trận kiểm thử Backup và Restore JSON (TC14–TC18)*
+* [Bảng 4.6: Ma trận kiểm thử Backup và Restore JSON (TC14–TC18)](#bang-46)
 
-*Bảng 4.7: Ma trận kiểm thử Widget và Thống kê (TC19–TC21)*
+* [Bảng 4.7: Ma trận kiểm thử Widget và Thống kê (TC19–TC21)](#bang-47)
 
-*Bảng 4.8: Tổng hợp kết quả kiểm thử hộp đen theo nhóm chức năng*
+* [Bảng 4.8: Tổng hợp kết quả kiểm thử hộp đen theo nhóm chức năng](#bang-48)
 
-*Bảng 4.9: Danh sách unit test tự động của dự án trên JVM*
+* [Bảng 4.9: Danh sách unit test tự động của dự án trên JVM](#bang-49)
 
-*Bảng 4.10: Tổng hợp chỉ số kiểm thử tự động*
+* [Bảng 4.10: Tổng hợp chỉ số kiểm thử tự động](#bang-410)
 
-*Bảng 4.11: Kết quả kiểm chứng ngoài thiết bị*
+* [Bảng 4.11: Kết quả kiểm chứng ngoài thiết bị](#bang-411)
 
-*Bảng 4.12: Bảng phân tích ưu và nhược điểm của hệ thống*
+* [Bảng 4.12: Bảng phân tích ưu và nhược điểm của hệ thống](#bang-412)
 
-*Bảng 4.13: Bảng đánh giá mức độ hoàn thành các yêu cầu sau kiểm thử*
+* [Bảng 4.13: Bảng đánh giá mức độ hoàn thành các yêu cầu sau kiểm thử](#bang-413)
 
-*Bảng 5.1: Tổng hợp kỹ thuật và công nghệ đã vận dụng trong đề tài*
+* [Bảng 5.1: Tổng hợp kỹ thuật và công nghệ đã vận dụng trong đề tài](#bang-51)
 
-*Bảng A.1: Danh sách file Kotlin theo từng phân hệ*
+* [Bảng A.1: Danh sách file Kotlin theo từng phân hệ](#bang-a1)
 
-*Bảng B.1: Quy tắc toàn vẹn dữ liệu cơ sở dữ liệu*
+* [Bảng B.1: Quy tắc toàn vẹn dữ liệu cơ sở dữ liệu](#bang-b1)
 
-*Bảng C.1: Bộ test case chi tiết nhóm 1 - Quản lý công việc*
+* [Bảng C.1: Bộ test case chi tiết nhóm 1 - Quản lý công việc](#bang-c1)
 
-*Bảng C.2: Ma trận test case chi tiết nhóm 2 - Thông báo và khôi phục nhắc nhở*
+* [Bảng C.2: Ma trận test case chi tiết nhóm 2 - Thông báo và khôi phục nhắc nhở](#bang-c2)
 
-*Bảng C.3: Ma trận test case chi tiết nhóm 3 - Bảo mật mã PIN và sinh trắc học*
+* [Bảng C.3: Ma trận test case chi tiết nhóm 3 - Bảo mật mã PIN và sinh trắc học](#bang-c3)
 
-*Bảng C.4: Ma trận test case chi tiết nhóm 4 - Sao lưu và khôi phục dữ liệu*
+* [Bảng C.4: Ma trận test case chi tiết nhóm 4 - Sao lưu và khôi phục dữ liệu](#bang-c4)
 
-*Bảng C.5: Ma trận test case chi tiết nhóm 5 - Widget, thống kê và Pomodoro*
+* [Bảng C.5: Ma trận test case chi tiết nhóm 5 - Widget, thống kê và Pomodoro](#bang-c5)
 
-*Bảng C.6: Danh sách các ca kiểm thử bổ sung biên và kiểm tra chịu lỗi*
+* [Bảng C.6: Danh sách các ca kiểm thử bổ sung biên và kiểm tra chịu lỗi](#bang-c6)
 
-*Bảng D.1: Danh mục các đoạn mã nguồn cốt lõi được trích lục*
+* [Bảng D.1: Danh mục các đoạn mã nguồn cốt lõi được trích lục](#bang-d1)
 
-*Bảng E.1: Yêu cầu hệ thống và môi trường vận hành*
+* [Bảng E.1: Yêu cầu hệ thống và môi trường vận hành](#bang-e1)
 
-*Bảng E.2: Hướng dẫn thao tác quản lý công việc*
+* [Bảng E.2: Hướng dẫn thao tác quản lý công việc](#bang-e2)
 
-*Bảng E.3: Xử lý các tình huống thường gặp khi sử dụng*
+* [Bảng E.3: Xử lý các tình huống thường gặp khi sử dụng](#bang-e3)
 
 # DANH MỤC HÌNH ẢNH
 
-*Hình 1.1: Sơ đồ khái quát của hệ thống*
+* [Hình 1.1: Sơ đồ khái quát của hệ thống](#hinh-11)
 
-*Hình 2.1: Sơ đồ Use Case tổng quát*
+* [Hình 2.1: Sơ đồ Use Case tổng quát](#hinh-21)
 
-*Hình 2.2: Luồng kiến trúc Model — View — ViewModel*
+* [Hình 2.2: Luồng kiến trúc Model — View — ViewModel](#hinh-22)
 
-*Hình 2.3: Sơ đồ kiến trúc MVVM của Task Management App*
+* [Hình 2.3: Sơ đồ kiến trúc MVVM của Task Management App](#hinh-23)
 
-*Hình 2.4: Sơ đồ quan hệ thực thể (ERD) giữa tasks và pomodoro_sessions*
+* [Hình 2.4: Sơ đồ quan hệ thực thể (ERD) giữa tasks và pomodoro_sessions](#hinh-24)
 
-*Hình 2.5: Sơ đồ luồng xử lý tạo / sửa / xóa công việc*
+* [Hình 2.5: Sơ đồ luồng xử lý tạo / sửa / xóa công việc](#hinh-25)
 
-*Hình 2.6: Sơ đồ luồng thông báo nhắc việc*
+* [Hình 2.6: Sơ đồ luồng thông báo nhắc việc](#hinh-26)
 
-*Hình 2.7: Sơ đồ luồng khôi phục nhắc nhở sau khi khởi động lại*
+* [Hình 2.7: Sơ đồ luồng khôi phục nhắc nhở sau khi khởi động lại](#hinh-27)
 
-*Hình 2.8: Sơ đồ luồng xác thực mã PIN*
+* [Hình 2.8: Sơ đồ luồng xác thực mã PIN](#hinh-28)
 
-*Hình 2.9: Sơ đồ luồng Backup JSON*
+* [Hình 2.9: Sơ đồ luồng Backup JSON](#hinh-29)
 
-*Hình 2.10: Sơ đồ luồng Restore JSON*
+* [Hình 2.10: Sơ đồ luồng Restore JSON](#hinh-210)
 
-*Hình 2.11: Sơ đồ luồng Home Screen Widget*
+* [Hình 2.11: Sơ đồ luồng Home Screen Widget](#hinh-211)
 
-*Hình 2.12: Sơ đồ máy trạng thái của Pomodoro Timer*
+* [Hình 2.12: Sơ đồ máy trạng thái của Pomodoro Timer](#hinh-212)
 
-*Hình 3.1: Giao diện danh sách công việc (Task List)*
+* [Hình 3.1: Giao diện danh sách công việc (Task List)](#hinh-31)
 
-*Hình 3.2: Giao diện thêm / sửa công việc (Add / Edit Task)*
+* [Hình 3.2: Giao diện thêm / sửa công việc (Add / Edit Task)](#hinh-32)
 
-*Hình 3.3: Giao diện chi tiết công việc (Task Detail)*
+* [Hình 3.3: Giao diện chi tiết công việc (Task Detail)](#hinh-33)
 
-*Hình 3.4: Giao diện lọc và sắp xếp (Filter Bottom Sheet)*
+* [Hình 3.4: Giao diện lọc và sắp xếp (Filter Bottom Sheet)](#hinh-34)
 
-*Hình 3.5: Giao diện lịch biểu (Calendar View)*
+* [Hình 3.5: Giao diện lịch biểu (Calendar View)](#hinh-35)
 
-*Hình 3.6: Luồng xử lý quyền thông báo trên Android 13+*
+* [Hình 3.6: Luồng xử lý quyền thông báo trên Android 13+](#hinh-36)
 
-*Hình 3.7: Luồng xử lý khi hoàn thành công việc lặp lại*
+* [Hình 3.7: Luồng xử lý khi hoàn thành công việc lặp lại](#hinh-37)
 
-*Hình 3.8: Giao diện khóa PIN*
+* [Hình 3.8: Giao diện khóa PIN](#hinh-38)
 
-*Hình 3.9: Luồng thiết lập và xác thực mã PIN*
+* [Hình 3.9: Luồng thiết lập và xác thực mã PIN](#hinh-39)
 
-*Hình 3.10: Giao diện quản lý dữ liệu (Backup / Restore)*
+* [Hình 3.10: Giao diện quản lý dữ liệu (Backup / Restore)](#hinh-310)
 
-*Hình 3.11: Giao diện Home Screen Widget*
+* [Hình 3.11: Giao diện Home Screen Widget](#hinh-311)
 
-*Hình 3.12: Giao diện thống kê Bento Grid*
+* [Hình 3.12: Giao diện thống kê Bento Grid](#hinh-312)
 
-*Hình 3.13: Giao diện đồng hồ tập trung Pomodoro Timer*
+* [Hình 3.13: Giao diện đồng hồ tập trung Pomodoro Timer](#hinh-313)
 
-*Hình 3.14: Giao diện chuỗi ngày và hệ thống huy hiệu (Badges & Streak)*
+* [Hình 3.14: Giao diện chuỗi ngày và hệ thống huy hiệu (Badges & Streak)](#hinh-314)
 
-*Hình 3.15: Giao diện trợ lý ảo AI thông minh (AI Assistant Chat Bottom Sheet)*
+* [Hình 3.15: Giao diện trợ lý ảo AI thông minh (AI Assistant Chat Bottom Sheet)](#hinh-315)
 
-*Hình 3.16: Giao diện phím tắt màn hình chính (Launcher App Shortcuts)*
+* [Hình 3.16: Giao diện phím tắt màn hình chính (Launcher App Shortcuts)](#hinh-316)
 
 # MỞ ĐẦU
 
@@ -326,6 +326,8 @@ Xây dựng một ứng dụng Android hoàn chỉnh, ổn định và có tính
 ### 2.2. Mục tiêu cụ thể
 
 Các mục tiêu cụ thể được xác định song song với 11 yêu cầu bắt buộc của đề bài, đồng thời bổ sung các mục tiêu về chất lượng kiến trúc và trải nghiệm người dùng:
+
+<a id="bang-1"></a>
 
 *Bảng 1: Mục tiêu cụ thể của đề tài*
 
@@ -377,6 +379,8 @@ Dữ liệu nghiệp vụ giới hạn trong phạm vi một người dùng trê
 ## 5. Phương pháp nghiên cứu
 
 Nhóm áp dụng kết hợp nhiều phương pháp, tương ứng với từng giai đoạn của vòng đời phát triển phần mềm:
+
+<a id="bang-2"></a>
 
 *Bảng 2: Phương pháp nghiên cứu và cách áp dụng cụ thể*
 
@@ -448,6 +452,8 @@ Trong nghiệp vụ quản lý công việc cá nhân, một "công việc" (tas
 
 ### 1.1.2. Các thành phần thông tin của một công việc
 
+<a id="bang-11"></a>
+
 *Bảng 1.1. Các thành phần thông tin của một công việc*
 
 | Thành phần | Vai trò trong nghiệp vụ | Lý do cần thiết |
@@ -509,6 +515,8 @@ Tiêu chí so sánh được xây dựng theo cấu trúc của đề bài, tậ
 
 ### 1.3.2. Bảng so sánh các ứng dụng
 
+<a id="bang-12"></a>
+
 *Bảng 1.2. So sánh các ứng dụng*
 
 | Tiêu chí | Todoist | TickTick | Microsoft To Do | Task Management App (đề tài) |
@@ -561,6 +569,52 @@ Nhanh chóng: mọi thao tác đọc dữ liệu diễn ra theo cơ chế reacti
 Tạo động lực (Gamification): Tích hợp hệ thống tính điểm, đếm chuỗi ngày hoàn thành liên tục (Streak) và mở khóa các huy hiệu thành tựu (Special Badges) nhằm khích lệ tính kỷ luật của người dùng.
 
 ### 1.4.2. Sơ đồ khái quát giải pháp
+
+<a id="hinh-11"></a>
+
+```mermaid
+graph TB
+    subgraph "👤 NGƯỜI DÙNG & TÁC VỤ CÁ NHÂN"
+        USER["Người dùng cá nhân / Học tập / Công việc"]
+    end
+
+    subgraph "📱 HỆ THỐNG TASK MANAGEMENT APP (TASKFLOW)"
+        subgraph "🎯 Phân hệ Nghiệp vụ Cốt lõi"
+            TASK_MGR["Quản lý công việc (CRUD)"]
+            FILTER_SORT["Lọc & Sắp xếp đa tiêu chí"]
+            CALENDAR["Lịch biểu (Calendar View)"]
+            RECURRING["Công việc lặp lại (Recurring)"]
+        end
+
+        subgraph "⚡ Phân hệ Tiện ích & Năng suất"
+            POMODORO["Đồng hồ Pomodoro (Focus Timer)"]
+            STREAK["Chuỗi ngày & 7 Huy hiệu (Gamification)"]
+            AI_ASSISTANT["Trợ lý ảo AI (Google Gemini)"]
+            STATS["Thống kê Bento Grid"]
+            WIDGET["Home Screen Widget"]
+            SHORTCUTS["Launcher App Shortcuts"]
+        end
+
+        subgraph "🛡️ Phân hệ An toàn & Hệ thống"
+            PIN_BIO["Bảo mật PIN SHA-256 & Vân tay"]
+            NOTI_ALARM["Nhắc nhở Exact Alarm & Boot Recovery"]
+            BACKUP_SAF["Sao lưu & Phục hồi JSON (SAF)"]
+        end
+    end
+
+    subgraph "💾 TẦNG LƯU TRỮ & HỆ ĐIỀU HÀNH ANDROID"
+        ROOM_DB[("Room Database<br/>(tasks & pomodoro_sessions)")]
+        PREFS["Encrypted SharedPreferences<br/>(PIN Hash + Salt)"]
+        ANDROID_OS["Android OS Services<br/>(AlarmManager, NotificationManager, AppWidget)"]
+    end
+
+    USER <--> TASK_MGR & POMODORO & AI_ASSISTANT & WIDGET & SHORTCUTS
+    TASK_MGR & FILTER_SORT & CALENDAR & RECURRING & STATS & STREAK <--> ROOM_DB
+    POMODORO <--> ROOM_DB & ANDROID_OS
+    NOTI_ALARM <--> ANDROID_OS
+    PIN_BIO <--> PREFS
+    BACKUP_SAF <--> ROOM_DB
+```
 
 *Hình 1.1. Sơ đồ khái quát của hệ thống*
 
@@ -630,6 +684,8 @@ Task Management App
 `
 
 ## 1.5. Mục tiêu của hệ thống
+
+<a id="bang-13"></a>
 
 *Bảng 1.3. Mục tiêu của hệ thống*
 
@@ -704,6 +760,8 @@ FR-13 (Phím tắt ứng dụng): Cung cấp các lối tắt trên màn hình c
 
 Trên cơ sở 11 nhóm yêu cầu bắt buộc của đề bài kết hợp với kết quả khảo sát ở Chương 1, hệ thống được đặc tả thành các yêu cầu chức năng sau:
 
+<a id="bang-21"></a>
+
 *Bảng 2.1. Danh sách yêu cầu chức năng của hệ thống*
 
 | Mã | Nhóm chức năng | Mô tả chi tiết | Độ ưu tiên |
@@ -732,6 +790,8 @@ Trên cơ sở 11 nhóm yêu cầu bắt buộc của đề bài kết hợp v�
 
 ### 2.1.2. Yêu cầu phi chức năng
 
+<a id="bang-22"></a>
+
 *Bảng 2.2. Danh sách yêu cầu phi chức năng của hệ thống*
 
 | Mã | Nhóm | Yêu cầu | Cách đáp ứng trong hệ thống |
@@ -758,6 +818,8 @@ Trên cơ sở 11 nhóm yêu cầu bắt buộc của đề bài kết hợp v�
 
 Hệ thống gồm 3 tác nhân chính:
 
+<a id="bang-23"></a>
+
 *Bảng 2.3. Các tác nhân của hệ thống*
 
 | Tác nhân | Loại | Mô tả |
@@ -768,6 +830,8 @@ Hệ thống gồm 3 tác nhân chính:
 
 
 ### 2.2.2. Danh sách Use Case
+
+<a id="bang-24"></a>
 
 *Bảng 2.4. Bảng phân tích tác nhân và Use Case*
 
@@ -790,6 +854,36 @@ Hệ thống gồm 3 tác nhân chính:
 
 ### 2.2.3. Sơ đồ Use Case tổng quát
 
+<a id="hinh-21"></a>
+
+```mermaid
+flowchart LR
+    subgraph Actors["Tác nhân"]
+        USER(("👤 Người dùng"))
+        OS(("⚙️ Hệ điều hành Android"))
+    end
+
+    subgraph UseCases["Hệ thống Use Case"]
+        UC1(["UC-01: Quản lý công việc (CRUD)"])
+        UC2(["UC-02: Lọc và Sắp xếp công việc"])
+        UC3(["UC-03: Xem Lịch biểu"])
+        UC4(["UC-04: Nhận thông báo nhắc việc"])
+        UC5(["UC-05: Quản lý công việc lặp lại"])
+        UC6(["UC-06: Khóa & Mở khóa bằng mã PIN"])
+        UC7(["UC-07: Sao lưu & Phục hồi JSON"])
+        UC8(["UC-08: Tương tác qua Home Screen Widget"])
+        UC9(["UC-09: Quản lý phiên Pomodoro"])
+        UC10(["UC-10: Tương tác với Trợ lý ảo AI"])
+        UC11(["UC-11: Xem Chuỗi ngày & Mở khóa Huy hiệu"])
+        UC12(["UC-12: Mở khóa bằng Sinh trắc học vân tay"])
+        UC13(["UC-13: Thao tác nhanh qua Launcher Shortcuts"])
+        UC_BOOT(["UC-14: Tự động khôi phục Alarms khi khởi động lại"])
+    end
+
+    USER --> UC1 & UC2 & UC3 & UC5 & UC6 & UC7 & UC8 & UC9 & UC10 & UC11 & UC12 & UC13
+    OS --> UC4 & UC_BOOT
+```
+
 *Hình 2.1. Sơ đồ Use Case tổng quát*
 
 ## 2.3. Thiết kế kiến trúc phần mềm
@@ -798,9 +892,110 @@ Hệ thống gồm 3 tác nhân chính:
 
 Ứng dụng áp dụng kiến trúc Model — View — ViewModel (MVVM) theo hướng dẫn chính thức của Google cho phát triển ứng dụng Android. Luồng phụ thuộc một chiều từ ngoài vào trong:
 
+<a id="hinh-22"></a>
+
+```mermaid
+flowchart TD
+    subgraph ViewLayer["View Layer (UI)"]
+        UI["Activity / Fragment / Custom View<br/>(Quan sát StateFlow, phát tín hiệu tương tác)"]
+    end
+
+    subgraph ViewModelLayer["ViewModel Layer"]
+        VM["ViewModel<br/>(Nắm giữ UIState, điều phối Coroutines)"]
+    end
+
+    subgraph DataLayer["Data Layer (Single Source of Truth)"]
+        REPO["Repository<br/>(Điều phối nguồn dữ liệu)"]
+        ROOM["Room Database (DAO)<br/>(Cơ sở dữ liệu cục bộ SQLite)"]
+    end
+
+    UI -->|1. Gọi hành động / User Action| VM
+    VM -->|2. Gọi hàm suspend / Query| REPO
+    REPO -->|3. Đọc / Ghi dữ liệu| ROOM
+    ROOM -->|4. Phát luồng Flow dữ liệu mới| REPO
+    REPO -->|5. Chuyển đổi dữ liệu| VM
+    VM -->|6. Cập nhật StateFlow UIState| UI
+```
+
 *Hình 2.2. Luồng kiến trúc*
 
 Sơ đồ kiến trúc của hệ thống:
+
+<a id="hinh-23"></a>
+
+```mermaid
+graph TB
+    subgraph "📱 View Layer (UI)"
+        MainActivity["MainActivity (BottomNav 5 Tab)"]
+        TaskListFrag["TaskListFragment"]
+        CalendarFrag["CalendarFragment"]
+        PomodoroFrag["PomodoroFragment"]
+        StreakFrag["StreakFragment (Badges)"]
+        StatsFrag["StatsFragment"]
+        AddEditAct["AddEditTaskActivity"]
+        TaskDetailAct["TaskDetailActivity"]
+        PinLockAct["PinLockActivity"]
+        AiBottomDialog["AiAssistantBottomSheet"]
+        WidgetProvider["TaskWidgetProvider"]
+    end
+
+    subgraph "🧠 ViewModel Layer"
+        TaskVM["TaskViewModel"]
+        CalendarVM["CalendarViewModel"]
+        PomodoroVM["PomodoroViewModel"]
+        StatsVM["StatsViewModel"]
+        TaskAssistantVM["TaskAssistantViewModel"]
+        AddEditVM["AddEditTaskViewModel"]
+        BackupVM["BackupViewModel"]
+    end
+
+    subgraph "📦 Repository Layer"
+        TaskRepo["TaskRepository"]
+        PomodoroRepo["PomodoroRepository"]
+        BackupRepo["BackupRepository"]
+        PinRepo["PinRepository"]
+    end
+
+    subgraph "💾 Data Layer (Local Persistence)"
+        AppDB[("AppDatabase (Room v4)")]
+        TaskDao["TaskDao"]
+        PomodoroDao["PomodoroDao"]
+        Prefs["SharedPreferences (Salted PIN)"]
+        SAF["Storage Access Framework (JSON)"]
+    end
+
+    subgraph "⚙️ OS Background Services & Receivers"
+        AlarmSched["AlarmScheduler"]
+        BootRecv["BootReceiver"]
+        TimeRecv["TimeChangeReceiver"]
+        PomoService["PomodoroService (Foreground)"]
+        StreakRecv["StreakReminderReceiver"]
+        GeminiClient["AiTaskAssistant (Firebase Gemini)"]
+    end
+
+    TaskListFrag & CalendarFrag & TaskDetailAct --> TaskVM
+    CalendarFrag --> CalendarVM
+    PomodoroFrag --> PomodoroVM
+    StreakFrag & StatsFrag --> StatsVM
+    AiBottomDialog --> TaskAssistantVM
+    AddEditAct --> AddEditVM
+    PinLockAct --> PinRepo
+
+    TaskVM & CalendarVM & AddEditVM --> TaskRepo
+    PomodoroVM --> PomodoroRepo
+    StatsVM --> TaskRepo & PomodoroRepo
+    TaskAssistantVM --> TaskRepo & GeminiClient
+
+    TaskRepo --> TaskDao --> AppDB
+    PomodoroRepo --> PomodoroDao --> AppDB
+    BackupRepo --> TaskDao & PomodoroDao & SAF
+    PinRepo --> Prefs
+
+    TaskRepo -.->|Trigger Alarm| AlarmSched
+    AlarmSched -.-> BootRecv & TimeRecv
+    PomodoroVM -.->|Start/Stop| PomoService
+    StatsVM -.->|Schedule Reminder| StreakRecv
+```
 
 *Hình 2.3. Sơ đồ kiến trúc MVVM của Task Management App*
 
@@ -854,6 +1049,8 @@ TypeConverters: chuyển đổi enum và các kiểu phức tạp sang kiểu l�
 
 Repository là lớp duy nhất được phép truy cập DAO. Trong dự án, Repository được cài đặt dưới dạng lớp thuần (plain class) nhận DAO qua hàm khởi tạo, không cần interface trừu tượng, nhưng vẫn đảm bảo vai trò tách biệt tầng:
 
+<a id="bang-25"></a>
+
 *Bảng 2.5. Các Repository và trách nhiệm chính*
 
 | Repository | Trách nhiệm chính |
@@ -897,6 +1094,8 @@ TypeConverters chuyển đổi các enum (Priority, TaskStatus, RecurrenceType, 
 
 *Bảng tasks lưu trữ toàn bộ công việc của người dùng.*
 
+<a id="bang-26"></a>
+
 *Bảng 2.6. Cấu trúc bảng “tasks” trong cơ sở dữ liệu Room*
 
 | Tên cột | Kiểu dữ liệu | Ràng buộc | Ý nghĩa |
@@ -930,6 +1129,8 @@ Ghi chú thiết kế: Dự án dùng hai trường thời gian song song. Trư�
 
 *Bảng pomodoro_sessions lưu lịch sử các phiên tập trung và nghỉ của kỹ thuật Pomodoro.*
 
+<a id="bang-27"></a>
+
 *Bảng 2.7. Cấu trúc bảng pomodoro_sessions trong cơ sở dữ liệu Room*
 
 | Tên cột | Kiểu dữ liệu | Ràng buộc | Ý nghĩa |
@@ -951,9 +1152,49 @@ Chỉ mục startTime tăng tốc các truy vấn thống kê theo khoảng th�
 
 Ràng buộc ON DELETE CASCADE đảm bảo khi người dùng xóa một công việc, toàn bộ lịch sử phiên tập trung của công việc đó cũng bị xóa theo, do đó không bao giờ tồn tại bản ghi "mồ côi" trong cơ sở dữ liệu.
 
+<a id="hinh-24"></a>
+
+```mermaid
+erDiagram
+    tasks ||--o{ pomodoro_sessions : "contains (1-n)"
+    
+    tasks {
+        INTEGER id PK "Khóa chính tự tăng"
+        TEXT title "Tiêu đề công việc"
+        TEXT description "Mô tả chi tiết"
+        INTEGER dueDate "Ngày hạn (chuẩn hóa đầu ngày UTC)"
+        INTEGER dueTime "Giờ nhắc (mili-giây trong ngày)"
+        TEXT priority "HIGH | MEDIUM | LOW"
+        TEXT status "PENDING | IN_PROGRESS | COMPLETED | OVERDUE"
+        TEXT recurrenceType "NONE | DAILY | WEEKLY | MONTHLY"
+        INTEGER createdAt "Thời điểm tạo bản ghi"
+        INTEGER updatedAt "Thời điểm cập nhật gần nhất"
+        INTEGER completedAt "Thời điểm hoàn thành"
+        INTEGER totalFocusTimeMinutes "Tổng số phút tập trung tích lũy"
+        INTEGER completedPomodoros "Tổng số phiên Pomodoro hoàn thành"
+        INTEGER repeatEndDate "Ngày kết thúc lặp"
+        INTEGER repeatLimitCount "Giới hạn số lần lặp"
+        INTEGER currentOccurrence "Lần lặp hiện tại"
+        INTEGER isPaused "Trạng thái tạm dừng chuỗi lặp"
+    }
+
+    pomodoro_sessions {
+        INTEGER id PK "Khóa chính tự tăng"
+        INTEGER taskId FK "Khóa ngoại trỏ về tasks.id (CASCADE)"
+        TEXT sessionType "FOCUS | SHORT_BREAK | LONG_BREAK"
+        INTEGER durationMinutes "Thời lượng phiên (phút)"
+        INTEGER startTime "Thời điểm bắt đầu (INDEXED)"
+        INTEGER endTime "Thời điểm kết thúc"
+        INTEGER isCompleted "1: Hoàn thành đầy đủ | 0: Bỏ dở"
+        INTEGER createdAt "Thời điểm tạo bản ghi"
+    }
+```
+
 *Hình 2.4. Sơ đồ quan hệ thực thể (ERD) giữa tasks và pomodoro_sessions*
 
 ### 2.4.4. TaskDao và PomodoroDao
+
+<a id="bang-28"></a>
 
 *Bảng 2.8. Danh sách các DAO và phạm vi truy vấn*
 
@@ -976,6 +1217,8 @@ Ràng buộc ON DELETE CASCADE đảm bảo khi người dùng xóa một công 
 
 Dữ liệu người dùng là tài sản quan trọng nhất của ứng dụng quản lý công việc, vì vậy mọi thay đổi lược đồ đều được thực hiện bằng migration tường minh.
 
+<a id="bang-29"></a>
+
 *Bảng 2.9. Bảng đối chiếu version cơ sở dữ liệu và migration*
 
 | Version | Thay đổi lược đồ | Migration | Ghi chú |
@@ -991,6 +1234,38 @@ Dữ liệu người dùng là tài sản quan trọng nhất của ứng dụng
 ## 2.5. Thiết kế các luồng xử lý
 
 ### 2.5.1. Luồng tạo / sửa / xóa công việc
+
+<a id="hinh-25"></a>
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as 👤 Người dùng
+    participant View as 📱 AddEditTaskActivity
+    participant VM as 🧠 AddEditTaskViewModel
+    participant Repo as 📦 TaskRepository
+    participant DB as 💾 Room DB (TaskDao)
+    participant Alarm as ⏰ AlarmScheduler
+
+    User->>View: Nhập Tiêu đề, Chọn Ngày, Giờ nhắc, Ưu tiên -> Bấm Lưu
+    View->>VM: saveTask(title, desc, dueDate, dueTime, priority, recurrence)
+    VM->>VM: ValidationHelper.validate(title, dueDate, dueTime)
+    alt Dữ liệu không hợp lệ
+        VM-->>View: Trả về ValidationResult.Error
+        View-->>User: Hiển thị lỗi trên TextInputLayout
+    else Dữ liệu hợp lệ
+        VM->>Repo: insertTask(task)
+        Repo->>DB: TaskDao.insertTask(task) -> trả về taskId
+        opt Có đặt giờ nhắc
+            Repo->>Alarm: scheduleTaskReminder(task)
+            Alarm->>Alarm: AlarmManager.setExactAndAllowWhileIdle()
+        end
+        DB-->>Repo: Ghi thành công
+        Repo-->>VM: Hoàn tất
+        VM-->>View: Phát sự kiện UIEvent.SaveSuccess
+        View-->>User: Đóng màn hình & Hiển thị Snackbar thành công
+    end
+```
 
 *Hình 2.5. Sơ đồ luồng xử lý tạo / sửa / xóa công việc*
 
@@ -1010,6 +1285,32 @@ Vì màn hình danh sách quan sát Flow từ Room, danh sách tự động cậ
 
 ### 2.5.2. Luồng thông báo nhắc việc
 
+<a id="hinh-26"></a>
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant AM as ⏰ AlarmManager (OS)
+    participant AR as 📡 AlarmReceiver
+    participant NH as 🔔 NotificationHelper
+    participant User as 👤 Người dùng
+    participant Repo as 📦 TaskRepository
+
+    AM->>AR: Kích hoạt báo thức đúng giờ (PendingIntent)
+    AR->>NH: showTaskNotification(taskId, title, priority)
+    NH->>NH: Tạo Notification với Kênh High Importance, Âm thanh & Rung
+    NH-->>User: Hiển thị thông báo Banner trên thanh trạng thái
+    alt Người dùng bấm "Hoàn thành" trực tiếp trên Notification
+        User->>AR: Bấm Action PendingIntent "COMPLETE"
+        AR->>Repo: markTaskCompleted(taskId)
+        AR->>NH: cancelNotification(taskId)
+    else Người dùng bấm "Báo lại (Snooze)"
+        User->>AR: Bấm Action PendingIntent "SNOOZE_10_MIN"
+        AR->>AM: Lập lịch lại Alarm sau 10 phút
+        AR->>NH: cancelNotification(taskId)
+    end
+```
+
 *Hình 2.6. Sơ đồ luồng thông báo nhắc việc*
 
 Các điểm kỹ thuật quan trọng:
@@ -1024,11 +1325,71 @@ PendingIntent bất biến: mọi PendingIntent đều dùng cờ FLAG_IMMUTABLE
 
 ### 2.5.3. Luồng khôi phục nhắc nhở sau khi khởi động lại
 
+<a id="hinh-27"></a>
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant OS as ⚙️ Hệ điều hành Android
+    participant BR as 📡 BootReceiver / TimeChangeReceiver
+    participant Repo as 📦 TaskRepository
+    participant DB as 💾 Room DB
+    participant AS as ⏰ AlarmScheduler
+
+    OS->>BR: Phát broadcast ACTION_BOOT_COMPLETED / ACTION_TIME_CHANGED
+    Note over BR: Chuyển sang Coroutine IO không chặn Main Thread
+    BR->>Repo: getActiveTasksWithReminder()
+    Repo->>DB: TaskDao.getPendingTasksWithDueTime()
+    DB-->>Repo: Danh sách công việc còn hạn nhắc
+    loop Duyệt từng Task
+        Repo->>AS: scheduleTaskReminder(task)
+        AS->>AS: AlarmManager.setExactAndAllowWhileIdle()
+    end
+    Note over BR: Toàn bộ lịch nhắc nhở được khôi phục 100%
+```
+
 *Hình 2.7. Sơ đồ luồng khôi phục nhắc nhở sau khi khởi động lại*
 
 Vì AlarmManager không lưu lịch hẹn qua các lần khởi động lại thiết bị, nếu không có cơ chế này thì toàn bộ nhắc nhở sẽ biến mất sau khi người dùng tắt máy — một trong những lỗi phổ biến của các ứng dụng nhắc việc viết không đúng chuẩn.
 
 ### 2.5.4. Luồng xác thực mã PIN
+
+<a id="hinh-28"></a>
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as 👤 Người dùng
+    participant View as 📱 PinLockActivity
+    participant PM as 🔐 PinManager
+    participant Bio as 🧬 BiometricAuthHelper
+    participant Prefs as 💾 SharedPreferences
+
+    User->>View: Mở ứng dụng (PIN Lock đang bật)
+    alt Thiết bị hỗ trợ & Đã bật Vân tay
+        View->>Bio: showBiometricPrompt()
+        User->>Bio: Quét vân tay thành công
+        Bio-->>View: onAuthenticationSucceeded()
+        View-->>User: Mở khóa ngay -> Điều hướng MainActivity
+    else Nhập mã PIN 4 số
+        User->>View: Nhập mã PIN 4 chữ số
+        View->>PM: verifyPin(enteredPin)
+        PM->>Prefs: Lấy Salt đã lưu & Hash đã lưu
+        PM->>PM: Tính testHash = SHA-256(enteredPin + Salt)
+        alt testHash == savedHash (Đúng)
+            PM-->>View: Xác thực thành công (Reset số lần sai về 0)
+            View-->>User: Mở khóa -> Điều hướng MainActivity
+        else testHash != savedHash (Sai)
+            PM->>PM: Tăng failedAttempts += 1
+            alt failedAttempts >= 5
+                PM-->>View: Kích hoạt khóa tạm thời 30 giây
+                View-->>User: Vô hiệu hóa bàn phím & Đếm ngược 30s
+            else
+                View-->>User: Rung lắc 4 ô PIN & Báo sai mã PIN
+            end
+        end
+    end
+```
 
 *Hình 2.8. Sơ đồ luồng xác thực mã PIN*
 
@@ -1036,7 +1397,65 @@ Vì AlarmManager không lưu lịch hẹn qua các lần khởi động lại th
 
 ### 2.5.5. Luồng Backup và Restore
 
+<a id="hinh-29"></a>
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as 👤 Người dùng
+    participant View as 📱 DataManagementFragment
+    participant VM as 🧠 BackupViewModel
+    participant Repo as 📦 BackupRepository
+    participant DB as 💾 Room DB
+    participant SAF as 📂 Storage Access Framework
+
+    User->>View: Bấm "Xuất dữ liệu ra tệp JSON"
+    View->>SAF: Khởi chạy CreateDocument Launcher (application/json)
+    User->>SAF: Chọn vị trí lưu & Đặt tên tệp
+    SAF-->>View: Trả về targetUri
+    View->>VM: exportBackup(targetUri)
+    VM->>Repo: createBackupJson(targetUri)
+    Repo->>DB: Đọc toàn bộ tasks và pomodoro_sessions
+    DB-->>Repo: Dữ liệu thực thể
+    Repo->>Repo: Đóng gói JSON (Metadata, Version, Tasks Array, Pomodoro Array)
+    Repo->>SAF: Mở OutputStream ghi dữ liệu JSON
+    SAF-->>Repo: Ghi tệp hoàn tất
+    Repo-->>VM: BackupResult.Success(taskCount, sessionCount)
+    VM-->>View: Hiển thị thông báo xuất dữ liệu thành công
+```
+
 *Hình 2.9. Sơ đồ luồng Backup JSON*
+
+<a id="hinh-210"></a>
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as 👤 Người dùng
+    participant View as 📱 DataManagementFragment
+    participant VM as 🧠 BackupViewModel
+    participant Val as 🛡️ BackupValidator
+    participant Repo as 📦 BackupRepository
+    participant DB as 💾 Room DB
+
+    User->>View: Bấm "Khôi phục dữ liệu" -> Chọn tệp JSON
+    View->>VM: importBackup(fileUri)
+    VM->>Repo: restoreFromJson(fileUri)
+    Repo->>Val: validateBackupFile(fileContent)
+    Val->>Val: Kiểm tra 1. JSON Syntax -> 2. Version -> 3. Arrays Structure -> 4. Task Fields -> 5. Foreign Key Integrity
+    alt Tệp không hợp lệ / Vi phạm cấu trúc
+        Val-->>Repo: ValidationResult.Invalid(lý do cụ thể)
+        Repo-->>VM: RestoreResult.Error(danh sách lỗi)
+        VM-->>View: Hiển thị Dialog báo lỗi chi tiết & Không ghi DB
+    else Tệp hoàn toàn hợp lệ
+        Val-->>Repo: ValidationResult.Valid
+        Repo->>DB: Thực thi @Transaction khôi phục nguyên tử
+        Note over DB: 1. Xóa toàn bộ dữ liệu hiện có<br/>2. Chèn tasks mới (giữ nguyên ID)<br/>3. Chèn pomodoro_sessions mới (giữ nguyên ID, TaskID)
+        DB-->>Repo: Transaction Commit thành công
+        Repo-->>VM: RestoreResult.Success
+        VM-->>View: Hiển thị thông báo khôi phục thành công & Cập nhật UI
+    end
+```
 
 *Hình 2.10. Sơ đồ luồng Restore JSON*
 
@@ -1049,6 +1468,8 @@ Kiểm tra tính hợp lệ trước khi chạm vào cơ sở dữ liệu (chi t
 Nếu hợp lệ, thực hiện toàn bộ việc ghi trong một transaction duy nhất: xóa dữ liệu hiện có, chèn lại danh sách công việc (giữ nguyên id), chèn lại lịch sử phiên Pomodoro (giữ nguyên id và taskId).
 
 Nếu bất kỳ bước nào lỗi, transaction bị hủy (rollback), cơ sở dữ liệu trở về trạng thái trước khi khôi phục; người dùng nhận thông báo lỗi thay vì dữ liệu bị hỏng một nửa.
+
+<a id="bang-210"></a>
 
 *Bảng 2.10. Các bước kiểm tra tính hợp lệ của tệp sao lưu*
 
@@ -1066,11 +1487,58 @@ Nếu bất kỳ kiểm tra nào thất bại, hệ thống không ghi gì vào 
 
 ### 2.5.6. Luồng Home Screen Widget
 
+<a id="hinh-211"></a>
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant OS as 📱 Android Launcher (Widget Host)
+    participant WP as 🧩 TaskWidgetProvider
+    participant WS as ⚙️ TaskWidgetService (RemoteViewsFactory)
+    participant DB as 💾 Room Database
+    participant User as 👤 Người dùng
+
+    OS->>WP: onUpdate() / Widget làm mới định kỳ
+    WP->>WS: notifyAppWidgetViewDataChanged()
+    WS->>DB: TaskDao.getTodayTasksSync()
+    DB-->>WS: Danh sách công việc hôm nay
+    WS->>OS: Bind RemoteViews danh sách công việc
+    OS-->>User: Hiển thị danh sách việc trực tiếp trên Widget màn hình chính
+    alt Người dùng chạm Checkbox trên Widget
+        User->>WP: Bấm checkbox hoàn thành việc
+        WP->>DB: TaskDao.toggleTaskComplete(taskId)
+        DB-->>WP: Cập nhật thành công
+        WP->>WP: AppWidgetManager.notifyAppWidgetViewDataChanged()
+        WP-->>OS: Giao diện Widget gạch ngang công việc tức thì
+    end
+```
+
 *Hình 2.11. Sơ đồ luồng Home Screen Widget*
 
 Cơ chế đáng chú ý: ứng dụng đăng ký một InvalidationTracker.Observer cho bảng tasks ở tầng Application. Nhờ đó, mọi thay đổi dữ liệu công việc — dù xuất phát từ ứng dụng hay từ chính widget — đều kích hoạt cập nhật lại tất cả widget đang hiển thị trên màn hình chính, đảm bảo widget không bao giờ hiển thị dữ liệu cũ.
 
 ### 2.5.7. Luồng quản lý phiên tập trung Pomodoro
+
+<a id="hinh-212"></a>
+
+```mermaid
+stateDiagram-v2
+    [*] --> IDLE: Khởi động ứng dụng
+
+    IDLE --> FOCUS_RUNNING: Bấm "Bắt đầu tập trung"
+    FOCUS_RUNNING --> FOCUS_PAUSED: Bấm "Tạm dừng"
+    FOCUS_PAUSED --> FOCUS_RUNNING: Bấm "Tiếp tục"
+    FOCUS_RUNNING --> IDLE: Bấm "Hủy phiên"
+    
+    FOCUS_RUNNING --> BREAK_RUNNING: Hết 25 phút tập trung (Tự động hoặc bấm chuyển)
+    note right of BREAK_RUNNING: Lưu phiên vào DB & Rung chuông thông báo
+    
+    BREAK_RUNNING --> BREAK_PAUSED: Bấm "Tạm dừng nghỉ"
+    BREAK_PAUSED --> BREAK_RUNNING: Bấm "Tiếp tục nghỉ"
+    BREAK_RUNNING --> IDLE: Bấm "Dừng nghỉ" / Hết 5 phút nghỉ ngắn
+    
+    BREAK_RUNNING --> FOCUS_RUNNING: Bắt đầu chu kỳ Pomodoro tiếp theo
+```
 
 *Hình 2.12. Sơ đồ máy trạng thái của Pomodoro Timer*
 
@@ -1136,6 +1604,8 @@ Các thiết kế này là cơ sở trực tiếp để hiện thực mã nguồ
 
 ## 3.1. Môi trường phát triển
 
+<a id="bang-31"></a>
+
 *Bảng 3.1. Môi trường phát triển của dự án*
 
 | Thành phần | Phiên bản / Thông số | Ghi chú |
@@ -1153,6 +1623,8 @@ Các thiết kế này là cơ sở trực tiếp để hiện thực mã nguồ
 
 
 ## 3.2. Công nghệ và thư viện sử dụng
+
+<a id="bang-32"></a>
 
 *Bảng 3.2. Danh sách thư viện và phiên bản sử dụng trong dự án*
 
@@ -1176,6 +1648,8 @@ Các thiết kế này là cơ sở trực tiếp để hiện thực mã nguồ
 
 
 Các API nền tảng Android được sử dụng:
+
+<a id="bang-33"></a>
 
 *Bảng 3.3. Mục đích sử dụng của các API trong dự án*
 
@@ -1259,11 +1733,47 @@ app/src/main/java/com/team/taskmanagementapp/
 └── viewmodel/                          # ImportViewModel, TaskViewModel, CalendarViewModel
 `
 
+<a id="hinh-31"></a>
+
+```text
+┌────────────────────────────────────────────────────────┐
+│  TaskFlow                     [🔍 Tìm kiếm]  [⚙️ Cài đặt]│
+├────────────────────────────────────────────────────────┤
+│  ⚡ TIẾN ĐỘ HÔM NAY                                    │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │  3/5 Công việc hoàn thành        [ 60% Hoàn thành]│  │
+│  │  ■■■■■■■■■■■■■■■■■■■■□□□□□□□□                    │  │
+│  └──────────────────────────────────────────────────┘  │
+│                                                        │
+│  📅 HÔM NAY (3)                     [⚡ Lọc] [🔃 Sắp xếp]│
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ [ ] Hoàn thành báo cáo LTTBDD       🔴 HIGH     │  │
+│  │     ⏰ 17:00 • 🔁 Không lặp                      │  │
+│  │     Mô tả: Nộp bản hoàn chỉnh kèm DOCX và Code   │  │
+│  ├──────────────────────────────────────────────────┤  │
+│  │ [x] Họp nhóm đồ án qua Google Meet 🟡 MEDIUM   │  │
+│  │     ⏰ 09:00 • 🔁 Hằng tuần (Đã xong)           │  │
+│  └──────────────────────────────────────────────────┘  │
+│                                                        │
+│  📆 SẮP TỚI (2)                                        │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ [ ] Ôn tập kiểm tra cuối kỳ         🟢 LOW      │  │
+│  │     ⏰ 28/09/2026 • 08:00                        │  │
+│  └──────────────────────────────────────────────────┘  │
+│                                                        │
+│  [🤖 Trợ lý AI]                     [ ➕ Thêm công việc ]│
+├────────────────────────────────────────────────────────┤
+│  [📋 Việc]   [📅 Lịch]   [🍅 Pomodoro]  [🏆 Badges] [📊 Stats] │
+└────────────────────────────────────────────────────────┘
+```
+
 *Hình 3.1. Cấu trúc thư mục mã nguồn*
 
 Nguyên tắc: mã nguồn được tổ chức theo tầng kiến trúc (data — ui — util) kết hợp theo miền nghiệp vụ (pomodoro, widget, receiver, security). Các logic thuần Kotlin được tách riêng để có thể kiểm thử trên JVM.
 
 ### 3.3.1. Danh sách màn hình chính
+
+<a id="bang-34"></a>
 
 *Bảng 3.4. Các màn hình chính của ứng dụng*
 
@@ -1290,13 +1800,95 @@ Cung cấp vòng đời đầy đủ cho một công việc: tạo mới, xem, c
 
 ### 3.4.2. Giao diện
 
+<a id="hinh-32"></a>
+
+```text
+┌────────────────────────────────────────────────────────┐
+│  ← Thêm công việc mới                         [💾 LƯU] │
+├────────────────────────────────────────────────────────┤
+│  Tiêu đề công việc *                                   │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ Ôn thi cuối kỳ môn Lập trình di động             │  │
+│  └──────────────────────────────────────────────────┘  │
+│                                                        │
+│  Mô tả chi tiết                                        │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ Ôn tập các chương MVVM, Room, Alarm và Pomodoro  │  │
+│  │ chuẩn bị thuyết trình đồ án trước hội đồng.      │  │
+│  └──────────────────────────────────────────────────┘  │
+│                                                        │
+│  📅 Ngày hết hạn           ⏰ Giờ nhắc                 │
+│  ┌──────────────────────┐  ┌──────────────────────┐    │
+│  │ 📅 28/09/2026        │  │ ⏰ 14:00             │    │
+│  └──────────────────────┘  └──────────────────────┘    │
+│                                                        │
+│  Mức độ ưu tiên                                        │
+│  ( ) Thấp (LOW)     ( ) Vừa (MEDIUM)    (*) Cao (HIGH) │
+│                                                        │
+│  Quy tắc lặp lại                                       │
+│  (*) Không lặp   ( ) Hằng ngày  ( ) Hằng tuần  ( ) Tháng│
+└────────────────────────────────────────────────────────┘
+```
+
 *Hình 3.2. Giao diện danh sách công việc (Task List)*
 
+<a id="hinh-33"></a>
+
+```text
+┌────────────────────────────────────────────────────────┐
+│  ← Chi tiết công việc             [✏️ Sửa]   [🗑️ Xóa]   │
+├────────────────────────────────────────────────────────┤
+│  Hoàn thành Báo cáo BTL LTTBDD                         │
+│  [ Trạng thái: Đang thực hiện ]     [ Mức ưu tiên: CAO ]│
+├────────────────────────────────────────────────────────┤
+│  📝 MÔ TẢ                                              │
+│  Hoàn thiện các sơ đồ Use Case, ERD, Sequence Flows    │
+│  và đồng bộ toàn bộ mã nguồn vào báo cáo Markdown.     │
+├────────────────────────────────────────────────────────┤
+│  ⏰ THỜI GIAN & NHẮC NHỞ                               │
+│  • Hạn chót: Thứ Năm, 24/09/2026                      │
+│  • Giờ nhắc: 17:00 (Exact Alarm • Nhắc trước 10 phút)  │
+│  • Quy tắc lặp: Không lặp                              │
+├────────────────────────────────────────────────────────┤
+│  💡 CHÂM NGÔN ĐỘNG LỰC (Tự đổi mỗi 5s)                │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ "Hành trình vạn dặm bắt đầu từ một bước chân.   │  │
+│  │  Hãy tập trung hoàn thành từng mục tiêu nhỏ!"   │  │
+│  └──────────────────────────────────────────────────┘  │
+├────────────────────────────────────────────────────────┤
+│  [ 🍅 BẮT ĐẦU POMODORO ]      [ ✅ ĐÁNH DẤU HOÀN THÀNH ] │
+└────────────────────────────────────────────────────────┘
+```
+
 *Hình 3.3. Giao diện thêm / sửa công việc*
+
+<a id="hinh-34"></a>
+
+```text
+┌────────────────────────────────────────────────────────┐
+│  Bộ lọc & Sắp xếp công việc                   [ Đóng ] │
+├────────────────────────────────────────────────────────┤
+│  LỌC THEO TRẠNG THÁI                                   │
+│  [x] Tất cả       [ ] Chưa hoàn thành    [ ] Đã xong   │
+│                                                        │
+│  LỌC THEO ĐỘ ƯU TIÊN                                   │
+│  [x] Tất cả       [ ] 🔴 Cao   [ ] 🟡 Vừa  [ ] 🟢 Thấp │
+│                                                        │
+│  SẮP XẾP THEO                                          │
+│  (*) Ngày hết hạn (Gần nhất trước)                     │
+│  ( ) Ngày hết hạn (Xa nhất trước)                      │
+│  ( ) Mức độ ưu tiên (Cao đến Thấp)                     │
+│  ( ) Mới tạo gần đây                                   │
+├────────────────────────────────────────────────────────┤
+│  [ 🔄 Đặt lại mặc định ]            [ ⚡ ÁP DỤNG BỘ LỌC ]│
+└────────────────────────────────────────────────────────┘
+```
 
 *Hình 3.4. Giao diện chi tiết công việc*
 
 ### 3.4.3. Xử lý và các thành phần mã nguồn
+
+<a id="bang-35"></a>
 
 *Bảng 3.5. Chức năng, xử lý của các thành phần mã nguồn*
 
@@ -1359,6 +1951,27 @@ Giúp người dùng thu hẹp danh sách theo tiêu chí quan tâm và sắp x�
 
 ### 3.5.2. Giao diện
 
+<a id="hinh-35"></a>
+
+```text
+┌────────────────────────────────────────────────────────┐
+│  Lịch biểu                      [ ‹ ] Tháng 09/2026 [ › ]│
+├────────────────────────────────────────────────────────┤
+│   T2    T3    T4    T5    T6    T7    CN               │
+│   31     1     2     3     4     5     6               │
+│    7     8     9    10    11    12    13               │
+│   14    15    16    17    18    19    20               │
+│   21    22    23   [24]•  25•   26    27               │
+│   28•   29    30     1     2     3     4               │
+├────────────────────────────────────────────────────────┤
+│  📋 CÔNG VIỆC NGÀY 24/09/2026 (2 việc)                 │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ 🔴 17:00 • Hoàn thành Báo cáo BTL LTTBDD        │  │
+│  │ 🟡 20:00 • Kiểm tra mã nguồn Pomodoro Service    │  │
+│  └──────────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────┘
+```
+
 *Hình 3.5. Giao diện lọc và sắp xếp (Filter Bottom Sheet)*
 
 ### 3.5.3. Xử lý và các thành phần mã nguồn
@@ -1409,9 +2022,37 @@ Cho phép người dùng nhìn công việc theo trục thời gian, phát hiệ
 
 ### 3.6.2. Giao diện
 
+<a id="hinh-36"></a>
+
+```mermaid
+flowchart TD
+    START(["👤 Mở tính năng đặt giờ nhắc"]) --> CHECK_SDK{"Android 13+<br/>(API ≥ 33)?"}
+    
+    CHECK_SDK -->|Không| CHECK_EXACT
+    CHECK_SDK -->|Có| CHECK_NOTI{"Đã cấp quyền<br/>POST_NOTIFICATIONS?"}
+    
+    CHECK_NOTI -->|Đã cấp| CHECK_EXACT
+    CHECK_NOTI -->|Chưa cấp| SHOW_RATIONALE{"Cần giải thích<br/>lý do (Rationale)?"}
+    
+    SHOW_RATIONALE -->|Có| DIALOG["Hiển thị Dialog giải thích<br/>sự cần thiết của thông báo"]
+    SHOW_RATIONALE -->|Không| REQ_PERM["Yêu cầu cấp quyền<br/>ActivityResultLauncher"]
+    DIALOG --> REQ_PERM
+    
+    REQ_PERM --> RESULT{"Người dùng<br/>đồng ý?"}
+    RESULT -->|Từ chối| WARN["Cảnh báo: Không thể nhận nhắc nhở đúng giờ"]
+    RESULT -->|Đồng ý| CHECK_EXACT
+    
+    CHECK_EXACT{"Đã cấp quyền<br/>SCHEDULE_EXACT_ALARM?"}
+    CHECK_EXACT -->|Đã có| READY["✅ Lập lịch Exact Alarm chính xác 100%"]
+    CHECK_EXACT -->|Chưa có| SETTINGS["Điều hướng tới Cài đặt hệ thống để bật quyền"]
+    SETTINGS --> READY
+```
+
 *Hình 3.6. Giao diện lịch biểu (Calendar View)*
 
 ### 3.6.3. Xử lý và các thành phần mã nguồn
+
+<a id="bang-37"></a>
 
 *Bảng 3.7. Vai trò của các thành phần trong mã nguồn*
 
@@ -1441,6 +2082,8 @@ Truy vấn theo khoảng ngày được tái sử dụng cho cả widget và th�
 
 ### 3.7.2. Kiến trúc phân hệ
 
+<a id="bang-38"></a>
+
 *Bảng 3.8. Kiến trúc phân hệ*
 
 | Thành phần | Trách nhiệm |
@@ -1466,6 +2109,24 @@ Hủy. Khi công việc bị xóa hoặc được chỉnh sửa để bỏ nhắ
 
 ### 3.7.4. Xử lý quyền thông báo trên Android 13
 
+<a id="hinh-37"></a>
+
+```mermaid
+flowchart TD
+    COMPLETE(["👤 Đánh dấu hoàn thành Task lặp"]) --> CHECK_REC{"Kiểu lặp<br/>(RecurrenceType)?"}
+    
+    CHECK_REC -->|NONE| FINISH["Đổi trạng thái = COMPLETED<br/>Lưu completedAt = Now"]
+    
+    CHECK_REC -->|DAILY / WEEKLY / MONTHLY| CALC["RecurrenceHelper tính toán<br/>kỳ hạn tiếp theo"]
+    
+    CALC --> UPDATE_DUE["1. dueDate mới = dueDate cũ + (1 Ngày/Tuần/Tháng)<br/>2. dueTime mới = dueTime cũ (giữ nguyên giờ nhắc)<br/>3. status = PENDING (chuyển tiếp chu kỳ mới)"]
+    
+    UPDATE_DUE --> SAVE_DB["Lưu cập nhật vào Room Database"]
+    SAVE_DB --> RESCHEDULE["AlarmScheduler đặt lại lịch nhắc cho kỳ hạn mới"]
+    RESCHEDULE --> DONE["✅ Hoàn tất chu kỳ lặp"]
+    FINISH --> DONE
+```
+
 *Hình 3.7. Luồng xử lý quyền thông báo*
 
 ### 3.7.5. Kết quả đạt được
@@ -1485,6 +2146,8 @@ Có phương án dự phòng khi thiết bị không cho phép hẹn giờ chín
 Giảm thao tác thủ công và tránh bỏ sót đối với nhóm công việc định kỳ — nhóm công việc chiếm tỷ trọng lớn trong kế hoạch cá nhân như họp nhóm hằng tuần, đóng học phí hằng tháng, ôn tập theo chu kỳ.
 
 ### 3.8.2. Các quy tắc lặp được hỗ trợ
+
+<a id="bang-39"></a>
 
 *Bảng 3.9. Quy tắc lặp lại task mới*
 
@@ -1507,6 +2170,33 @@ Lặp có giới hạn (bounded recurrence). Nhóm cột repeatEndDate, repeatLi
 
 ### 3.8.4. Xử lý khi hoàn thành công việc lặp lại
 
+<a id="hinh-38"></a>
+
+```text
+┌────────────────────────────────────────────────────────┐
+│                                                        │
+│                    🔒 TASKFLOW LOCK                    │
+│             Nhập mã PIN để mở khóa ứng dụng            │
+│                                                        │
+│                     ●   ●   ●   ○                      │
+│                                                        │
+│                  ┌───┐  ┌───┐  ┌───┐                   │
+│                  │ 1 │  │ 2 │  │ 3 │                   │
+│                  └───┘  └───┘  └───┘                   │
+│                  ┌───┐  ┌───┐  ┌───┐                   │
+│                  │ 4 │  │ 5 │  │ 6 │                   │
+│                  └───┘  └───┘  └───┘                   │
+│                  ┌───┐  ┌───┐  ┌───┐                   │
+│                  │ 7 │  │ 8 │  │ 9 │                   │
+│                  └───┘  └───┘  └───┘                   │
+│                  ┌───┐  ┌───┐  ┌───┐                   │
+│                  │🧬 │  │ 0 │  │ ⌫ │                   │
+│                  └───┘  └───┘  └───┘                   │
+│                                                        │
+│            [🧬 Chạm biểu tượng để quét Vân tay]        │
+└────────────────────────────────────────────────────────┘
+```
+
 *Hình 3.8. Luồng xử lý khi hoàn thành công việc lặp lại*
 
 ### 3.8.5. Kết quả đạt được
@@ -1525,6 +2215,8 @@ Bảo vệ danh sách công việc cá nhân khỏi người khác truy cập kh
 
 ### 3.9.2. Thiết kế bảo mật
 
+<a id="bang-310"></a>
+
 *Bảng 3.10. Thiết kế bảo mật*
 
 | Thành phần | Nội dung |
@@ -1538,11 +2230,61 @@ Bảo vệ danh sách công việc cá nhân khỏi người khác truy cập kh
 
 ### 3.9.3. Giao diện
 
+<a id="hinh-39"></a>
+
+```mermaid
+flowchart TD
+    START(["👤 Người dùng thiết lập / mở khóa PIN"]) --> MODE{"Chế độ xử lý?"}
+    
+    MODE -->|Thiết lập mới| ENTER_NEW["Nhập PIN 4 số lần 1"]
+    ENTER_NEW --> CONFIRM_NEW["Nhập lại PIN để xác nhận"]
+    CONFIRM_NEW --> MATCH{"2 lần trùng khớp?"}
+    MATCH -->|Không| ERR_MISMATCH["Báo lỗi không khớp -> Nhập lại"]
+    MATCH -->|Khớp| GEN_SALT["Sinh chuỗi Salt ngẫu nhiên (16 bytes SecureRandom)"]
+    GEN_SALT --> HASH["Tính hash = SHA-256(PIN + Salt)"]
+    HASH --> SAVE_PREF["Lưu Salt & Hash vào SharedPreferences"]
+    SAVE_PREF --> PIN_ENABLED["✅ Kích hoạt bảo vệ PIN thành công"]
+    
+    MODE -->|Xác thực mở khóa| INPUT_PIN["Nhập PIN 4 chữ số"]
+    INPUT_PIN --> CALC_TEST["Lấy Salt đã lưu -> Tính testHash = SHA-256(Input + Salt)"]
+    CALC_TEST --> VERIFY{"testHash == savedHash?"}
+    VERIFY -->|Đúng| UNLOCK["✅ Mở khóa ứng dụng -> Reset failedAttempts = 0"]
+    VERIFY -->|Sai| INC_FAIL["failedAttempts += 1"]
+    INC_FAIL --> CHECK_LIMIT{"Đã sai ≥ 5 lần?"}
+    CHECK_LIMIT -->|Chưa| RETRY["Báo sai mã PIN -> Thử lại"]
+    CHECK_LIMIT -->|Đã đủ 5 lần| LOCK30["⏳ Khóa tạm thời 30 giây (Anti-Brute Force)"]
+    LOCK30 -->|Hết 30s| INPUT_PIN
+```
+
 *Hình 3.9. Giao diện khóa PIN*
 
 ### 3.9.4. Luồng thiết lập và xác thực
 
-***Hình 3.10. Luồng thiết lập và xác thực***
+**<a id="hinh-310"></a>
+
+```text
+┌────────────────────────────────────────────────────────┐
+│  ← Quản lý Dữ liệu (Backup & Restore)                  │
+├────────────────────────────────────────────────────────┤
+│  📤 SAO LƯU DỮ LIỆU                                    │
+│  Xuất toàn bộ công việc và lịch sử Pomodoro ra tệp     │
+│  JSON an toàn vào bộ nhớ máy hoặc Google Drive.        │
+│                                                        │
+│  Thống kê dữ liệu hiện tại:                            │
+│  • Tổng số công việc: 24 công việc                     │
+│  • Phiên tập trung Pomodoro: 18 phiên                  │
+│                                                        │
+│  [ 📤 XUẤT RA TỆP JSON (SAF) ]                         │
+├────────────────────────────────────────────────────────┤
+│  📥 KHÔI PHỤC DỮ LIỆU                                  │
+│  Phục hồi dữ liệu từ tệp tin taskflow_backup_*.json.   │
+│  (Lưu ý: Thao tác sẽ thay thế dữ liệu hiện có).        │
+│                                                        │
+│  [ 📥 CHỌN TỆP SAO LƯU ĐỂ PHỤC HỒI ]                   │
+└────────────────────────────────────────────────────────┘
+```
+
+*Hình 3.10. Luồng thiết lập và xác thực***
 
 ### 3.9.5. Kết quả đạt được
 
@@ -1559,6 +2301,18 @@ Màn hình khóa ngăn truy cập nội dung ứng dụng khi chưa xác thực 
 Cho phép người dùng chủ động sao lưu toàn bộ dữ liệu ra một tệp tin duy nhất có thể mang đi bất kỳ đâu, và khôi phục lại dữ liệu đó khi đổi thiết bị hoặc cài lại ứng dụng — đây là cơ chế "bảo hiểm dữ liệu" của một ứng dụng hoạt động thuần ngoại tuyến.
 
 ### 3.10.2. Giao diện
+
+<a id="hinh-311"></a>
+
+```text
+┌────────────────────────────────────────────────────────┐
+│  TASKFLOW WIDGET — HÔM NAY (3 việc)       [ 🔄 ] [ ➕ ] │
+├────────────────────────────────────────────────────────┤
+│  [ ] 🔴 17:00 • Nộp Báo cáo đồ án LTTBDD              │
+│  [ ] 🟡 19:30 • Họp online phản biện môn học          │
+│  [x] 🟢 08:00 • Đọc tài liệu Kotlin Coroutines Flow    │
+└────────────────────────────────────────────────────────┘
+```
 
 *Hình 3.11. Giao diện Quản lý dữ liệu (Backup / Restore)*
 
@@ -1634,6 +2388,8 @@ Sao lưu cả số liệu Pomodoro của công việc (estimatedPomodoros, compl
 
 Quy trình khôi phục được chia thành ba pha tách biệt:
 
+<a id="bang-311"></a>
+
 *Bảng 3.11. Quy trình khôi phục*
 
 | Pha | Nội dung | Nguyên tắc |
@@ -1646,6 +2402,8 @@ Quy trình khôi phục được chia thành ba pha tách biệt:
 Kiểm tra toàn vẹn khóa ngoại là bước kiểm tra đặc biệt quan trọng: nếu tệp có phiên tập trung trỏ tới một taskId không tồn tại trong danh sách công việc của tệp, việc ghi vào cơ sở dữ liệu sẽ vi phạm khóa ngoại. Nhờ kiểm tra trước, ứng dụng phát hiện tệp sai và thông báo rõ ràng, thay vì để transaction thất bại với thông báo lỗi khó hiểu hoặc ghi được một phần dữ liệu.
 
 ### 3.10.5. Các thành phần mã nguồn
+
+<a id="bang-312"></a>
 
 *Bảng 3.12. Trách nhiệm của các thành phần mã nguồn*
 
@@ -1679,11 +2437,38 @@ Lịch sử sao lưu gần đây giúp người dùng biết mình đã sao lưu
 
 ### 3.11.2. Giao diện
 
+<a id="hinh-312"></a>
+
+```text
+┌────────────────────────────────────────────────────────┐
+│  Thống kê Năng suất (Bento Grid)                       │
+├────────────────────────────────────────────────────────┤
+│  ┌─────────────────────────┐ ┌───────────────────────┐ │
+│  │   TỶ LỆ HOÀN THÀNH      │ │  TỔNG THỜI GIAN FOCUS │ │
+│  │         ╭───╮           │ │                       │ │
+│  │        │ 78% │          │ │       12h 45m         │ │
+│  │         ╰───╯           │ │    (28 Phiên Pomodoro)│ │
+│  │    18/23 Task đã xong   │ │                       │ │
+│  └─────────────────────────┘ └───────────────────────┘ │
+│                                                        │
+│  NĂNG SUẤT 7 NGÀY TRONG TUẦN (Số task hoàn thành)      │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │   6 ┤        █                                   │  │
+│  │   4 ┤   █    █    █         █                    │  │
+│  │   2 ┤   █    █    █    █    █    █               │  │
+│  │   0 ┼───┴────┴────┴────┴────┴────┴────┴──        │  │
+│  │        T2   T3   T4   T5   T6   T7   CN          │  │
+│  └──────────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────┘
+```
+
 *Hình 3.12. Giao diện Home Screen Widget*
 
 Khi tất cả công việc trong ngày đã hoàn thành, widget hiển thị trạng thái động viên "Xong hết 🎉". Khi chưa có công việc nào cho ngày hôm nay, widget hiển thị hướng dẫn thêm việc mới.
 
 ### 3.11.3. Các thành phần mã nguồn
+
+<a id="bang-313"></a>
 
 *Bảng 3.13. Trách nhiệm của các thành phần mã nguồn*
 
@@ -1724,9 +2509,35 @@ Biến dữ liệu công việc thành thông tin phản hồi cho người dùn
 
 ### 3.12.2. Giao diện
 
+<a id="hinh-313"></a>
+
+```text
+┌────────────────────────────────────────────────────────┐
+│  Đồng hồ Pomodoro                                      │
+├────────────────────────────────────────────────────────┤
+│  Công việc đang tập trung:                             │
+│  🎯 Hoàn thành Báo cáo BTL LTTBDD                      │
+│                                                        │
+│                   ╭────────────────╮                   │
+│                 ╭╯                  ╰╮                 │
+│                │        24:35         │                │
+│                │     PHIÊN FOCUS      │                │
+│                 ╰╮                  ╭╯                 │
+│                   ╰────────────────╯                   │
+│                      Phiên 3 / 4                       │
+│                                                        │
+│     [ ⏸️ Tạm dừng ]     [ ⏭️ Bỏ qua ]     [ ⏹️ Dừng ]     │
+├────────────────────────────────────────────────────────┤
+│  ⚙️ CÀI ĐẶT THỜI LƯỢNG                                 │
+│  • Tập trung: 25 phút  • Nghỉ ngắn: 5p  • Nghỉ dài: 15p│
+└────────────────────────────────────────────────────────┘
+```
+
 *Hình 3.13. Giao diện Thống kê Bento Grid*
 
 ### 3.12.3. Các thành phần mã nguồn
+
+<a id="bang-314"></a>
 
 *Bảng 3.14. Trách nhiệm của các thành phần mã nguồn*
 
@@ -1768,6 +2579,8 @@ Trạng thái không có dữ liệu được xử lý rõ ràng: hiển thị "
 Bổ sung một năng lực mà các ứng dụng quản lý công việc tối giản thường thiếu: không chỉ nhắc người dùng *phải làm gì* mà còn hỗ trợ người dùng *thực sự bắt tay vào làm*. Kỹ thuật Pomodoro chia công việc thành các phiên tập trung ngắn (mặc định 25 phút) xen kẽ các phiên nghỉ ngắn, sau một số chu kỳ thì nghỉ dài. Việc gắn mỗi phiên tập trung với một công việc cụ thể giúp dữ liệu thống kê có ý nghĩa nghiệp vụ.
 
 ### 3.13.2. Kiến trúc phân hệ
+
+<a id="bang-315"></a>
 
 *Bảng 3.15. Trách nhiệm của các thành phần mã nguồn*
 
@@ -1811,6 +2624,31 @@ Bổ sung một năng lực mà các ứng dụng quản lý công việc tối 
 └─────────────────────────────────────────────────────────┘
 `
 
+<a id="hinh-314"></a>
+
+```text
+┌────────────────────────────────────────────────────────┐
+│  Thành tích & Huy hiệu (Milestone Badges)              │
+├────────────────────────────────────────────────────────┤
+│  🔥 CHUỖI LIÊN TIẾP HIỆN TẠI                           │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │  🔥 7 NGÀY LIÊN TIẾP             Kỷ lục: 14 ngày │  │
+│  │  Danh hiệu: KỶ LUẬT THÉP         [ Chi tiết mốc ]│  │
+│  │  Tiến độ tuần: [T2✓] [T3✓] [T4✓] [T5✓] [T6✓] [T7✓] [CN ] │  │
+│  └──────────────────────────────────────────────────┘  │
+│                                                        │
+│  🏆 BỘ SƯU TẬP 7 HUY HIỆU ĐẶC BIỆT                     │
+│  ┌──────────────┐ ┌──────────────┐ ┌─────────────────┐ │
+│  │ 🌅 Early Bird│ │ 🦉 Night Owl │ │ ⚔️ Weekend Hero │ │
+│  │ [ ĐÃ MỞ KHÓA]│ │ [ ĐÃ MỞ KHÓA]│ │ [ ĐÃ MỞ KHÓA]   │ │
+│  └──────────────┘ └──────────────┘ └─────────────────┘ │
+│  ┌──────────────┐ ┌──────────────┐ ┌─────────────────┐ │
+│  │ 🍅 Pomo King │ │ 💯 Century   │ │ 👑 Consistency  │ │
+│  │ [ ĐÃ MỞ KHÓA]│ │ [ 24/100 ]   │ │ [ 7/30 Ngày ]   │ │
+│  └──────────────┘ └──────────────┘ └─────────────────┘ │
+└────────────────────────────────────────────────────────┘
+```
+
 *Hình 3.14. Giao diện đồng hồ Pomodoro*
 
 `kotlin
@@ -1841,6 +2679,32 @@ Bổ sung một năng lực mà các ứng dụng quản lý công việc tối 
 │  Phiên đang chạy giữ nguyên thời lượng.                 │
 └─────────────────────────────────────────────────────────┘
 `
+
+<a id="hinh-315"></a>
+
+```text
+┌────────────────────────────────────────────────────────┐
+│  🤖 Trợ lý ảo AI (TaskFlow Assistant)         [ Đóng ] │
+├────────────────────────────────────────────────────────┤
+│                                                        │
+│  [🤖 AI]: Chào Thái! Tôi có thể giúp bạn tạo việc,     │
+│           tra cứu lịch trình hoặc gợi ý kế hoạch hôm nay.│
+│                                                        │
+│  [👤 Bạn]: Thêm việc Ôn thi Di động lúc 14h chiều mai    │
+│            ưu tiên cao                                 │
+│                                                        │
+│  [🤖 AI]: ✅ Đã thêm công việc thành công!             │
+│           • Tiêu đề: Ôn thi Di động                   │
+│           • Thời gian: 14:00 - Ngày 25/09/2026         │
+│           • Mức độ ưu tiên: CAO (🔴)                   │
+├────────────────────────────────────────────────────────┤
+│  Gợi ý nhanh: [Việc hôm nay?] [Có bao nhiêu việc quá hạn?] │
+├────────────────────────────────────────────────────────┤
+│  ┌──────────────────────────────────────────┬───────┐  │
+│  │ Nhập câu lệnh hoặc câu hỏi...            │ [ 📤 ]│  │
+│  └──────────────────────────────────────────┴───────┘  │
+└────────────────────────────────────────────────────────┘
+```
 
 *Hình 3.15. Giao diện cài đặt Pomodoro*
 
@@ -1875,6 +2739,8 @@ Nếu phiên là phiên tập trung (không phải phiên nghỉ), cộng dồn 
 Nếu công việc không còn tồn tại (người dùng đã xóa công việc trong lúc phiên đang chạy), thao tác ghi được bỏ qua một cách an toàn thay vì tạo bản ghi vi phạm khóa ngoại. Nhờ đặt hai thao tác trong một transaction, không bao giờ xảy ra trường hợp bảng phiên có dữ liệu nhưng số liệu cộng dồn trên công việc bị lệch.
 
 ### 3.13.6. Thống kê thời gian tập trung
+
+<a id="bang-316"></a>
 
 *Bảng 3.16. Thống kê thời gian tập trung*
 
@@ -1934,6 +2800,8 @@ d) Chi tiết mốc thành tựu (StreakDetailsBottomSheet): BottomSheet hiển 
 
 ### 3.14.3. Xử lý và các thành phần mã nguồn
 
+<a id="bang-317"></a>
+
 *Bảng 3.17. Vai trò của các thành phần trong phân hệ Streak & Milestone Badges*
 
 | Thành phần | Vai trò |
@@ -1967,6 +2835,8 @@ Thanh công cụ gợi ý thao tác nhanh (Action Chips): Cho phép chọn nhanh
 Ô nhập văn bản và nút gửi tích hợp trạng thái chờ xử lý (Loading indicator / Typing indicator).
 
 ### 3.15.3. Xử lý và các thành phần mã nguồn
+
+<a id="bang-318"></a>
 
 *Bảng 3.18. Các thành phần chính trong phân hệ Trợ lý ảo AI*
 
@@ -2069,6 +2939,8 @@ Các thành phần chứa logic phức tạp được thiết kế để có th�
 
 ## 3.18. Đối chiếu với các yêu cầu bàn giao của đề bài
 
+<a id="bang-319"></a>
+
 *Bảng 3.19. Đối chiếu với yêu cầu đề bài*
 
 | STT | Yêu cầu của đề bài | Thành phần mã nguồn hiện thực | Mô tả kỹ thuật | Trạng thái |
@@ -2130,6 +3002,8 @@ Kiểm chứng tính toàn vẹn dữ liệu: các thao tác nguy hiểm (xóa, 
 
 ## 4.2. Môi trường kiểm thử
 
+<a id="bang-41"></a>
+
 *Bảng 4.1. Môi trường kiểm thử*
 
 | Nhóm | Thiết bị / Môi trường | Phiên bản hệ điều hành | Vai trò trong kiểm thử |
@@ -2166,6 +3040,8 @@ Phương pháp này phù hợp với ứng dụng Android vì phần lớn rủi
 
 Các thành phần chứa logic thuần được kiểm thử tự động bằng JUnit 4. Điều kiện để một thành phần có thể kiểm thử tự động trong dự án này là nó không phụ thuộc trực tiếp vào Android SDK:
 
+<a id="bang-42"></a>
+
 *Bảng 4.2. Kiểm thử tự động trên JVM*
 
 | Thành phần | Cách tách phụ thuộc Android |
@@ -2186,6 +3062,8 @@ Với các hành vi chỉ xảy ra trên thiết bị thật (ví dụ nâng c�
 
 Bộ kiểm thử được chia thành năm nhóm theo miền nghiệp vụ. Mã test case được đánh số liên tục TC01–TC21; phần diễn giải chi tiết từng ca kiểm thử (dữ liệu đầu vào, các bước thực hiện, kết quả mong đợi) được trình bày đầy đủ trong Phụ lục C.
 
+<a id="bang-43"></a>
+
 *Bảng 4.3. Ma trận kiểm thử chức năng quản lý công việc (TC01–TC06)*
 
 | Mã TC | Chức năng | Dữ liệu đầu vào / Thao tác | Kết quả mong đợi | Kết quả thực tế | Đánh giá |
@@ -2198,6 +3076,8 @@ Bộ kiểm thử được chia thành năm nhóm theo miền nghiệp vụ. Mã
 | TC06 | Đánh dấu hoàn thành | Tích chọn ô vuông ở đầu dòng công việc | Trạng thái chuyển sang hoàn thành, giao diện đổi màu, số liệu thống kê cập nhật | Trạng thái đổi đúng, thống kê thay đổi tương ứng | Đạt |
 
 
+<a id="bang-44"></a>
+
 *Bảng 4.4. Ma trận kiểm thử thông báo và khôi phục nhắc nhở (TC07–TC10)*
 
 | Mã TC | Chức năng | Dữ liệu đầu vào / Thao tác | Kết quả mong đợi | Kết quả thực tế | Đánh giá |
@@ -2208,6 +3088,8 @@ Bộ kiểm thử được chia thành năm nhóm theo miền nghiệp vụ. Mã
 | TC10 | Khôi phục khi đổi múi giờ | Đổi múi giờ thiết bị | Lịch nhắc được đăng ký lại theo múi giờ mới | Lịch nhắc được cập nhật đúng | Đạt |
 
 
+<a id="bang-45"></a>
+
 *Bảng 4.5. Ma trận kiểm thử bảo mật PIN (TC11–TC13)*
 
 | Mã TC | Chức năng | Dữ liệu đầu vào / Thao tác | Kết quả mong đợi | Kết quả thực tế | Đánh giá |
@@ -2216,6 +3098,8 @@ Bộ kiểm thử được chia thành năm nhóm theo miền nghiệp vụ. Mã
 | TC12 | Nhập đúng PIN | Nhập PIN chính xác | Mở khóa và vào màn hình chính | Mở khóa thành công | Đạt |
 | TC13 | Nhập sai PIN | Nhập PIN sai | Hiển thị thông báo sai, giữ nguyên màn hình khóa, không cho truy cập | Không thể truy cập, thông báo hiển thị đúng | Đạt |
 
+
+<a id="bang-46"></a>
 
 *Bảng 4.6. Ma trận kiểm thử Backup / Restore JSON (TC14–TC18)*
 
@@ -2227,6 +3111,8 @@ Bộ kiểm thử được chia thành năm nhóm theo miền nghiệp vụ. Mã
 | TC17 | Tệp sai phiên bản | Chỉnh trường version trong tệp lên giá trị lớn hơn phiên bản hỗ trợ | Ứng dụng từ chối tệp và thông báo phiên bản không được hỗ trợ | Tệp bị từ chối, dữ liệu không thay đổi | Đạt |
 | TC18 | Tệp vi phạm khóa ngoại | Tạo tệp có phiên tập trung trỏ tới taskId không tồn tại | Ứng dụng phát hiện sai và từ chối, không ghi bất kỳ bản ghi nào | Danh sách lỗi hiển thị rõ, cơ sở dữ liệu không bị thay đổi | Đạt |
 
+
+<a id="bang-47"></a>
 
 *Bảng 4.7. Ma trận kiểm thử Widget và Thống kê (TC19–TC21)*
 
@@ -2249,6 +3135,8 @@ Kiểm thử Sinh trắc học & App Shortcuts: Kiểm chứng mở khóa vân t
 
 Tổng hợp từ năm nhóm kiểm thử ở mục 4.4:
 
+<a id="bang-48"></a>
+
 *Bảng 4.8. Tổng hợp test case*
 
 | Nhóm kiểm thử | Số ca | Đạt | Không đạt | Tỷ lệ đạt |
@@ -2264,6 +3152,8 @@ Tổng hợp từ năm nhóm kiểm thử ở mục 4.4:
 ### 4.5.2. Kết quả kiểm thử tự động trên JVM
 
 Bộ kiểm thử tự động được chạy bằng lệnh gradlew testDebugUnitTest. Kết quả ghi nhận: toàn bộ test đều đạt, không có test thất bại. Danh sách các lớp kiểm thử tiêu biểu:
+
+<a id="bang-49"></a>
 
 *Bảng 4.9. Danh sách unit test tự động của dự án*
 
@@ -2287,6 +3177,8 @@ Bộ kiểm thử tự động được chạy bằng lệnh gradlew testDebugUn
 
 Kết quả chạy tự động được ghi nhận như sau:
 
+<a id="bang-410"></a>
+
 *Bảng 4.10. Danh sách unit test tự động của dự án*
 
 | Chỉ số | Kết quả |
@@ -2302,6 +3194,8 @@ Kết quả chạy tự động được ghi nhận như sau:
 
 Với các hành vi khó tái hiện trên thiết bị, nhóm thực hiện diễn tập trên SQLite thật và thu được kết quả:
 
+<a id="bang-411"></a>
+
 *Bảng 4.11. Kết quả kiểm chứng ngoài thiết bị*
 
 | Nội dung kiểm chứng | Kết quả |
@@ -2316,6 +3210,8 @@ Với các hành vi khó tái hiện trên thiết bị, nhóm thực hiện di�
 
 
 ## 4.6. Đánh giá hệ thống
+
+<a id="bang-412"></a>
 
 *Bảng 4.12. Bảng phân tích ưu/nhược điểm của hệ thống*
 
@@ -2338,6 +3234,8 @@ Với các hành vi khó tái hiện trên thiết bị, nhóm thực hiện di�
 
 
 ## 4.7. Đánh giá mức độ hoàn thành yêu cầu
+
+<a id="bang-413"></a>
 
 *Bảng 4.13. Bảng đánh giá mức độ hoàn thành 11 yêu cầu sau kiểm thử*
 
@@ -2556,6 +3454,8 @@ StreakReminderReceiver.kt: Tiếp nhận báo thức và phát thông báo bảo
 res/xml/shortcuts.xml: Khai báo các phím tắt nhanh trên màn hình chính.
 `
 
+<a id="bang-a1"></a>
+
 *Bảng A.1. Danh sách file Kotlin theo từng phân hệ*
 
 | Phân hệ | File / Lớp | Trách nhiệm chính |
@@ -2742,6 +3642,8 @@ ALTER TABLE tasks ADD COLUMN totalFocusTimeMinutes  INTEGER NOT NULL DEFAULT 0;
 
 **B.4. Quy tắc toàn vẹn dữ liệu**
 
+<a id="bang-b1"></a>
+
 *Bảng B.1. Quy tắc toàn vẹn dữ liệu*
 
 | Quy tắc | Cơ chế thực hiện | Hệ quả |
@@ -2758,6 +3660,8 @@ ALTER TABLE tasks ADD COLUMN totalFocusTimeMinutes  INTEGER NOT NULL DEFAULT 0;
 Phụ lục này trình bày chi tiết bộ kiểm thử hộp đen: điều kiện đầu vào, các bước thực hiện, kết quả mong đợi và kết quả thực tế của từng ca kiểm thử.
 
 **C.1. Nhóm 1 — Quản lý công việc**
+
+<a id="bang-c1"></a>
 
 *Bảng C.1. Bộ test case chi tiết dùng cho kiểm thử hộp đen*
 
@@ -2833,6 +3737,8 @@ Ngoài 21 ca kiểm thử chính, nhóm thực hiện thêm các ca kiểm tra b
 # PHỤ LỤC D. CÁC ĐOẠN SOURCE CODE QUAN TRỌNG
 
 Các đoạn mã dưới đây được trích lục từ mã nguồn của dự án và lược bỏ một số phần không cần thiết cho việc trình bày (phần lược bỏ được ghi chú bằng dấu ba chấm trong khối mã).
+
+<a id="bang-d1"></a>
 
 *Bảng D.1. Danh mục các đoạn mã nguồn cốt lõi được trích lục*
 

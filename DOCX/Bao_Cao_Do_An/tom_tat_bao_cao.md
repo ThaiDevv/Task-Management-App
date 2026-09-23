@@ -3,6 +3,11 @@
 
 ---
 
+> [!NOTE]
+> **Tài liệu tham chiếu chi tiết:** Toàn bộ nội dung báo cáo hoàn chỉnh (hơn 4.300 dòng) kèm 100% sơ đồ Workflow, Kiến trúc, Sequence Diagrams, ERD và Wireframe giao diện được lưu tại: [bao_cao.md](bao_cao.md).
+
+---
+
 ## 🏛️ THÔNG TIN CHUNG
 * **Tên đề tài:** Xây dựng Ứng dụng Quản lý công việc cá nhân trên nền tảng Android (*Task Management Application — TaskFlow*)
 * **Học phần:** Lập trình thiết bị di động (Mã lớp học phần: `012012103402`)
@@ -32,7 +37,7 @@
 ## 1. PHẦN MỞ ĐẦU
 
 ### 1.1. Tính cấp thiết của đề tài
-* Trong thời đại số, khối lượng công việc, bài tập và dự án cá nhân gia tăng nhanh chóng. Con người dễ rơi vào trạng thái quá tải, quên hạn chót (deadline) và suy giảm năng suất làm việc.
+* Trong kỷ nguyên số, khối lượng công việc, bài tập và dự án cá nhân gia tăng nhanh chóng. Con người dễ rơi vào trạng thái quá tải, quên hạn chót (deadline) và suy giảm năng suất làm việc.
 * **Hạn chế của các ứng dụng thương mại hiện nay (Todoist, TickTick, Microsoft To Do):**
   * **Phụ thuộc kết nối Internet & Tài khoản:** Bắt buộc đăng nhập tài khoản đám mây; khi mất mạng dữ liệu bị hạn chế hoặc không thể truy cập.
   * **Rủi ro quyền riêng tư:** Toàn bộ dữ liệu kế hoạch, thông tin công việc, ghi chú nhạy cảm đều tải lên máy chủ của bên thứ ba.
@@ -41,17 +46,17 @@
 
 ### 1.2. Mục tiêu nghiên cứu
 * **Mục tiêu tổng quát:** Xây dựng một ứng dụng Android hoàn chỉnh, ổn định, hoạt động độc lập, có giá trị thực tiễn cao giúp người dùng lập kế hoạch và duy trì năng suất cá nhân.
-* **Mục tiêu cụ thể:**
+* **Mục tiêu cụ thể ([Xem Bảng 1 trong bao_cao.md](bao_cao.md#bang-1)):**
   * Hoàn thành xuất sắc **11 yêu cầu chức năng bắt buộc** của đề tài (CRUD, Deadline, Priority, Alarm, Room DB, PIN Lock, Validation, Recurring, Calendar, Boot Recovery, Backup/Restore JSON qua SAF).
   * Phát triển **6 phân hệ mở rộng cao cấp:** Home Screen Widget, Bento Grid Statistics, Pomodoro Timer (Foreground Service), Gamification (Streak Tracker & 7 Huy hiệu), Trợ lý ảo AI (Google Gemini 2.5 Flash), Phím tắt màn hình chính (App Shortcuts).
-* **Phạm vi nền tảng:** Hỗ trợ từ Android 8.0 (API 26) đến Android 14 (API 34) và mới hơn; hoạt động thuần ngoại tuyến (offline) trên một thiết bị cá nhân.
+* **Phạm vi nền tảng:** Hỗ trợ từ Android 8.0 (API 26) đến Android 14 (API 34) và mới hơn; hoạt động thuần ngoại tuyến (offline) trên thiết bị cá nhân.
 
 ---
 
 ## 2. CHƯƠNG I: TỔNG QUAN VÀ KHẢO SÁT BÀI TOÁN
 
 ### 2.1. Cấu trúc thông tin của một công việc (Task Model)
-* Một công việc trong hệ thống được chuẩn hóa thành một thực thể thông tin gồm 7 trường nghiệp vụ:
+* Một công việc trong hệ thống được chuẩn hóa thành một thực thể thông tin gồm 7 trường nghiệp vụ ([Xem Bảng 1.1 trong bao_cao.md](bao_cao.md#bang-11)):
   1. **Title (Tiêu đề):** Tên định danh ngắn gọn (trường bắt buộc).
   2. **Description (Mô tả):** Ghi chú chi tiết, hướng dẫn thực hiện, ngữ cảnh công việc.
   3. **DueDate (Ngày hạn):** Mốc ngày hoàn thành (chuẩn hóa về đầu ngày `00:00:00.000` để phục vụ tra cứu lịch và lọc ngày).
@@ -61,7 +66,7 @@
   7. **Recurrence (Quy tắc lặp):** `NONE`, `DAILY` (Hằng ngày), `WEEKLY` (Hằng tuần), `MONTHLY` (Hằng tháng).
 
 ### 2.2. Khảo sát các ứng dụng tương tự
-* **Khảo sát 3 sản phẩm lớn:**
+* **Khảo sát 3 sản phẩm lớn ([Xem Bảng 1.2 trong bao_cao.md](bao_cao.md#bang-12)):**
   * *Todoist:* Mạnh về phân cấp dự án và nhãn, nhưng không thể khóa PIN cục bộ và tính phí tính năng sao lưu/nhắc nhở.
   * *TickTick:* Tích hợp Pomodoro và Habit tracker nhưng phụ thuộc tài khoản, widget và thống kê nâng cao phải trả phí.
   * *Microsoft To Do:* Đơn giản, miễn phí nhưng phụ thuộc hoàn toàn vào hệ sinh thái tài khoản Microsoft, không hỗ trợ xuất tệp sao lưu cục bộ và không có khóa PIN.
@@ -69,8 +74,8 @@
 
 ### 2.3. Định hướng giải pháp & Sơ đồ phân rã chức năng (12 nhóm nghiệp vụ)
 * **4 Trụ cột giải pháp:** **Độc lập** (Không cần mạng/server) — **An toàn** (Bảo mật PIN/Vân tay) — **Nhanh chóng** (Phản ứng thời gian thực với Room Flow) — **Đầy đủ tiện ích** (Widget, Bento Stats, Pomodoro, AI, Streak).
-* **Sơ đồ phân rã 12 nhóm chức năng:**
-  1. *Quản lý công việc:* Tạo mới, Xem chi tiết, Chỉnh sửa, Xóa (hộp thoại xác nhận), Đánh dấu hoàn thành, Quick Actions (3-dot menu), Quote Rotator 5s.
+* **Sơ đồ phân rã 12 nhóm chức năng ([Xem Hình 1.1 trong bao_cao.md](bao_cao.md#hinh-11)):**
+  1. *Quản lý công việc:* Tạo mới, Xem chi tiết, Chỉnh sửa, Xóa (hộp thoại xác nhận), Đánh dấu hoàn thành, Quick Actions (3-dot popup), Quote Rotator 5s.
   2. *Lọc và sắp xếp:* Lọc theo trạng thái, độ ưu tiên; Sắp xếp theo hạn chót (tăng/giảm dần) và mức độ ưu tiên.
   3. *Lịch biểu:* Lịch tháng 7 cột, event dots chỉ báo ngày có việc, danh sách việc theo ngày chọn.
   4. *Nhắc nhở:* Lập lịch báo chính xác (Exact Alarm), xin quyền Android 13+, khôi phục lịch nhắc khi khởi động lại hoặc đổi múi giờ, thao tác nhanh trên Notification (Hoàn thành / Báo lại).
@@ -88,7 +93,7 @@
 ## 3. CHƯƠNG II: PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG
 
 ### 3.1. Đặc tả yêu cầu chức năng (FR) & Phi chức năng (NFR)
-* **Yêu cầu chức năng (FR-01 đến FR-13):**
+* **Yêu cầu chức năng (FR-01 đến FR-13) ([Xem Bảng 2.1](bao_cao.md#bang-21)):**
   * `FR-01`: Quản lý công việc CRUD đầy đủ.
   * `FR-02`: Cấu trúc dữ liệu chi tiết đầy đủ 7 thuộc tính.
   * `FR-03`: Lọc đa tiêu chí và sắp xếp linh hoạt.
@@ -102,33 +107,33 @@
   * `FR-11`: Gamification: Đếm chuỗi ngày (Streak) và mở khóa 7 huy hiệu thành tích.
   * `FR-12`: Xác thực sinh trắc học vân tay (AndroidX Biometric).
   * `FR-13`: Phím tắt truy cập nhanh từ màn hình chính (Launcher App Shortcuts).
-* **Yêu cầu phi chức năng (NFR-01 đến NFR-08):** Hiệu năng phản hồi <100ms; hoạt động offline 100%; an toàn dữ liệu tuyệt đối; tối ưu hóa pin; giao diện chuẩn Material Design 3; tương thích Android 8.0 – 14+.
+* **Yêu cầu phi chức năng (NFR-01 đến NFR-08) ([Xem Bảng 2.2](bao_cao.md#bang-22)):** Hiệu năng phản hồi <100ms; hoạt động offline 100%; an toàn dữ liệu tuyệt đối; tối ưu hóa pin; giao diện chuẩn Material Design 3; tương thích Android 8.0 – 14+.
 
 ### 3.2. Thiết kế Kiến trúc phần mềm (MVVM + Repository Pattern)
-* **Tầng View (UI):** Các `Activity`, `Fragment`, `Custom Views`, `Adapters` và `Dialogs`. Sử dụng **ViewBinding** triệt để (loại bỏ `findViewById`). Lắng nghe dữ liệu bất biến từ ViewModel thông qua `StateFlow` / `Flow`.
+* **Tầng View (UI):** Các `Activity`, `Fragment`, `Custom Views`, `Adapters` và `Dialogs`. Sử dụng **ViewBinding** triệt để (loại bỏ `findViewById`). Lắng nghe dữ liệu bất biến từ ViewModel thông qua `StateFlow` / `Flow` ([Xem Hình 2.2 & 2.3](bao_cao.md#hinh-22)).
 * **Tầng ViewModel:** `TaskViewModel`, `CalendarViewModel`, `StatsViewModel`, `PomodoroViewModel`, `TaskAssistantViewModel`, `AddEditTaskViewModel`, `BackupViewModel`. Nắm giữ trạng thái giao diện (`UiState`), điều phối các tác vụ bất đồng bộ bằng `viewModelScope` (Coroutines), độc lập hoàn toàn với vòng đời của View.
 * **Tầng Data (Single Source of Truth):**
-  * `TaskRepository`, `PomodoroRepository`, `BackupRepository`, `PinRepository`.
-  * `TaskDao`, `PomodoroDao` định nghĩa các truy vấn SQL.
+  * `TaskRepository`, `PomodoroRepository`, `BackupRepository`, `PinRepository` ([Xem Bảng 2.5](bao_cao.md#bang-25)).
+  * `TaskDao`, `PomodoroDao` định nghĩa các truy vấn SQL ([Xem Bảng 2.8](bao_cao.md#bang-28)).
   * `Room Database` (SQLite), `SharedPreferences` (Lưu trữ PIN Hash & Salt).
 
 ### 3.3. Thiết kế Cơ sở dữ liệu Room (Phiên bản 4)
-* **Bảng `tasks` (17 cột):** `id` (PK), `title`, `description`, `dueDate` (Long, chuẩn hóa đầu ngày), `dueTime` (Long, mốc giờ nhắc), `priority`, `status`, `recurrenceType`, `createdAt`, `updatedAt`, `completedAt`, `totalFocusTimeMinutes`, `completedPomodoros`, `repeatEndDate`, `repeatLimitCount`, `currentOccurrence`, `isPaused`.
-* **Bảng `pomodoro_sessions` (8 cột):** `id` (PK), `taskId` (FK trỏ tới `tasks.id`), `sessionType` (`FOCUS`/`SHORT_BREAK`/`LONG_BREAK`), `durationMinutes`, `startTime`, `endTime`, `isCompleted`, `createdAt`.
-  * Ràng buộc: `ON DELETE CASCADE` (xóa task tự động xóa toàn bộ phiên Pomodoro liên quan, không để lại bản ghi rác).
+* **Bảng `tasks` (17 cột) ([Xem Bảng 2.6](bao_cao.md#bang-26)):** `id` (PK), `title`, `description`, `dueDate` (Long, chuẩn hóa đầu ngày), `dueTime` (Long, mốc giờ nhắc), `priority`, `status`, `recurrenceType`, `createdAt`, `updatedAt`, `completedAt`, `totalFocusTimeMinutes`, `completedPomodoros`, `repeatEndDate`, `repeatLimitCount`, `currentOccurrence`, `isPaused`.
+* **Bảng `pomodoro_sessions` (8 cột) ([Xem Bảng 2.7](bao_cao.md#bang-27)):** `id` (PK), `taskId` (FK trỏ tới `tasks.id`), `sessionType` (`FOCUS`/`SHORT_BREAK`/`LONG_BREAK`), `durationMinutes`, `startTime`, `endTime`, `isCompleted`, `createdAt`.
+  * Ràng buộc: `ON DELETE CASCADE` (xóa task tự động xóa toàn bộ phiên Pomodoro liên quan, không để lại bản ghi rác) ([Xem Hình 2.4](bao_cao.md#hinh-24)).
   * Chỉ mục: `INDEX on startTime` giúp tăng tốc độ truy vấn thống kê theo ngày/tuần.
-* **Quy tắc Nâng cấp lược đồ (Defensive Migration):** Migration từ v1/v2/v3 lên v4 sử dụng câu lệnh kiểm tra `PRAGMA table_info` trước mỗi lệnh `ALTER TABLE ADD COLUMN`, đảm bảo ứng dụng không bao giờ bị crash do lỗi "duplicate column" và không mất dữ liệu người dùng.
+* **Quy tắc Nâng cấp lược đồ (Defensive Migration):** Migration từ v1/v2/v3 lên v4 sử dụng câu lệnh kiểm tra `PRAGMA table_info` trước mỗi lệnh `ALTER TABLE ADD COLUMN` ([Xem Bảng 2.9](bao_cao.md#bang-29)), đảm bảo ứng dụng không bao giờ bị crash do lỗi "duplicate column" và không làm mất dữ liệu người dùng.
 
 ### 3.4. 10 Luồng xử lý chính trong hệ thống (Sequence Flows)
-1. **Luồng CRUD công việc:** View gửi dữ liệu -> ViewModel xác thực qua `ValidationHelper` -> Repository thực thi `suspend fun` -> Room DB cập nhật -> Room Flow tự động phát tín hiệu làm mới UI tức thì.
-2. **Luồng thông báo nhắc việc:** Tính thời điểm nhắc -> `AlarmScheduler` gọi `AlarmManager.setExactAndAllowWhileIdle()` -> Báo thức kích hoạt -> `AlarmReceiver` -> `NotificationHelper` phát Notification kèm âm thanh, rung, heads-up banner và các nút hành động (Hoàn thành / Snooze 10 phút).
-3. **Luồng khôi phục nhắc nhở sau Reboot/Đổi giờ:** Hệ điều hành phát broadcast `ACTION_BOOT_COMPLETED` hoặc `ACTION_TIME_CHANGED` -> `BootReceiver` / `TimeChangeReceiver` chạy nền bất đồng bộ -> Đọc danh sách task chưa hoàn thành -> Lập lịch lại toàn bộ Alarms tự động.
-4. **Luồng xác thực mã PIN:** Người dùng nhập PIN -> Hệ thống lấy chuỗi Salt đã lưu -> Tính toán `hash = SHA-256(PIN + Salt)` -> So sánh với chuỗi Hash trong SharedPreferences -> Đúng: mở ứng dụng; Sai 5 lần: khóa tạm thời 30 giây chống dò mã.
-5. **Luồng Backup & Restore JSON:** 
+1. **Luồng CRUD công việc ([Xem Hình 2.5](bao_cao.md#hinh-25)):** View gửi dữ liệu -> ViewModel xác thực qua `ValidationHelper` -> Repository thực thi `suspend fun` -> Room DB cập nhật -> Room Flow tự động phát tín hiệu làm mới UI tức thì.
+2. **Luồng thông báo nhắc việc ([Xem Hình 2.6](bao_cao.md#hinh-26)):** Tính thời điểm nhắc -> `AlarmScheduler` gọi `AlarmManager.setExactAndAllowWhileIdle()` -> Báo thức kích hoạt -> `AlarmReceiver` -> `NotificationHelper` phát Notification kèm âm thanh, rung, heads-up banner và các nút hành động (Hoàn thành / Snooze 10 phút).
+3. **Luồng khôi phục nhắc nhở sau Reboot/Đổi giờ ([Xem Hình 2.7](bao_cao.md#hinh-27)):** Hệ điều hành phát broadcast `ACTION_BOOT_COMPLETED` hoặc `ACTION_TIME_CHANGED` -> `BootReceiver` / `TimeChangeReceiver` chạy nền bất đồng bộ -> Đọc danh sách task chưa hoàn thành -> Lập lịch lại toàn bộ Alarms tự động.
+4. **Luồng xác thực mã PIN ([Xem Hình 2.8](bao_cao.md#hinh-28)):** Người dùng nhập PIN -> Hệ thống lấy chuỗi Salt đã lưu -> Tính toán `hash = SHA-256(PIN + Salt)` -> So sánh với chuỗi Hash trong SharedPreferences -> Đúng: mở ứng dụng; Sai 5 lần: khóa tạm thời 30 giây chống dò mã.
+5. **Luồng Backup & Restore JSON ([Xem Hình 2.9 & 2.10](bao_cao.md#hinh-29)):** 
    * *Backup:* Đọc tasks + pomodoro_sessions -> Chuyển thành JSON định dạng chuẩn -> Ghi vào URI qua SAF.
-   * *Restore:* Đọc JSON -> Bộ thẩm định `BackupValidator` kiểm tra 5 bước (cú pháp, phiên bản, cấu trúc mảng, kiểu dữ liệu, toàn vẹn khóa ngoại) -> Mở Transaction -> Xóa dữ liệu cũ -> Ghi dữ liệu mới -> Commit (*All-or-Nothing*).
-6. **Luồng Home Screen Widget:** `AppWidgetProvider` nhận sự kiện cập nhật -> `WidgetTaskListBuilder` truy vấn task hôm nay -> `RemoteViews` hiển thị danh sách; đăng ký `InvalidationTracker.Observer` tự động cập nhật widget ngay khi DB thay đổi; `WidgetMidnightScheduler` tự đổi ngày lúc `00:00`.
-7. **Luồng Pomodoro Timer:** Tính thời điểm kết thúc đơn điệu `targetEndElapsedRealtime` -> Khởi động `Foreground Service` -> Duy trì thông báo Notification thường trực -> Mỗi nhịp đồng hồ so sánh với mốc đích (loại bỏ sai số đếm lùi) -> Hết giờ: rung chuông, ghi phiên vào DB trong một transaction.
+   * *Restore:* Đọc JSON -> Bộ thẩm định `BackupValidator` kiểm tra 5 bước ([Xem Bảng 2.10](bao_cao.md#bang-210)) (cú pháp, phiên bản, cấu trúc mảng, kiểu dữ liệu, toàn vẹn khóa ngoại) -> Mở Transaction -> Xóa dữ liệu cũ -> Ghi dữ liệu mới -> Commit (*All-or-Nothing*).
+6. **Luồng Home Screen Widget ([Xem Hình 2.11](bao_cao.md#hinh-211)):** `AppWidgetProvider` nhận sự kiện cập nhật -> `WidgetTaskListBuilder` truy vấn task hôm nay -> `RemoteViews` hiển thị danh sách; đăng ký `InvalidationTracker.Observer` tự động cập nhật widget ngay khi DB thay đổi; `WidgetMidnightScheduler` tự đổi ngày lúc `00:00`.
+7. **Luồng Pomodoro Timer ([Xem Hình 2.12](bao_cao.md#hinh-212)):** Tính thời điểm kết thúc đơn điệu `targetEndElapsedRealtime` -> Khởi động `Foreground Service` -> Duy trì thông báo Notification thường trực -> Mỗi nhịp đồng hồ so sánh với mốc đích (loại bỏ sai số đếm lùi) -> Hết giờ: rung chuông, ghi phiên vào DB trong một transaction.
 8. **Luồng Trợ lý ảo AI:** Người dùng nhập câu lệnh -> `TaskCommandParser` bóc tách cấu trúc câu lệnh bằng Regex (Tạo task, Xem hôm nay, Đếm quá hạn) -> Nếu câu hỏi mở, gọi Google Gemini 2.5 Flash qua Firebase Vertex AI -> Trả về câu trả lời và tự động thêm task vào Room DB.
 9. **Luồng Gamification (Streak & Badges):** Đánh dấu hoàn thành task -> `StreakCalculator` tính toán chuỗi liên tục dựa trên các mốc ngày UTC -> `SpecialBadgeCalculator` kiểm tra điều kiện 7 huy hiệu -> `StreakReminderScheduler` hẹn giờ phát thông báo nhắc nhở bảo vệ chuỗi lúc 20:00 hằng ngày.
 10. **Luồng Sinh trắc học & App Shortcuts:** Khi mở app, `BiometricAuthHelper` gọi `BiometricPrompt` quét vân tay; khi người dùng nhấn shortcut từ màn hình chính, `BaseActivity` chặn hiển thị và kiểm tra trạng thái khóa PIN trước khi điều hướng vào nội dung.
@@ -137,49 +142,50 @@
 
 ## 4. CHƯƠNG III: HIỆN THỰC HỆ THỐNG VÀ CÁC TÍNH NĂNG
 
-### 4.1. Môi trường phát triển & Thư viện sử dụng
+### 4.1. Môi trường phát triển & Thư viện sử dụng ([Xem Bảng 3.1 & 3.2](bao_cao.md#bang-31))
 * **Android Jetpack:** `androidx.room:room-ktx:2.6.1`, `androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0`, `androidx.navigation:navigation-fragment-ktx:2.7.7`, `androidx.biometric:biometric:1.2.0-alpha05`.
 * **Kotlin Coroutines:** `kotlinx-coroutines-android:1.7.3`, `kotlinx-coroutines-core:1.7.3`.
 * **Google Firebase AI:** `com.google.firebase:firebase-ai:16.0.0-beta01` (Gemini 2.5 Flash), `com.google.firebase:firebase-appcheck-playintegrity` & `debug`.
 * **Giao diện & Tiện ích:** `com.google.android.material:material:1.11.0` (Material 3), `com.google.code.gson:gson:2.10.1`, `com.github.PhilJay:MPAndroidChart:v3.1.0`.
 
 ### 4.2. Hiện thực chi tiết từng phân hệ chức năng
-* **3.4. Quản lý công việc:** 
+* **3.4. Quản lý công việc ([Xem Hình 3.1, 3.2, 3.3](bao_cao.md#hinh-31)):** 
   * `TaskListFragment`: Bố cục Bento Card, chia nhóm "Hôm nay", "Sắp tới" và "Đã hoàn thành".
   * `AddEditTaskActivity`: Form nhập liệu thông minh, tích hợp DatePicker, TimePicker, bộ chọn Priority/Recurrence dạng chip.
   * `TaskDetailActivity`: Hiển thị chi tiết toàn diện, tích hợp Quick Actions (Hoàn thành xanh lá / Xóa đỏ) và **Bộ quay danh ngôn động lực 5s (Quote Rotator)**.
-* **3.5. Lọc và sắp xếp:** Modal Bottom Sheet cho phép lọc đa tiêu chí (Tất cả, Chưa xong, Đã xong; Ưu tiên Cao/TB/Thấp) và sắp xếp tăng/giảm theo hạn chót hoặc mức ưu tiên.
-* **3.6. Lịch biểu (Calendar View):** Lưới lịch tháng tùy biến hiển thị chỉ báo chấm xanh ở các ngày có công việc, danh sách chi tiết các công việc trong ngày được chọn.
-* **3.7. Nhắc nhở (Notification):** 
+  * *Thành phần mã nguồn:* `TaskAdapter`, `TaskViewModel`, `TaskRepositoryImpl` ([Xem Bảng 3.5](bao_cao.md#bang-35)).
+* **3.5. Lọc và sắp xếp ([Xem Hình 3.4](bao_cao.md#hinh-34)):** Modal Bottom Sheet cho phép lọc đa tiêu chí (Tất cả, Chưa xong, Đã xong; Ưu tiên Cao/TB/Thấp) và sắp xếp tăng/giảm theo hạn chót hoặc mức ưu tiên ([Xem Bảng 3.6](bao_cao.md#bang-36)).
+* **3.6. Lịch biểu (Calendar View) ([Xem Hình 3.5](bao_cao.md#hinh-35)):** Lưới lịch tháng tùy biến hiển thị chỉ báo chấm xanh ở các ngày có công việc, danh sách chi tiết các công việc trong ngày được chọn (`CalendarFragment`, `CalendarViewModel`).
+* **3.7. Nhắc nhở (Notification) ([Xem Hình 3.6](bao_cao.md#hinh-36)):** 
   * Kênh thông báo `task_reminders_channel` có mức độ ưu tiên `IMPORTANCE_HIGH`, âm thanh chuông báo thức và rung.
-  * Tương thích hoàn toàn với cơ chế phân quyền runtime `POST_NOTIFICATIONS` trên Android 13+.
-* **3.8. Công việc lặp lại (Recurring Tasks):** Thuật toán `RecurrenceHelper` tự động tính toán kỳ hạn kế tiếp khi hoàn thành task lặp (cộng 1 ngày, 1 tuần hoặc 1 tháng) mà không làm mất lịch sử công việc cũ.
-* **3.9. Bảo mật PIN Lock & Sinh trắc học (Biometric):**
-  * Bàn phím số PIN tùy biến (4 ô tròn), băm mật mã SHA-256 kèm Salt, chống brute-force khóa 30 giây.
+  * Tương thích hoàn toàn với cơ chế phân quyền runtime `POST_NOTIFICATIONS` trên Android 13+ ([Xem Bảng 3.7](bao_cao.md#bang-37)).
+* **3.8. Công việc lặp lại (Recurring Tasks) ([Xem Hình 3.7](bao_cao.md#hinh-37)):** Thuật toán `RecurrenceHelper` tự động tính toán kỳ hạn kế tiếp khi hoàn thành task lặp (cộng 1 ngày, 1 tuần hoặc 1 tháng) ([Xem Bảng 3.8](bao_cao.md#bang-38)) mà không làm mất lịch sử công việc cũ.
+* **3.9. Bảo mật PIN Lock & Sinh trắc học (Biometric) ([Xem Hình 3.8 & 3.9](bao_cao.md#hinh-38)):**
+  * Bàn phím số PIN tùy biến (4 ô tròn), băm mật mã SHA-256 kèm Salt, chống brute-force khóa 30 giây ([Xem Bảng 3.9](bao_cao.md#bang-39)).
   * Tích hợp AndroidX Biometric quét vân tay phần cứng; quy tắc an toàn tự động vô hiệu hóa vân tay khi thay đổi hoặc xóa mã PIN.
-* **3.10. Sao lưu và Khôi phục (Backup/Restore):**
-  * Xuất tệp JSON qua Storage Access Framework (SAF), tên tệp dạng `taskflow_backup_YYYYMMDD_HHmmss.json`.
-  * Bộ thẩm định `BackupValidator` kiểm tra tính hợp lệ toàn diện trước khi ghi đè; khôi phục an toàn trong 1 `@Transaction` duy nhất.
-* **3.11. Home Screen Widget:**
-  * Widget kích thước linh hoạt hiển thị danh sách công việc hôm nay kèm giờ nhắc.
+* **3.10. Sao lưu và Khôi phục (Backup/Restore) ([Xem Hình 3.10](bao_cao.md#hinh-310)):**
+  * Xuất tệp JSON qua Storage Access Framework (SAF), tên tệp dạng `taskflow_backup_YYYYMMDD_HHmmss.json` ([Xem Bảng 3.10](bao_cao.md#bang-310)).
+  * Bộ thẩm định `BackupValidator` kiểm tra tính hợp lệ toàn diện trước khi ghi đè; khôi phục an toàn trong 1 `@Transaction` duy nhất ([Xem Bảng 3.11](bao_cao.md#bang-311)).
+* **3.11. Home Screen Widget ([Xem Hình 3.11](bao_cao.md#hinh-311)):**
+  * Widget kích thước linh hoạt hiển thị danh sách công việc hôm nay kèm giờ nhắc ([Xem Bảng 3.12](bao_cao.md#bang-312)).
   * Tương tác trực tiếp: Chạm vào checkbox để đánh dấu hoàn thành ngay trên màn hình chính mà không cần mở ứng dụng; tự động chuyển sang ngày mới lúc 00:00.
-* **3.12. Thống kê Bento Grid:**
+* **3.12. Thống kê Bento Grid ([Xem Hình 3.12](bao_cao.md#hinh-312)):**
   * Thẻ tỷ lệ hoàn thành dạng cung tròn xoay (`CircularCompletionRateView`).
   * Biểu đồ cột năng suất 7 ngày trong tuần (`WeeklyProductivityChartView`).
-  * Thống kê phân bổ công việc theo mức độ ưu tiên.
-* **3.13. Quản lý thời gian tập trung (Pomodoro Timer):**
+  * Thống kê phân bổ công việc theo mức độ ưu tiên ([Xem Bảng 3.13](bao_cao.md#bang-313)).
+* **3.13. Quản lý thời gian tập trung (Pomodoro Timer) ([Xem Hình 3.13](bao_cao.md#hinh-313)):**
   * Kỹ thuật Pomodoro chuẩn (25 phút tập trung, 5 phút nghỉ ngắn, 15 phút nghỉ dài).
-  * `PomodoroService` (Foreground Service) quản lý đồng hồ chạy nền độc lập; thông báo thường trực có nút Tạm dừng / Bỏ qua / Dừng phiên.
-  * Ghi nhận lịch sử phiên vào cơ sở dữ liệu và tích hợp thống kê thời gian tập trung.
-* **3.14. Chuỗi ngày & Hệ thống Huy hiệu (Streak & Milestone Badges):**
+  * `PomodoroService` (Foreground Service) quản lý đồng hồ chạy nền độc lập; thông báo thường trực có nút Tạm dừng / Bỏ qua / Dừng phiên ([Xem Bảng 3.14](bao_cao.md#bang-314)).
+  * Ghi nhận lịch sử phiên vào cơ sở dữ liệu và tích hợp thống kê thời gian tập trung ([Xem Bảng 3.15](bao_cao.md#bang-315)).
+* **3.14. Chuỗi ngày & Hệ thống Huy hiệu (Streak & Milestone Badges) ([Xem Hình 3.14](bao_cao.md#hinh-314)):**
   * `StreakCalculator` tính chuỗi ngày hoàn thành liên tục (`Current Streak`, `Best Streak`).
   * `SpecialBadgeCalculator` đánh giá mở khóa 7 huy hiệu độc đáo: Early Bird, Night Owl, Weekend Warrior, Pomodoro Master, Century Club, Consistency King, Speed Demon.
-  * `StreakReminderReceiver` phát thông báo nhắc nhở bảo vệ chuỗi lúc 20:00 hằng ngày nếu người dùng chưa hoàn thành việc nào.
-* **3.15. Trợ lý ảo AI thông minh (AI Task Assistant):**
+  * `StreakReminderReceiver` phát thông báo nhắc nhở bảo vệ chuỗi lúc 20:00 hằng ngày nếu người dùng chưa hoàn thành việc nào ([Xem Bảng 3.16](bao_cao.md#bang-316)).
+* **3.15. Trợ lý ảo AI thông minh (AI Task Assistant) ([Xem Hình 3.15](bao_cao.md#hinh-315)):**
   * Nút nổi Launcher với tooltip chào mừng thông minh.
   * Khung chat `AiAssistantBottomSheet` với các chip gợi ý thao tác nhanh.
-  * `TaskCommandParser` phân tích lệnh tự nhiên tiếng Việt/Anh; kết nối Google Gemini 2.5 Flash API qua Firebase Vertex AI SDK; bảo vệ qua Firebase App Check.
-* **3.16. Phím tắt màn hình chính (Launcher App Shortcuts):**
+  * `TaskCommandParser` phân tích lệnh tự nhiên tiếng Việt/Anh; kết nối Google Gemini 2.5 Flash API qua Firebase Vertex AI SDK; bảo vệ qua Firebase App Check ([Xem Bảng 3.17](bao_cao.md#bang-317)).
+* **3.16. Phím tắt màn hình chính (Launcher App Shortcuts) ([Xem Hình 3.16](bao_cao.md#hinh-316)):**
   * Tệp cấu hình `shortcuts.xml` cung cấp các lối tắt: Tạo việc mới, Xem việc hôm nay, Bật Pomodoro khi nhấn giữ biểu tượng ứng dụng.
   * `BaseActivity` đảm bảo người dùng phải mở khóa PIN/Vân tay trước khi truy cập nội dung từ Shortcut.
 
@@ -193,19 +199,19 @@
 7. **Khôi phục dữ liệu nguyên tử theo mô hình Transaction:** Toàn bộ quá trình phục hồi từ JSON được bọc trong một transaction duy nhất (*All-or-Nothing*).
 8. **Máy trạng thái Pomodoro thuần Kotlin:** Tách biệt hoàn toàn khỏi Android Framework, sử dụng mốc thời gian đích đơn điệu (`elapsedRealtime()`) triệt tiêu sai số đếm lùi và cho phép kiểm thử tự động trên JVM.
 
-### 4.4. Bảng đối chiếu 11 yêu cầu bàn giao của đề tài
+### 4.4. Bảng đối chiếu 11 yêu cầu bàn giao của đề tài ([Xem Bảng 3.18 & 3.19](bao_cao.md#bang-318))
 * **Tất cả 11/11 yêu cầu cốt lõi và 6 phân hệ mở rộng đều ĐẠT 100% tiêu chí kỹ thuật và nghiệp vụ.**
 
 ---
 
 ## 5. CHƯƠNG IV: KIỂM THỬ VÀ ĐÁNH GIÁ HỆ THỐNG
 
-### 5.1. Môi trường & Phương pháp kiểm thử
+### 5.1. Môi trường & Phương pháp kiểm thử ([Xem Bảng 4.1 & 4.2](bao_cao.md#bang-41))
 * **Môi trường:** Thiết bị thật (Xiaomi Redmi Note 11 - Android 13, Samsung Galaxy S21 - Android 14) và Máy ảo Android Emulator (Pixel 6 Pro - Android 14 API 34).
 * **Phương pháp:** Kết hợp Kiểm thử hộp đen (Black-box Testing) trên thiết bị và Kiểm thử tự động (Unit Testing) trên JVM.
 
 ### 5.2. Kết quả kiểm thử chi tiết
-* **Kiểm thử hộp đen (Black-box Testing):**
+* **Kiểm thử hộp đen (Black-box Testing) ([Xem Bảng 4.3 đến 4.8](bao_cao.md#bang-43)):**
   * Nhóm 1: Quản lý công việc (TC01–TC06) -> 6/6 Đạt (100%).
   * Nhóm 2: Thông báo và khôi phục nhắc nhở (TC07–TC10) -> 4/4 Đạt (100%).
   * Nhóm 3: Bảo mật mã PIN và Sinh trắc học (TC11–TC13) -> 3/3 Đạt (100%).
@@ -213,21 +219,21 @@
   * Nhóm 5: Widget, Thống kê và Pomodoro (TC19–TC21) -> 3/3 Đạt (100%).
   * Nhóm kiểm thử biên và chịu lỗi (13 ca kiểm thử bổ sung) -> 13/13 Đạt (100%).
   * **Tổng kết: 34/34 ca kiểm thử ĐẠT yêu cầu (Tỷ lệ thành công 100%).**
-* **Kiểm thử tự động trên JVM (Unit Tests):**
+* **Kiểm thử tự động trên JVM (Unit Tests) ([Xem Bảng 4.9 & 4.10](bao_cao.md#bang-49)):**
   * Xây dựng **15 lớp kiểm thử** với hơn **90 test cases** bao phủ: `PomodoroTimerEngineTest`, `StatsCalculationTest`, `BackupValidatorTest`, `TaskCommandParserTest`, `PinSecurityTest`, `StreakCalculatorTest`, `DateTimeUtilsTest`,...
   * Toàn bộ test case chạy hoàn tất trong **< 5 giây trên JVM** với tỷ lệ đỗ **100%**.
-* **Kiểm chứng ngoài thiết bị:** Kiểm chứng tính toàn vẹn cơ sở dữ liệu SQLite, kiểm chứng cơ chế Migration v1->v4, kiểm tra tính đúng đắn của thuật toán băm SHA-256 + Salt.
+* **Kiểm chứng ngoài thiết bị ([Xem Bảng 4.11](bao_cao.md#bang-411)):** Kiểm chứng tính toàn vẹn cơ sở dữ liệu SQLite, kiểm chứng cơ chế Migration v1->v4, kiểm tra tính đúng đắn của thuật toán băm SHA-256 + Salt.
 
 ---
 
 ## 6. KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
 
-### 6.1. Kết quả đạt được
+### 6.1. Kết quả đạt được ([Xem Bảng 5.1](bao_cao.md#bang-51))
 * **Về chức năng:** Hoàn thành trọn vẹn 100% yêu cầu đề bài và phát triển thêm các phân hệ tiện ích mở rộng cao cấp (Widget, Pomodoro, Bento Stats, Gamification Streak/Badges, AI Assistant, App Shortcuts).
 * **Về kiến trúc & Chất lượng mã nguồn:** Áp dụng chuẩn mực kiến trúc MVVM, Clean Architecture, Single Source of Truth, Room Flow reactive, quản lý mã nguồn phân nhánh Git bài bản.
 * **Về giá trị thực tiễn:** Ứng dụng mang lại trải nghiệm mượt mà, độc lập, an toàn, hỗ trợ người dùng xây dựng thói quen và quản lý thời gian hiệu quả.
 
-### 6.2. Hạn chế hiện tại
+### 6.2. Hạn chế hiện tại ([Xem Bảng 4.12](bao_cao.md#bang-412))
 1. Chưa hỗ trợ đồng bộ dữ liệu tự động qua đám mây giữa nhiều thiết bị.
 2. Chưa có tính năng làm việc nhóm, chia sẻ công việc hoặc gán việc cho nhiều người.
 
@@ -240,10 +246,10 @@
 
 ## 7. TÓM LƯỢC CÁC PHỤ LỤC (PHỤ LỤC A – F)
 
-* **Phụ lục A (Cấu trúc Source Code):** Danh sách đầy đủ hơn 55 tệp mã nguồn Kotlin được tổ chức khoa học theo các package nghiệp vụ (`ai/`, `data/`, `pomodoro/`, `receiver/`, `security/`, `ui/`, `util/`, `viewmodel/`, `widget/`) và cấu trúc thư mục tài nguyên `res/`.
-* **Phụ lục B (Cấu trúc Database chi tiết):** Lược đồ tạo bảng Room version 4 (`tasks`, `pomodoro_sessions`), các câu lệnh truy vấn DAO tiêu biểu, mã nguồn các bước migration v1 -> v4 có kiểm tra cấu trúc cột, quy tắc toàn vẹn dữ liệu.
-* **Phụ lục C (Bộ Test Case chi tiết):** Bảng chi tiết 34 ca kiểm thử hộp đen hoàn chỉnh (Mã TC, Mục tiêu, Tiền điều kiện, Các bước thực hiện, Kết quả mong đợi, Kết quả thực tế, Đánh giá).
-* **Phụ lục D (Các đoạn Source Code quan trọng):** Trích lục 12 đoạn mã nguồn cốt lõi của dự án:
+* **Phụ lục A (Cấu trúc Source Code) ([Xem Bảng A.1](bao_cao.md#bang-a1)):** Danh sách đầy đủ hơn 55 tệp mã nguồn Kotlin được tổ chức khoa học theo các package nghiệp vụ (`ai/`, `data/`, `pomodoro/`, `receiver/`, `security/`, `ui/`, `util/`, `viewmodel/`, `widget/`) và cấu trúc thư mục tài nguyên `res/`.
+* **Phụ lục B (Cấu trúc Database chi tiết) ([Xem Bảng B.1](bao_cao.md#bang-b1)):** Lược đồ tạo bảng Room version 4 (`tasks`, `pomodoro_sessions`), các câu lệnh truy vấn DAO tiêu biểu, mã nguồn các bước migration v1 -> v4 có kiểm tra cấu trúc cột, quy tắc toàn vẹn dữ liệu.
+* **Phụ lục C (Bộ Test Case chi tiết) ([Xem Bảng C.1 đến C.6](bao_cao.md#bang-c1)):** Bảng chi tiết 34 ca kiểm thử hộp đen hoàn chỉnh (Mã TC, Mục tiêu, Tiền điều kiện, Các bước thực hiện, Kết quả mong đợi, Kết quả thực tế, Đánh giá).
+* **Phụ lục D (Các đoạn Source Code quan trọng) ([Xem Bảng D.1](bao_cao.md#bang-d1)):** Trích lục 12 đoạn mã nguồn cốt lõi của dự án:
   * `D.1`: Lập lịch nhắc việc với cơ chế dự phòng (`AlarmScheduler.kt`).
   * `D.2`: Defensive Migration kiểm tra sự tồn tại của cột trước khi thêm (`AppDatabase.kt`).
   * `D.3`: Ghi phiên tập trung Pomodoro và cộng dồn số liệu trong một transaction.
@@ -256,5 +262,5 @@
   * `D.10`: Thuật toán kiểm tra điều kiện mở khóa 7 huy hiệu đặc biệt (`SpecialBadgeCalculator.kt`).
   * `D.11`: Lớp tiện ích quản lý xác thực sinh trắc học vân tay an toàn (`BiometricAuthHelper.kt`).
   * `D.12`: Cấu hình phím tắt ứng dụng tĩnh trên màn hình chính (`shortcuts.xml`).
-* **Phụ lục E (Hướng dẫn sử dụng ứng dụng):** Cẩm nang hướng dẫn người dùng gồm 12 mục chi tiết từ cài đặt, tạo việc, quản lý lịch, khóa PIN, sao lưu JSON, kéo widget, chạy Pomodoro, trò chuyện với Trợ lý AI, theo dõi Chuỗi ngày và bảng xử lý 6 sự cố thường gặp.
+* **Phụ lục E (Hướng dẫn sử dụng ứng dụng) ([Xem Bảng E.1 đến E.3](bao_cao.md#bang-e1)):** Cẩm nang hướng dẫn người dùng gồm 12 mục chi tiết từ cài đặt, tạo việc, quản lý lịch, khóa PIN, sao lưu JSON, kéo widget, chạy Pomodoro, trò chuyện với Trợ lý AI, theo dõi Chuỗi ngày và bảng xử lý 6 sự cố thường gặp.
 * **Phụ lục F (Đường dẫn dự án):** Kho lưu trữ mã nguồn GitHub và tài liệu liên quan của đề tài.
