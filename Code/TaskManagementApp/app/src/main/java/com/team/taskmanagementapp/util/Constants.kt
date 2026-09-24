@@ -86,6 +86,7 @@ object Constants {
     const val KEY_PIN_HASH = "key_pin_hash"
     const val KEY_PIN_SALT = "key_pin_salt"
     const val KEY_PIN_ENABLED = "key_pin_enabled"
+    const val KEY_BIOMETRIC_ENABLED = "key_biometric_enabled"
     const val KEY_NOTIFICATIONS_ENABLED = "key_notifications_enabled"
     const val KEY_AUTO_LOCK_TIMER = "key_auto_lock_timer"
     const val KEY_SORT_ORDER = "key_sort_order"
@@ -110,6 +111,16 @@ object Constants {
     const val ACTION_TASK_DATE_TIME_CHANGED =
         "com.team.taskmanagementapp.action.TASK_DATE_TIME_CHANGED"
     const val EXTRA_PIN_MODE = "extra_pin_mode"
+
+    // App Shortcuts
+    const val ACTION_SHORTCUT_NEW_TASK =
+        "com.team.taskmanagementapp.action.SHORTCUT_NEW_TASK"
+    const val ACTION_SHORTCUT_TODAY =
+        "com.team.taskmanagementapp.action.SHORTCUT_TODAY"
+    const val ACTION_SHORTCUT_CALENDAR =
+        "com.team.taskmanagementapp.action.SHORTCUT_CALENDAR"
+    const val ACTION_SHORTCUT_STATS =
+        "com.team.taskmanagementapp.action.SHORTCUT_STATS"
 
     // Home Screen Widget (TMA-56)
     const val EXTRA_WIDGET_TASK_ID = "extra_widget_task_id"
@@ -138,3 +149,4 @@ object Constants {
     const val ACTION_STREAK_REMINDER = "com.team.taskmanagementapp.action.STREAK_REMINDER"
     const val REQUEST_CODE_STREAK_REMINDER = 3001
 }
+

@@ -43,6 +43,16 @@ interface PinRepository {
     fun setPinEnabled(enabled: Boolean)
 
     /**
+     * Kiểm tra xem mở khóa bằng sinh trắc học (vân tay/khuôn mặt) có được bật không.
+     */
+    fun isBiometricEnabled(): Boolean
+
+    /**
+     * Bật hoặc tắt mở khóa bằng sinh trắc học.
+     */
+    fun setBiometricEnabled(enabled: Boolean)
+
+    /**
      * Ghi nhận một lần nhập PIN sai.
      * @return Số lần nhập sai hiện tại.
      */

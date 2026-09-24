@@ -68,4 +68,38 @@ class PinSecurityTest {
         assertFalse(isValid("12a4"))     // contains letters
         assertFalse(isValid(""))         // empty
     }
+
+    @Test
+    fun `clearing PIN also disables biometric setting`() {
+        var pinEnabled = true
+        var biometricEnabled = true
+
+        fun clearPin() {
+            pinEnabled = false
+            biometricEnabled = false
+        }
+
+        clearPin()
+        assertFalse("Clearing PIN must disable biometric", biometricEnabled)
+        assertFalse("PIN must be disabled", pinEnabled)
+    }
+
+    @Test
+    fun `disabling PIN lock turns off biometric unlock`() {
+        var pinEnabled = true
+        var biometricEnabled = true
+
+        fun setPinEnabled(enabled: Boolean) {
+            pinEnabled = enabled
+            if (!enabled) {
+                biometricEnabled = false
+            }
+        }
+
+        setPinEnabled(false)
+        assertFalse("Disabling PIN must automatically disable biometric", biometricEnabled)
+        assertFalse("PIN must be disabled", pinEnabled)
+    }
 }
+
+

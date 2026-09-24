@@ -20,6 +20,7 @@ import com.team.taskmanagementapp.R
 import com.team.taskmanagementapp.databinding.FragmentSettingsBinding
 import com.team.taskmanagementapp.ui.base.BaseActivity
 import com.team.taskmanagementapp.ui.pin.PinLockActivity
+import com.team.taskmanagementapp.util.BiometricAuthHelper
 import com.team.taskmanagementapp.util.Constants
 import com.team.taskmanagementapp.util.NotificationPermissionManager
 import com.team.taskmanagementapp.util.PinManager
@@ -134,6 +135,46 @@ class SettingsFragment : Fragment() {
             }
         }
 
+        binding.biometricSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (isSynchronizingSwitches) return@setOnCheckedChangeListener
+
+            val status = BiometricAuthHelper.checkBiometricStatus(requireContext())
+            if (isChecked) {
+                when (status) {
+                    BiometricAuthHelper.BiometricStatus.READY -> {
+                        BiometricAuthHelper.showBiometricPrompt(
+                            activity = requireActivity(),
+                            title = getString(R.string.biometric_confirm_prompt_title),
+                            subtitle = getString(R.string.biometric_confirm_prompt_subtitle),
+                            negativeButtonText = getString(R.string.action_cancel),
+                            onSuccess = {
+                                pinManager.setBiometricEnabled(true)
+                                Toast.makeText(requireContext(), R.string.biometric_enabled, Toast.LENGTH_SHORT).show()
+                                synchronizeToggleStates()
+                            },
+                            onError = { _, _ ->
+                                synchronizeToggleStates()
+                            }
+                        )
+                    }
+                    BiometricAuthHelper.BiometricStatus.NOT_ENROLLED -> {
+                        Toast.makeText(requireContext(), R.string.settings_biometric_not_enrolled, Toast.LENGTH_LONG).show()
+                        val intent = Intent(Settings.ACTION_SECURITY_SETTINGS)
+                        startActivity(intent)
+                        synchronizeToggleStates()
+                    }
+                    else -> {
+                        Toast.makeText(requireContext(), R.string.settings_biometric_no_hardware, Toast.LENGTH_SHORT).show()
+                        synchronizeToggleStates()
+                    }
+                }
+            } else {
+                pinManager.setBiometricEnabled(false)
+                Toast.makeText(requireContext(), R.string.biometric_disabled, Toast.LENGTH_SHORT).show()
+                synchronizeToggleStates()
+            }
+        }
+
         binding.notificationSwitch.setOnCheckedChangeListener { _, isChecked ->
             if (isSynchronizingSwitches) return@setOnCheckedChangeListener
 
@@ -190,6 +231,31 @@ class SettingsFragment : Fragment() {
         binding.changePinDivider.isVisible = pinEnabled
         binding.changePinRow.isVisible = pinEnabled
 
+        // Biometric toggle visibility & status
+        binding.biometricDivider.isVisible = pinEnabled
+        binding.biometricRow.isVisible = pinEnabled
+
+        if (pinEnabled) {
+            val biometricStatus = BiometricAuthHelper.checkBiometricStatus(requireContext())
+            when (biometricStatus) {
+                BiometricAuthHelper.BiometricStatus.READY -> {
+                    binding.biometricSwitch.isEnabled = true
+                    binding.biometricSwitch.isChecked = pinManager.isBiometricEnabled()
+                    binding.biometricSummaryText.setText(R.string.settings_biometric_summary)
+                }
+                BiometricAuthHelper.BiometricStatus.NOT_ENROLLED -> {
+                    binding.biometricSwitch.isEnabled = true
+                    binding.biometricSwitch.isChecked = false
+                    binding.biometricSummaryText.setText(R.string.settings_biometric_not_enrolled)
+                }
+                else -> {
+                    binding.biometricSwitch.isEnabled = false
+                    binding.biometricSwitch.isChecked = false
+                    binding.biometricSummaryText.setText(R.string.settings_biometric_no_hardware)
+                }
+            }
+        }
+
         val notificationsEnabled = preferences.getBoolean(
             Constants.KEY_NOTIFICATIONS_ENABLED,
             true
@@ -227,6 +293,7 @@ class SettingsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding?.pinLockSwitch?.setOnCheckedChangeListener(null)
+        _binding?.biometricSwitch?.setOnCheckedChangeListener(null)
         _binding?.notificationSwitch?.setOnCheckedChangeListener(null)
         _binding = null
     }

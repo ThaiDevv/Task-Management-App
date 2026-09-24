@@ -13,6 +13,7 @@ import com.team.taskmanagementapp.databinding.ItemPinKeyWithLettersBinding
 import com.team.taskmanagementapp.pinRepository
 import com.team.taskmanagementapp.security.PinRepository
 import com.team.taskmanagementapp.ui.base.BaseActivity
+import com.team.taskmanagementapp.util.BiometricAuthHelper
 import com.team.taskmanagementapp.util.Constants
 
 /**
@@ -90,6 +91,10 @@ class PinLockActivity : AppCompatActivity() {
         // If state was restored, refresh the dot indicator to show saved buffer length
         if (savedInstanceState != null) {
             updatePinDots()
+        } else if (mode == PinMode.ENTER && pinRepo.isBiometricEnabled()) {
+            binding.root.post {
+                promptBiometricIfAvailable()
+            }
         }
     }
 
@@ -216,15 +221,53 @@ class PinLockActivity : AppCompatActivity() {
             true
         }
 
-        // Biometric button (placeholder for future biometric feature)
+        // Biometric button (Fingerprint / Face Unlock)
+        val isBiometricReady = BiometricAuthHelper.isBiometricReady(this)
+        val canUseBiometric = isBiometricReady && pinRepo.isBiometricEnabled() && mode == PinMode.ENTER
+        binding.btnFingerprint.alpha = if (canUseBiometric) 1.0f else 0.4f
+
         binding.btnFingerprint.setOnClickListener {
             animateKeyPress(it)
+            if (mode != PinMode.ENTER) {
+                return@setOnClickListener
+            }
+            if (!pinRepo.isBiometricEnabled()) {
+                showError(getString(R.string.settings_biometric_summary))
+                return@setOnClickListener
+            }
+            promptBiometricIfAvailable()
         }
 
         // Forgot PIN (only in ENTER mode)
         binding.btnForgotPin.setOnClickListener {
             showForgotPinDialog()
         }
+    }
+
+    private fun promptBiometricIfAvailable() {
+        if (pinRepo.isLockedOut()) return
+        if (!BiometricAuthHelper.isBiometricReady(this)) return
+
+        BiometricAuthHelper.showBiometricPrompt(
+            activity = this,
+            title = getString(R.string.biometric_prompt_title),
+            subtitle = getString(R.string.biometric_prompt_subtitle),
+            negativeButtonText = getString(R.string.biometric_prompt_negative),
+            onSuccess = {
+                onPinSuccess()
+            },
+            onError = { errorCode, errString ->
+                if (errorCode != androidx.biometric.BiometricPrompt.ERROR_USER_CANCELED &&
+                    errorCode != androidx.biometric.BiometricPrompt.ERROR_NEGATIVE_BUTTON &&
+                    errorCode != androidx.biometric.BiometricPrompt.ERROR_CANCELED
+                ) {
+                    showError(errString.toString())
+                }
+            },
+            onFailed = {
+                showError(getString(R.string.pin_error_wrong, 1))
+            }
+        )
     }
 
     // ──────────────────────────────────────────────────────────────────────

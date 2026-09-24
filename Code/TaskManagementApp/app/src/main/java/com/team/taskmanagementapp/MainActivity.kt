@@ -104,7 +104,41 @@ class MainActivity : BaseActivity() {
             binding.aiGreetingBubble.isVisible = false
         }
 
+        handleShortcutIntent(intent)
         openPomodoroScreenIfRequested(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        // Notification dùng FLAG_ACTIVITY_SINGLE_TOP: khi MainActivity đã mở sẵn thì phải
+        // xử lý intent mới ở đây, nếu không chạm notification sẽ không mở được màn hình.
+        setIntent(intent)
+        handleShortcutIntent(intent)
+        openPomodoroScreenIfRequested(intent)
+    }
+
+    private fun handleShortcutIntent(intent: Intent?) {
+        val action = intent?.action ?: return
+        when (action) {
+            Constants.ACTION_SHORTCUT_NEW_TASK -> {
+                startActivity(Intent(this, AddEditTaskActivity::class.java))
+            }
+            Constants.ACTION_SHORTCUT_TODAY -> {
+                if (navController.currentDestination?.id != R.id.taskListFragment) {
+                    navController.navigate(R.id.taskListFragment)
+                }
+            }
+            Constants.ACTION_SHORTCUT_CALENDAR -> {
+                if (navController.currentDestination?.id != R.id.calendarFragment) {
+                    navController.navigate(R.id.calendarFragment)
+                }
+            }
+            Constants.ACTION_SHORTCUT_STATS -> {
+                if (navController.currentDestination?.id != R.id.statsFragment) {
+                    navController.navigate(R.id.statsFragment)
+                }
+            }
+        }
     }
 
     /**
@@ -126,14 +160,6 @@ class MainActivity : BaseActivity() {
             R.id.pomodoroFragment,
             bundleOf(PomodoroFragment.ARG_TASK_ID to taskId)
         )
-    }
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        // Notification dùng FLAG_ACTIVITY_SINGLE_TOP: khi MainActivity đã mở sẵn thì phải
-        // xử lý intent mới ở đây, nếu không chạm notification sẽ không mở được màn hình.
-        setIntent(intent)
-        openPomodoroScreenIfRequested(intent)
     }
 
     private fun requestNotificationPermissionIfNeeded() {

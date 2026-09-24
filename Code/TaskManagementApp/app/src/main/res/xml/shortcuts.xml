@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <shortcut
+        android:shortcutId="shortcut_new_task"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_add"
+        android:shortcutShortLabel="@string/shortcut_new_task_short"
+        android:shortcutLongLabel="@string/shortcut_new_task_long">
+        <intent
+            android:action="com.team.taskmanagementapp.action.SHORTCUT_NEW_TASK"
+            android:targetPackage="com.team.taskmanagementapp"
+            android:targetClass="com.team.taskmanagementapp.MainActivity" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="shortcut_today"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_today"
+        android:shortcutShortLabel="@string/shortcut_today_short"
+        android:shortcutLongLabel="@string/shortcut_today_long">
+        <intent
+            android:action="com.team.taskmanagementapp.action.SHORTCUT_TODAY"
+            android:targetPackage="com.team.taskmanagementapp"
+            android:targetClass="com.team.taskmanagementapp.MainActivity" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="shortcut_calendar"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_calendar"
+        android:shortcutShortLabel="@string/shortcut_calendar_short"
+        android:shortcutLongLabel="@string/shortcut_calendar_long">
+        <intent
+            android:action="com.team.taskmanagementapp.action.SHORTCUT_CALENDAR"
+            android:targetPackage="com.team.taskmanagementapp"
+            android:targetClass="com.team.taskmanagementapp.MainActivity" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="shortcut_stats"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_stats"
+        android:shortcutShortLabel="@string/shortcut_stats_short"
+        android:shortcutLongLabel="@string/shortcut_stats_long">
+        <intent
+            android:action="com.team.taskmanagementapp.action.SHORTCUT_STATS"
+            android:targetPackage="com.team.taskmanagementapp"
+            android:targetClass="com.team.taskmanagementapp.MainActivity" />
+    </shortcut>
+
+</shortcuts>

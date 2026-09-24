@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Circular Background -->
+    <path
+        android:fillColor="@color/primary_container"
+        android:pathData="M24,24m-22,0a22,22 0,1 1,44 0a22,22 0,1 1,-44 0" />
+    <!-- Bar Chart Icon -->
+    <path
+        android:fillColor="@color/on_primary_container"
+        android:pathData="M16,28h3v-7h-3v7zM22.5,28h3V16h-3v12zM29,28h3v-4h-3v4zM14,31h19v2H14v-2z" />
+</vector>
