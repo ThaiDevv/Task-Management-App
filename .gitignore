@@ -47,7 +47,7 @@ local.properties
 *.key
 *.pem
 *.secret
-google-services.json
+# google-services.json
 
 # External native build folder
 .externalNativeBuild/
