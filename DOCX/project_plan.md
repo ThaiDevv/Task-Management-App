@@ -10,47 +10,65 @@
 ## 🏗️ Kiến trúc tổng quan (MVVM + Repository Pattern)
 
 ```mermaid
-graph TB
-    subgraph "UI Layer"
-        A["Activities / Fragments"]
-        B["XML Layouts"]
-    end
-    subgraph "ViewModel Layer"
-        C["TaskViewModel"]
-        D["SettingsViewModel"]
-        E["CalendarViewModel"]
-        F["BackupViewModel"]
-    end
-    subgraph "Repository Layer"
-        G["TaskRepository"]
-        H["SettingsRepository"]
-        I["BackupRepository"]
-    end
-    subgraph "Data Layer"
-        J["Room Database"]
-        K["TaskDao"]
-        L["DataStore / SharedPreferences (Encrypted)"]
-        M["JSON File I/O"]
-    end
-    subgraph "Services & Receivers"
-        N["NotificationHelper"]
-        O["AlarmManager / WorkManager"]
-        P["BootReceiver"]
-        Q["TimeChangeReceiver"]
+flowchart TD
+    %% TIER 1: UI LAYER
+    subgraph TIER_UI ["📱 TẦNG HIỂN THỊ — UI & PRESENTATION LAYER"]
+        direction LR
+        UI_MAIN["<b>Activities & Fragments</b><br/>MainActivity, TaskDetailActivity, AddEditTaskActivity<br/>TaskListFragment, CalendarFragment, RewardsFragment, SettingsFragment"]
+        UI_COMP["<b>Components & BottomSheets</b><br/>TaskAdapter, StreakWeekAdapter, FilterBottomSheet<br/>StreakDetailsBottomSheet, AiAssistantBottomSheet"]
+        UI_WIDGET["<b>HomeScreen Widget</b><br/>TaskWidgetProvider & Service"]
     end
 
-    A --> C & D & E & F
-    C --> G
-    D --> H
-    E --> G
-    F --> I
-    G --> K --> J
-    H --> L
-    I --> M
-    G --> O
-    O --> N
-    P --> O
-    Q --> O
+    %% TIER 2: VIEWMODEL LAYER
+    subgraph TIER_VM ["🧠 TẦNG QUẢN LÝ TRẠNG THÁI — VIEWMODEL LAYER (StateFlow / UDF)"]
+        direction LR
+        VM_CORE["<b>Task & Calendar ViewModels</b><br/>TaskViewModel, AddEditTaskViewModel, CalendarViewModel"]
+        VM_FOCUS["<b>Focus & Analytics ViewModels</b><br/>PomodoroViewModel, StatsViewModel"]
+        VM_DATA["<b>Backup & Import ViewModels</b><br/>BackupViewModel, ImportViewModel"]
+    end
+
+    %% TIER 3: DOMAIN ENGINES
+    subgraph TIER_DOMAIN ["⚙️ TẦNG TÍNH TOÁN NGHIỆP VỤ — DOMAIN & COMPUTATION ENGINES"]
+        direction LR
+        ENG_GAMIFICATION["<b>Gamification & Recurrence</b><br/>StreakCalculator, SpecialBadgeCalculator, RecurrenceHelper"]
+        ENG_SMART["<b>AI & Focus State Machine</b><br/>AiTaskAssistant, AiPromptManager, PomodoroManager"]
+        ENG_VALIDATE["<b>Data Integrity Engine</b><br/>JSONValidator & Schema Validation"]
+    end
+
+    %% TIER 4: REPOSITORY LAYER
+    subgraph TIER_REPO ["📦 TẦNG ĐIỀU PHỐI DỮ LIỆU — REPOSITORY LAYER (Single Source of Truth)"]
+        direction LR
+        REPO_TASK["<b>TaskRepository</b><br/>CRUD Tasks, Filters, Sorters"]
+        REPO_POMO["<b>PomodoroRepository</b><br/>Focus Sessions & Stats History"]
+        REPO_BACKUP["<b>BackupRepository</b><br/>JSON Export/Import via SAF"]
+        REPO_SEC["<b>Security & Preferences</b><br/>PinRepository, PreferencesRepository"]
+    end
+
+    %% TIER 5: DATA PERSISTENCE LAYER
+    subgraph TIER_DATA ["💾 TẦNG LƯU TRỮ DỮ LIỆU — DATA PERSISTENCE LAYER"]
+        direction LR
+        DB_ROOM["<b>Room Database v3 (AppDatabase)</b><br/>TaskDao, PomodoroDao (SQLite ORM)"]
+        STORE_SEC["<b>Encrypted Storage</b><br/>EncryptedSharedPreferences (PIN & Biometrics)"]
+        STORE_SAF["<b>Document Storage</b><br/>Storage Access Framework (JSON Files)"]
+    end
+
+    %% TIER 6: BACKGROUND & SYSTEM
+    subgraph TIER_SYS ["🔔 HỆ THỐNG NỀN & THÔNG BÁO — BACKGROUND SERVICES & SYSTEM INTEGRATION"]
+        direction LR
+        SYS_NOTIF["<b>Notification Engine</b><br/>NotificationHelper (Heads-up, Reminders, Pomodoro)"]
+        SYS_ALARM["<b>Alarms & Services</b><br/>AlarmManager, StreakReminderScheduler, PomodoroService (Foreground)"]
+        SYS_RCV["<b>Broadcast Receivers & Workers</b><br/>AlarmReceiver, BootReceiver, TimeChangeReceiver, WorkManager"]
+    end
+
+    %% CONNECTIONS (Strict Top-to-Bottom Flow)
+    TIER_UI ==>|User Interactions / Collect UI State| TIER_VM
+    TIER_VM -->|Execute Business Logic| TIER_DOMAIN
+    TIER_DOMAIN -->|Query & Persist Data| TIER_REPO
+    TIER_VM -->|Direct Data Requests| TIER_REPO
+    TIER_REPO ==>|Room DB Operations / Storage Access| TIER_DATA
+    
+    TIER_VM -.->|Schedule Reminders / Trigger Alarms| TIER_SYS
+    TIER_SYS -.->|Push Notifications & Re-sync State| TIER_REPO
 ```
 
 ---
