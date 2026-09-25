@@ -48,6 +48,11 @@ class StreakFragment : Fragment() {
         observeViewModel()
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.refreshStreak()
+    }
+
     private fun setupUI() {
         streakWeekAdapter = StreakWeekAdapter()
         binding.streakWeekRecyclerView.apply {

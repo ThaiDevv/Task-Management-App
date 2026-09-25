@@ -126,6 +126,58 @@ class StreakCalculatorTest {
     }
 
     @Test
+    fun `calculateStreak resets to 0 when streak was lost yesterday and today has no completed tasks`() {
+        val now = System.currentTimeMillis()
+        val day2AgoTask = createSampleTask(1, getMillisForDaysAgo(2, now), isCompleted = true)
+        // Yesterday had an incomplete task (lost streak yesterday)
+        val yesterdayIncompleteTask = createSampleTask(2, getMillisForDaysAgo(1, now), isCompleted = false)
+        // Today has 1 pending task (not completed yet)
+        val todayPendingTask = createSampleTask(3, now, isCompleted = false)
+
+        val result = StreakCalculator.calculateStreak(
+            listOf(day2AgoTask, yesterdayIncompleteTask, todayPendingTask),
+            currentTimeMillis = now
+        )
+
+        assertEquals(0, result.currentStreak)
+        assertFalse(result.isTodayCompleted)
+    }
+
+    @Test
+    fun `calculateStreak resets to 0 when past midnight and yesterday had no tasks at all`() {
+        val now = System.currentTimeMillis()
+        val day2AgoTask = createSampleTask(1, getMillisForDaysAgo(2, now), isCompleted = true)
+        // Yesterday had 0 tasks (empty day -> streak lost yesterday)
+        // Today has 0 completed tasks
+        val todayPendingTask = createSampleTask(2, now, isCompleted = false)
+
+        val result = StreakCalculator.calculateStreak(
+            listOf(day2AgoTask, todayPendingTask),
+            currentTimeMillis = now
+        )
+
+        assertEquals(0, result.currentStreak)
+        assertFalse(result.isTodayCompleted)
+    }
+
+    @Test
+    fun `calculateStreak starts new streak of 1 when completing task today after streak was lost yesterday`() {
+        val now = System.currentTimeMillis()
+        val day2AgoTask = createSampleTask(1, getMillisForDaysAgo(2, now), isCompleted = true)
+        // Yesterday had no tasks (streak lost)
+        // Today user completes a task
+        val todayCompletedTask = createSampleTask(2, now, isCompleted = true)
+
+        val result = StreakCalculator.calculateStreak(
+            listOf(day2AgoTask, todayCompletedTask),
+            currentTimeMillis = now
+        )
+
+        assertEquals(1, result.currentStreak)
+        assertTrue(result.isTodayCompleted)
+    }
+
+    @Test
     fun `calculateStreak generates 7 week days with correct statuses`() {
         val now = System.currentTimeMillis()
         val todayTask = createSampleTask(1, now, isCompleted = true)

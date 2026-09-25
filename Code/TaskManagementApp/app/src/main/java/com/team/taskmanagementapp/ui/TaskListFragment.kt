@@ -275,7 +275,11 @@ class TaskListFragment : Fragment() {
         binding.greetingText.text = "$greeting!"
     }
 
-
+    override fun onResume() {
+        super.onResume()
+        updateGreeting()
+        viewModel.refreshStreak()
+    }
 
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {

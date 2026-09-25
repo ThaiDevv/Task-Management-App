@@ -26,47 +26,65 @@ object StreakCalculator {
     ): StreakInfo {
         val startOfToday = DateTimeUtils.getStartOfDay(currentTimeMillis)
 
-        // Group tasks by start of day timestamp based on dueDate
-        val tasksByDay = tasks.groupBy { DateTimeUtils.getStartOfDay(it.dueDate) }
+        // Today evaluation
+        val todayDueTasks = tasks.filter { DateTimeUtils.getStartOfDay(it.dueDate) == startOfToday }
+        val todayCompletedTasks = tasks.filter { isTaskCompleted(it) && getCompletionDay(it) == startOfToday }
 
-        // Evaluate today
-        val todayTasks = tasksByDay[startOfToday] ?: emptyList()
-        val todayTotal = todayTasks.size
-        val todayCompletedCount = todayTasks.count { isTaskCompleted(it) }
-        val isTodayCompleted = todayTotal > 0 && todayCompletedCount == todayTotal
+        val todayTotal = if (todayDueTasks.isNotEmpty()) todayDueTasks.size else todayCompletedTasks.size
+        val todayCompletedCount = if (todayDueTasks.isNotEmpty()) {
+            todayDueTasks.count { isTaskCompleted(it) }
+        } else {
+            todayCompletedTasks.size
+        }
+
+        val isTodayCompleted = if (todayDueTasks.isNotEmpty()) {
+            todayDueTasks.all { isTaskCompleted(it) } && todayCompletedCount > 0
+        } else {
+            todayCompletedTasks.isNotEmpty()
+        }
 
         // Calculate continuous streak backwards
-        var streakCount = 0
+        var streakCount: Int
 
-        // Start checking date: if today is 100% completed, include today in streak calculation.
-        // If today is not completed yet, today is in-progress and streak is calculated backwards from yesterday.
-        var checkCal = Calendar.getInstance().apply {
-            timeInMillis = startOfToday
-        }
+        val earliestDate = tasks.minOfOrNull {
+            minOf(
+                if (it.dueDate > 0) DateTimeUtils.getStartOfDay(it.dueDate) else Long.MAX_VALUE,
+                if (isTaskCompleted(it)) getCompletionDay(it) else Long.MAX_VALUE
+            )
+        }?.takeIf { it != Long.MAX_VALUE }
 
         if (isTodayCompleted) {
-            streakCount++
-            checkCal.add(Calendar.DAY_OF_MONTH, -1)
-        } else {
-            checkCal.add(Calendar.DAY_OF_MONTH, -1)
-        }
-
-        // Loop backwards through past days
-        // We only check back as far as the earliest task date, or max 365 days to prevent infinite loops.
-        val earliestTaskDate = tasks.minOfOrNull { DateTimeUtils.getStartOfDay(it.dueDate) }
-        if (earliestTaskDate != null) {
-            while (checkCal.timeInMillis >= earliestTaskDate) {
-                val dayMillis = checkCal.timeInMillis
-                val dayTasks = tasksByDay[dayMillis] ?: emptyList()
-
-                // "Những ngày không có task hoặc làm không hoàn thành đủ task trong 1 ngày thì sẽ mất chuỗi"
-                if (dayTasks.isEmpty() || !dayTasks.all { isTaskCompleted(it) }) {
-                    // Streak is broken
-                    break
+            streakCount = 1
+            var checkDay = getPreviousDay(startOfToday)
+            if (earliestDate != null) {
+                while (checkDay >= earliestDate) {
+                    if (!isPastDayCompleted(checkDay, tasks)) {
+                        break
+                    }
+                    streakCount++
+                    checkDay = getPreviousDay(checkDay)
                 }
-
-                streakCount++
-                checkCal.add(Calendar.DAY_OF_MONTH, -1)
+            }
+        } else {
+            // Today is not completed yet (in-progress / 0 tasks completed today).
+            // Check if yesterday was completed.
+            val yesterday = getPreviousDay(startOfToday)
+            if (isPastDayCompleted(yesterday, tasks)) {
+                // Yesterday was completed -> maintain streak from yesterday (giữ chuỗi)
+                streakCount = 1
+                var checkDay = getPreviousDay(yesterday)
+                if (earliestDate != null) {
+                    while (checkDay >= earliestDate) {
+                        if (!isPastDayCompleted(checkDay, tasks)) {
+                            break
+                        }
+                        streakCount++
+                        checkDay = getPreviousDay(checkDay)
+                    }
+                }
+            } else {
+                // Yesterday was NOT completed (mất chuỗi qua 12h đêm) and today has no completed task -> reset to 0
+                streakCount = 0
             }
         }
 
@@ -84,7 +102,7 @@ object StreakCalculator {
         }
 
         // Build 7-day week overview (Monday -> Sunday of current week)
-        val weekDays = buildWeekDays(startOfToday, tasksByDay)
+        val weekDays = buildWeekDays(startOfToday, tasks)
 
         return StreakInfo(
             currentStreak = streakCount,
@@ -96,13 +114,48 @@ object StreakCalculator {
         )
     }
 
+    private fun getCompletionDay(task: Task): Long {
+        val ts = task.completedAt?.takeIf { it > 0 }
+            ?: task.dueDate.takeIf { it > 0 }
+            ?: task.updatedAt
+        return DateTimeUtils.getStartOfDay(ts)
+    }
+
     private fun isTaskCompleted(task: Task): Boolean {
         return task.isCompleted || task.status == TaskStatus.COMPLETED
     }
 
+    private fun isPastDayCompleted(
+        dayMillis: Long,
+        tasks: List<Task>
+    ): Boolean {
+        val tasksDueOnDay = tasks.filter { DateTimeUtils.getStartOfDay(it.dueDate) == dayMillis }
+        val tasksCompletedOnDay = tasks.filter { isTaskCompleted(it) && getCompletionDay(it) == dayMillis }
+
+        return if (tasksDueOnDay.isNotEmpty()) {
+            // All tasks due on this day must be completed AND not completed on a later day
+            tasksDueOnDay.all { task ->
+                if (!isTaskCompleted(task)) return@all false
+                val completedDate = task.completedAt?.takeIf { it > 0 }?.let { DateTimeUtils.getStartOfDay(it) }
+                completedDate == null || completedDate <= dayMillis
+            }
+        } else {
+            // If no tasks were specifically due on this day, day is completed if at least 1 task was completed on this day
+            tasksCompletedOnDay.isNotEmpty()
+        }
+    }
+
+    private fun getPreviousDay(dayMillis: Long): Long {
+        val cal = Calendar.getInstance().apply {
+            timeInMillis = dayMillis
+            add(Calendar.DAY_OF_MONTH, -1)
+        }
+        return DateTimeUtils.getStartOfDay(cal.timeInMillis)
+    }
+
     private fun buildWeekDays(
         startOfToday: Long,
-        tasksByDay: Map<Long, List<Task>>
+        tasks: List<Task>
     ): List<DayStreakInfo> {
         val calendar = Calendar.getInstance().apply {
             timeInMillis = startOfToday
@@ -114,6 +167,14 @@ object StreakCalculator {
         val weekDays = mutableListOf<DayStreakInfo>()
         val dayLabelFormat = SimpleDateFormat("EEE", Locale.getDefault())
 
+        val todayDueTasks = tasks.filter { DateTimeUtils.getStartOfDay(it.dueDate) == startOfToday }
+        val todayCompletedTasks = tasks.filter { isTaskCompleted(it) && getCompletionDay(it) == startOfToday }
+        val isTodayDone = if (todayDueTasks.isNotEmpty()) {
+            todayDueTasks.all { isTaskCompleted(it) } && todayCompletedTasks.isNotEmpty()
+        } else {
+            todayCompletedTasks.isNotEmpty()
+        }
+
         for (i in 0 until 7) {
             val dayMillis = DateTimeUtils.getStartOfDay(calendar.timeInMillis)
             val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
@@ -122,16 +183,14 @@ object StreakCalculator {
             val status = when {
                 dayMillis > startOfToday -> StreakDayStatus.FUTURE
                 dayMillis == startOfToday -> {
-                    val todayTasks = tasksByDay[dayMillis] ?: emptyList()
-                    if (todayTasks.isNotEmpty() && todayTasks.all { isTaskCompleted(it) }) {
+                    if (isTodayDone) {
                         StreakDayStatus.COMPLETED
                     } else {
                         StreakDayStatus.TODAY_IN_PROGRESS
                     }
                 }
                 else -> {
-                    val dayTasks = tasksByDay[dayMillis] ?: emptyList()
-                    if (dayTasks.isNotEmpty() && dayTasks.all { isTaskCompleted(it) }) {
+                    if (isPastDayCompleted(dayMillis, tasks)) {
                         StreakDayStatus.COMPLETED
                     } else {
                         StreakDayStatus.FAILED
