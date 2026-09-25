@@ -56,7 +56,7 @@
         <!-- TaskId tuy chọn truyền từ Task Detail (Task 13); -1 = không truyền -->
         <argument
             android:name="arg_pomodoro_task_id"
-            android:defaultValue="-1"
+            android:defaultValue="-1L"
             app:argType="long" />
     </fragment>
 
