@@ -77,16 +77,24 @@ class TaskViewModel(
             repository.getAllTasks().collect { tasks ->
                 _allTasks.value = tasks
                 _streakInfo.value = StreakCalculator.calculateStreak(tasks, applicationContext)
-                _totalCompletedTasks.value = tasks.count { it.isCompleted }
+                _totalCompletedTasks.value = tasks.count { it.isCompleted || it.status == TaskStatus.COMPLETED }
             }
         }
     }
 
-
+    fun refreshStreak() {
+        viewModelScope.launch {
+            repository.checkAndUpdateOverdueTasks()
+            val tasks = _allTasks.value
+            _streakInfo.value = StreakCalculator.calculateStreak(tasks, applicationContext)
+            _totalCompletedTasks.value = tasks.count { it.isCompleted || it.status == TaskStatus.COMPLETED }
+        }
+    }
 
     fun loadAllTasks() {
         taskListJob?.cancel()
         taskListJob = viewModelScope.launch {
+            repository.checkAndUpdateOverdueTasks()
             _uiState.value = UiState.Loading
             repository.getFilteredTasks(_filterCriteria.value)
                 .catch { e ->
